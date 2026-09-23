@@ -201,15 +201,44 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     return mesh(parent, skinGeometry(vertices, nx, ny, [s * 0.035, 0, 0]), paint, [0, 0, 0], true);
   }
 
+  // The exterior patches share the same surface equation as the painted skin,
+  // so lamps and grilles do not float away from the vehicle in oblique views.
+  function frontSurface(x: number, y: number) {
+    const u = Math.max(-1, Math.min(1, x / 0.91));
+    const t = Math.max(0, Math.min(1, (y - 0.67) / 0.47));
+    return 2.295 + 0.075 * (1 - u * u) * (0.27 + 0.73 * (1 - t)) + 0.013 * Math.sin(Math.PI * t);
+  }
+  function rearSurface(x: number, y: number) {
+    const u = Math.max(-1, Math.min(1, x / 0.935));
+    const t = Math.max(0, Math.min(1, (y - 0.72) / 0.5));
+    return -2.295 - 0.07 * (1 - u * u) - 0.017 * Math.sin(Math.PI * t);
+  }
+  function fasciaPatch(parent: THREE.Object3D, x0: number, x1: number, y0: number, y1: number,
+    surface: (x: number, y: number) => number, outward: 1 | -1, offset: number, material: THREE.Material) {
+    const vertices: number[] = [], nx = 4, ny = 1;
+    for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
+      const x = x0 + (x1 - x0) * i / nx, y = y0 + (y1 - y0) * j / ny;
+      vertices.push(x, y, surface(x, y) + outward * offset);
+    }
+    return mesh(parent, skinGeometry(vertices, nx, ny, [0, 0, -outward * 0.012]), material, [0, 0, 0], true);
+  }
   function frontFascia(parent: THREE.Object3D) {
     const vertices: number[] = [], nx = 10, ny = 5;
     for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
       const u = i / nx * 2 - 1, t = j / ny;
-      const width = 0.905 * (1 - 0.028 * t);
-      const nose = 2.29 + 0.069 * (1 - u * u) + 0.013 * Math.sin(Math.PI * t);
-      vertices.push(u * width, 0.67 + 0.47 * t, nose);
+      const x = u * 0.905 * (1 - 0.028 * t), y = 0.67 + 0.47 * t;
+      vertices.push(x, y, frontSurface(x, y));
     }
     return mesh(parent, skinGeometry(vertices, nx, ny, [0, 0, -0.048]), paint, [0, 0, 0], true);
+  }
+  function rearFascia(parent: THREE.Object3D) {
+    const vertices: number[] = [], nx = 10, ny = 5;
+    for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
+      const u = i / nx * 2 - 1, t = j / ny;
+      const x = u * (0.935 - 0.018 * t), y = 0.72 + 0.5 * t;
+      vertices.push(x, y, rearSurface(x, y));
+    }
+    return mesh(parent, skinGeometry(vertices, nx, ny, [0, 0, 0.048]), paint, [0, 0, 0], true);
   }
 
   const chassis = part('chassis', '承载式底板、纵梁与副车架', 'chassis', [0, -0.1, 0]);
@@ -374,28 +403,35 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   const hood = part('hood', '曲面前舱盖与前灯', 'shell', [0, 0.74, 0.3]);
   curvedPanel(hood, 1.87, 1.15, 2.31, 1.22, 1.09, 0.06);
   frontFascia(hood);
-  box(hood, [1.57, 0.14, 0.06], [0, 0.72, 2.36], dark, 0.045, true);
-  box(hood, [1.19, 0.15, 0.014], [0, 0.852, 2.37], dark, 0.035, true);
-  for (let i = -6; i <= 6; i++) box(hood, [0.016, 0.11, 0.016], [i * 0.082, 0.852, 2.383], steel, 0, true);
+  fasciaPatch(hood, -0.78, 0.78, 0.685, 0.755, frontSurface, 1, 0.018, dark);
+  fasciaPatch(hood, -0.61, 0.61, 0.785, 0.935, frontSurface, 1, 0.019, dark);
+  for (let i = -6; i <= 6; i++) {
+    const x = i * 0.082;
+    box(hood, [0.015, 0.105, 0.013], [x, 0.857, frontSurface(x, 0.857) + 0.027], steel, 0, true);
+  }
   for (const s of [-1, 1]) {
-    box(hood, [0.53, 0.102, 0.035], [s * 0.61, 1.065, 2.353], dark, 0.025, true);
-    box(hood, [0.47, 0.027, 0.018], [s * 0.61, 1.079, 2.375], headlamp, 0.009, true);
-    box(hood, [0.15, 0.065, 0.025], [s * 0.72, 1.025, 2.373], headlamp, 0.015, true);
-    for (let i = 0; i < 4; i++) box(hood, [0.07, 0.012, 0.012], [s * (0.425 + i * 0.105), 1.102, 2.394], headlamp, 0, true);
-    box(hood, [0.085, 0.027, 0.014], [s * 0.78, 1.073, 2.381], indicator, 0, true);
-    box(hood, [0.2, 0.08, 0.03], [s * 0.73, 0.745, 2.373], dark, 0.02, true);
+    const left = s > 0 ? 0.35 : -0.87, right = s > 0 ? 0.87 : -0.35;
+    fasciaPatch(hood, left, right, 1.025, 1.115, frontSurface, 1, 0.02, dark);
+    fasciaPatch(hood, left + 0.026, right - 0.026, 1.072, 1.09, frontSurface, 1, 0.034, headlamp);
+    fasciaPatch(hood, s > 0 ? 0.67 : -0.84, s > 0 ? 0.84 : -0.67, 1.026, 1.058, frontSurface, 1, 0.035, headlamp);
+    fasciaPatch(hood, s > 0 ? 0.77 : -0.855, s > 0 ? 0.855 : -0.77, 1.092, 1.11, frontSurface, 1, 0.041, indicator);
+    fasciaPatch(hood, s > 0 ? 0.64 : -0.84, s > 0 ? 0.84 : -0.64, 0.72, 0.8, frontSurface, 1, 0.023, dark);
     appendShell(tube(hood, [[s * 0.66, 1.228, 1.28], [s * 0.61, 1.203, 1.68], [s * 0.62, 1.142, 2.2]], 0.003, trim));
   }
   const tail = part('tailgate', '尾门、尾灯与后保险杠', 'shell', [0, 0.46, -0.48]);
-  box(tail, [1.87, 0.47, 0.13], [0, 0.98, -2.29], paint, 0.07, true);
-  box(tail, [1.8, 0.06, 0.07], [0, 1.16, -2.37], taillamp, 0.02, true);
+  rearFascia(tail);
+  fasciaPatch(tail, -0.87, 0.87, 1.14, 1.19, rearSurface, -1, 0.016, taillamp);
   for (const s of [-1, 1]) {
-    box(tail, [0.52, 0.13, 0.023], [s * 0.66, 1.015, -2.383], dark, 0, true);
-    for (let i = 0; i < 4; i++) box(tail, [0.083, 0.028, 0.013], [s * (0.48 + i * 0.115), 1.048, -2.406], taillamp, 0, true);
-    box(tail, [0.12, 0.024, 0.013], [s * 0.48, 0.985, -2.407], headlamp, 0, true);
+    const left = s > 0 ? 0.39 : -0.86, right = s > 0 ? 0.86 : -0.39;
+    fasciaPatch(tail, left, right, 0.985, 1.09, rearSurface, -1, 0.015, dark);
+    for (let i = 0; i < 4; i++) {
+      const x = s * (0.46 + i * 0.105);
+      fasciaPatch(tail, x - 0.034, x + 0.034, 1.035, 1.06, rearSurface, -1, 0.029, taillamp);
+    }
+    fasciaPatch(tail, s > 0 ? 0.43 : -0.54, s > 0 ? 0.54 : -0.43, 0.996, 1.016, rearSurface, -1, 0.029, headlamp);
   }
-  box(tail, [1.77, 0.14, 0.18], [0, 0.63, -2.3], dark, 0.05, true);
-  box(tail, [0.45, 0.13, 0.014], [0, 0.89, -2.367], dark, 0.01, true);
+  fasciaPatch(tail, -0.865, 0.865, 0.615, 0.765, rearSurface, -1, 0.028, dark);
+  fasciaPatch(tail, -0.23, 0.23, 0.855, 0.925, rearSurface, -1, 0.018, dark);
   box(tail, [1.6, 0.055, 0.16], [0, 1.89, -1.84], paint, 0.02, true);
   const roof = part('roof', '车顶、立柱与玻璃', 'shell', [0, 1.0, 0]);
   curvedPanel(roof, 1.59, -1.76, 0.7, 1.91, 1.96, 0.035);
