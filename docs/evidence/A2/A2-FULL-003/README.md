@@ -1,6 +1,6 @@
 # A2-FULL-003：公共车壳与座舱第一轮视觉升级
 
-日期：2026-09-24。源码来自 `a/a2-full-003-visual`，基于完整目标 [PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7) 的 `f38b94d`；本任务见 [PR #8](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/8)。准确代码版本由本目录对应提交及 PR 记录定位，不把未合并分支写作 main。运行的 Vite 生产主包 `dist/assets/index-CSqvXccz.js` SHA-256 为 `86fa39aeda735fedefa6327ff502cd81a5d5233dcf2afb2171abae652d725118`，viewer 代码包 `dist/assets/index-Do82-Iun.js` 为 `5ca1aa7fd46cadae35ca23b2fa365487a7f03499e7d49aa78481fa980c8b48b0`。两个产物只作本轮构建识别，正式发布须重新绑定同版全包清单。
+日期：2026-09-24。已验证源码提交 [`5e184f6`](https://github.com/lzhdai/RNC_3D_SIMULATION/commit/5e184f6fbd395aad3ea0d54186f8812a70d82828)，分支 `a/a2-full-003-visual`，基于完整目标 [PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7) 的 `f38b94d`；本任务见 [PR #8](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/8)。后续文档固定版本提交不改变该运行源码，不把未合并分支写作 main。运行的 Vite 生产主包 `dist/assets/index-CSqvXccz.js` SHA-256 为 `86fa39aeda735fedefa6327ff502cd81a5d5233dcf2afb2171abae652d725118`，viewer 代码包 `dist/assets/index-Do82-Iun.js` 为 `5ca1aa7fd46cadae35ca23b2fa365487a7f03499e7d49aa78481fa980c8b48b0`。两个产物只作本轮构建识别，正式发布须重新绑定同版全包清单。
 
 ## 改动与结论
 
