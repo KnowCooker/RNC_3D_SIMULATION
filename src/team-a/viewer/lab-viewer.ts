@@ -210,7 +210,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const resize = new ResizeObserver(() => { renderer.setSize(host.clientWidth, host.clientHeight, false); camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); }); resize.observe(host);
   function reset() {
     const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
-    camera.position.set(6.3, 3.9, 7.2); controls.target.set(0, 1, 0); controls.update(); controls.enableDamping = damping; exploded = false;
+    camera.position.set(4, 3.4, 4.8); controls.target.set(0, 0.7, 0); controls.update(); controls.enableDamping = damping; exploded = false;
   }
   reset();
   return {

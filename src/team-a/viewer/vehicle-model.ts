@@ -127,6 +127,56 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     const line = new THREE.Line(geometry, stitching); parent.add(line);
   }
 
+  // A continuous cushion skin keeps the seat silhouette curved without moving the
+  // seat part or the four microphone anchors attached to its headrests.
+  function cushionSkin(parent: THREE.Object3D, x: number, z: number, width: number, depth: number, material: THREE.Material, inlay = false) {
+    const vertices: number[] = [], nx = inlay ? 6 : 8, nz = inlay ? 4 : 5;
+    for (let j = 0; j <= nz; j++) for (let i = 0; i <= nx; i++) {
+      const u = (i / nx * 2 - 1) * (inlay ? 0.67 : 1);
+      const t = (j / nz - 0.5) * (inlay ? 0.76 : 1) + 0.5;
+      const sideBolster = 0.036 * Math.pow(Math.abs(u), 4) * Math.sin(Math.PI * t);
+      const frontRoll = 0.021 * Math.pow(t, 3);
+      vertices.push(x + u * width / 2, 0.983 + (inlay ? 0.008 : 0) + sideBolster + frontRoll - 0.025 * (1 - u * u) * Math.sin(Math.PI * t), z + (t - 0.5) * depth);
+    }
+    return mesh(parent, skinGeometry(vertices, nx, nz, [0, inlay ? -0.014 : -0.09, 0]), material);
+  }
+
+  function backrestSkin(parent: THREE.Object3D, x: number, z: number, width: number, material: THREE.Material, inlay = false) {
+    const vertices: number[] = [], nx = inlay ? 6 : 8, ny = inlay ? 4 : 5;
+    for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
+      const u = (i / nx * 2 - 1) * (inlay ? 0.63 : 1);
+      const t = inlay ? 0.17 + 0.68 * j / ny : j / ny;
+      const taper = 1 - 0.09 * t - 0.025 * Math.sin(Math.PI * t);
+      const lumbar = 0.035 * (1 - u * u) * Math.sin(Math.PI * t);
+      vertices.push(x + u * width * taper / 2, 1.07 + 0.51 * t, z - 0.14 - 0.085 * t + lumbar + (inlay ? 0.008 : 0));
+    }
+    return mesh(parent, skinGeometry(vertices, nx, ny, [0, 0, inlay ? -0.014 : -0.115]), material);
+  }
+
+  function roofPillar(parent: THREE.Object3D, s: number, bottom: V3, top: V3, widthAtBase: number, widthAtTop: number) {
+    const vertices: number[] = [], nx = 1, ny = 6;
+    for (let j = 0; j <= ny; j++) {
+      const t = j / ny, bow = 0.012 * Math.sin(Math.PI * t);
+      const width = widthAtBase * (1 - t) + widthAtTop * t;
+      const centerX = bottom[0] * (1 - t) + top[0] * t + s * bow;
+      const centerY = bottom[1] * (1 - t) + top[1] * t;
+      const centerZ = bottom[2] * (1 - t) + top[2] * t;
+      for (const edge of [-1, 1]) vertices.push(centerX, centerY, centerZ + edge * width / 2);
+    }
+    return mesh(parent, skinGeometry(vertices, nx, ny, [s * 0.035, 0, 0]), paint, [0, 0, 0], true);
+  }
+
+  function frontFascia(parent: THREE.Object3D) {
+    const vertices: number[] = [], nx = 10, ny = 5;
+    for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
+      const u = i / nx * 2 - 1, t = j / ny;
+      const width = 0.905 * (1 - 0.028 * t);
+      const nose = 2.29 + 0.069 * (1 - u * u) + 0.013 * Math.sin(Math.PI * t);
+      vertices.push(u * width, 0.67 + 0.47 * t, nose);
+    }
+    return mesh(parent, skinGeometry(vertices, nx, ny, [0, 0, -0.048]), paint, [0, 0, 0], true);
+  }
+
   const chassis = part('chassis', '承载式底板、纵梁与副车架', 'chassis', [0, -0.1, 0]);
   box(chassis, [1.66, 0.09, 3.95], [0, 0.64, -0.08], dark);
   for (const x of [-0.74, 0.74]) box(chassis, [0.13, 0.18, 4.1], [x, 0.57, 0], steel);
@@ -165,11 +215,13 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   for (const [index, [x, z, width]] of ([[0.48, 0.55, 0.62], [-0.48, 0.55, 0.62], [0.5, -0.79, 0.57], [0, -0.79, 0.42], [-0.5, -0.79, 0.57]] as [number, number, number][]).entries()) {
     const seat = part(`seat-${index + 1}`, `${index < 2 ? '前排' : '后排'}座椅 ${index + 1}（含头枕）`, 'cabin', [0, 0.45, 0]);
     box(seat, [width - 0.13, 0.14, 0.46], [x, 0.76, z], dark);
-    box(seat, [width, 0.17, 0.57], [x, 0.91, z], fabric, 0.07);
-    box(seat, [width * 0.67, 0.035, 0.46], [x, 1.007, z + 0.015], insert, 0.025);
-    const back = box(seat, [width, 0.6, 0.16], [x, 1.29, z - 0.24], fabric, 0.075); back.rotation.x = -0.1;
-    box(seat, [width * 0.64, 0.46, 0.035], [x, 1.3, z - 0.14], insert, 0.04);
-    for (const dx of [-width * 0.35, width * 0.35]) box(seat, [0.09, 0.43, 0.21], [x + dx, 1.22, z - 0.19], fabric, 0.04);
+    cushionSkin(seat, x, z, width, 0.57, fabric);
+    cushionSkin(seat, x, z, width, 0.57, insert, true);
+    backrestSkin(seat, x, z, width, fabric);
+    backrestSkin(seat, x, z, width, insert, true);
+    for (const dx of [-width * 0.37, width * 0.37]) {
+      const bolster = box(seat, [0.064, 0.43, 0.15], [x + dx, 1.27, z - 0.155], fabric, 0.031); bolster.rotation.x = -0.1;
+    }
     for (const dx of [-0.085, 0.085]) cylinder(seat, 0.012, 0.14, [x + dx, 1.63, z - 0.25], trim, 'y', 8);
     box(seat, [Math.min(width * 0.62, 0.34), 0.22, 0.15], [x, 1.77, z - 0.25], fabric, 0.055);
     box(seat, [0.045, 0.1, 0.05], [x + width / 2 - 0.035, 1.01, z - 0.1], red, 0.01);
@@ -179,7 +231,13 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     }
   }
   const cockpit = part('cockpit', '仪表台、方向盘、踏板与中央扶手', 'cabin', [0, 0.45, 0]);
-  box(cockpit, [1.69, 0.24, 0.35], [0, 1.23, 1.18], dark, 0.07);
+  const dashboardVertices: number[] = [], dashboardNx = 12, dashboardNz = 5;
+  for (let j = 0; j <= dashboardNz; j++) for (let i = 0; i <= dashboardNx; i++) {
+    const x = -0.845 + i / dashboardNx * 1.69, t = j / dashboardNz;
+    const binnacle = 0.062 * Math.exp(-(((x - 0.46) / 0.28) ** 2)) * Math.sin(Math.PI * t);
+    dashboardVertices.push(x, 1.31 - 0.09 * t + binnacle + 0.012 * (1 - (x / 0.845) ** 2), 1.01 + 0.34 * t);
+  }
+  mesh(cockpit, skinGeometry(dashboardVertices, dashboardNx, dashboardNz, [0, -0.12, 0]), dark);
   box(cockpit, [1.58, 0.035, 0.02], [0, 1.29, 0.995], trim, 0.005);
   box(cockpit, [0.4, 0.19, 0.025], [0.45, 1.43, 1.105], display, 0.01);
   box(cockpit, [0.43, 0.27, 0.035], [0, 1.41, 1.005], display, 0.01);
@@ -251,8 +309,8 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   }
   const hood = part('hood', '曲面前舱盖与前灯', 'shell', [0, 0.74, 0.3]);
   curvedPanel(hood, 1.87, 1.15, 2.31, 1.22, 1.09, 0.06);
-  box(hood, [1.81, 0.26, 0.12], [0, 0.945, 2.295], paint, 0.055, true);
-  box(hood, [1.76, 0.2, 0.12], [0, 0.74, 2.31], dark, 0.06, true);
+  frontFascia(hood);
+  box(hood, [1.57, 0.14, 0.06], [0, 0.72, 2.36], dark, 0.045, true);
   box(hood, [1.19, 0.15, 0.014], [0, 0.852, 2.37], dark, 0.035, true);
   for (let i = -6; i <= 6; i++) box(hood, [0.016, 0.11, 0.016], [i * 0.082, 0.852, 2.383], steel, 0, true);
   for (const s of [-1, 1]) {
@@ -276,9 +334,9 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     const topX = s * 0.775, bottomX = s * 0.92;
     panel(roof, [[bottomX, 1.26, 1.08], [bottomX, 1.26, -0.15], [topX, 1.93, -0.15], [topX, 1.93, 0.61]], glass);
     panel(roof, [[bottomX, 1.26, -0.24], [bottomX, 1.26, -1.89], [topX, 1.90, -1.65], [topX, 1.93, -0.24]], glass);
-    for (const [a, b] of [[[bottomX, 1.23, 1.14], [topX, 1.96, 0.66]], [[bottomX, 1.24, -0.195], [topX, 1.97, -0.195]], [[bottomX, 1.24, -2.15], [topX, 1.91, -1.72]]] as [V3, V3][]) {
-      const pillar = rod(roof, a, b, 0.041, paint); shell.push(pillar);
-    }
+    roofPillar(roof, s, [bottomX, 1.23, 1.14], [topX, 1.96, 0.66], 0.135, 0.095);
+    roofPillar(roof, s, [bottomX, 1.24, -0.195], [topX, 1.97, -0.195], 0.085, 0.075);
+    roofPillar(roof, s, [bottomX, 1.24, -2.15], [topX, 1.91, -1.72], 0.19, 0.115);
     const rail = tube(roof, [[s * 0.64, 1.998, -1.48], [s * 0.67, 2.014, -0.3], [s * 0.64, 2.02, 0.45]], 0.024, paint); shell.push(rail);
     const mirror = part(`mirror-${s}`, `${s > 0 ? '左' : '右'}后视镜`, 'shell', [s * 0.72, 0.3, 0]);
     appendShell(rod(mirror, [s * 0.95, 1.24, 0.91], [s * 1.12, 1.32, 0.88], 0.024, dark));
