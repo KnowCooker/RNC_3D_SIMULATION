@@ -99,6 +99,12 @@
   font-size: 10px;
   pointer-events: none;
 }
+.lab-field-note-compact { display: none; }
+@media (max-width: 600px) {
+  .lab-field-interpolation-note { font-size: 9px; }
+  .lab-field-note-detail { display: none; }
+  .lab-field-note-compact { display: inline; }
+}
 .lab-path-focus-note {
   position: absolute;
   z-index: 3;

@@ -113,7 +113,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     field.add(mesh); sliceMeshes.set(axis, { mesh, sampleIndices: topology.sampleIndices }); sliceMaterials.push(material);
   }
   const fieldNote = document.createElement('div'); fieldNote.className = 'lab-field-interpolation-note'; fieldNote.hidden = true;
-  host.append(fieldNote);
+  const fieldNoteDetail = document.createElement('span'); fieldNoteDetail.className = 'lab-field-note-detail';
+  const fieldNoteCompact = document.createElement('span'); fieldNoteCompact.className = 'lab-field-note-compact';
+  fieldNote.append(fieldNoteDetail, fieldNoteCompact); host.append(fieldNote);
   const pathFocusNote = document.createElement('div'); pathFocusNote.className = 'lab-path-focus-note'; pathFocusNote.hidden = true;
   const pathFocusDetail = document.createElement('span'); pathFocusDetail.className = 'lab-path-focus-detail';
   const pathFocusCompact = document.createElement('span'); pathFocusCompact.className = 'lab-path-focus-compact';
@@ -238,7 +240,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     field.visible = valid;
     if (!valid || !frame) {
       fieldNote.hidden = fieldMode === 'off' || !frame?.valid;
-      if (!fieldNote.hidden) fieldNote.textContent = '空间采样点与模型不匹配，已隐藏声场';
+      if (!fieldNote.hidden) {
+        fieldNoteDetail.textContent = '空间采样点与模型不匹配，已隐藏声场';
+        fieldNoteCompact.textContent = '采样点不匹配，声场已隐藏';
+      }
       return;
     }
     fieldNote.hidden = fieldSlice === 'volume';
@@ -262,7 +267,12 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       });
       colors.needsUpdate = true;
     }
-    if (!fieldNote.hidden) fieldNote.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${fieldSlice.toUpperCase()} 切片 · 真实采样点间三角插值/透视叠层 · 30–80 dB SPL`;
+    if (!fieldNote.hidden) {
+      const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
+      const coordinate = fieldPoints[sample][{ x: 0, y: 1, z: 2 }[axis]];
+      fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m 固定采样切片 · 车身剖面另行移动 · 三角插值/透视叠层 · 30–80 dB SPL`;
+      fieldNoteCompact.textContent = `${fieldMode === 'primary' ? '原声' : '残余'} ${axis.toUpperCase()}=${coordinate.toFixed(2)}m 固定场片；车身剖面另移`;
+    }
   }
   function pathIsShown(row: (typeof pathRows)[number]) {
     return (row.primary || !!config?.speakerEnabled[row.channel]) && (pathMode === 'both' || (row.primary ? pathMode === 'primary' : pathMode === 'secondary'));
