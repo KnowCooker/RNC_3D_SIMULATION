@@ -3,7 +3,7 @@ import type { Four, SignalKind } from './contracts';
 
 export type VehicleKind = 'ice' | 'bev' | 'hev' | 'erev';
 export type Vec3 = readonly [number, number, number];
-export interface ReferenceSensor { id: string; name: string; position: Vec3 }
+export interface ReferenceSensor { id: string; name: string; position: Vec3; /** Visual attachment only; position remains an unexpanded physical coordinate. */ mountPart?: string }
 export interface LabConfig {
   schemaVersion: 'lab-v3';
   vehicle: VehicleKind;
@@ -31,7 +31,7 @@ export interface LabResult {
   signals: { x: Float32Array[]; u: Four<Float32Array>; d: Four<Float32Array>; a: Four<Float32Array>; e: Four<Float32Array> };
   metrics: { reductionDbByMic: Four<number>; aggregateReductionDb: number };
 }
-export interface LabSelection { signal: SignalKind; channel: number }
+export interface LabSelection { signal: SignalKind | 'q'; channel: number }
 export interface LabAnalysis {
   time: number;
   valid: boolean;

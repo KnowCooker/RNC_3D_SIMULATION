@@ -2,7 +2,7 @@
 
 适用于本仓库内任何开发者和 AI。
 
-1. 开始工作前先读 `开发记录.md`，再读本文件、`docs/plan/00_两周开发总计划.md`、所属组需求、`03_每日任务与验收.md`、`04_接口与AI执行指南.md` 和 `src/shared/contracts.ts`。
+1. 开始工作前先读 `开发记录.md`，再读本文件、`docs/plan/10_FULL_GOAL.md`、`docs/coordination/A_FINAL_DELIVERY.md`、所属角色交接及 `src/shared/lab-contracts.ts`。00～04两周计划及 `contracts.ts` 是demo-v2历史基准，维护旧版时读取；其中缩减范围不能覆盖完整目标。
 2. 用户已于2026-09-24明确恢复完整目标，见docs/plan/10_FULL_GOAL.md：四类SUV、车辆交互/剖面、可改制参考与扬声器、参数化路噪与空间声场。旧demo-v2及其fixture保持冻结作为回归基准；新增lab-v3按完整目标扩展。教学模型不得冒充实车标定或有限元结果。
 3. A 组只改 `src/team-a/**` 与自己的测试；B 组只改 `src/team-b/**` 与自己的测试。需要共管文件时先在开发记录中写明原因与接口影响，由 A1 + B1 协调；已有明确跨组任务授权时直接按授权执行。
 4. shared、integration、根配置、CI 和公共脚本为共管。A/B 不可直接互相导入；装配只在 integration 中进行。

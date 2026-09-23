@@ -1,4 +1,4 @@
-import type { Corner, RunResult } from '../../shared/contracts';
+import type { Corner, Four, RunResult } from '../../shared/contracts';
 import { ORDER } from '../../shared/contracts';
 
 /** Single transport clock. Pa -> PCM gain is always 2 for both d and e. */
@@ -7,7 +7,7 @@ export class Player {
   private master: GainNode | null = null;
   private active: { source: AudioBufferSourceNode; gain: GainNode } | null = null;
   private buffers = new Map<string, AudioBuffer>();
-  private result: RunResult | null = null;
+  private result: { signals: Pick<RunResult['signals'], 'd' | 'e'> } | null = null;
   private offset = 0;
   private startedAt = 0;
   private running = false;
@@ -23,7 +23,7 @@ export class Player {
   get currentTime(): number {
     return this.positionAt(this.context?.currentTime ?? 0);
   }
-  load(result: RunResult) { this.pause(); this.offset = 0; this.result = result; this.buffers.clear(); }
+  load<T extends { signals: Pick<RunResult['signals'], 'd' | 'e'> }>(result: T) { this.pause(); this.offset = 0; this.result = result; this.buffers.clear(); }
   play(): Promise<void> {
     if (!this.result || this.playing) return Promise.resolve();
     if (this.pendingPlay) return this.pendingPlay;
@@ -122,13 +122,41 @@ export class Player {
   }
 }
 
-export function resampleForAudio(input: Float32Array): Float32Array<ArrayBuffer> {
+function audioKernel() {
   const up = 8, kernel = new Float64Array(129);
   for (let i = 0; i < 129; i++) {
     const t = i - 64, x = 2 * 700 / 16000 * t;
     kernel[i] = 2 * 700 / 16000 * (x === 0 ? 1 : Math.sin(Math.PI * x) / (Math.PI * x)) * (0.54 - 0.46 * Math.cos(2 * Math.PI * i / 128));
   }
   const norm = kernel.reduce((sum, v) => sum + v, 0);
+  return { up, kernel, norm };
+}
+
+type PlaybackResult = { signals: Pick<RunResult['signals'], 'd' | 'e'> };
+
+/**
+ * Protect the expanded lab's much wider source range with ONE gain for all seats and d/e.
+ * Scaling precedes the legacy PCM limiter. Metrics/physical signals must retain the original result.
+ * The sinc polyphase absolute row sum bounds interpolated peaks, including between-sample overshoot.
+ */
+export function prepareLabPlayback<T extends PlaybackResult>(input: T): { result: T; gain: number } {
+  let peak = 0;
+  for (const mode of ['d', 'e'] as const) for (const channel of input.signals[mode]) for (const value of channel) {
+    if (!Number.isFinite(value)) throw new Error('试听声压必须是有限数值');
+    peak = Math.max(peak, Math.abs(value));
+  }
+  const { up, kernel, norm } = audioKernel();
+  const phases = new Float64Array(up);
+  for (let k = 0; k < kernel.length; k++) phases[k % up] += Math.abs(kernel[k] * up / norm * 2);
+  const bound = Math.max(...phases);
+  // 0.90 leaves margin for Float32 summation and the existing 0.98 safety limiter.
+  const gain = peak === 0 ? 1 : Math.min(1, 0.90 / (peak * bound));
+  const scale = (channels: Four<Float32Array>) => channels.map(channel => channel.map(value => value * gain)) as unknown as Four<Float32Array>;
+  return { gain, result: { ...input, signals: { ...input.signals, d: scale(input.signals.d), e: scale(input.signals.e) } } };
+}
+
+export function resampleForAudio(input: Float32Array): Float32Array<ArrayBuffer> {
+  const { up, kernel, norm } = audioKernel();
   const output = new Float32Array(input.length * up);
   for (let n = 0; n < input.length; n++) for (let k = 0; k < kernel.length; k++) {
     const index = n * up + k - 64;
