@@ -31,6 +31,21 @@ export interface LabResult {
   signals: { x: Float32Array[]; u: Four<Float32Array>; d: Four<Float32Array>; a: Four<Float32Array>; e: Four<Float32Array> };
   metrics: { reductionDbByMic: Four<number>; aggregateReductionDb: number };
 }
+/** Sequential new samples from a persistent processor; never a repeated prerecorded segment. */
+export interface LabChunk {
+  runId: string;
+  startSample: number;
+  sampleCount: number;
+  sources: Four<Float32Array>;
+  signals: LabResult['signals'];
+}
+/** Chronological bounded history. Result indices are local; bounds are absolute sample indices. */
+export interface LabLiveSnapshot {
+  startSample: number;
+  endSample: number;
+  result: LabResult;
+}
+export interface LabLivePacket { chunk: LabChunk; snapshot: LabLiveSnapshot }
 export interface LabSelection { signal: SignalKind | 'q'; channel: number }
 export interface LabAnalysis {
   time: number;

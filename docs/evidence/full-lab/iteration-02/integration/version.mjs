@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+const sha = value => crypto.createHash('sha256').update(value).digest('hex');
+const files = dir => fs.readdirSync(dir, { recursive: true, withFileTypes: true }).filter(e => e.isFile()).map(e => path.join(e.parentPath, e.name));
+const name = file => path.relative(process.cwd(), file).replaceAll('\\', '/');
+const source = Object.fromEntries([...files('src'), ...files('tests'), 'package.json', 'pnpm-lock.yaml'].sort().map(file => [name(file), sha(fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n'))]));
+const dist = Object.fromEntries(files('dist').sort().map(file => [name(file), sha(fs.readFileSync(file))]));
+const manifest = { capturedAt: new Date().toISOString(), base: '79df17b', sourceDigest: sha(JSON.stringify(source)), source, dist, validation: 'pnpm check: 59/59 tests, typecheck, boundaries, production build passed' };
+fs.writeFileSync('output/playwright/live-lab/version.json', JSON.stringify(manifest, null, 2) + '\n');
+console.log(JSON.stringify({ sourceDigest: manifest.sourceDigest, sourceFiles: Object.keys(source).length, distFiles: Object.keys(dist).length }));

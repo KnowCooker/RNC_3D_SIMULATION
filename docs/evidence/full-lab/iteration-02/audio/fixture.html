@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Live audio browser boundary</title>
+<button id="start">Start live audio</button><pre id="status">idle</pre>
+<script type="module">
+import { LivePlayer } from '/src/team-a/player/live-player.ts';
+window.player = new LivePlayer(); player.setMuted(true);
+window.makeChunk = (startSample, sampleCount = 200) => {
+  const d = Array.from({length:4}, (_, seat) => Float32Array.from({length:sampleCount}, (_, n) => .02 * (seat+1) * Math.sin(2*Math.PI*125*(startSample+n)/2000)));
+  return {runId:'browser',startSample,sampleCount,sources:d,signals:{x:d,u:d,d,a:d,e:d.map(channel => channel.map(x=>x/4))}};
+};
+player.enqueue(makeChunk(0,1000)); window.nextSample = 1000;
+window.feed = () => { if (player.bufferedUntil - player.currentTime < .5) { player.enqueue(makeChunk(nextSample)); nextSample += 200; } };
+document.querySelector('#start').onclick = async () => { await player.start(); window.feeding = setInterval(feed,25); document.querySelector('#status').textContent = 'started'; };
+</script></html>

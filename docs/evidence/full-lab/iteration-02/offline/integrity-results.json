@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "sourceDigest": "c2e43d7994ac8941ca7f820546010e1d28a23dc3d2590d5cd90fecb9ca7f90f1",
+  "checkedPackageFiles": 31,
+  "checkedFrozenDistFiles": 26,
+  "checkedArchiveFiles": 31,
+  "zipSha256": "e9d9445e9dc1b44dba65a20f2a910c8076175cdc33d5dfc4995b7b35c62c66c2",
+  "manifestSha256": "651c82a69cb417da26c1bb80e1f96a3d7c1dbcdd1b23e71a22aee00befd63383",
+  "bytes": 3341221
+}

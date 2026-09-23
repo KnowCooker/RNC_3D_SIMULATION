@@ -40,12 +40,15 @@ test('four drivetrains preserve their physical differences and five-seat cabin',
 
 test('vehicle geometry is finite and every owned GPU resource is disposed once', () => {
   for (const kind of ['ice', 'bev', 'hev', 'erev'] as VehicleKind[]) {
-    const model = createVehicleModel(kind), geometrySet = new Set<THREE.BufferGeometry>(), materialSet = new Set<THREE.Material>();
+    const model = createVehicleModel(kind), geometrySet = new Set<THREE.BufferGeometry>(), materialSet = new Set<THREE.Material>(), textureSet = new Set<THREE.Texture>();
     let triangles = 0;
     model.group.traverse(object => {
       if (!(object instanceof THREE.Mesh)) return;
       geometrySet.add(object.geometry);
-      (Array.isArray(object.material) ? object.material : [object.material]).forEach(m => materialSet.add(m));
+      (Array.isArray(object.material) ? object.material : [object.material]).forEach(m => {
+        materialSet.add(m);
+        for (const value of Object.values(m)) if (value instanceof THREE.Texture) textureSet.add(value);
+      });
       const position = object.geometry.getAttribute('position');
       assert.ok([...position.array].every(Number.isFinite));
       triangles += (object.geometry.index?.count ?? position.count) / 3;
@@ -58,11 +61,13 @@ test('vehicle geometry is finite and every owned GPU resource is disposed once',
     assert.ok(extent.x >= 2 && extent.x <= 2.6);
     assert.ok(extent.y >= 1.8 && extent.y <= 2.1);
     assert.ok(model.shell.length > 15);
-    let geometryDisposed = 0, materialDisposed = 0;
+    let geometryDisposed = 0, materialDisposed = 0, textureDisposed = 0;
     geometrySet.forEach(g => g.addEventListener('dispose', () => geometryDisposed++));
     model.materials.forEach(m => m.addEventListener('dispose', () => materialDisposed++));
+    textureSet.forEach(t => t.addEventListener('dispose', () => textureDisposed++));
     model.dispose(); model.dispose();
     assert.equal(geometryDisposed, geometrySet.size); assert.equal(materialDisposed, model.materials.length);
+    assert.ok(textureSet.size > 0); assert.equal(textureDisposed, textureSet.size);
     assert.equal(model.group.children.length, 0);
   }
 });

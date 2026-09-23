@@ -17,7 +17,7 @@ git config --local rnc.role A1
 
 | 角色 | 独占范围 | 交接页 |
 | --- | --- | --- |
-| A1 | src/team-a/app、charts、player；tests/player.test.ts 和 tests/a1-*.test.ts | [A1](A1.md) |
+| A1 | src/team-a/lab、app、charts、player；tests/player.test.ts 和 tests/a1-*.test.ts | [A1](A1.md) |
 | A2 | src/team-a/viewer；tests/a2-*.test.ts | [A2](A2.md) |
 
 每端可更新自己的交接页、根开发记录中自己的状态行及追加历史。公共入口、配置、依赖、接口、汇总验收记录由协调任务指定单一修改者。B 组的实现职责保持不变。
@@ -51,7 +51,8 @@ main 是已合并状态，开放 PR 是未合并工作索引，PR 分支上的�
 ## 工作、验证与交接
 
 - 每次只完成一个可验证的小任务，不重写整个 A 组。先复现问题；已有行为正确时记录证据，不为了产生提交改写代码。
-- A1/A2 日常用 `pnpm dev:a` 参考回放并行开发，需要真实重算时使用 `pnpm dev`。不改原始基准，不重新定义 B 组指标。
+- 当前lab-v3日常使用 `pnpm dev`，页面由integration注入真实Worker；`pnpm dev:a`只维护旧demo-v2参考回放。A1/A2可分别使用第二轮证据目录的生命周期夹具和A2-FULL-002的独立viewer夹具，按各README复制到自己的output目录运行；夹具不替代最终真实引擎组合验收。不改原始基准，不重新定义B组指标。
+- 独立验证分别运行 `pnpm exec tsx --test tests/a1-*.test.ts`、`pnpm exec tsx --test tests/a2-*.test.ts`，提交前仍执行 `pnpm check`。实时处理器归B，Worker/契约归指定集成者，A1拥有播放时钟，A2只消费时间与场帧。
 - 保持 viewer 现有接口兼容。A1 提供统一播放时间、选中通道和残余指标；A2 回传点选事件并消费这些值，不另建播放时钟。
 - 跨边界需求写入自己交接页的“依赖/请求”：目标角色、问题、所需接口、验收条件、关联 PR。对方下一次同步读取；不假定写入即获同意。无阻塞部分继续推进。
 - 每个可验证批次同时更新自己的交接页和根开发记录，提交并推送。结束前无论完成或阻塞，都保存精确下一步、实际检查和失败信息。

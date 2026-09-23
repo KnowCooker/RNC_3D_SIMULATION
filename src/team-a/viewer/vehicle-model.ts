@@ -25,22 +25,31 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   const group = new THREE.Group(); group.name = `teaching-suv-${kind}`;
   group.userData = { vehicleKind: kind, originalDesign: true, seats: 5, rows: 2 };
   const parts: VehiclePart[] = [], shell: THREE.Mesh[] = [], wheels: THREE.Object3D[] = [];
-  const materials: THREE.Material[] = [], geometries = new Set<THREE.BufferGeometry>();
+  const materials: THREE.Material[] = [], geometries = new Set<THREE.BufferGeometry>(), textures = new Set<THREE.Texture>();
   const shellMaterialCopies = new Map<THREE.Material, THREE.Material>();
   const standard = (color: string, roughness = 0.55, metalness = 0.15) => {
     const m = new THREE.MeshStandardMaterial({ color, roughness, metalness }); materials.push(m); return m;
   };
-  const paint = new THREE.MeshPhysicalMaterial({ color: '#86b8bf', metalness: 0.62, roughness: 0.28, clearcoat: 0.8, clearcoatRoughness: 0.2 });
+  const paint = new THREE.MeshPhysicalMaterial({ color: { ice: '#466883', bev: '#90b7c1', hev: '#658c7b', erev: '#956b6b' }[kind], metalness: 0.52, roughness: 0.27, clearcoat: 0.8, clearcoatRoughness: 0.16 });
   materials.push(paint);
   const glass = new THREE.MeshPhysicalMaterial({ color: '#88c6d8', transparent: true, opacity: 0.28, metalness: 0.18, roughness: 0.18, side: THREE.DoubleSide, depthWrite: false });
   materials.push(glass);
   const dark = standard('#162530', 0.82), black = standard('#111920', 0.95, 0), steel = standard('#778b98', 0.42, 0.65);
-  const trim = standard('#c1d3da', 0.3, 0.8), fabric = standard('#46586a', 0.92, 0), insert = standard('#72899a', 0.85, 0);
+  const trim = standard('#c1d3da', 0.3, 0.8), fabric = standard('#263542', 0.86, 0), insert = standard('#b2a18c', 0.86, 0);
   const copper = standard('#f59039', 0.4, 0.5), battery = standard('#209e91', 0.45, 0.5), engine = standard('#a8adb2', 0.5, 0.55);
   const blue = standard('#398bb8', 0.35, 0.5), red = standard('#bd594f', 0.6, 0.1);
   const headlamp = standard('#d8f5ff', 0.23); headlamp.emissive.set('#d2efff'); headlamp.emissiveIntensity = 1.2;
   const taillamp = standard('#bd302e', 0.23); taillamp.emissive.set('#d44131'); taillamp.emissiveIntensity = 0.8;
   const display = standard('#162d42', 0.3); display.emissive.set('#183f53'); display.emissiveIntensity = 0.4;
+  const weave = new Uint8Array(64 * 64 * 4);
+  for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+    const i = (y * 64 + x) * 4, value = 125 + ((x + 2 * y) % 4 < 2 ? 45 : -35);
+    weave[i] = weave[i + 1] = weave[i + 2] = value; weave[i + 3] = 255;
+  }
+  const upholsteryTexture = new THREE.DataTexture(weave, 64, 64); upholsteryTexture.wrapS = upholsteryTexture.wrapT = THREE.RepeatWrapping;
+  upholsteryTexture.repeat.set(8, 8); upholsteryTexture.needsUpdate = true; textures.add(upholsteryTexture);
+  fabric.bumpMap = insert.bumpMap = upholsteryTexture; fabric.bumpScale = insert.bumpScale = 0.002;
+  const stitching = new THREE.LineBasicMaterial({ color: '#ddc9aa', transparent: true, opacity: 0.8 }); materials.push(stitching);
 
   function part(id: string, name: string, category: string, offset: V3, position: V3 = [0, 0, 0], description = '') {
     const object = new THREE.Group(); object.name = id; object.position.set(...position);
@@ -53,18 +62,28 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
       if (!shellMaterialCopies.has(material)) { const copy = material.clone(); materials.push(copy); shellMaterialCopies.set(material, copy); }
       material = shellMaterialCopies.get(material)!;
     }
-    geometries.add(geometry); const object = new THREE.Mesh(geometry, material); object.position.set(...position);
+    geometries.add(geometry);
+    if (geometry.userData.sectionClosed === undefined) geometry.userData.sectionClosed = ['BoxGeometry', 'RoundedBoxGeometry', 'CylinderGeometry', 'TorusGeometry', 'ExtrudeGeometry', 'SphereGeometry'].includes(geometry.type);
+    const object = new THREE.Mesh(geometry, material); object.position.set(...position);
     object.castShadow = true; object.receiveShadow = true; parent.add(object); if (isShell) shell.push(object); return object;
   }
   function box(parent: THREE.Object3D, size: V3, pos: V3, material = steel, radius = 0.025, isShell = false) {
     return mesh(parent, radius ? new RoundedBoxGeometry(...size, 1, radius) : new THREE.BoxGeometry(...size), material, pos, isShell);
+  }
+  function appendShell(object: THREE.Mesh) {
+    const material = object.material as THREE.Material;
+    if (material !== paint && material !== glass) {
+      if (!shellMaterialCopies.has(material)) { const copy = material.clone(); materials.push(copy); shellMaterialCopies.set(material, copy); }
+      object.material = shellMaterialCopies.get(material)!;
+    }
+    shell.push(object); return object;
   }
   function cylinder(parent: THREE.Object3D, radius: number, length: number, pos: V3, material = steel, axis = 'x', segments = 20) {
     const object = mesh(parent, new THREE.CylinderGeometry(radius, radius, length, segments), material, pos);
     if (axis === 'x') object.rotation.z = Math.PI / 2; else if (axis === 'z') object.rotation.x = Math.PI / 2; return object;
   }
   function tube(parent: THREE.Object3D, points: V3[], radius: number, material = steel) {
-    return mesh(parent, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p))), Math.min(128, Math.max(10, points.length * 5)), radius, 6, false), material);
+    return mesh(parent, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p))), Math.min(96, Math.max(10, points.length * 5)), radius, 6, false), material);
   }
   function rod(parent: THREE.Object3D, a: V3, b: V3, radius: number, material = steel) {
     const av = new THREE.Vector3(...a), bv = new THREE.Vector3(...b), delta = bv.clone().sub(av);
@@ -76,16 +95,36 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     geometry.setIndex([0, 1, 2, 0, 2, 3]); geometry.computeVertexNormals(); return mesh(parent, geometry, material, [0, 0, 0], isShell);
   }
   function curvedPanel(parent: THREE.Object3D, width: number, z0: number, z1: number, y0: number, y1: number, crown: number) {
-    const vertices: number[] = [], indices: number[] = [], nx = 12, nz = 8;
+    const vertices: number[] = [], nx = 12, nz = 8;
     for (let j = 0; j <= nz; j++) for (let i = 0; i <= nx; i++) {
       const u = i / nx * 2 - 1, t = j / nz;
-      vertices.push(u * width / 2 * (0.96 + 0.04 * Math.sin(t * Math.PI)), y0 + (y1 - y0) * t + crown * (1 - u * u), z0 + (z1 - z0) * t);
+      vertices.push(u * width / 2 * (0.95 + 0.05 * Math.sin(t * Math.PI)), y0 + (y1 - y0) * t + crown * (1 - u * u) + 0.018 * Math.sin(t * Math.PI), z0 + (z1 - z0) * t);
     }
+    return mesh(parent, skinGeometry(vertices, nx, nz, [0, -0.006, 0]), paint, [0, 0, 0], true);
+  }
+  function skinGeometry(surface: number[], nx: number, nz: number, thickness: V3) {
+    const vertices = [...surface], indices: number[] = [], count = surface.length / 3;
+    for (let i = 0; i < count; i++) vertices.push(surface[i * 3] + thickness[0], surface[i * 3 + 1] + thickness[1], surface[i * 3 + 2] + thickness[2]);
     for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
-      const a = j * (nx + 1) + i; indices.push(a, a + nx + 1, a + 1, a + 1, a + nx + 1, a + nx + 2);
+      const a = j * (nx + 1) + i, b = a + nx + 1;
+      indices.push(a, b, a + 1, a + 1, b, b + 1, a + count, a + 1 + count, b + count, a + 1 + count, b + 1 + count, b + count);
+    }
+    const boundary: number[] = [];
+    for (let i = 0; i <= nx; i++) boundary.push(i);
+    for (let j = 1; j <= nz; j++) boundary.push(j * (nx + 1) + nx);
+    for (let i = nx - 1; i >= 0; i--) boundary.push(nz * (nx + 1) + i);
+    for (let j = nz - 1; j > 0; j--) boundary.push(j * (nx + 1));
+    boundary.forEach((a, i) => { const b = boundary[(i + 1) % boundary.length]; indices.push(a, b, a + count, b, b + count, a + count); });
+    const first = new THREE.Vector3().fromArray(vertices, indices[0] * 3), second = new THREE.Vector3().fromArray(vertices, indices[1] * 3), third = new THREE.Vector3().fromArray(vertices, indices[2] * 3);
+    if (second.sub(first).cross(third.sub(first)).dot(new THREE.Vector3(...thickness)) > 0) {
+      for (let i = 0; i < indices.length; i += 3) [indices[i + 1], indices[i + 2]] = [indices[i + 2], indices[i + 1]];
     }
     const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.setIndex(indices); geometry.computeVertexNormals(); return mesh(parent, geometry, paint, [0, 0, 0], true);
+    geometry.setIndex(indices); geometry.computeVertexNormals(); geometry.userData.sectionClosed = true; return geometry;
+  }
+  function seam(parent: THREE.Object3D, points: V3[]) {
+    const geometry = new THREE.BufferGeometry().setFromPoints(points.map(p => new THREE.Vector3(...p))); geometries.add(geometry);
+    const line = new THREE.Line(geometry, stitching); parent.add(line);
   }
 
   const chassis = part('chassis', '承载式底板、纵梁与副车架', 'chassis', [0, -0.1, 0]);
@@ -134,6 +173,10 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     for (const dx of [-0.085, 0.085]) cylinder(seat, 0.012, 0.14, [x + dx, 1.63, z - 0.25], trim, 'y', 8);
     box(seat, [Math.min(width * 0.62, 0.34), 0.22, 0.15], [x, 1.77, z - 0.25], fabric, 0.055);
     box(seat, [0.045, 0.1, 0.05], [x + width / 2 - 0.035, 1.01, z - 0.1], red, 0.01);
+    for (const direction of [-1, 1]) {
+      seam(seat, [[x + direction * width * 0.28, 1.03, z - 0.2], [x + direction * width * 0.29, 1.014, z + 0.16], [x + direction * width * 0.25, 1.006, z + 0.21]]);
+      seam(seat, [[x + direction * width * 0.27, 1.09, z - 0.115], [x + direction * width * 0.28, 1.47, z - 0.115], [x + direction * width * 0.22, 1.53, z - 0.14]]);
+    }
   }
   const cockpit = part('cockpit', '仪表台、方向盘、踏板与中央扶手', 'cabin', [0, 0.45, 0]);
   box(cockpit, [1.69, 0.24, 0.35], [0, 1.23, 1.18], dark, 0.07);
@@ -163,18 +206,39 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     shape.lineTo(-2.36, 0.65); shape.lineTo(-2.31, 1.11); shape.quadraticCurveTo(-1.4, 1.31, -0.9, 1.24);
     shape.lineTo(1.7, 1.23); shape.quadraticCurveTo(2.34, 1.2, 2.36, 1.05); shape.closePath();
     const g = new THREE.ExtrudeGeometry(shape, { depth: 0.055, bevelEnabled: true, bevelSize: 0.025, bevelThickness: 0.015, bevelSegments: 2, steps: 1, curveSegments: 10 });
-    g.rotateY(Math.PI / 2); mesh(side, g, paint, [s > 0 ? 0.91 : -0.965, 0, 0], true);
+    g.rotateY(Math.PI / 2);
+    const skin = g.getAttribute('position');
+    for (let i = 0; i < skin.count; i++) {
+      const y = skin.getY(i), z = skin.getZ(i);
+      const shoulder = 0.023 * Math.sin(Math.PI * Math.max(0, Math.min(1, (y - 0.58) / 0.74)));
+      const endTaper = 0.06 * Math.max(0, Math.abs(z) - 1.83) / 0.56;
+      skin.setX(i, skin.getX(i) + s * (shoulder - endTaper));
+    }
+    g.computeVertexNormals();
+    const normals = g.getAttribute('normal'), smooth = new Map<string, THREE.Vector3>();
+    const vertexKey = (i: number) => `${skin.getX(i).toFixed(5)},${skin.getY(i).toFixed(5)},${skin.getZ(i).toFixed(5)}`;
+    for (let i = 0; i < skin.count; i++) { const key = vertexKey(i), normal = new THREE.Vector3().fromBufferAttribute(normals, i); smooth.set(key, (smooth.get(key) ?? new THREE.Vector3()).add(normal)); }
+    smooth.forEach(normal => normal.normalize());
+    for (let i = 0; i < skin.count; i++) { const normal = smooth.get(vertexKey(i))!; normals.setXYZ(i, normal.x, normal.y, normal.z); }
+    mesh(side, g, paint, [s > 0 ? 0.91 : -0.965, 0, 0], true);
     box(side, [0.095, 0.13, 1.81], [s * 0.957, 0.61, 0], dark, 0.035, true);
     for (const z of [-1.45, 1.45]) {
       const arch: V3[] = []; for (let i = 0; i <= 24; i++) { const a = i / 24 * Math.PI; arch.push([s * 0.994, 0.49 + Math.sin(a) * 0.445, z + Math.cos(a) * 0.49]); }
-      tube(side, arch, 0.031, dark);
+      appendShell(tube(side, arch, 0.031, dark));
     }
     for (const [id, z, length] of [['front', 0.62, 1.19], ['rear', -0.73, 1.35]] as [string, number, number][]) {
       const door = part(`door-${id}-${s}`, `${s > 0 ? '左' : '右'}${id === 'front' ? '前' : '后'}车门及扬声器`, 'shell', [s * 0.72, 0.35, 0]);
-      const doorPanel = box(door, [0.024, 0.48, length], [s * 0.983, 1.005, z], paint, 0.01, true);
+      const doorVertices: number[] = [];
+      for (let j = 0; j <= 8; j++) for (let i = 0; i <= 4; i++) {
+        const t = i / 4, longitudinal = j / 8;
+        doorVertices.push(s * (0.996 + 0.018 * Math.sin(t * Math.PI) + 0.006 * Math.sin(longitudinal * Math.PI)), 0.765 + 0.48 * t, z - length / 2 + length * longitudinal);
+      }
+      const doorGeometry = skinGeometry(doorVertices, 4, 8, [-s * 0.008, 0, 0]);
+      // Both orientations are visible because thin exterior skins can be viewed from inside after an exploded view.
+      const doorPanel = mesh(door, doorGeometry, paint, [0, 0, 0], true);
       // A thin dark outline makes door shut lines visible without painted-on unrelated texture.
-      tube(door, [[s * 1.002, 1.24, z + length / 2], [s * 1.008, 0.85, z + length / 2 - 0.04], [s * 1.008, 0.78, z], [s * 1.002, 0.84, z - length / 2], [s * 1.002, 1.24, z - length / 2]], 0.006, dark);
-      box(door, [0.045, 0.035, 0.17], [s * 1.019, 1.16, z - 0.22], trim, 0.012);
+      appendShell(tube(door, [[s * 1.002, 1.24, z + length / 2], [s * 1.008, 0.85, z + length / 2 - 0.04], [s * 1.008, 0.78, z], [s * 1.002, 0.84, z - length / 2], [s * 1.002, 1.24, z - length / 2]], 0.006, dark));
+      box(door, [0.045, 0.035, 0.17], [s * 1.019, 1.16, z - 0.22], trim, 0.012, true);
       box(door, [0.06, 0.46, length * 0.88], [s * 0.88, 1.015, z], fabric, 0.035);
       box(door, [0.09, 0.065, 0.44], [s * 0.83, 1.1, z + 0.02], dark);
       const speakerZ = id === 'front' ? 0.65 : -0.75;
@@ -187,13 +251,23 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   }
   const hood = part('hood', '曲面前舱盖与前灯', 'shell', [0, 0.74, 0.3]);
   curvedPanel(hood, 1.87, 1.15, 2.31, 1.22, 1.09, 0.06);
-  box(hood, [1.8, 0.21, 0.1], [0, 0.86, 2.32], dark, 0.065, true);
-  for (const s of [-1, 1]) { box(hood, [0.55, 0.085, 0.07], [s * 0.61, 1.035, 2.33], headlamp, 0.025); box(hood, [0.2, 0.09, 0.045], [s * 0.74, 0.79, 2.38], dark); }
+  box(hood, [1.81, 0.26, 0.12], [0, 0.945, 2.295], paint, 0.055, true);
+  box(hood, [1.76, 0.2, 0.12], [0, 0.74, 2.31], dark, 0.06, true);
+  box(hood, [1.19, 0.15, 0.014], [0, 0.852, 2.37], dark, 0.035, true);
+  for (let i = -6; i <= 6; i++) box(hood, [0.016, 0.11, 0.016], [i * 0.082, 0.852, 2.383], steel, 0, true);
+  for (const s of [-1, 1]) {
+    box(hood, [0.53, 0.102, 0.035], [s * 0.61, 1.065, 2.353], dark, 0.025, true);
+    box(hood, [0.47, 0.027, 0.018], [s * 0.61, 1.079, 2.375], headlamp, 0.009, true);
+    box(hood, [0.15, 0.065, 0.025], [s * 0.72, 1.025, 2.373], headlamp, 0.015, true);
+    box(hood, [0.2, 0.08, 0.03], [s * 0.73, 0.745, 2.373], dark, 0.02, true);
+    appendShell(tube(hood, [[s * 0.66, 1.228, 1.28], [s * 0.61, 1.203, 1.68], [s * 0.62, 1.142, 2.2]], 0.003, trim));
+  }
   const tail = part('tailgate', '尾门、尾灯与后保险杠', 'shell', [0, 0.46, -0.48]);
   box(tail, [1.87, 0.47, 0.13], [0, 0.98, -2.29], paint, 0.07, true);
-  box(tail, [1.8, 0.06, 0.07], [0, 1.16, -2.37], taillamp, 0.02);
+  box(tail, [1.8, 0.06, 0.07], [0, 1.16, -2.37], taillamp, 0.02, true);
   box(tail, [1.77, 0.14, 0.18], [0, 0.63, -2.3], dark, 0.05, true);
-  box(tail, [0.45, 0.13, 0.014], [0, 0.89, -2.367], dark);
+  box(tail, [0.45, 0.13, 0.014], [0, 0.89, -2.367], dark, 0.01, true);
+  box(tail, [1.6, 0.055, 0.16], [0, 1.89, -1.84], paint, 0.02, true);
   const roof = part('roof', '车顶、立柱与玻璃', 'shell', [0, 1.0, 0]);
   curvedPanel(roof, 1.59, -1.76, 0.7, 1.91, 1.96, 0.035);
   panel(roof, [[-0.89, 1.27, 1.15], [0.89, 1.27, 1.15], [0.755, 1.94, 0.64], [-0.755, 1.94, 0.64]], glass);
@@ -207,11 +281,11 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     }
     const rail = tube(roof, [[s * 0.64, 1.998, -1.48], [s * 0.67, 2.014, -0.3], [s * 0.64, 2.02, 0.45]], 0.024, paint); shell.push(rail);
     const mirror = part(`mirror-${s}`, `${s > 0 ? '左' : '右'}后视镜`, 'shell', [s * 0.72, 0.3, 0]);
-    rod(mirror, [s * 0.95, 1.24, 0.91], [s * 1.12, 1.32, 0.88], 0.024, dark);
+    appendShell(rod(mirror, [s * 0.95, 1.24, 0.91], [s * 1.12, 1.32, 0.88], 0.024, dark));
     box(mirror, [0.23, 0.13, 0.23], [s * 1.12, 1.34, 0.85], paint, 0.05, true);
-    box(mirror, [0.18, 0.085, 0.012], [s * 1.12, 1.35, 0.737], trim, 0.025);
+    box(mirror, [0.18, 0.085, 0.012], [s * 1.12, 1.35, 0.737], trim, 0.025, true);
   }
-  for (const s of [-1, 1]) rod(roof, [s * 0.58, 1.29, 1.13], [s * 0.14, 1.37, 1.066], 0.012, dark);
+  for (const s of [-1, 1]) appendShell(rod(roof, [s * 0.58, 1.29, 1.13], [s * 0.14, 1.37, 1.066], 0.012, dark));
 
   const auxiliary = part('auxiliary-electrical', '12V 电池、配电与冷却散热器', 'electrical', [-0.24, 0.22, 0.2]);
   box(auxiliary, [0.3, 0.22, 0.25], [-0.6, 0.98, 1.88], dark);
@@ -287,7 +361,7 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   let disposed = false;
   return { group, parts, shell, wheels, materials, dispose() {
     if (disposed) return; disposed = true;
-    geometries.forEach(geometry => geometry.dispose()); materials.forEach(material => material.dispose());
+    geometries.forEach(geometry => geometry.dispose()); materials.forEach(material => material.dispose()); textures.forEach(texture => texture.dispose());
     group.clear();
   } };
 }

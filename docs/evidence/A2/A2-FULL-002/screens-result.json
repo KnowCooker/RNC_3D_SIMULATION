@@ -1,0 +1,1 @@
+{"sections":[{"axis":"x","value":0,"caps":45,"contours":47},{"axis":"y","value":1.06,"caps":42,"contours":46},{"axis":"z","value":0.1,"caps":14,"contours":23}],"invalid":{"before":[],"missing":[{"sensorId":"mount-port","mountPart":"charge-system"}],"physical":[-0.99,1.08,-1.88]}}

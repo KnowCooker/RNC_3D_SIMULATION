@@ -1,0 +1,12 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><title>A2 model and section verification</title><style>body{margin:0;background:#101a25;color:#dce9f0;font:14px Arial}#view{width:1500px;height:1000px;position:relative}.lab-marker{position:absolute;color:var(--marker-color);background:#152333dd;border:1px solid currentColor;padding:3px 7px;font:11px monospace;border-radius:4px}.title{position:absolute;top:20px;left:24px;z-index:4;font:20px monospace;pointer-events:none}canvas{display:block}</style><div id="view"><div class="title" id="title">A2 • 四车型 / 真实网格剖面</div></div><script type="module">
+import * as THREE from '/node_modules/.vite/deps/three.js';
+import {createLabViewer} from '/src/team-a/viewer/lab-viewer.ts';
+import {defaultLabConfig} from '/src/shared/lab-contracts.ts';
+const host=document.querySelector('#view'),qa={host,THREE};
+Object.defineProperty(THREE.WebGLRenderer.prototype,'render',{configurable:true,set(fn){const renderer=this;Object.defineProperty(this,'render',{configurable:true,writable:true,value:function(scene,camera){qa.scene=scene;qa.camera=camera;qa.renderer=renderer;return fn.call(renderer,scene,camera);}});}});
+const viewer=createLabViewer(host,{select:s=>qa.selection=s,add:(position,mountPart)=>qa.addition={position,mountPart},context:()=>{}});delete THREE.WebGLRenderer.prototype.render;
+qa.viewer=viewer;qa.config=defaultLabConfig();viewer.setConfig(qa.config);viewer.setBody('solid');qa.selection={signal:'e',channel:0};
+qa.show=(kind,body='solid',axis='none',cut=0)=>{qa.config.vehicle=kind;viewer.setConfig(qa.config);viewer.setBody(body);viewer.setSection(axis,cut);document.querySelector('#title').textContent=`A2 • ${kind.toUpperCase()} / ${body} / ${axis} ${cut}`;qa.draw();};
+qa.draw=()=>viewer.render(0,qa.selection,[0,0,0,0],[0,0,0,0]);
+qa.draw();window.qa=qa;window.ready=true;
+</script></html>

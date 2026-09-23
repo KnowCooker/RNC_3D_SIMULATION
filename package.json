@@ -13,7 +13,7 @@
     "start": "node scripts/serve.mjs",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
-    "test:b": "tsx --test tests/engine.test.ts tests/analysis.test.ts tests/b-lab-physics.test.ts",
+    "test:b": "tsx --test tests/engine.test.ts tests/analysis.test.ts tests/b-lab-physics.test.ts tests/b-live-stream.test.ts",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:progress": "node scripts/check-progress.mjs",
     "check": "pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build",

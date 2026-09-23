@@ -1,0 +1,99 @@
+$ pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build
+$ tsc --noEmit
+$ node scripts/check-boundaries.mjs
+源码边界通过：A/B 互不导入；shared 独立；integration 负责装配。
+$ tsx --test tests/*.test.ts
+✔ A1: unavailable convergence values leave gaps rather than zero gain or connecting across missing data (2.9093ms)
+✔ A1: original noise draws once in grey, residual compares against the same original channel (1.1684ms)
+✔ lab playback applies one gain to all eight signals, preserves d/e ratios and does not mutate physics (51.163ms)
+✔ actual extreme valid lab experiment has no clipped samples after shared preparation (745.9089ms)
+✔ sinc overshoot is covered by the strict bound; silence and low-level legacy gain remain unchanged (2.1636ms)
+✔ live Worker cancellation rejects pending work and late old errors cannot kill the new run (4.3614ms)
+✔ field failure is recoverable but a processor failure rejects every pending query (1.2974ms)
+✔ start cancellation and foreign run identities fail explicitly; batch mode cannot produce live chunks (1.1671ms)
+✔ streaming sinc is independent of chunk partition and matches continuous interpolation before the real lookahead tail (284.9596ms)
+✔ common lookahead safety envelope preserves all eight d/e ratios, bounds peaks and retains bounded memory (841.8425ms)
+✔ live queue validates complete finite contiguous chunks without changing accepted state on rejection (40.3944ms)
+✔ one audio clock freezes on starvation and resumes at the missing sample instead of skipping wall time (8.0732ms)
+✔ queued chunks are gapless and all comparisons share one eight-channel buffer without a new clock on switching (7.5129ms)
+✔ pause preserves partly consumed audio and a cold allocation never advances the simulation clock (3.7447ms)
+✔ async resume cannot revive pause/reset/dispose or clear a newer request, and failure is retryable (6.9709ms)
+✔ continuous enqueue reclaims ended audio and keeps the schedule bounded through 100 simulated seconds (1275.7213ms)
+✔ A1: preparing first audio buffer does not skip the requested playback position (33.5121ms)
+✔ A1: pause cancels pending audio resume; repeated play creates one start (21.4082ms)
+✔ A1: loading a new experiment cancels an earlier pending play (0.7902ms)
+✔ A1: reaching the end stays stopped when seeking, including before ended is delivered (21.0516ms)
+✔ A1: seeking to the end stops; replay starts only on explicit play (28.3585ms)
+✔ A1: cold seat/mode switches prepare audio before fading, keep time and use the same gain (409.2413ms)
+✔ A1: audio resume failure leaves a retryable paused player (14.8968ms)
+✔ A1: an obsolete resume cannot clear or start a newer play request (13.6755ms)
+✔ A1: seeking while playing continues at the new position without a retired ended event stopping it (14.4554ms)
+✔ A1: a cold comparison prepared across the end never restarts the clip (27.2408ms)
+✔ 12 coincident projections remain separate and inside the narrow supported viewer (4.4112ms)
+✔ four source illustrations can share a narrow view with all 12 hardware labels (2.9168ms)
+✔ labels at viewport edges and densely grouped hardware remain clickable (8.9558ms)
+✔ true mesh-plane sections preserve area, plane position and outward normal after transforms (10.0281ms)
+✔ section through exact edges is closed; tangencies and existing coplanar faces are not duplicated (2.4846ms)
+✔ ring sections keep their holes and disconnected islands; open surfaces never get a solid cap (39.3533ms)
+✔ section display updates from exploded geometry, respects ancestor visibility and material opacity (6.0933ms)
+✔ four drivetrains preserve their physical differences and five-seat cabin (329.6204ms)
+✔ vehicle geometry is finite and every owned GPU resource is disposed once (265.2982ms)
+✔ Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak (12.3039ms)
+✔ analysis warming-up, window boundary, channel identity and pressure calibration (3.6409ms)
+✔ lab FxLMS produces finite true superposition, baseline then learned reduction at all microphones (13.4873ms)
+✔ all 16 secondary paths have causal cross coupling and every source reaches every mic (1.9218ms)
+✔ first adaptive output matches an independent all-error normalized gradient calculation (46.1912ms)
+✔ RNC off, zero step and all disabled speakers retain original noise exactly (243.3151ms)
+✔ one and eight references and disabled output actually change controller dimensions and results (669.1068ms)
+✔ high source levels and co-located references remain finite without forced improvement (962.1652ms)
+✔ field at microphone positions equals independently measured trace power in the same window (4.8695ms)
+✔ off-microphone field is recalculated from wheel q and speaker u, not microphone interpolation (15.5941ms)
+✔ vehicle paths vary, seed is reproducible and speed/roughness trends are source-driven (468.0493ms)
+✔ warm-up, zero-speed energy floor and bad configurations are explicit (273.3471ms)
+✔ q selection analyzes each actual wheel source independently of reference layout (124.5397ms)
+✔ stateful first 16 seconds match the unchanged batch q/x/u/d/a/e bit for bit (935.4955ms)
+✔ arbitrary block sizes preserve source/filter/weight state beyond 16 seconds and repeated history wraps (2392.3529ms)
+✔ RNC off, zero step, disabled speakers and eight references retain the batch semantics across blocks (1189.2509ms)
+✔ wrapped snapshots use one absolute clock and yield the same field window at mic and off-mic points (662.122ms)
+✔ resident storage stays bounded through two minutes and invalid requests do not advance the stream (270.6693ms)
+✔ numerical divergence is explicit and a partially advanced failed sample cannot be resumed (35.1771ms)
+✔ B01/B03: all 640,000 samples match immutable Python Float32 golden and e=d+a (41.2487ms)
+✔ B02/B04/B05: five configurations match Python metrics; repeat is deterministic (1019.043ms)
+✔ B06: every output reaches every mic; removing one cross-path removes only that response (0.5696ms)
+✔ B07: rejects invalid taps, negative/NaN step, wrong fixed dimensions, null config (0.7747ms)
+✔ audio paths use the same linear gain and sinc resampling (17.2744ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 59
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6274.2482
+$ tsc --noEmit && vite build
+vite v7.1.7 building for production...
+transforming...
+✓ 39 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                       0.55 kB │ gzip:     0.35 kB
+dist/assets/engine.worker-DAEd859z.js                 4.16 kB
+dist/assets/lab.worker-B8jbtwzQ.js                   13.96 kB
+dist/assets/golden_browser_fixture-BhKaGSeS.json  3,414.19 kB │ gzip: 2,407.80 kB
+dist/assets/index-C1sMH_1o.css                        7.47 kB │ gzip:     2.44 kB
+dist/assets/index-D3a-2bxx.css                       10.53 kB │ gzip:     2.97 kB
+dist/assets/contracts-nWp9BSjY.js                     0.09 kB │ gzip:     0.11 kB │ map:     2.22 kB
+dist/assets/lab-contracts-CDlFoAjC.js                 0.75 kB │ gzip:     0.52 kB │ map:     4.43 kB
+dist/assets/index-T7UGU3Lx.js                         1.59 kB │ gzip:     0.92 kB │ map:     6.51 kB
+dist/assets/lab-engine-BjdDfpiK.js                    1.84 kB │ gzip:     0.99 kB │ map:     6.66 kB
+dist/assets/index-CSRmuigp.js                         4.49 kB │ gzip:     2.24 kB │ map:     6.42 kB
+dist/assets/index-D8XjOriU.js                        13.67 kB │ gzip:     5.97 kB │ map:    56.82 kB
+dist/assets/index-Z_OYMv7b.js                        19.01 kB │ gzip:     8.51 kB │ map:    48.27 kB
+dist/assets/index-B3ncL56q.js                        77.99 kB │ gzip:    31.25 kB │ map:   232.30 kB
+dist/assets/index-CSqvXccz.js                       547.48 kB │ gzip:   139.71 kB │ map: 2,841.94 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.92s
