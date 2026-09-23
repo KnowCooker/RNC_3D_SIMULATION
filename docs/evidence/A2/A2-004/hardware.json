@@ -1,0 +1,44 @@
+{
+  "capturedAt": "2026-09-23T22:05:35.1655604+08:00",
+  "cpu": [
+    {
+      "Name": "12th Gen Intel(R) Core(TM) i7-12800HX",
+      "NumberOfCores": 16,
+      "NumberOfLogicalProcessors": 24
+    }
+  ],
+  "gpu": [
+    {
+      "Name": "GameViewer Virtual Display Adapter",
+      "DriverVersion": "17.13.25.697",
+      "AdapterRAM": null
+    },
+    {
+      "Name": "OrayIddDriver Device",
+      "DriverVersion": "17.1.58.818",
+      "AdapterRAM": null
+    },
+    {
+      "Name": "Sharing Monitor",
+      "DriverVersion": "17.1.40.460",
+      "AdapterRAM": null
+    },
+    {
+      "Name": "MuMu Virtual Display Adapter",
+      "DriverVersion": "20.36.41.498",
+      "AdapterRAM": null
+    },
+    {
+      "Name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "DriverVersion": "32.0.16.1074",
+      "AdapterRAM": 4293918720
+    }
+  ],
+  "os": [
+    {
+      "Caption": "Microsoft Windows 11 家庭版 中文版",
+      "Version": "10.0.26200",
+      "TotalVisibleMemorySize": 16502116
+    }
+  ]
+}

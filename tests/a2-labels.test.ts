@@ -18,6 +18,10 @@ test('12 coincident projections remain separate and inside the narrow supported 
   check(Array.from({ length: 12 }, () => ({ x: 180, y: 190 })), 360, 380);
 });
 
+test('four source illustrations can share a narrow view with all 12 hardware labels', () => {
+  check(Array.from({ length: 16 }, () => ({ x: 180, y: 190 })), 360, 380);
+});
+
 test('labels at viewport edges and densely grouped hardware remain clickable', () => {
   for (const x of [0, 180, 360]) for (const y of [0, 190, 380]) {
     check(Array.from({ length: 12 }, (_, i) => ({ x: x + (i % 3), y: y + (i % 4) })), 360, 380);
