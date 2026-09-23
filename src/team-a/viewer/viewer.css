@@ -2,6 +2,16 @@
   width: 100%;
   height: 100%;
 }
+.lab-marker-leaders {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  stroke-width: 1;
+  opacity: .65;
+}
 .rnc-viewer .rnc-marker-leaders {
   position: absolute;
   inset: 0;

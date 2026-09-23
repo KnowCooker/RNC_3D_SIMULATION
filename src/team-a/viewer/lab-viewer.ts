@@ -4,7 +4,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createVehicleModel, type VehiclePart } from './vehicle-model';
 import { createSectionDisplay } from './section-display';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
-import { placeLabels } from './labels';
+import { placeLabLabels } from './labels';
+import './viewer.css';
 
 export function createLabViewer(host: HTMLElement, callbacks: {
   select(selection: LabSelection): void;
@@ -16,6 +17,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.localClippingEnabled = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace; host.append(renderer.domElement);
+  const leaders = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  leaders.classList.add('lab-marker-leaders'); leaders.setAttribute('aria-hidden', 'true'); host.append(leaders);
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.95;
   const environmentRoom = new RoomEnvironment(), environmentGenerator = new THREE.PMREMGenerator(renderer);
   const environment = environmentGenerator.fromScene(environmentRoom, 0.04);
@@ -62,7 +65,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const sourceAnchor = (i: number): Anchor => ({ origin: SOURCE_POSITIONS[i], mountPart: `wheel-${corners[i]}` });
   const speakerAnchor = (i: number): Anchor => ({ origin: SPEAKER_POSITIONS[i], mountPart: `door-${i < 2 ? 'front' : 'rear'}-${i % 2 === 0 ? 1 : -1}` });
   const micAnchor = (i: number): Anchor => ({ origin: MIC_POSITIONS[i], mountPart: `seat-${[1, 2, 3, 5][i]}` });
-  const markerRows: { mesh: THREE.Mesh; button: HTMLButtonElement; selection: LabSelection; source: boolean; anchor: Anchor }[] = [];
+  const markerRows: { mesh: THREE.Mesh; button: HTMLButtonElement; line: SVGLineElement; selection: LabSelection; source: boolean; anchor: Anchor }[] = [];
   const waveRows: THREE.Mesh[] = [];
   const pathRows: { line: THREE.Line; dot: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; start: Anchor; end: Anchor; primary: boolean; channel: number }[] = [];
   const fieldPoints: Vec3[] = [];
@@ -97,6 +100,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     clipPlane.normal.set(clipAxis === 'x' ? 1 : 0, clipAxis === 'y' ? 1 : 0, clipAxis === 'z' ? 1 : 0);
     clipPlane.constant = -clipValue;
     const planes = clipAxis === 'none' ? [] : [clipPlane];
+    // Retain computed field samples while letting cut geometry remain legible.
+    fieldMaterial.opacity = clipAxis === 'none' ? 0.48 : 0.18;
     for (const material of model?.materials ?? []) { material.clippingPlanes = planes; material.needsUpdate = true; }
     for (const group of [markers, waves, paths, field]) group.traverse(object => {
       const material = (object as THREE.Mesh).material;
@@ -125,7 +130,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     button.dataset.signal = selection.signal; button.dataset.channel = String(selection.channel);
     button.onclick = () => callbacks.select(selection);
     button.oncontextmenu = event => { event.preventDefault(); callbacks.context(selection, event.clientX, event.clientY); };
-    host.append(button); markerRows.push({ mesh, button, selection, source, anchor });
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('stroke', hex); leaders.append(line);
+    host.append(button); markerRows.push({ mesh, button, line, selection, source, anchor });
   }
   function setConfig(next: LabConfig) {
     config = structuredClone(next);
@@ -142,7 +149,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         bodyMaterials.set(material, { opacity: material.opacity, transparent: material.transparent, depthWrite: material.depthWrite });
       }
     });
-    markerRows.forEach(row => row.button.remove()); markerRows.length = 0;
+    markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); markerRows.length = 0;
     clear(markers); clear(paths); clear(waves); pathRows.length = 0; waveRows.length = 0;
     mountIssues = [];
     next.references.forEach((sensor, i) => {
@@ -213,13 +220,24 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
     camera.position.set(4, 3.4, 4.8); controls.target.set(0, 0.7, 0); controls.update(); controls.enableDamping = damping; exploded = false;
   }
+  function focusSection(axis: string) {
+    const views: Record<string, { position: Vec3; target: Vec3 }> = {
+      x: { position: [-6.2, 2.0, 0], target: [0, 1.05, 0] },
+      y: { position: [0, -5.3, 4.4], target: [0, 1.06, 0] },
+      z: { position: [0, 1.7, -6.8], target: [0, 1.05, 0.1] },
+    };
+    const view = views[axis]; if (!view) return;
+    // Consume damped orbit deltas before switching to the visible cut face.
+    const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
+    camera.position.set(...view.position); controls.target.set(...view.target); controls.update(); controls.enableDamping = damping;
+  }
   reset();
   return {
     fieldPoints, setConfig, reset,
     getMountIssues() { return mountIssues.map(issue => ({ ...issue })); },
     setExploded(value: boolean) { exploded = value; },
     setBody(value: string) { body = value; applyBody(); },
-    setSection(axis: string, value: number) { clipAxis = axis; clipValue = value; applyClipping(); },
+    setSection(axis: string, value: number) { const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; applyClipping(); if (changed) focusSection(axis); },
     setEditMode(value: boolean) { editMode = value; host.classList.toggle('editing', value); },
     setWaves(value: boolean) { waveVisible = value; },
     setPaths(value: string) { pathMode = value; },
@@ -241,6 +259,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.button.setAttribute('aria-pressed', String(active));
       });
       field.position.y = amount * 0.45;
+      (contactShade.material as THREE.MeshBasicMaterial).opacity = clipAxis === 'none' ? 1 - amount * 0.8 : 0.12;
       waves.visible = waveVisible;
       waveRows.forEach(row => {
         const i = row.userData.speaker, phase = (time * 1.5 + row.userData.phase) % 1;
@@ -263,12 +282,17 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const visible = markerRows.map(row => {
         const p = row.mesh.position.clone().project(camera);
         const show = p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1 && (clipAxis === 'none' || clipPlane.distanceToPoint(row.mesh.position) >= 0);
-        row.button.hidden = !show;
+        row.button.hidden = !show; row.line.style.display = show ? '' : 'none';
         return { row, visible: show, x: (p.x + 1) / 2 * width, y: (1 - p.y) / 2 * height };
       }).filter(row => row.visible);
-      const positions = placeLabels(visible, width, height);
-      visible.forEach(({ row }, i) => { row.button.style.left = `${positions[i].x}px`; row.button.style.top = `${positions[i].y}px`; });
+      const positions = placeLabLabels(visible, width, height);
+      visible.forEach(({ row, x, y }, i) => {
+        const position = positions[i]; row.button.style.left = `${position.x}px`; row.button.style.top = `${position.y}px`;
+        row.line.setAttribute('x1', String(x)); row.line.setAttribute('y1', String(y));
+        row.line.setAttribute('x2', String(Math.max(position.x, Math.min(position.x + 64, x))));
+        row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
+      });
     },
-    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => row.button.remove()); renderer.domElement.remove(); },
+    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); leaders.remove(); renderer.domElement.remove(); },
   };
 }
