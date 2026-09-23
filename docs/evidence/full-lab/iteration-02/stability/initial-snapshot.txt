@@ -1,0 +1,315 @@
+﻿### Page
+- Page URL: http://127.0.0.1:5180/
+- Page Title: RNC · 四通道声学实验室
+- Console: 1 errors, 0 warnings
+### Snapshot
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - text: INTERACTIVE ACOUSTICS / RNC
+      - heading "车辆声学实验室" [level=1] [ref=e5]
+    - generic [ref=e6]: 完整目标 · 开发中
+    - link "两周基准版本" [ref=e7] [cursor=pointer]:
+      - /url: "?legacy=1"
+  - generic [ref=e8]: 原创教学车型 · 公开结构依据 · 合成空间路径 · 16秒预计算回放 · 非实车预测 / 非有限元结果
+  - main [ref=e9]:
+    - complementary [ref=e10]:
+      - heading "01 / 车辆与工况" [level=2] [ref=e11]
+      - generic [ref=e12]:
+        - text: 运行方式
+        - combobox "运行方式" [ref=e13]:
+          - option "16秒计算后回放" [selected]
+          - option "实时连续仿真"
+      - paragraph [ref=e14]: 一次计算完整实验，可定位和重放。
+      - generic [ref=e15]:
+        - text: 动力类型
+        - combobox "动力类型" [ref=e16]:
+          - option "纯燃油 SUV"
+          - option "纯电 SUV" [selected]
+          - option "混合动力 SUV"
+          - option "增程 SUV"
+      - paragraph [ref=e17]: 底板动力电池 → 逆变器 → 电机/减速器；纯电驱轮。
+      - generic [ref=e18]:
+        - text: 车速 / km/h
+        - slider "车速 / km/h" [ref=e19]: "60"
+        - status [ref=e20]: "60"
+      - generic [ref=e21]:
+        - text: 路面粗糙度 / 相对值
+        - slider "路面粗糙度 / 相对值" [ref=e22]: "1"
+        - status [ref=e23]: "1"
+      - generic [ref=e24]:
+        - text: 胎面粗糙度 / 相对值
+        - slider "胎面粗糙度 / 相对值" [ref=e25]: "1"
+        - status [ref=e26]: "1"
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - text: 胎压 / kPa
+          - spinbutton "胎压 / kPa" [ref=e29]: "240"
+        - generic [ref=e30]:
+          - text: 温度 / °C
+          - spinbutton "温度 / °C" [ref=e31]: "20"
+      - paragraph [ref=e32]: 车速和粗糙度改变源能量。胎压/温度用于教学谱峰与阻尼变化，不宣称普适单调关系。
+      - heading "02 / 算法与改制" [level=2] [ref=e33]
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - text: FxLMS 系数数
+          - spinbutton "FxLMS 系数数" [ref=e36]: "64"
+        - generic [ref=e37]:
+          - text: 归一化步长 μ
+          - spinbutton "归一化步长 μ" [ref=e38]: "0.08"
+      - paragraph [ref=e39]: FIR数学阶数为系数数减1。参数/改制变化将结束当前运行并重新开始学习。
+      - generic [ref=e40]:
+        - checkbox "启用 RNC（更改后重算）" [checked] [ref=e41]
+        - text: 启用 RNC（更改后重算）
+      - generic [ref=e42]:
+        - checkbox "车辆改制：点击结构添加参考传感器" [ref=e43]
+        - text: 车辆改制：点击结构添加参考传感器
+      - paragraph [ref=e44]: 参考1–8个；右击标记可查看或移除。误差点固定。所有改制将要求重新计算。
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - button "REF FL" [ref=e47] [cursor=pointer]
+          - generic [ref=e48]: 0.85, 0.67, 1.45
+          - button "移除 REF FL" [disabled] [ref=e49]: 移除
+        - generic [ref=e50]:
+          - button "REF FR" [ref=e51] [cursor=pointer]
+          - generic [ref=e52]: "-0.85, 0.67, 1.45"
+          - button "移除 REF FR" [disabled] [ref=e53]: 移除
+        - generic [ref=e54]:
+          - button "REF RL" [ref=e55] [cursor=pointer]
+          - generic [ref=e56]: 0.85, 0.67, -1.45
+          - button "移除 REF RL" [disabled] [ref=e57]: 移除
+        - generic [ref=e58]:
+          - button "REF RR" [ref=e59] [cursor=pointer]
+          - generic [ref=e60]: "-0.85, 0.67, -1.45"
+          - button "移除 REF RR" [disabled] [ref=e61]: 移除
+      - group "车门扬声器" [ref=e62]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - checkbox "FL" [checked] [ref=e66]
+            - text: FL
+          - generic [ref=e67]:
+            - checkbox "FR" [checked] [ref=e68]
+            - text: FR
+          - generic [ref=e69]:
+            - checkbox "RL" [checked] [ref=e70]
+            - text: RL
+          - generic [ref=e71]:
+            - checkbox "RR" [checked] [ref=e72]
+            - text: RR
+      - button "计算当前实验" [ref=e73] [cursor=pointer]
+      - button "取消计算" [disabled] [ref=e74]
+      - status [ref=e75]: 实验就绪 · 383 ms · 末4秒总改善 12.7 dB（教学模型）；四座位d/e共用试听衰减 1.000
+    - generic [ref=e76]:
+      - generic [ref=e77]:
+        - heading "03 / 结构与空间声场" [level=2] [ref=e78]
+        - generic [ref=e79]: 纯电 SUV · 4×4×4 · 05729f32
+      - generic [ref=e80]:
+        - generic: 左键旋转 · 滚轮缩放 · 右击硬件查看信号
+        - generic "可旋转、剖切、改制的车辆三维视图" [ref=e81]
+        - button "REF FL · 查看信号和频谱" [ref=e82] [cursor=pointer]: REF FL
+        - button "REF FR · 查看信号和频谱" [ref=e83] [cursor=pointer]: REF FR
+        - button "REF RL · 查看信号和频谱" [ref=e84] [cursor=pointer]: REF RL
+        - button "REF RR · 查看信号和频谱" [ref=e85] [cursor=pointer]: REF RR
+        - button "OUT 1 · 查看信号和频谱" [ref=e86] [cursor=pointer]: OUT 1
+        - button "OUT 2 · 查看信号和频谱" [ref=e87] [cursor=pointer]: OUT 2
+        - button "OUT 3 · 查看信号和频谱" [ref=e88] [cursor=pointer]: OUT 3
+        - button "OUT 4 · 查看信号和频谱" [ref=e89] [cursor=pointer]: OUT 4
+        - button "MIC FL · 查看信号和频谱" [pressed] [ref=e90] [cursor=pointer]: MIC FL
+        - button "MIC FR · 查看信号和频谱" [ref=e91] [cursor=pointer]: MIC FR
+        - button "MIC RL · 查看信号和频谱" [ref=e92] [cursor=pointer]: MIC RL
+        - button "MIC RR · 查看信号和频谱" [ref=e93] [cursor=pointer]: MIC RR
+        - button "Q1 · 查看轮端激励源信号和频谱" [ref=e94] [cursor=pointer]: Q1
+        - button "Q2 · 查看轮端激励源信号和频谱" [ref=e95] [cursor=pointer]: Q2
+        - button "Q3 · 查看轮端激励源信号和频谱" [ref=e96] [cursor=pointer]: Q3
+        - button "Q4 · 查看轮端激励源信号和频谱" [ref=e97] [cursor=pointer]: Q4
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - text: 车身
+          - combobox "车身" [ref=e100]:
+            - option "透明" [selected]
+            - option "实体"
+            - option "隐藏"
+        - button "分解动画" [ref=e101] [cursor=pointer]
+        - button "复位" [ref=e102] [cursor=pointer]
+        - generic [ref=e103]:
+          - text: 剖面
+          - combobox "剖面" [ref=e104]:
+            - option "关闭" [selected]
+            - option "纵剖 X"
+            - option "水平 Y"
+            - option "横剖 Z"
+        - generic [ref=e105]:
+          - text: 剖面位置 / m
+          - slider "剖面位置 / m" [ref=e106]: "0"
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - text: 声压场
+          - combobox "声压场" [ref=e109]:
+            - option "关闭" [selected]
+            - option "残余 e / SPL"
+            - option "原始 d / SPL"
+        - generic [ref=e110]:
+          - text: 场显示
+          - combobox "场显示" [ref=e111]:
+            - option "三维采样体" [selected]
+            - option "中央纵切片"
+            - option "头部水平切片"
+            - option "前排横切片"
+        - generic [ref=e112]:
+          - text: 传播路径
+          - combobox "传播路径" [ref=e113]:
+            - option "关闭" [selected]
+            - option "初级路径"
+            - option "次级路径"
+            - option "全部"
+        - generic [ref=e114]:
+          - checkbox "扬声器波前" [ref=e115]
+          - text: 扬声器波前
+      - generic [ref=e116]:
+        - generic [ref=e118]: 30—80 dB SPL，固定色标；0.5秒RMS
+        - generic [ref=e119]: 声场未开启
+      - paragraph [ref=e120]: 空间场由四轮源和实际扬声器驱动经同一传播模型计算。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。
+      - generic [ref=e121]:
+        - generic [ref=e240]:
+          - strong [ref=e241]: FL
+          - generic [ref=e242]: 准备中
+          - text: — → — dB SPL
+        - generic [ref=e243]:
+          - strong [ref=e244]: FR
+          - generic [ref=e245]: 准备中
+          - text: — → — dB SPL
+        - generic [ref=e246]:
+          - strong [ref=e247]: RL
+          - generic [ref=e248]: 准备中
+          - text: — → — dB SPL
+        - generic [ref=e249]:
+          - strong [ref=e250]: RR
+          - generic [ref=e251]: 准备中
+          - text: — → — dB SPL
+      - generic [ref=e122]:
+        - heading "04 / 信号流与控制机理" [level=2] [ref=e123]
+        - region [ref=e125]:
+          - generic [ref=e126]:
+            - heading "RNC 信号流 · 多通道 FxLMS" [level=3] [ref=e127]
+            - status [ref=e128]: 已暂停 ｜ 控制未生效 · u = a = 0，e = d
+          - paragraph [ref=e129]: 上方是声的叠加，下方是控制与学习。点击框图或通道，查看对应波形和频谱。
+          - group "多输入、多输出、四误差点的前馈主动路噪控制 四轮噪声经初级路径形成原声 d；振动参考 x 经控制滤波器 W 形成驱动 u，u 经次级路径 S 形成次级声压 a。误差 e 等于 d 加 a。x 经次级路径估计 S 帽得到 filtered-x，与所有误差点一起更新 W。各路径是多通道矩阵，不是四套独立控制器。" [ref=e131]:
+            - button "选择轮端源激励 q" [ref=e136] [cursor=pointer]:
+              - generic: 四轮噪声源 q
+              - generic: 4 路 · m/s²
+            - generic [ref=e138]:
+              - generic: 初级路径 H
+              - generic: 四轮 → 四个误差点
+            - button "选择原始噪声 d" [ref=e140] [cursor=pointer]:
+              - generic: 原声 d
+              - generic: 4 路 · Pa
+            - generic [ref=e142]: ＋
+            - generic [ref=e145]: d + a 在同一位置叠加
+            - button "选择残余误差 e" [pressed] [ref=e146] [cursor=pointer]:
+              - generic: 误差 e
+              - generic: 4 路 · Pa
+            - generic [ref=e148]: 振动测量
+            - button "选择振动参考 x" [ref=e149] [cursor=pointer]:
+              - generic: 参考 x
+              - generic: 4 路 · m/s²
+            - generic [ref=e151]:
+              - generic: 控制滤波器 W
+              - generic: 4 输出 × 4 参考
+            - button "选择扬声器驱动 u" [ref=e153] [cursor=pointer]:
+              - generic: 驱动 u
+              - generic: 4 / 4 启用
+            - generic [ref=e155]:
+              - generic: 次级路径 S
+              - generic: 扬声器 → 误差点
+            - button "选择次级声压 a" [ref=e157] [cursor=pointer]:
+              - generic: 次级声 a
+              - generic: 4 路 · Pa
+            - generic [ref=e159]: 声压求和
+            - generic [ref=e160]:
+              - generic: 次级路径估计 Ŝ
+              - generic: 参考经 Ŝ 滤波
+            - generic [ref=e162]: Filtered-x
+            - generic [ref=e163]:
+              - generic: FxLMS 权重更新
+              - generic: 所有误差点共同参与
+            - generic [ref=e165]: 误差反馈
+            - generic [ref=e166]: 更新 W；μ = 0 时权重不变
+          - paragraph [ref=e167]: 4 路参考 × 4 个扬声器槽位 × 4 个固定误差点。W 有 16 组滤波器，S 包含全部 16 条交叉路径；禁用通道的驱动为零。
+          - generic [ref=e168]:
+            - group "q · 轮端源激励" [ref=e169]:
+              - generic [ref=e171]:
+                - button "轮端源激励 前左 FL，查看波形和频谱" [ref=e172] [cursor=pointer]: 前左 FL
+                - button "轮端源激励 前右 FR，查看波形和频谱" [ref=e173] [cursor=pointer]: 前右 FR
+                - button "轮端源激励 后左 RL，查看波形和频谱" [ref=e174] [cursor=pointer]: 后左 RL
+                - button "轮端源激励 后右 RR，查看波形和频谱" [ref=e175] [cursor=pointer]: 后右 RR
+            - group "x · 振动参考" [ref=e176]:
+              - generic [ref=e178]:
+                - button "振动参考 REF FL，查看波形和频谱" [ref=e179] [cursor=pointer]: REF FL
+                - button "振动参考 REF FR，查看波形和频谱" [ref=e180] [cursor=pointer]: REF FR
+                - button "振动参考 REF RL，查看波形和频谱" [ref=e181] [cursor=pointer]: REF RL
+                - button "振动参考 REF RR，查看波形和频谱" [ref=e182] [cursor=pointer]: REF RR
+            - group "u · 扬声器驱动" [ref=e183]:
+              - generic [ref=e185]:
+                - button "扬声器驱动 前左 FL，查看波形和频谱" [ref=e186] [cursor=pointer]: 前左 FL
+                - button "扬声器驱动 前右 FR，查看波形和频谱" [ref=e187] [cursor=pointer]: 前右 FR
+                - button "扬声器驱动 后左 RL，查看波形和频谱" [ref=e188] [cursor=pointer]: 后左 RL
+                - button "扬声器驱动 后右 RR，查看波形和频谱" [ref=e189] [cursor=pointer]: 后右 RR
+            - group "d · 原始噪声" [ref=e190]:
+              - generic [ref=e192]:
+                - button "原始噪声 前左 FL，查看波形和频谱" [ref=e193] [cursor=pointer]: 前左 FL
+                - button "原始噪声 前右 FR，查看波形和频谱" [ref=e194] [cursor=pointer]: 前右 FR
+                - button "原始噪声 后左 RL，查看波形和频谱" [ref=e195] [cursor=pointer]: 后左 RL
+                - button "原始噪声 后右 RR，查看波形和频谱" [ref=e196] [cursor=pointer]: 后右 RR
+            - group "a · 次级声压" [ref=e197]:
+              - generic [ref=e199]:
+                - button "次级声压 前左 FL，查看波形和频谱" [ref=e200] [cursor=pointer]: 前左 FL
+                - button "次级声压 前右 FR，查看波形和频谱" [ref=e201] [cursor=pointer]: 前右 FR
+                - button "次级声压 后左 RL，查看波形和频谱" [ref=e202] [cursor=pointer]: 后左 RL
+                - button "次级声压 后右 RR，查看波形和频谱" [ref=e203] [cursor=pointer]: 后右 RR
+            - group "e · 残余误差" [ref=e204]:
+              - generic [ref=e206]:
+                - button "残余误差 前左 FL，查看波形和频谱" [pressed] [ref=e207] [cursor=pointer]: 前左 FL
+                - button "残余误差 前右 FR，查看波形和频谱" [ref=e208] [cursor=pointer]: 前右 FR
+                - button "残余误差 后左 RL，查看波形和频谱" [ref=e209] [cursor=pointer]: 后左 RL
+                - button "残余误差 后右 RR，查看波形和频谱" [ref=e210] [cursor=pointer]: 后右 RR
+          - generic [ref=e211]:
+            - strong [ref=e212]: e · 残余误差 · 前左 FL · Pa
+            - paragraph [ref=e213]: 头枕附近误差麦克风测得的总声压 e = d + a。四个误差点共同参与权重更新，目标是降低整体误差能量。
+          - group [ref=e214]:
+            - generic "理解符号、动画与数据" [ref=e215] [cursor=pointer]
+  - generic [ref=e216]:
+    - article [ref=e217]:
+      - heading "E FL / Pa · 0.00 s · 准备中" [level=3] [ref=e252]
+      - generic "所选信号波形" [ref=e219]
+    - article [ref=e220]:
+      - heading "PSD / (Pa)²/Hz · 需0.512秒" [level=3] [ref=e253]
+      - generic "所选信号频谱" [ref=e222]
+    - article [ref=e223]:
+      - heading "四测点收敛 / dB" [level=3] [ref=e224]
+      - generic "完整实验收敛曲线" [ref=e225]
+  - contentinfo [ref=e226]:
+    - button "播放" [ref=e227] [cursor=pointer]
+    - button "重播" [ref=e228] [cursor=pointer]
+    - generic [ref=e229]: 0.00 / 16 s
+    - slider "播放进度" [ref=e230]: "0"
+    - generic [ref=e231]:
+      - text: 试听座位
+      - combobox "试听座位" [ref=e232]:
+        - option "FL" [selected]
+        - option "FR"
+        - option "RL"
+        - option "RR"
+    - generic [ref=e233]:
+      - text: 对比
+      - combobox "对比" [ref=e234]:
+        - option "残余声 e" [selected]
+        - option "原噪声 d"
+    - generic [ref=e235]:
+      - text: 音量
+      - slider "音量" [ref=e236]: "0.15"
+    - button "静音" [ref=e237] [cursor=pointer]
+  - group [ref=e238]:
+    - generic "公开依据与模型限制" [ref=e239] [cursor=pointer]
+    - text: ·
+```

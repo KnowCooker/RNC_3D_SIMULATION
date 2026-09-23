@@ -2,7 +2,7 @@
 
 目标是四类双排SUV的交互式RNC展示、调试与试听应用。当前lab-v3包含ICE/BEV/HEV/EREV、参考改制、四门扬声器启禁、FxLMS调参、信号图、空间SPL采样与逐部件剖面；提供**16秒预计算回放**和**实时连续仿真**两种方式。所有源/路径为合成教学模型，没有连接实车采集设备。
 
-当前为**完整目标开发基线，尚非最终交付**。源码/证据通过[PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7)交接，开放PR不等于main已合并。[第二轮验证](docs/evidence/full-lab/iteration-02/README.md)包括59项工程测试、20项生产版实时流程、Web Audio与生命周期验证；模型精细度、设备/离线/正式包仍有缺口，新版长稳结果另行记录。旧demo-v2的20分钟与离线验证不能代表新版通过。
+当前为**完整目标开发基线，尚非最终交付**。源码/证据通过[PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7)交接，开放PR不等于main已合并。[第二轮验证](docs/evidence/full-lab/iteration-02/README.md)包括59项工程测试、20项生产版实时流程、Web Audio与生命周期、1207.85秒长稳及同机隔离候选包。两次瞬态补缓冲、模型精细度和目标设备/正式发布仍有缺口。旧demo-v2报告仅作历史参照。
 
 A组最终交付内容、责任与验收门槛统一见[A组最终交付清单](docs/coordination/A_FINAL_DELIVERY.md)。本机功能完成与最终设备验收分别记录。
 
