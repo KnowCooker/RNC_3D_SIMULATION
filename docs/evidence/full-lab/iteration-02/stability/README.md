@@ -15,6 +15,8 @@
 
 正式数据：`stability-summary.json`、`stability-samples.jsonl`、`stability-progress.json`、`stability-finished.png`、前后build清单、source清单和`browser-console.txt`。`smoke-*`为单独23.63秒脚本检查，不计入20分钟；其未达到长稳门槛的布尔值按原样保留。
 
+校验说明：`run-config.json`的`buildManifestSha256`和`sourceManifestSha256`来自`Get-ManifestHash`对解析后的清单执行`ConvertTo-Json -Depth 8 -Compress`再取UTF-8 SHA-256，不是格式化JSON文件的原始字节摘要。按该方法复核两项均匹配；直接对格式化文件执行Get-FileHash会得到不同值。目录`.gitattributes`保留JSON/JSONL原始字节，跨平台读取时仍按上述语义核验。
+
 ## 独立真实可见性探测（未验证）
 
 长稳保存并关闭后，另开 headed Chrome 153，会话`rnc-live-visibility`，运行同一冻结生产包：
