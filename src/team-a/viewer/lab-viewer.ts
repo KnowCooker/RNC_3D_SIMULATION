@@ -24,7 +24,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   renderer.domElement.setAttribute('aria-label', '可旋转、剖切、改制的车辆三维视图');
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true; controls.minDistance = 3; controls.maxDistance = 16;
-  controls.maxPolarAngle = Math.PI * 0.51;
+  // Allow a real user orbit under the vehicle to inspect the battery, exhaust and axles.
+  controls.maxPolarAngle = Math.PI * 0.84;
   scene.add(new THREE.HemisphereLight('#e3f2ff', '#283643', 1.4));
   const key = new THREE.DirectionalLight('#fff2db', 2.4); key.position.set(4, 7, 5); scene.add(key);
   const fill = new THREE.DirectionalLight('#7cb6ff', 1.1); fill.position.set(-5, 4, -5); scene.add(fill);

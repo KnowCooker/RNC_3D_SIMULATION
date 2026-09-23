@@ -35,6 +35,7 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   const glass = new THREE.MeshPhysicalMaterial({ color: '#88c6d8', transparent: true, opacity: 0.28, metalness: 0.18, roughness: 0.18, side: THREE.DoubleSide, depthWrite: false });
   materials.push(glass);
   const dark = standard('#162530', 0.82), black = standard('#111920', 0.95, 0), steel = standard('#778b98', 0.42, 0.65);
+  const underbody = standard('#425562', 0.8, 0.15);
   const trim = standard('#c1d3da', 0.3, 0.8), fabric = standard('#263542', 0.86, 0), insert = standard('#b2a18c', 0.86, 0);
   const copper = standard('#f59039', 0.4, 0.5), battery = standard('#209e91', 0.45, 0.5), engine = standard('#a8adb2', 0.5, 0.55);
   const blue = standard('#398bb8', 0.35, 0.5), red = standard('#bd594f', 0.6, 0.1);
@@ -178,7 +179,7 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   }
 
   const chassis = part('chassis', '承载式底板、纵梁与副车架', 'chassis', [0, -0.1, 0]);
-  box(chassis, [1.66, 0.09, 3.95], [0, 0.64, -0.08], dark);
+  box(chassis, [1.66, 0.09, 3.95], [0, 0.64, -0.08], underbody);
   for (const x of [-0.74, 0.74]) box(chassis, [0.13, 0.18, 4.1], [x, 0.57, 0], steel);
   for (const z of [-1.45, 1.45]) {
     box(chassis, [1.55, 0.13, 0.28], [0, 0.56, z], steel);
@@ -352,14 +353,22 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   for (let i = 0; i < 14; i++) box(auxiliary, [0.015, 0.245, 0.015], [-0.52 + i * 0.08, 0.87, 2.13], dark, 0);
   function makeBattery(id: string, name: string, size: V3, position: V3) {
     const p = part(id, name, 'energy', [0, -0.32, 0]); box(p, size, position, battery, 0.04);
-    for (let i = 0; i < 7; i++) box(p, [size[0] * 0.9, 0.014, 0.025], [position[0], position[1] + size[1] / 2 + 0.008, position[2] - size[2] * 0.42 + i * size[2] * 0.14], trim, 0.004);
+    // Exterior enclosure, skid rim and longitudinal mounts; no invented cell internals.
+    for (const s of [-1, 1]) box(p, [0.045, 0.075, size[2] * 0.88], [position[0] + s * (size[0] / 2 - 0.06), position[1] - size[1] / 2 - 0.04, position[2]], steel, 0);
+    for (const s of [-1, 1]) box(p, [size[0] * 0.92, 0.035, 0.045], [position[0], position[1] - size[1] / 2 - 0.04, position[2] + s * size[2] * 0.42], steel, 0);
+    for (let i = 0; i < 7; i++) box(p, [size[0] * 0.9, 0.014, 0.025], [position[0], position[1] + size[1] / 2 + 0.008, position[2] - size[2] * 0.42 + i * size[2] * 0.14], trim, 0);
+    box(p, [0.13, 0.09, 0.12], [position[0] + size[0] / 2 + 0.015, position[1], position[2] + size[2] * 0.32], copper, 0.015);
     return p;
   }
   function electricDrive(front: boolean) {
     const z = front ? 1.45 : -1.45;
     const p = part(front ? 'traction-motor-front' : 'traction-motor-rear', front ? 'MG2 前驱电机与减速差速器' : '后驱电机与减速差速器', 'powertrain', [0, 0.15, front ? 0.22 : -0.25]);
     const motorX = front ? 0.49 : -0.18, motorLength = front ? 0.3 : 0.49;
-    cylinder(p, front ? 0.155 : 0.18, motorLength, [motorX, 0.72, z], blue); box(p, [0.25, 0.26, 0.3], [0.18, 0.62, z], steel, 0.055);
+    const radius = front ? 0.155 : 0.18;
+    cylinder(p, radius, motorLength, [motorX, 0.72, z], blue); box(p, [0.25, 0.26, 0.3], [0.18, 0.62, z], steel, 0.055);
+    for (const end of [-1, 1]) cylinder(p, radius * 1.045, 0.025, [motorX + end * motorLength * 0.49, 0.72, z], dark, 'x', 12);
+    cylinder(p, 0.105, 0.13, [0.18, 0.62, z], trim, 'x', 12);
+    rod(p, [motorX + motorLength * 0.38, 0.72, z], [0.18, 0.62, z], 0.045, steel);
     for (const s of [-1, 1]) rod(p, [s * 0.15, 0.49, z], [s * 0.9, 0.44, z], 0.029);
     for (let i = 0; i < 6; i++) cylinder(p, front ? 0.161 : 0.187, 0.008, [motorX - motorLength * 0.42 + i * motorLength * 0.168, 0.72, z], steel);
     return p;
@@ -372,14 +381,18 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     const electronics = part('inverter', '逆变器与高压配电', 'electrical', [0.2, 0.33, 0]);
     const z = kind === 'hev' ? 1.34 : -1.46;
     box(electronics, [0.52, 0.11, 0.37], [0, 0.98, z], copper);
+    box(electronics, [0.6, 0.025, 0.43], [0, 0.91, z], dark, 0.012);
     for (let i = 0; i < 8; i++) box(electronics, [0.012, 0.026, 0.32], [-0.21 + i * 0.06, 1.046, z], steel, 0);
+    for (const x of [-0.15, 0.15]) cylinder(electronics, 0.035, 0.035, [x, 1.06, z - 0.15], dark, 'z', 10);
     tube(electronics, [[0.24, 0.54, kind === 'hev' ? -0.75 : 0], [0.53, 0.57, 0.25], [0.53, 0.8, z], [0.17, 0.98, z]], 0.018, copper);
     if (kind !== 'hev') {
       const charger = part('charge-system', '外接充电口、车载充电器与 DC/DC', 'electrical', [-0.3, 0.28, 0]);
       const chargerPosition: V3 = kind === 'erev' ? [-0.52, 0.89, 1.05] : [-0.31, 0.92, 1.53];
       box(charger, [0.43, 0.14, 0.36], chargerPosition, blue);
+      box(charger, [0.47, 0.018, 0.4], [chargerPosition[0], chargerPosition[1] - 0.08, chargerPosition[2]], dark, 0.008);
       box(charger, [0.24, 0.12, 0.28], kind === 'erev' ? [0.65, 0.98, 1.13] : [0.29, 0.9, 1.82], steel);
       box(charger, [0.025, 0.13, 0.14], [-0.999, 1.085, -1.88], dark, 0.025);
+      const chargeRim = mesh(charger, new THREE.TorusGeometry(0.064, 0.009, 5, 16), trim, [-1.016, 1.085, -1.88]); chargeRim.rotation.y = Math.PI / 2;
       tube(charger, [[-0.95, 1.08, -1.88], [-0.69, 0.59, -1.68], [-0.66, 0.57, 1.04], chargerPosition], 0.014, copper);
     }
   }
@@ -387,24 +400,36 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     const combustion = part('combustion-engine', kind === 'erev' ? '增程发动机（仅驱动发电机）' : '横置四缸汽油发动机', 'powertrain', [0, 0.23, 0.4], [0, 0, 0], kind === 'erev' ? '仅与发电机机械连接，不驱动车轮' : '机械动力经变速/分流机构到前差速器');
     const engineX = kind === 'hev' ? -0.34 : -0.17, engineWidth = kind === 'hev' ? 0.56 : 0.69;
     box(combustion, [engineWidth, 0.34, 0.39], [engineX, 0.86, 1.64], engine, 0.055);
+    box(combustion, [engineWidth + 0.06, 0.11, 0.35], [engineX, 0.64, 1.64], dark, 0.03);
     box(combustion, [engineWidth - 0.07, 0.07, 0.33], [engineX, 1.067, 1.64], dark, 0.025);
+    box(combustion, [engineWidth - 0.13, 0.1, 0.16], [engineX, 1.17, 1.47], steel, 0.04);
     for (let i = 0; i < 4; i++) { const cylinderX = engineX + (i - 1.5) * engineWidth * 0.21; cylinder(combustion, 0.045, 0.028, [cylinderX, 1.116, 1.64], steel, 'y', 12); tube(combustion, [[cylinderX, 0.87, 1.42], [cylinderX, 0.67, 1.29], [-0.1, 0.53, 1.18]], 0.022, steel); }
+    for (let i = 0; i < 4; i++) {
+      const x = engineX + (i - 1.5) * engineWidth * 0.21;
+      rod(combustion, [x, 1.13, 1.48], [x, 1.05, 1.6], 0.018, dark);
+    }
     const fuel = part('fuel-tank', '燃油箱与供油管', 'energy', [0.25, -0.19, -0.12]);
     box(fuel, [0.98, 0.2, 0.54], [0.11, 0.48, kind === 'erev' ? -0.94 : -1.11], dark, 0.08);
+    for (const x of [-0.19, 0.38]) box(fuel, [0.035, 0.025, 0.58], [x, 0.365, kind === 'erev' ? -0.94 : -1.11], steel, 0);
     tube(fuel, [[0.58, 0.51, -1.15], [0.65, 0.55, 0], [0.56, 0.79, 1.4], [0.13, 0.9, 1.64]], 0.008, steel);
     const exhaust = part('exhaust', '催化器、排气管与后消声器', 'exhaust', [-0.22, -0.15, 0]);
     tube(exhaust, [[-0.1, 0.54, 1.2], [-0.58, 0.43, 0.92], [-0.7, 0.38, -0.5], [-0.61, 0.44, -1.83], [-0.5, 0.44, -2.38]], 0.033);
     cylinder(exhaust, 0.095, 0.26, [-0.6, 0.43, 0.83], engine, 'z');
     box(exhaust, [0.46, 0.16, 0.36], [-0.52, 0.43, -1.92], engine, 0.055);
+    box(exhaust, [0.45, 0.015, 0.53], [-0.52, 0.535, -1.89], steel, 0.004);
     if (kind === 'ice') {
       const gearbox = part('transmission', '前置变速器、差速器与驱动半轴', 'powertrain', [0.18, 0.15, 0.27]);
       box(gearbox, [0.42, 0.35, 0.44], [0.4, 0.7, 1.51], steel, 0.085);
+      const bell = mesh(gearbox, new THREE.CylinderGeometry(0.17, 0.23, 0.2, 12), engine, [0.22, 0.78, 1.62]); bell.rotation.z = Math.PI / 2;
+      cylinder(gearbox, 0.115, 0.12, [0.18, 0.53, 1.45], dark, 'x', 12);
       for (const s of [-1, 1]) rod(gearbox, [s * 0.18, 0.52, 1.45], [s * 0.9, 0.44, 1.45], 0.03);
     } else if (kind === 'hev') {
       electricDrive(true);
       const split = part('power-split', '行星功率分流器与 MG1 发电机', 'powertrain', [0.36, 0.36, 0.28], [0, 0, 0], '发动机同时连机械输出与 MG1 发电支路；MG2 经减速器驱动车轮');
       cylinder(split, 0.13, 0.14, [0.18, 0.91, 1.68], copper);
       cylinder(split, 0.105, 0.23, [0.48, 0.95, 1.79], blue);
+      cylinder(split, 0.14, 0.025, [0.18, 0.91, 1.68], dark, 'x', 12);
+      cylinder(split, 0.108, 0.025, [0.61, 0.95, 1.79], dark, 'x', 12);
       rod(split, [-0.08, 0.91, 1.68], [0.18, 0.91, 1.68], 0.022);
       rod(split, [0.18, 0.91, 1.68], [0.48, 0.95, 1.79], 0.022);
       rod(split, [0.18, 0.91, 1.68], [0.18, 0.62, 1.45], 0.024);
@@ -412,6 +437,8 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     } else {
       const generator = part('range-generator', '增程发电机与电气输出（无车轮传动轴）', 'powertrain', [0.35, 0.27, 0.37], [0, 0, 0], '发动机→发电机→高压母线/电池→后逆变器→后电机；无发动机到车轮的机械通路');
       cylinder(generator, 0.15, 0.31, [0.44, 0.87, 1.64], blue);
+      cylinder(generator, 0.157, 0.025, [0.61, 0.87, 1.64], dark, 'x', 12);
+      cylinder(generator, 0.07, 0.075, [0.18, 0.87, 1.64], steel, 'x', 12);
       rod(generator, [0.1, 0.87, 1.64], [0.44, 0.87, 1.64], 0.028);
       tube(generator, [[0.43, 0.91, 1.64], [0.62, 0.7, 1.27], [0.61, 0.58, 0.4], [0.23, 0.54, 0.3]], 0.021, copper);
     }

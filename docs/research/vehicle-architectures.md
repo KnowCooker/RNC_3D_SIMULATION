@@ -13,6 +13,8 @@
 
 选择这些资料，是因为它们直接说明部件作用和关键布局；建模不要求下载或复制商标车模。RAV4 的 HEV 前驱架构、ID.4 后驱 BEV、C10 后驱 EREV 可作为进一步查证的实车参考，不能由本模型反推它们的精确管线、悬架尺寸或认证性能。四种教学车统一采用同一原创外壳，便于只比较动力结构。
 
+2026-09-24 的 V5–V6 近景复核补充了直接结构依据：美国能源部[汽油车部件](https://afdc.energy.gov/vehicles/how-do-gasoline-cars-work)明确燃油箱、供油、发动机、传动与含催化器的排气系统；其[纯电部件说明](https://afdc.energy.gov/vehicles/how-do-all-electric-cars-work)区分动力电池、车载充电器、DC/DC、功率电子控制器、电机和电传动。Toyota [THS II 两电机机械功率分流说明](https://global.toyota/en/mobility/tnga/powertrain2018/ths2/)与[功率分流路径说明](https://global.toyota/en/detail/7889139)支持发动机向机械输出和 MG1 发电分流、MG2 辅助驱轮；Volkswagen [ID.4 布局](https://www.volkswagen-newsroom.com/en/the-id4-from-volkswagen-15712/design-vehicle-interior-and-controls-15718)支持底板电池与后桥电驱/控制电子布置；Leapmotor [C10 Hybrid EV 原厂资料](https://www.media.stellantis.com/uk-en/leapmotor/press/leapmotor-c10-uk-press-information)明确前机带发电机、后电机驱轮且发动机不联车轮。本项目新增的外壳、法兰、安装筋、外部连接以教学辨识为目的原创，不代表上述产品的制造外形、线束路由或认证参数。
+
 ## 座舱与底盘
 
 - 五座两排：两张前座、三位后座、五个头枕、座椅支架、背部及坐垫、座椅轮廓/侧翼；左侧方向盘及转向柱、仪表台、仪表屏、中央屏、扶手储物箱、杯托、油门/制动踏板、内门板和拉手。位置布局参考 [Volkswagen ID.4 座舱说明](https://www.volkswagen-newsroom.com/en/press-releases/freedom-on-the-outside-free-space-on-the-inside-the-interior-of-the-new-id4-6361) 与上述 C10 的座椅、扶手储物及杯托说明。

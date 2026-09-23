@@ -71,3 +71,17 @@ test('vehicle geometry is finite and every owned GPU resource is disposed once',
     assert.equal(model.group.children.length, 0);
   }
 });
+
+test('the BEV and EREV battery enclosure remains directly visible from the underbody', () => {
+  for (const kind of ['ice', 'bev', 'erev'] as VehicleKind[]) {
+    const model = createVehicleModel(kind);
+    model.group.updateMatrixWorld(true);
+    const hit = new THREE.Raycaster(new THREE.Vector3(0, -3, 0), new THREE.Vector3(0, 1, 0))
+      .intersectObject(model.group, true)[0];
+    assert.ok(hit, `${kind} has an underbody surface`);
+    let part: THREE.Object3D | null = hit.object;
+    while (part && part.parent !== model.group) part = part.parent;
+    assert.equal(part?.name === 'traction-battery', kind !== 'ice', `${kind} first visible underbody part`);
+    model.dispose();
+  }
+});
