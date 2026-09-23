@@ -1,6 +1,6 @@
 # A2-FULL-012：四车共用驾驶舱近景可读性
 
-状态：本批 A2 局部实现与本机验证完成，待审查和整组最终验收。基线为 A2-FULL-011 已提交 `1d6c5b0`；工作分支 `a/a2-full-012-cockpit-readability`，草稿 [PR #17](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/17)，依赖 #16→#15→#14→#13→#12→#11→#10→#9→#8→#7。经验证运行源码 SHA 见本批后续固定版本提交；本文与最终源码在同一 PR 中。
+状态：本批 A2 局部实现与本机验证完成，待审查和整组最终验收。基线为 A2-FULL-011 已提交 `1d6c5b0`；工作分支 `a/a2-full-012-cockpit-readability`，草稿 [PR #17](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/17)，依赖 #16→#15→#14→#13→#12→#11→#10→#9→#8→#7。经验证运行源码为 `5f9bf9e61de07f9642bd4945b95c42b50fff8760`，原仓库 verify CI 已通过；后续固定版本提交仅修改本文及交接，不改变运行源码。
 
 ## 范围与实现
 
