@@ -1,0 +1,579 @@
+{
+  "assertions": 223,
+  "passed": [
+    "baseline contains vehicle and road, fewer than 50000 rendered triangles",
+    "round 1: four wheels follow supplied time 0.75",
+    "round 1: all 44 road marks follow supplied time",
+    "round 1: paused frame does not advance wheel or road time",
+    "round 1: solid expanded scene keeps object count",
+    "round 1: hide changes only 13 shell meshes",
+    "round 1: expanded positions/materials are identical without accumulated drift",
+    "round 1: immediate reset restores exact default camera after orbit and zoom",
+    "round 1: reset restores all mesh transforms/visibility/opacity",
+    "round 1: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 1: no residual camera motion after reset",
+    "round 1: all 12 labels restored",
+    "round 2: four wheels follow supplied time 1.5",
+    "round 2: all 44 road marks follow supplied time",
+    "round 2: paused frame does not advance wheel or road time",
+    "round 2: solid expanded scene keeps object count",
+    "round 2: hide changes only 13 shell meshes",
+    "round 2: expanded positions/materials are identical without accumulated drift",
+    "round 2: immediate reset restores exact default camera after pan and zoom",
+    "round 2: reset restores all mesh transforms/visibility/opacity",
+    "round 2: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 2: no residual camera motion after reset",
+    "round 2: all 12 labels restored",
+    "round 3: four wheels follow supplied time 2.25",
+    "round 3: all 44 road marks follow supplied time",
+    "round 3: paused frame does not advance wheel or road time",
+    "round 3: solid expanded scene keeps object count",
+    "round 3: hide changes only 13 shell meshes",
+    "round 3: expanded positions/materials are identical without accumulated drift",
+    "round 3: immediate reset restores exact default camera after orbit and zoom",
+    "round 3: reset restores all mesh transforms/visibility/opacity",
+    "round 3: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 3: no residual camera motion after reset",
+    "round 3: all 12 labels restored",
+    "round 4: four wheels follow supplied time 3",
+    "round 4: all 44 road marks follow supplied time",
+    "round 4: paused frame does not advance wheel or road time",
+    "round 4: solid expanded scene keeps object count",
+    "round 4: hide changes only 13 shell meshes",
+    "round 4: expanded positions/materials are identical without accumulated drift",
+    "round 4: immediate reset restores exact default camera after pan and zoom",
+    "round 4: reset restores all mesh transforms/visibility/opacity",
+    "round 4: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 4: no residual camera motion after reset",
+    "round 4: all 12 labels restored",
+    "round 5: four wheels follow supplied time 3.75",
+    "round 5: all 44 road marks follow supplied time",
+    "round 5: paused frame does not advance wheel or road time",
+    "round 5: solid expanded scene keeps object count",
+    "round 5: hide changes only 13 shell meshes",
+    "round 5: expanded positions/materials are identical without accumulated drift",
+    "round 5: immediate reset restores exact default camera after orbit and zoom",
+    "round 5: reset restores all mesh transforms/visibility/opacity",
+    "round 5: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 5: no residual camera motion after reset",
+    "round 5: all 12 labels restored",
+    "round 6: four wheels follow supplied time 4.5",
+    "round 6: all 44 road marks follow supplied time",
+    "round 6: paused frame does not advance wheel or road time",
+    "round 6: solid expanded scene keeps object count",
+    "round 6: hide changes only 13 shell meshes",
+    "round 6: expanded positions/materials are identical without accumulated drift",
+    "round 6: immediate reset restores exact default camera after pan and zoom",
+    "round 6: reset restores all mesh transforms/visibility/opacity",
+    "round 6: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 6: no residual camera motion after reset",
+    "round 6: all 12 labels restored",
+    "round 7: four wheels follow supplied time 5.25",
+    "round 7: all 44 road marks follow supplied time",
+    "round 7: paused frame does not advance wheel or road time",
+    "round 7: solid expanded scene keeps object count",
+    "round 7: hide changes only 13 shell meshes",
+    "round 7: expanded positions/materials are identical without accumulated drift",
+    "round 7: immediate reset restores exact default camera after orbit and zoom",
+    "round 7: reset restores all mesh transforms/visibility/opacity",
+    "round 7: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 7: no residual camera motion after reset",
+    "round 7: all 12 labels restored",
+    "round 8: four wheels follow supplied time 6",
+    "round 8: all 44 road marks follow supplied time",
+    "round 8: paused frame does not advance wheel or road time",
+    "round 8: solid expanded scene keeps object count",
+    "round 8: hide changes only 13 shell meshes",
+    "round 8: expanded positions/materials are identical without accumulated drift",
+    "round 8: immediate reset restores exact default camera after pan and zoom",
+    "round 8: reset restores all mesh transforms/visibility/opacity",
+    "round 8: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 8: no residual camera motion after reset",
+    "round 8: all 12 labels restored",
+    "round 9: four wheels follow supplied time 6.75",
+    "round 9: all 44 road marks follow supplied time",
+    "round 9: paused frame does not advance wheel or road time",
+    "round 9: solid expanded scene keeps object count",
+    "round 9: hide changes only 13 shell meshes",
+    "round 9: expanded positions/materials are identical without accumulated drift",
+    "round 9: immediate reset restores exact default camera after orbit and zoom",
+    "round 9: reset restores all mesh transforms/visibility/opacity",
+    "round 9: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 9: no residual camera motion after reset",
+    "round 9: all 12 labels restored",
+    "round 10: four wheels follow supplied time 7.5",
+    "round 10: all 44 road marks follow supplied time",
+    "round 10: paused frame does not advance wheel or road time",
+    "round 10: solid expanded scene keeps object count",
+    "round 10: hide changes only 13 shell meshes",
+    "round 10: expanded positions/materials are identical without accumulated drift",
+    "round 10: immediate reset restores exact default camera after pan and zoom",
+    "round 10: reset restores all mesh transforms/visibility/opacity",
+    "round 10: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 10: no residual camera motion after reset",
+    "round 10: all 12 labels restored",
+    "round 11: four wheels follow supplied time 8.25",
+    "round 11: all 44 road marks follow supplied time",
+    "round 11: paused frame does not advance wheel or road time",
+    "round 11: solid expanded scene keeps object count",
+    "round 11: hide changes only 13 shell meshes",
+    "round 11: expanded positions/materials are identical without accumulated drift",
+    "round 11: immediate reset restores exact default camera after orbit and zoom",
+    "round 11: reset restores all mesh transforms/visibility/opacity",
+    "round 11: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 11: no residual camera motion after reset",
+    "round 11: all 12 labels restored",
+    "round 12: four wheels follow supplied time 9",
+    "round 12: all 44 road marks follow supplied time",
+    "round 12: paused frame does not advance wheel or road time",
+    "round 12: solid expanded scene keeps object count",
+    "round 12: hide changes only 13 shell meshes",
+    "round 12: expanded positions/materials are identical without accumulated drift",
+    "round 12: immediate reset restores exact default camera after pan and zoom",
+    "round 12: reset restores all mesh transforms/visibility/opacity",
+    "round 12: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 12: no residual camera motion after reset",
+    "round 12: all 12 labels restored",
+    "round 13: four wheels follow supplied time 9.75",
+    "round 13: all 44 road marks follow supplied time",
+    "round 13: paused frame does not advance wheel or road time",
+    "round 13: solid expanded scene keeps object count",
+    "round 13: hide changes only 13 shell meshes",
+    "round 13: expanded positions/materials are identical without accumulated drift",
+    "round 13: immediate reset restores exact default camera after orbit and zoom",
+    "round 13: reset restores all mesh transforms/visibility/opacity",
+    "round 13: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 13: no residual camera motion after reset",
+    "round 13: all 12 labels restored",
+    "round 14: four wheels follow supplied time 10.5",
+    "round 14: all 44 road marks follow supplied time",
+    "round 14: paused frame does not advance wheel or road time",
+    "round 14: solid expanded scene keeps object count",
+    "round 14: hide changes only 13 shell meshes",
+    "round 14: expanded positions/materials are identical without accumulated drift",
+    "round 14: immediate reset restores exact default camera after pan and zoom",
+    "round 14: reset restores all mesh transforms/visibility/opacity",
+    "round 14: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 14: no residual camera motion after reset",
+    "round 14: all 12 labels restored",
+    "round 15: four wheels follow supplied time 11.25",
+    "round 15: all 44 road marks follow supplied time",
+    "round 15: paused frame does not advance wheel or road time",
+    "round 15: solid expanded scene keeps object count",
+    "round 15: hide changes only 13 shell meshes",
+    "round 15: expanded positions/materials are identical without accumulated drift",
+    "round 15: immediate reset restores exact default camera after orbit and zoom",
+    "round 15: reset restores all mesh transforms/visibility/opacity",
+    "round 15: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 15: no residual camera motion after reset",
+    "round 15: all 12 labels restored",
+    "round 16: four wheels follow supplied time 12",
+    "round 16: all 44 road marks follow supplied time",
+    "round 16: paused frame does not advance wheel or road time",
+    "round 16: solid expanded scene keeps object count",
+    "round 16: hide changes only 13 shell meshes",
+    "round 16: expanded positions/materials are identical without accumulated drift",
+    "round 16: immediate reset restores exact default camera after pan and zoom",
+    "round 16: reset restores all mesh transforms/visibility/opacity",
+    "round 16: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 16: no residual camera motion after reset",
+    "round 16: all 12 labels restored",
+    "round 17: four wheels follow supplied time 12.75",
+    "round 17: all 44 road marks follow supplied time",
+    "round 17: paused frame does not advance wheel or road time",
+    "round 17: solid expanded scene keeps object count",
+    "round 17: hide changes only 13 shell meshes",
+    "round 17: expanded positions/materials are identical without accumulated drift",
+    "round 17: immediate reset restores exact default camera after orbit and zoom",
+    "round 17: reset restores all mesh transforms/visibility/opacity",
+    "round 17: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 17: no residual camera motion after reset",
+    "round 17: all 12 labels restored",
+    "round 18: four wheels follow supplied time 13.5",
+    "round 18: all 44 road marks follow supplied time",
+    "round 18: paused frame does not advance wheel or road time",
+    "round 18: solid expanded scene keeps object count",
+    "round 18: hide changes only 13 shell meshes",
+    "round 18: expanded positions/materials are identical without accumulated drift",
+    "round 18: immediate reset restores exact default camera after pan and zoom",
+    "round 18: reset restores all mesh transforms/visibility/opacity",
+    "round 18: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 18: no residual camera motion after reset",
+    "round 18: all 12 labels restored",
+    "round 19: four wheels follow supplied time 14.25",
+    "round 19: all 44 road marks follow supplied time",
+    "round 19: paused frame does not advance wheel or road time",
+    "round 19: solid expanded scene keeps object count",
+    "round 19: hide changes only 13 shell meshes",
+    "round 19: expanded positions/materials are identical without accumulated drift",
+    "round 19: immediate reset restores exact default camera after orbit and zoom",
+    "round 19: reset restores all mesh transforms/visibility/opacity",
+    "round 19: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 19: no residual camera motion after reset",
+    "round 19: all 12 labels restored",
+    "round 20: four wheels follow supplied time 15",
+    "round 20: all 44 road marks follow supplied time",
+    "round 20: paused frame does not advance wheel or road time",
+    "round 20: solid expanded scene keeps object count",
+    "round 20: hide changes only 13 shell meshes",
+    "round 20: expanded positions/materials are identical without accumulated drift",
+    "round 20: immediate reset restores exact default camera after pan and zoom",
+    "round 20: reset restores all mesh transforms/visibility/opacity",
+    "round 20: allocated geometries stay within fixed scene topology; texture count unchanged",
+    "round 20: no residual camera motion after reset",
+    "round 20: all 12 labels restored",
+    "seeking backward then to the end reproduces wheel/road pose exactly",
+    "view reset preserves externally supplied playback time"
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 2,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 3,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 4,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 5,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 6,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 7,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 8,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 9,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 10,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 11,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 12,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 13,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 14,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 15,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 16,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 17,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 18,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 19,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    },
+    {
+      "round": 20,
+      "camera": [
+        6.699999999999999,
+        4.8999999999999995,
+        7.399999999999999,
+        -0.1707651619498598,
+        0.3535794624509308,
+        0.06582065840417364,
+        0.9173268033391317
+      ],
+      "meshes": 118,
+      "memory": {
+        "geometries": 118,
+        "textures": 0
+      }
+    }
+  ],
+  "baseline": {
+    "meshes": 118,
+    "memory": {
+      "geometries": 101,
+      "textures": 0
+    },
+    "triangles": 5158
+  },
+  "note": "Controlled slider input tests external time consumption, not measured audio/visual latency or target GPU performance."
+}

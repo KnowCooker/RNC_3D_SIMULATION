@@ -66,19 +66,24 @@ export function createViewer(host: HTMLElement, onSelect: Select) {
     { signal: 'x' as const, color: '#f3bd65', y: 0.8, x: 0.86, front: 1.45, rear: -1.45, lift: 0, prefix: 'REF' },
     { signal: 'u' as const, color: '#70b9ff', y: 1.15, x: 1.03, front: 0.65, rear: -0.75, lift: 0.65, prefix: 'OUT' },
     { signal: 'e' as const, color: '#5ee2bf', y: 1.86, x: 0.48, front: 0.4, rear: -1.01, lift: 0.4, prefix: 'MIC' },
+    { signal: 'x' as const, color: '#d8b5ff', y: 0.1, x: 1, front: 1.45, rear: -1.45, lift: 0, prefix: 'SOURCE' },
   ];
   for (const kind of kinds) ORDER.forEach((corner, i) => {
-    const marker = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 8), new THREE.MeshBasicMaterial({ color: kind.color, depthTest: false }));
+    const source = kind.prefix === 'SOURCE';
+    const geometry = source ? new THREE.TorusGeometry(0.15, 0.025, 8, 20) : new THREE.SphereGeometry(0.075, 12, 8);
+    const marker = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: kind.color, depthTest: false }));
+    if (source) marker.rotation.x = Math.PI / 2;
     marker.position.set(i % 2 === 0 ? kind.x : -kind.x, kind.y, i < 2 ? kind.front : kind.rear);
-    marker.userData = { signal: kind.signal, corner }; marker.renderOrder = 5; vehicle.add(marker); markers.push(marker);
+    marker.userData = { signal: kind.signal, corner, source }; marker.renderOrder = 5; vehicle.add(marker); markers.push(marker);
     layers.push({ mesh: marker, y: kind.y, lift: kind.lift });
-    const el = document.createElement('button'); el.type = 'button'; el.className = 'rnc-marker-label';
+    const el = document.createElement('button'); el.type = 'button'; el.className = source ? 'rnc-source-label' : 'rnc-marker-label';
     el.style.color = kind.color; el.textContent = `${kind.prefix} ${corner.toUpperCase()}`;
     const position = ['前左', '前右', '后左', '后右'][i];
     const hardware = { x: '悬架振动参考', u: '车门扬声器驱动', e: '头枕误差声压' }[kind.signal];
-    el.title = `${position} · ${hardware} · ${kind.signal}`;
-    el.setAttribute('aria-label', `${kind.prefix} ${corner.toUpperCase()} · ${position}${hardware}`);
-    el.dataset.viewerSignal = kind.signal; el.dataset.viewerCorner = corner;
+    el.title = source ? `${position}轮端激励示意；查看同角 REF 参考，不是新增测量信号` : `${position} · ${hardware} · ${kind.signal}`;
+    el.setAttribute('aria-label', source ? `SOURCE ${corner.toUpperCase()} · ${position}轮端激励示意，查看同角REF参考` : `${kind.prefix} ${corner.toUpperCase()} · ${position}${hardware}`);
+    if (source) el.dataset.sourceCorner = corner;
+    else { el.dataset.viewerSignal = kind.signal; el.dataset.viewerCorner = corner; }
     el.addEventListener('click', () => onSelect(kind.signal, corner));
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('stroke', kind.color); leaders.append(line);
@@ -107,7 +112,12 @@ export function createViewer(host: HTMLElement, onSelect: Select) {
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   }); resize.observe(host);
   function reset() {
+    // Consume pending orbit/pan deltas without damping before restoring the fixed view.
+    // Otherwise a reset during a drag's settling phase keeps moving on later frames.
+    const damping = controls.enableDamping;
+    controls.enableDamping = false; controls.update();
     camera.position.set(6.7, 4.9, 7.4); controls.target.set(0, 1.05, 0); controls.update();
+    controls.enableDamping = damping;
     setExploded(false); setBody('transparent');
   }
   function setExploded(enabled: boolean) { for (const layer of layers) layer.mesh.position.y = layer.y + (enabled ? layer.lift : 0); }
@@ -122,7 +132,7 @@ export function createViewer(host: HTMLElement, onSelect: Select) {
       roadMarks.forEach((line, i) => { line.position.z = (Math.floor(i / 2) * 3 + time * (60 / 3.6)) % 66 - 33; });
       markers.forEach(marker => {
         const { signal, corner } = marker.userData;
-        marker.scale.setScalar(signal === selected.signal && corner === selected.channel ? 1.5 : 1);
+        marker.scale.setScalar(!marker.userData.source && signal === selected.signal && corner === selected.channel ? 1.5 : 1);
         if (signal === 'e') {
           const spl = residualSpl[ORDER.indexOf(corner)];
           (marker.material as THREE.MeshBasicMaterial).color.set(spl === null ? '#8eabb7' : new THREE.Color().setHSL((1 - Math.max(0, Math.min(1, (spl - 30) / 50))) * 0.38, 0.65, 0.6));
@@ -134,7 +144,7 @@ export function createViewer(host: HTMLElement, onSelect: Select) {
         const p = label.object.getWorldPosition(new THREE.Vector3()).project(camera);
         const visible = p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1;
         label.el.hidden = !visible; label.line.style.display = visible ? '' : 'none';
-        const active = label.object.userData.signal === selected.signal && label.object.userData.corner === selected.channel;
+        const active = !label.object.userData.source && label.object.userData.signal === selected.signal && label.object.userData.corner === selected.channel;
         label.el.setAttribute('aria-pressed', String(active));
         return { label, visible, x: (p.x + 1) / 2 * width, y: (1 - p.y) / 2 * height };
       }).filter(point => point.visible);
