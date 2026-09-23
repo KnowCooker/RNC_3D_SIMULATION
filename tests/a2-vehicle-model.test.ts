@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as THREE from 'three';
 import { createVehicleModel, type VehicleKind } from '../src/team-a/viewer/vehicle-model';
-import { SPEAKER_POSITIONS } from '../src/shared/lab-contracts';
+import { MIC_POSITIONS, SPEAKER_POSITIONS } from '../src/shared/lab-contracts';
 
 test('four drivetrains preserve their physical differences and five-seat cabin', () => {
   for (const kind of ['ice', 'bev', 'hev', 'erev'] as VehicleKind[]) {
@@ -27,6 +27,14 @@ test('four drivetrains preserve their physical differences and five-seat cabin',
       const speaker = model.group.getObjectByName(`speaker-${corner}`);
       assert.ok(speaker, `${kind} ${corner} speaker exists`);
       assert.deepEqual(speaker.getWorldPosition(new THREE.Vector3()).toArray(), SPEAKER_POSITIONS[index]);
+    });
+    [1, 2, 3, 5].forEach((seatIndex, index) => {
+      const headrest = model.group.getObjectByName(`headrest-${seatIndex}`);
+      assert.ok(headrest, `${kind} seat ${seatIndex} has a headrest`);
+      assert.equal(headrest.parent?.name, `seat-${seatIndex}`);
+      const mic = new THREE.Vector3(...MIC_POSITIONS[index]), bounds = new THREE.Box3().setFromObject(headrest);
+      assert.ok(mic.distanceTo(bounds.clampPoint(mic, new THREE.Vector3())) < 0.1,
+        `${kind} MIC ${index + 1} remains at its designated headrest`);
     });
     for (const p of model.parts) {
       assert.equal(p.object.parent, model.group, 'exploded parts do not inherit another part offset');

@@ -189,6 +189,17 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     return mesh(parent, skinGeometry(vertices, nx, ny, [0, 0, inlay ? -0.014 : -0.115]), material);
   }
 
+  function headrestSkin(parent: THREE.Object3D, x: number, z: number, width: number) {
+    const vertices: number[] = [], nx = 8, ny = 6;
+    for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
+      const t = j / ny, u = i / nx * 2 - 1;
+      const endTaper = 1 - 0.26 * Math.pow(Math.abs(t * 2 - 1), 2);
+      vertices.push(x + u * width * endTaper / 2, 1.665 + 0.225 * t,
+        z - 0.205 + 0.047 * (1 - u * u) * Math.sin(Math.PI * t));
+    }
+    return mesh(parent, skinGeometry(vertices, nx, ny, [0, 0, -0.155]), fabric);
+  }
+
   function roofPillar(parent: THREE.Object3D, s: number, bottom: V3, top: V3, widthAtBase: number, widthAtTop: number) {
     const vertices: number[] = [], nx = 1, ny = 6;
     for (let j = 0; j <= ny; j++) {
@@ -277,18 +288,22 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     for (const xx of [-0.075, 0, 0.075]) { const g = new THREE.TorusGeometry(0.394 - Math.abs(xx) * 0.2, 0.004, 4, 24); g.rotateY(Math.PI / 2); mesh(wheel, g, dark, [xx, 0, 0]); }
   }
 
+  const rearBench = part('rear-bench-frame', '后排共用坐垫基座', 'cabin', [0, 0.45, 0]);
+  box(rearBench, [1.61, 0.15, 0.53], [0, 0.77, -0.79], dark, 0.055);
   for (const [index, [x, z, width]] of ([[0.48, 0.55, 0.62], [-0.48, 0.55, 0.62], [0.5, -0.79, 0.57], [0, -0.79, 0.42], [-0.5, -0.79, 0.57]] as [number, number, number][]).entries()) {
     const seat = part(`seat-${index + 1}`, `${index < 2 ? '前排' : '后排'}座椅 ${index + 1}（含头枕）`, 'cabin', [0, 0.45, 0]);
-    box(seat, [width - 0.13, 0.14, 0.46], [x, 0.76, z], dark);
+    if (index < 2) box(seat, [width - 0.13, 0.14, 0.46], [x, 0.76, z], dark);
     cushionSkin(seat, x, z, width, 0.57, fabric);
     cushionSkin(seat, x, z, width, 0.57, insert, true);
     backrestSkin(seat, x, z, width, fabric);
     backrestSkin(seat, x, z, width, insert, true);
-    for (const dx of [-width * 0.37, width * 0.37]) {
+    const bolsterOffsets = index < 2 ? [-width * 0.37, width * 0.37] : index === 2 ? [width * 0.37] : index === 4 ? [-width * 0.37] : [];
+    for (const dx of bolsterOffsets) {
       const bolster = box(seat, [0.075, 0.43, 0.13], [x + dx, 1.27, z - 0.155], fabric, 0.037); bolster.rotation.x = -0.1;
     }
     for (const dx of [-0.085, 0.085]) cylinder(seat, 0.012, 0.14, [x + dx, 1.63, z - 0.25], trim, 'y', 8);
-    box(seat, [Math.min(width * 0.64, 0.35), 0.21, 0.17], [x, 1.77, z - 0.25], fabric, 0.078);
+    const headrest = headrestSkin(seat, x, z, Math.min(width * 0.64, 0.35));
+    headrest.name = `headrest-${index + 1}`;
     box(seat, [0.045, 0.1, 0.05], [x + width / 2 - 0.035, 1.01, z - 0.1], red, 0.01);
     for (const direction of [-1, 1]) {
       seam(seat, [[x + direction * width * 0.28, 1.03, z - 0.2], [x + direction * width * 0.29, 1.014, z + 0.16], [x + direction * width * 0.25, 1.006, z + 0.21]]);
