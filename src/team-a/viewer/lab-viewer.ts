@@ -6,6 +6,7 @@ import { createSectionDisplay } from './section-display';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
 import { describeVehiclePart, featuredVehicleParts } from './part-guide';
+import { createFieldPoints, createFieldSliceTopology, fieldFrameMatchesPoints, type SliceAxis } from './field-slices';
 import './viewer.css';
 
 export function createLabViewer(host: HTMLElement, callbacks: {
@@ -94,11 +95,25 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const markerRows: { mesh: THREE.Mesh; button: HTMLButtonElement; line: SVGLineElement; selection: LabSelection; source: boolean; anchor: Anchor }[] = [];
   const waveRows: THREE.Mesh[] = [];
   const pathRows: { line: THREE.Line; dot: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; start: Anchor; end: Anchor; primary: boolean; channel: number }[] = [];
-  const fieldPoints: Vec3[] = [];
-  for (let x = 0; x < 7; x++) for (let y = 0; y < 5; y++) for (let z = 0; z < 8; z++) fieldPoints.push([-0.72 + x * 0.24, 0.85 + y * 0.21, -1.2 + z * 0.29]);
+  const fieldPoints = createFieldPoints();
   const fieldMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.48, depthWrite: false });
   const fieldMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(0.085, 8, 6), fieldMaterial, fieldPoints.length);
   fieldMesh.frustumCulled = false; field.add(fieldMesh); field.visible = false;
+  const sliceMaterials: THREE.MeshBasicMaterial[] = [];
+  const sliceMeshes = new Map<SliceAxis, { mesh: THREE.Mesh; sampleIndices: number[] }>();
+  for (const axis of ['x', 'y', 'z'] as const) {
+    const topology = createFieldSliceTopology(axis, fieldPoints);
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(topology.positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(topology.sampleIndices.length * 3), 3));
+    geometry.setIndex(topology.triangles);
+    // An explanatory see-through overlay: the sampled plane must remain readable inside opaque seats and chassis.
+    const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide, transparent: true, opacity: 0.52, depthTest: false, depthWrite: false, toneMapped: false });
+    const mesh = new THREE.Mesh(geometry, material); mesh.visible = false; mesh.frustumCulled = false; mesh.renderOrder = 4;
+    field.add(mesh); sliceMeshes.set(axis, { mesh, sampleIndices: topology.sampleIndices }); sliceMaterials.push(material);
+  }
+  const fieldNote = document.createElement('div'); fieldNote.className = 'lab-field-interpolation-note'; fieldNote.hidden = true;
+  host.append(fieldNote);
   const matrix = new THREE.Matrix4(), color = new THREE.Color();
   let frame: FieldFrame | null = null;
 
@@ -128,6 +143,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const planes = clipAxis === 'none' ? [] : [clipPlane];
     // Retain computed field samples while letting cut geometry remain legible.
     fieldMaterial.opacity = clipAxis === 'none' ? 0.48 : 0.18;
+    sliceMaterials.forEach(material => { material.opacity = clipAxis === 'none' ? 0.52 : 0.32; });
     for (const material of model?.materials ?? []) { material.clippingPlanes = planes; material.needsUpdate = true; }
     for (const group of [markers, waves, paths, field]) group.traverse(object => {
       const material = (object as THREE.Mesh).material;
@@ -165,6 +181,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const key = JSON.stringify([next.vehicle, next.references, next.speakerEnabled]);
     if (key === signature) return;
     signature = key;
+    frame = null; paintField();
     if (sections) { scene.remove(sections.group); sections.dispose(); }
     if (model) { scene.remove(model.group); model.dispose(); }
     model = createVehicleModel(next.vehicle); scene.add(model.group);
@@ -210,16 +227,35 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     applyBody(); applyClipping();
   }
   function paintField() {
-    field.visible = fieldMode !== 'off' && !!frame?.valid;
-    if (!frame?.valid) return;
+    const valid = fieldMode !== 'off' && !!frame && fieldFrameMatchesPoints(frame, fieldPoints);
+    field.visible = valid;
+    if (!valid || !frame) {
+      fieldNote.hidden = fieldMode === 'off' || !frame?.valid;
+      if (!fieldNote.hidden) fieldNote.textContent = '空间采样点与模型不匹配，已隐藏声场';
+      return;
+    }
+    fieldNote.hidden = fieldSlice === 'volume';
     const values = fieldMode === 'primary' ? frame.primarySpl : frame.residualSpl;
-    fieldPoints.forEach((p, i) => {
-      const shown = fieldSlice === 'volume' || (fieldSlice === 'x' ? Math.abs(p[0]) < 0.13 : fieldSlice === 'y' ? Math.abs(p[1] - 1.48) < 0.12 : Math.abs(p[2] - 0.54) < 0.16);
-      matrix.makeScale(shown ? 1 : 0, shown ? 1 : 0, shown ? 1 : 0); matrix.setPosition(...p); fieldMesh.setMatrixAt(i, matrix);
-      const scalar = Math.max(0, Math.min(1, (values[i] - 30) / 50));
-      color.setHSL((1 - scalar) * 0.65, 0.86, 0.54); fieldMesh.setColorAt(i, color);
-    });
-    fieldMesh.instanceMatrix.needsUpdate = true; if (fieldMesh.instanceColor) fieldMesh.instanceColor.needsUpdate = true;
+    fieldMesh.visible = fieldSlice === 'volume';
+    if (fieldMesh.visible) {
+      fieldPoints.forEach((p, i) => {
+        matrix.makeScale(1, 1, 1); matrix.setPosition(...p); fieldMesh.setMatrixAt(i, matrix);
+        const scalar = Math.max(0, Math.min(1, (values[i] - 30) / 50));
+        color.setHSL((1 - scalar) * 0.65, 0.86, 0.54); fieldMesh.setColorAt(i, color);
+      });
+      fieldMesh.instanceMatrix.needsUpdate = true; if (fieldMesh.instanceColor) fieldMesh.instanceColor.needsUpdate = true;
+    }
+    for (const [axis, row] of sliceMeshes) {
+      row.mesh.visible = fieldSlice === axis;
+      if (!row.mesh.visible) continue;
+      const colors = row.mesh.geometry.getAttribute('color') as THREE.BufferAttribute;
+      row.sampleIndices.forEach((sample, i) => {
+        const scalar = Math.max(0, Math.min(1, (values[sample] - 30) / 50));
+        color.setHSL((1 - scalar) * 0.65, 0.86, 0.54); colors.setXYZ(i, color.r, color.g, color.b);
+      });
+      colors.needsUpdate = true;
+    }
+    if (!fieldNote.hidden) fieldNote.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${fieldSlice.toUpperCase()} 切片 · 真实采样点间三角插值/透视叠层 · 30–80 dB SPL`;
   }
   const raycaster = new THREE.Raycaster(), pointer = new THREE.Vector2();
   let down = [0, 0];
@@ -331,6 +367,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }
