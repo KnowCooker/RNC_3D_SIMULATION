@@ -6,7 +6,7 @@ import { createSectionDisplay } from './section-display';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
 import { describeVehiclePart, featuredVehicleParts } from './part-guide';
-import { createFieldPoints, createFieldSliceTopology, fieldFrameMatchesPoints, type SliceAxis } from './field-slices';
+import { createFieldPoints, createFieldPointsForSlice, createFieldSliceTopology, fieldFrameMatchesPoints, type SliceAxis } from './field-slices';
 import './viewer.css';
 
 export function createLabViewer(host: HTMLElement, callbacks: {
@@ -95,7 +95,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const markerRows: { mesh: THREE.Mesh; button: HTMLButtonElement; line: SVGLineElement; selection: LabSelection; source: boolean; anchor: Anchor }[] = [];
   const waveRows: THREE.Mesh[] = [];
   const pathRows: { line: THREE.Line; dot: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; start: Anchor; end: Anchor; primary: boolean; channel: number; mic: number }[] = [];
-  const fieldPoints = createFieldPoints();
+  let fieldPoints = createFieldPoints();
   const fieldMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.48, depthWrite: false });
   const fieldMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(0.085, 8, 6), fieldMaterial, fieldPoints.length);
   fieldMesh.frustumCulled = false; field.add(fieldMesh); field.visible = false;
@@ -153,9 +153,12 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     fieldMaterial.opacity = clipAxis === 'none' ? (layered ? 0.36 : 0.48) : 0.18;
     sliceMaterials.forEach(material => { material.opacity = clipAxis === 'none' ? (layered ? 0.44 : 0.52) : 0.32; });
     for (const material of model?.materials ?? []) { material.clippingPlanes = planes; material.needsUpdate = true; }
+    // The moving field plane lies exactly on the section boundary. Float32 vertex rounding
+    // can place it on the discarded side, so clip the car but not that coincident overlay.
+    const coincidentFieldMesh = movingFieldSlice() ? sliceMeshes.get(fieldSlice as SliceAxis)?.mesh : null;
     for (const group of [markers, waves, paths, field]) group.traverse(object => {
       const material = (object as THREE.Mesh).material;
-      if (material) for (const value of Array.isArray(material) ? material : [material]) { value.clippingPlanes = planes; value.needsUpdate = true; }
+      if (material) for (const value of Array.isArray(material) ? material : [material]) { value.clippingPlanes = object === coincidentFieldMesh ? [] : planes; value.needsUpdate = true; }
     });
   }
   function applyBody() {
@@ -235,14 +238,30 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     }
     applyBody(); applyClipping();
   }
+  function movingFieldSlice() { return fieldSlice !== 'volume' && clipAxis === fieldSlice && Number.isFinite(clipValue); }
+  function syncFieldSampling() {
+    const next = movingFieldSlice() ? createFieldPointsForSlice(fieldSlice as SliceAxis, clipValue) : createFieldPoints();
+    if (fieldPoints.every((point, i) => point.every((coordinate, component) => coordinate === next[i][component]))) return;
+    fieldPoints = next;
+    // An old physical position must never retain its colour while a new field query is pending.
+    frame = null;
+    for (const [axis, row] of sliceMeshes) {
+      const topology = createFieldSliceTopology(axis, fieldPoints);
+      const positions = row.mesh.geometry.getAttribute('position') as THREE.BufferAttribute;
+      (positions.array as Float32Array).set(topology.positions);
+      positions.needsUpdate = true;
+    }
+  }
   function paintField() {
     const valid = fieldMode !== 'off' && !!frame && fieldFrameMatchesPoints(frame, fieldPoints);
     field.visible = valid;
     if (!valid || !frame) {
-      fieldNote.hidden = fieldMode === 'off' || !frame?.valid;
+      fieldNote.hidden = fieldMode === 'off' || fieldSlice === 'volume' || (!movingFieldSlice() && !frame?.valid);
       if (!fieldNote.hidden) {
-        fieldNoteDetail.textContent = '空间采样点与模型不匹配，已隐藏声场';
-        fieldNoteCompact.textContent = '采样点不匹配，声场已隐藏';
+        fieldNoteDetail.textContent = frame?.valid ? '空间采样点与模型不匹配，已隐藏声场'
+          : frame ? '当前车身剖面暂无有效声场' : '当前车身剖面声场待查询，旧位置色片已隐藏';
+        fieldNoteCompact.textContent = frame?.valid ? '采样点不匹配，声场已隐藏'
+          : frame ? '当前剖面暂无有效场' : '当前剖面场待更新';
       }
       return;
     }
@@ -270,8 +289,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     if (!fieldNote.hidden) {
       const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
       const coordinate = fieldPoints[sample][{ x: 0, y: 1, z: 2 }[axis]];
-      fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m 固定采样切片 · 车身剖面另行移动 · 三角插值/透视叠层 · 30–80 dB SPL`;
-      fieldNoteCompact.textContent = `${fieldMode === 'primary' ? '原声' : '残余'} ${axis.toUpperCase()}=${coordinate.toFixed(2)}m 固定场片；车身剖面另移`;
+      const provenance = movingFieldSlice() ? '当前车身剖面真实采样切片' : '固定采样切片 · 车身剖面另行移动';
+      fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m ${provenance} · 三角插值/透视叠层 · 30–80 dB SPL`;
+      fieldNoteCompact.textContent = `${fieldMode === 'primary' ? '原声' : '残余'} ${axis.toUpperCase()}=${coordinate.toFixed(2)}m ${movingFieldSlice() ? '当前剖面真实采样' : '固定场片；车身剖面另移'}`;
     }
   }
   function pathIsShown(row: (typeof pathRows)[number]) {
@@ -369,15 +389,15 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   reset();
   return {
-    fieldPoints, setConfig, reset,
+    get fieldPoints() { return fieldPoints; }, setConfig, reset,
     getMountIssues() { return mountIssues.map(issue => ({ ...issue })); },
     setExploded(value: boolean) { exploded = value; },
     setBody(value: string) { body = value; applyBody(); },
-    setSection(axis: string, value: number) { const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; applyClipping(); if (changed) focusSection(axis); },
+    setSection(axis: string, value: number) { const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis); },
     setEditMode(value: boolean) { editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
     setWaves(value: boolean) { waveVisible = value; applyClipping(); },
     setPaths(value: string) { pathMode = value; pathFocusKey = ''; applyClipping(); },
-    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { fieldMode = mode; fieldSlice = slice; applyClipping(); paintField(); },
+    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { fieldMode = mode; fieldSlice = slice; syncFieldSampling(); applyClipping(); paintField(); },
     updateField(value: FieldFrame) { frame = value; paintField(); },
     render(time: number, selected: LabSelection, drives: number[], sourceValues: number[]) {
       const now = performance.now(), dt = Math.min(0.1, (now - lastTime) / 1000); lastTime = now;

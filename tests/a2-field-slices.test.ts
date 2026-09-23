@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { FieldFrame } from '../src/shared/lab-contracts';
-import { createFieldPoints, createFieldSliceTopology, fieldFrameMatchesPoints } from '../src/team-a/viewer/field-slices';
+import { createFieldPoints, createFieldPointsForSlice, createFieldSliceTopology, fieldFrameMatchesPoints } from '../src/team-a/viewer/field-slices';
 
 test('three slice meshes use the original 280 queried positions, including their fixed physical planes', () => {
   const points = createFieldPoints();
@@ -32,4 +32,27 @@ test('a reordered, truncated or non-finite B field frame cannot color the old lo
   const nonFinite = { ...frame, primarySpl: values.slice() }; nonFinite.primarySpl[0] = Number.NaN;
   assert.equal(fieldFrameMatchesPoints(nonFinite, points), false);
   assert.equal(fieldFrameMatchesPoints({ ...frame, valid: false }, points), false);
+});
+
+test('moving each sampled plane requests its physical position and refuses the previous field frame', () => {
+  const fixed = createFieldPoints();
+  const values = Float32Array.from(fixed, () => 50);
+  const oldFrame: FieldFrame = { time: 2, valid: true, points: fixed, primarySpl: values, residualSpl: values.slice(), reductionDb: values.slice() };
+  for (const [axis, coordinate] of [['x', -0.37], ['y', 1.12], ['z', -0.69]] as const) {
+    const moved = createFieldPointsForSlice(axis, coordinate);
+    const topology = createFieldSliceTopology(axis, moved);
+    const dimension = { x: 0, y: 1, z: 2 }[axis];
+    assert.equal(moved.length, 280);
+    assert.equal(fieldFrameMatchesPoints(oldFrame, moved), false);
+    assert.ok(topology.sampleIndices.every(sample => moved[sample][dimension] === coordinate));
+    topology.sampleIndices.forEach((sample, i) => {
+      assert.ok(Math.abs(topology.positions[i * 3 + dimension] - coordinate) < 1e-6);
+      fixed[sample].forEach((original, component) => {
+        if (component !== dimension) assert.equal(moved[sample][component], original);
+      });
+    });
+    assert.equal(moved.filter((point, i) => point[dimension] !== fixed[i][dimension]).length, topology.sampleIndices.length);
+    assert.equal(fieldFrameMatchesPoints({ ...oldFrame, points: moved }, moved), true);
+  }
+  assert.throws(() => createFieldPointsForSlice('x', Number.NaN));
 });

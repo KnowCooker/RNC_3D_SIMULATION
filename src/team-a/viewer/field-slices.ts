@@ -14,6 +14,21 @@ export function createFieldPoints(): Vec3[] {
   return points;
 }
 
+/** Move only the displayed slice's queried plane; retain the 280-point worker layout. */
+export function createFieldPointsForSlice(axis: SliceAxis, coordinate: number): Vec3[] {
+  if (!Number.isFinite(coordinate)) throw Error('Field slice coordinate must be finite');
+  const points = createFieldPoints();
+  const component = { x: 0, y: 1, z: 2 }[axis];
+  const layer = centers[axis];
+  for (let x = 0; x < counts.x; x++) for (let y = 0; y < counts.y; y++) for (let z = 0; z < counts.z; z++) {
+    if ([x, y, z][component] !== layer) continue;
+    const sample = index(x, y, z), point = points[sample];
+    points[sample] = component === 0 ? [coordinate, point[1], point[2]]
+      : component === 1 ? [point[0], coordinate, point[2]] : [point[0], point[1], coordinate];
+  }
+  return points;
+}
+
 const index = (x: number, y: number, z: number) => (x * counts.y + y) * counts.z + z;
 
 export interface FieldSliceTopology {
