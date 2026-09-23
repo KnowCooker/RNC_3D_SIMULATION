@@ -8,6 +8,6 @@ viewer 在接受场帧前核对 `valid`、280个点的顺序/物理位置、两�
 
 - [浏览器脚本](real-slices.js)和[原始结果](result.json)：在真实 lab-v3 页面先计算 BEV，再按同一进度查看体积、三轴色片、原声/残余、后期时刻和 Y 剖面+爆炸；随后分别计算 ICE/HEV/EREV 并显示对应切片。10组状态均收到“空间窗口截至”真实场帧，且没有页面脚本错误。
 - 截图：[BEV X](bev-x.png)、[Y](bev-y.png)、[Z](bev-z.png)、[体积](bev-volume.png)、[原声 Y](bev-y-primary.png)、[后期残余 Y](bev-y-late.png)、[Y 剖面+爆炸](bev-y-section-exploded.png)、[ICE X](ice-x.png)、[HEV Y](hev-y.png)、[EREV Z](erev-z.png)。图片为1108×508真实 WebGL viewer，不是模型夹具或合成热图。
-- 环境：Windows Headless Chromium 153，1440×1000视口、WebGL ANGLE RTX 4070 Laptop / Direct3D11。**没有目标核显性能结论**。`pnpm check` 通过类型、源码边界、65/65测试及生产构建；其中新增映射/错位帧拒绝测试。原仓库CI结果与经验证源码SHA在后续文档提交固定。
+- 环境：Windows Headless Chromium 153，1440×1000视口、WebGL ANGLE RTX 4070 Laptop / Direct3D11。**没有目标核显性能结论**。`pnpm check` 通过类型、源码边界、65/65测试及生产构建；其中新增映射/错位帧拒绝测试。经验证源码为 `f6fb267cc4bb40183ca0140f615a3d7ad205d077`；原仓库 [PR #12](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/12) 对该提交的 `verify` CI 通过。该源码构建所得 `dist/index.html` SHA-256 为 `27260C39ACBFB60FA8F902749A7B1D1F3F7ED0FACE203E2060627D7F9EF6E637`。本次仅文档提交固定证据版本。
 
 仍有限制：这是三个固定采样平面的可视化，不是任意位置的连续有限元切片；当前时刻在固定 30–80 dB 色标下局部可能接近同一颜色，不能为了视觉对比人为拉伸声压值。游戏参照车型精细度、全开叠层细节、目标核显、正式录像和整组交付仍未验收。
