@@ -36,7 +36,7 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   materials.push(glass);
   const dark = standard('#162530', 0.82), black = standard('#111920', 0.95, 0), steel = standard('#778b98', 0.42, 0.65);
   const underbody = standard('#425562', 0.8, 0.15);
-  const trim = standard('#c1d3da', 0.3, 0.8), fabric = standard('#263542', 0.86, 0), insert = standard('#77868b', 0.88, 0);
+  const trim = standard('#c1d3da', 0.3, 0.8), fabric = standard('#263542', 0.86, 0), insert = standard('#506670', 0.88, 0);
   const copper = standard('#f59039', 0.4, 0.5), battery = standard('#209e91', 0.45, 0.5), engine = standard('#a8adb2', 0.5, 0.55);
   const blue = standard('#398bb8', 0.35, 0.5), red = standard('#bd594f', 0.6, 0.1);
   const headlamp = standard('#d8f5ff', 0.23); headlamp.emissive.set('#d2efff'); headlamp.emissiveIntensity = 1.2;
@@ -169,8 +169,9 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
       const u = (i / nx * 2 - 1) * (inlay ? 0.67 : 1);
       const t = (j / nz - 0.5) * (inlay ? 0.76 : 1) + 0.5;
       const sideBolster = 0.036 * Math.pow(Math.abs(u), 4) * Math.sin(Math.PI * t);
-      const frontRoll = 0.021 * Math.pow(t, 3);
-      vertices.push(x + u * width / 2, 0.983 + (inlay ? 0.008 : 0) + sideBolster + frontRoll - 0.025 * (1 - u * u) * Math.sin(Math.PI * t), z + (t - 0.5) * depth);
+      const frontRoll = 0.028 * Math.pow(t, 3);
+      const edgeTaper = inlay ? 1 - 0.13 * Math.pow(Math.abs(t - 0.5) * 2, 2) : 1 - 0.075 * Math.pow(Math.abs(t - 0.5) * 2, 2);
+      vertices.push(x + u * width * edgeTaper / 2, 0.983 + (inlay ? 0.008 : 0) + sideBolster + frontRoll - 0.033 * (1 - u * u) * Math.sin(Math.PI * t), z + (t - 0.5) * depth);
     }
     return mesh(parent, skinGeometry(vertices, nx, nz, [0, inlay ? -0.014 : -0.09, 0]), material);
   }
@@ -180,9 +181,9 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
       const u = (i / nx * 2 - 1) * (inlay ? 0.63 : 1);
       const t = inlay ? 0.17 + 0.68 * j / ny : j / ny;
-      const taper = inlay ? 0.98 - 0.18 * Math.pow(t, 4) - 0.04 * Math.pow(1 - t, 4)
-        : 1 - 0.15 * t - 0.035 * Math.sin(Math.PI * t);
-      const lumbar = 0.035 * (1 - u * u) * Math.sin(Math.PI * t);
+      const taper = inlay ? 0.92 - 0.18 * Math.pow(t, 4) - 0.04 * Math.pow(1 - t, 4)
+        : 0.99 - 0.19 * t - 0.06 * Math.sin(Math.PI * t);
+      const lumbar = 0.048 * (1 - u * u) * Math.sin(Math.PI * t);
       vertices.push(x + u * width * taper / 2, 1.07 + 0.51 * t, z - 0.14 - 0.085 * t + lumbar + (inlay ? 0.008 : 0));
     }
     return mesh(parent, skinGeometry(vertices, nx, ny, [0, 0, inlay ? -0.014 : -0.115]), material);
@@ -273,7 +274,7 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
       rod(wheel, [s * 0.105, Math.cos(a) * 0.065, Math.sin(a) * 0.065], [s * 0.10, Math.cos(a + 0.16) * 0.24, Math.sin(a + 0.16) * 0.24], 0.024, trim);
     }
     // Three circumferential tread grooves remain model geometry, requiring no remote textures.
-    for (const xx of [-0.075, 0, 0.075]) { const g = new THREE.TorusGeometry(0.394 - Math.abs(xx) * 0.2, 0.004, 4, 40); g.rotateY(Math.PI / 2); mesh(wheel, g, dark, [xx, 0, 0]); }
+    for (const xx of [-0.075, 0, 0.075]) { const g = new THREE.TorusGeometry(0.394 - Math.abs(xx) * 0.2, 0.004, 4, 24); g.rotateY(Math.PI / 2); mesh(wheel, g, dark, [xx, 0, 0]); }
   }
 
   for (const [index, [x, z, width]] of ([[0.48, 0.55, 0.62], [-0.48, 0.55, 0.62], [0.5, -0.79, 0.57], [0, -0.79, 0.42], [-0.5, -0.79, 0.57]] as [number, number, number][]).entries()) {
@@ -284,10 +285,10 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     backrestSkin(seat, x, z, width, fabric);
     backrestSkin(seat, x, z, width, insert, true);
     for (const dx of [-width * 0.37, width * 0.37]) {
-      const bolster = box(seat, [0.064, 0.43, 0.15], [x + dx, 1.27, z - 0.155], fabric, 0.031); bolster.rotation.x = -0.1;
+      const bolster = box(seat, [0.075, 0.43, 0.13], [x + dx, 1.27, z - 0.155], fabric, 0.037); bolster.rotation.x = -0.1;
     }
     for (const dx of [-0.085, 0.085]) cylinder(seat, 0.012, 0.14, [x + dx, 1.63, z - 0.25], trim, 'y', 8);
-    box(seat, [Math.min(width * 0.62, 0.34), 0.22, 0.15], [x, 1.77, z - 0.25], fabric, 0.055);
+    box(seat, [Math.min(width * 0.64, 0.35), 0.21, 0.17], [x, 1.77, z - 0.25], fabric, 0.078);
     box(seat, [0.045, 0.1, 0.05], [x + width / 2 - 0.035, 1.01, z - 0.1], red, 0.01);
     for (const direction of [-1, 1]) {
       seam(seat, [[x + direction * width * 0.28, 1.03, z - 0.2], [x + direction * width * 0.29, 1.014, z + 0.16], [x + direction * width * 0.25, 1.006, z + 0.21]]);
@@ -369,8 +370,14 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     smooth.forEach(normal => normal.normalize());
     for (let i = 0; i < skin.count; i++) { const normal = smooth.get(vertexKey(i))!; normals.setXYZ(i, normal.x, normal.y, normal.z); }
     mesh(side, g, paint, [s > 0 ? 0.91 : -0.965, 0, 0], true);
-    box(side, [0.095, 0.13, 1.81], [s * 0.957, 0.61, 0], dark, 0.035, true);
+    box(side, [0.075, 0.085, 1.81], [s * 0.957, 0.615, 0], dark, 0.032, true);
     for (const z of [-1.45, 1.45]) {
+      const linerVertices: number[] = [], segments = 18;
+      for (let radiusIndex = 0; radiusIndex <= 1; radiusIndex++) for (let i = 0; i <= segments; i++) {
+        const angle = 0.13 + i / segments * (Math.PI - 0.26), radius = radiusIndex ? 0.53 : 0.405;
+        linerVertices.push(s * 0.966, 0.49 + Math.sin(angle) * radius, z + Math.cos(angle) * radius);
+      }
+      mesh(side, skinGeometry(linerVertices, segments, 1, [-s * 0.012, 0, 0]), dark, [0, 0, 0], true);
       const arch: V3[] = []; for (let i = 0; i <= 24; i++) { const a = i / 24 * Math.PI; arch.push([s * 0.994, 0.49 + Math.sin(a) * 0.445, z + Math.cos(a) * 0.49]); }
       appendShell(tube(side, arch, 0.031, dark));
     }
@@ -379,7 +386,10 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
       const doorVertices: number[] = [];
       for (let j = 0; j <= 8; j++) for (let i = 0; i <= 4; i++) {
         const t = i / 4, longitudinal = j / 8;
-        doorVertices.push(s * (0.996 + 0.018 * Math.sin(t * Math.PI) + 0.006 * Math.sin(longitudinal * Math.PI)), 0.765 + 0.48 * t, z - length / 2 + length * longitudinal);
+        const shoulder = 0.039 * Math.exp(-(((t - 0.79) / 0.22) ** 2));
+        const lowerSculpt = -0.014 * (1 - t) ** 2;
+        const endEase = 0.7 + 0.3 * Math.sin(longitudinal * Math.PI);
+        doorVertices.push(s * (0.994 + (shoulder + lowerSculpt) * endEase), 0.765 + 0.48 * t, z - length / 2 + length * longitudinal);
       }
       const doorGeometry = skinGeometry(doorVertices, 4, 8, [-s * 0.008, 0, 0]);
       // Both orientations are visible because thin exterior skins can be viewed from inside after an exploded view.
@@ -448,7 +458,14 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     roofPillar(roof, s, [bottomX, 1.23, 1.14], [topX, 1.96, 0.66], 0.135, 0.095);
     roofPillar(roof, s, [bottomX, 1.24, -0.195], [topX, 1.97, -0.195], 0.085, 0.075);
     roofPillar(roof, s, [bottomX, 1.24, -2.15], [topX, 1.91, -1.72], 0.19, 0.115);
-    const rail = tube(roof, [[s * 0.64, 1.998, -1.48], [s * 0.67, 2.014, -0.3], [s * 0.64, 2.02, 0.45]], 0.024, paint); shell.push(rail);
+    // A closed shoulder joins the crown to the side glazing instead of a floating roof bar.
+    const shoulderVertices: number[] = [], segments = 8;
+    for (let j = 0; j <= segments; j++) for (let i = 0; i <= 2; i++) {
+      const t = j / segments, z = -1.70 + 2.35 * t, u = i / 2;
+      const topY = 1.915 + 0.045 * t + 0.012 * Math.sin(t * Math.PI);
+      shoulderVertices.push(s * (0.705 + 0.082 * u), topY - 0.045 * u, z);
+    }
+    mesh(roof, skinGeometry(shoulderVertices, 2, segments, [0, -0.028, 0]), paint, [0, 0, 0], true);
     const mirror = part(`mirror-${s}`, `${s > 0 ? '左' : '右'}后视镜`, 'shell', [s * 0.72, 0.3, 0]);
     appendShell(rod(mirror, [s * 0.95, 1.24, 0.91], [s * 1.12, 1.32, 0.88], 0.024, dark));
     box(mirror, [0.23, 0.13, 0.23], [s * 1.12, 1.34, 0.85], paint, 0.05, true);
