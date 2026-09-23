@@ -48,3 +48,40 @@
   border-style: dashed;
   font-size: 9px;
 }
+
+.lab-part-picker {
+  position: absolute;
+  z-index: 4;
+  top: 12px;
+  right: 12px;
+  width: min(220px, calc(100% - 24px));
+  padding: 8px 10px;
+  border: 1px solid #526c7d;
+  border-radius: 8px;
+  background: #122432ed;
+  color: #dceaf5;
+  font-size: 11px;
+}
+.lab-part-picker select { display: block; width: 100%; margin-top: 4px; padding: 5px; font-size: 11px; }
+.lab-part-card {
+  position: absolute;
+  z-index: 5;
+  right: 12px;
+  top: 72px;
+  width: min(340px, calc(100% - 24px));
+  max-height: min(53%, 320px);
+  overflow: auto;
+  padding: 12px 14px;
+  border: 1px solid #7298a8;
+  border-radius: 9px;
+  background: #102230f5;
+  box-shadow: 0 8px 28px #0009;
+  color: #dceaf5;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.lab-part-card button { float: right; padding: 3px 7px; font-size: 11px; }
+.lab-part-card h3 { margin: 0 50px 8px 0; font-size: 15px; }
+.lab-part-card p { margin: 7px 0; }
+.lab-part-card small { display: block; color: #a5b8c7; }
+.lab-part-card a { display: block; margin-top: 8px; overflow-wrap: anywhere; }

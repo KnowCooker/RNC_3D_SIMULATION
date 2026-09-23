@@ -5,6 +5,7 @@ import { createVehicleModel, type VehiclePart } from './vehicle-model';
 import { createSectionDisplay } from './section-display';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
+import { describeVehiclePart, featuredVehicleParts } from './part-guide';
 import './viewer.css';
 
 export function createLabViewer(host: HTMLElement, callbacks: {
@@ -61,6 +62,31 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   type Anchor = { origin: Vec3; mountPart?: string };
   const corners = ['fl', 'fr', 'rl', 'rr'];
   const partByName = new Map<string, VehiclePart>();
+  const guidePicker = document.createElement('label'); guidePicker.className = 'lab-part-picker';
+  guidePicker.textContent = '查看车辆结构';
+  const guideSelect = document.createElement('select'); guideSelect.setAttribute('aria-label', '选择车辆结构');
+  guidePicker.append(guideSelect); host.append(guidePicker);
+  const guideCard = document.createElement('aside'); guideCard.className = 'lab-part-card'; guideCard.hidden = true;
+  guideCard.setAttribute('aria-live', 'polite');
+  const guideClose = document.createElement('button'); guideClose.type = 'button'; guideClose.textContent = '关闭'; guideClose.setAttribute('aria-label', '关闭车辆结构说明');
+  const guideTitle = document.createElement('h3'), guideRole = document.createElement('p'), guidePath = document.createElement('p');
+  const guideNote = document.createElement('small'); guideNote.textContent = '原创教学几何；外形、尺寸和管线不代表量产车或实车标定。';
+  const guideSource = document.createElement('a'); guideSource.target = '_blank'; guideSource.rel = 'noopener noreferrer';
+  guideCard.append(guideClose, guideTitle, guideRole, guidePath, guideNote, guideSource); host.append(guideCard);
+  function clearGuide() { guideSelect.value = ''; guideCard.hidden = true; }
+  guideClose.onclick = clearGuide;
+  function showGuide(part: VehiclePart) {
+    if (!config || editMode) return;
+    const guide = describeVehiclePart(config.vehicle, part);
+    guideSelect.value = guideSelect.querySelector(`option[value="${guide.id}"]`) ? guide.id : '';
+    guideTitle.textContent = guide.title;
+    guideRole.textContent = guide.role;
+    guidePath.textContent = `本车能量路径：${guide.path}`;
+    guideSource.textContent = `结构依据：${guide.sourceLabel}`;
+    guideSource.href = guide.sourceUrl;
+    guideCard.hidden = false;
+  }
+  guideSelect.onchange = () => { const part = partByName.get(guideSelect.value); if (part) showGuide(part); else clearGuide(); };
   const bodyMaterials = new Map<THREE.Material, { opacity: number; transparent: boolean; depthWrite: boolean }>();
   const sourceAnchor = (i: number): Anchor => ({ origin: SOURCE_POSITIONS[i], mountPart: `wheel-${corners[i]}` });
   const speakerAnchor = (i: number): Anchor => ({ origin: SPEAKER_POSITIONS[i], mountPart: `door-${i < 2 ? 'front' : 'rear'}-${i % 2 === 0 ? 1 : -1}` });
@@ -144,6 +170,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     model = createVehicleModel(next.vehicle); scene.add(model.group);
     sections = createSectionDisplay(model.group); scene.add(sections.group);
     partByName.clear(); model.parts.forEach(part => partByName.set(part.object.name, part));
+    guideSelect.replaceChildren(new Option('选择关键部件，或点击车模', ''));
+    featuredVehicleParts(next.vehicle, model.parts).forEach(part => guideSelect.add(new Option(part.name, part.object.name)));
+    clearGuide();
     bodyMaterials.clear(); model.shell.forEach(mesh => {
       for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
         bodyMaterials.set(material, { opacity: material.opacity, transparent: material.transparent, depthWrite: material.depthWrite });
@@ -205,12 +234,21 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     if (event.button !== 0 || Math.hypot(event.clientX - down[0], event.clientY - down[1]) > 5) return;
     const marker = hitAt(event);
     if (marker) { callbacks.select(marker.object.userData.selection); return; }
-    if (editMode && model) {
-      const hit = raycaster.intersectObject(model.group, true).find(hit => visibleInHierarchy(hit.object) && unclipped(hit.point));
+    if (model) {
+      const hits = raycaster.intersectObject(model.group, true).filter(hit => visibleInHierarchy(hit.object) && unclipped(hit.point));
+      const owner = (object: THREE.Object3D) => {
+        for (let current: THREE.Object3D | null = object; current && current !== model?.group; current = current.parent) {
+          const part = partByName.get(current.name); if (part && part.object === current) return part;
+        }
+        return undefined;
+      };
+      const hit = editMode ? hits[0] : hits.find(candidate => body === 'solid' || owner(candidate.object)?.category !== 'shell') ?? hits[0];
       if (hit) {
-        const part = model.parts.find(part => part.object === hit.object || part.object.getObjectById(hit.object.id));
-        const physical = hit.point.clone(); if (part) physical.sub(part.offset.clone().multiplyScalar(amount));
-        callbacks.add(physical.toArray() as [number, number, number], part?.object.name);
+        const part = owner(hit.object);
+        if (editMode) {
+          const physical = hit.point.clone(); if (part) physical.sub(part.offset.clone().multiplyScalar(amount));
+          callbacks.add(physical.toArray() as [number, number, number], part?.object.name);
+        } else if (part) showGuide(part);
       }
     }
   };
@@ -238,7 +276,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     setExploded(value: boolean) { exploded = value; },
     setBody(value: string) { body = value; applyBody(); },
     setSection(axis: string, value: number) { const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; applyClipping(); if (changed) focusSection(axis); },
-    setEditMode(value: boolean) { editMode = value; host.classList.toggle('editing', value); },
+    setEditMode(value: boolean) { editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
     setWaves(value: boolean) { waveVisible = value; },
     setPaths(value: string) { pathMode = value; },
     setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { fieldMode = mode; fieldSlice = slice; paintField(); },
@@ -293,6 +331,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }
