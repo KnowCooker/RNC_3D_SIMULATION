@@ -1,0 +1,19 @@
+{
+  "transport": "real Worker; one reference HTTP response deliberately returns 503",
+  "count": 8,
+  "checks": [
+    "real Worker cancellation retains reference and reports cancelled",
+    "real Worker accepts seed 29, taps 32, mu 0.08",
+    "real Worker accepts seed 47, taps 64, mu 0",
+    "real mu zero produces zero aggregate reduction",
+    "HTTP reference failure preserves actual computed experiment and stays paused",
+    "reference reload resets all three config controls after real Worker runs",
+    "reference reload restores identity and resets clock without autoplay",
+    "no uncaught page errors in real Worker flow"
+  ],
+  "runs": [
+    "runId: ef76d7d6-15ff-4779-8d2f-a6c3ad9bee8a | source: computed-browser | seed=29 · taps=32 · μ=0.08 | 计算 260 ms | sampleCount=32000",
+    "runId: 32822630-ec3b-4aec-a963-b50f92d29e7a | source: computed-browser | seed=47 · taps=64 · μ=0 | 计算 217 ms | sampleCount=32000"
+  ],
+  "errors": []
+}

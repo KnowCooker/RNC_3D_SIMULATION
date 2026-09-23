@@ -1,0 +1,29 @@
+{
+  "count": 22,
+  "checks": [
+    "12 viewer controls and 12 app controls have separate ownership attributes",
+    "viewer x/fl selects matching app graph and hardware",
+    "viewer x/fr selects matching app graph and hardware",
+    "viewer x/rl selects matching app graph and hardware",
+    "viewer x/rr selects matching app graph and hardware",
+    "viewer u/fl selects matching app graph and hardware",
+    "viewer u/fr selects matching app graph and hardware",
+    "viewer u/rl selects matching app graph and hardware",
+    "viewer u/rr selects matching app graph and hardware",
+    "viewer e/fl selects matching app graph and hardware",
+    "MIC fl propagates listening seat",
+    "viewer e/fr selects matching app graph and hardware",
+    "MIC fr propagates listening seat",
+    "viewer e/rl selects matching app graph and hardware",
+    "MIC rl propagates listening seat",
+    "viewer e/rr selects matching app graph and hardware",
+    "MIC rr propagates listening seat",
+    "viewer selections never change result identity",
+    "keyboard viewer selection reaches app callback",
+    "viewer reset leaves app result, selected signal and paused clock intact",
+    "viewer remains usable after real Worker cancellation",
+    "combined flow has no uncaught page errors"
+  ],
+  "errors": [],
+  "url": "http://127.0.0.1:5175/"
+}
