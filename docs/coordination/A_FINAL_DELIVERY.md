@@ -82,7 +82,7 @@ A1/A2从同一已提交基线开各自分支/PR，每角色同一时间只有一
 
 ## 7. 当前差距与下一步
 
-当前等级：**完整目标的开发基线，尚非最终交付**。第二轮已实现持续仿真/试听、统一时间、有界历史、逐实体剖面及曲面/材质改进；59项工程测试、20项生产版实时流程、11项Web Audio及31+4项生命周期断言通过，见[第二轮证据](../evidence/full-lab/iteration-02/README.md)。A2后续视觉和结构工作见草稿[PR #8](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/8)至[PR #11](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/11)，其中#11当前是任务认领与在开发中的结构讲解，不算功能验收完成；上述PR依赖完整基线[PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7)，均未作为已合入main的证据。早期38项工程/90项整页证据保留在[第一轮](../evidence/full-lab/iteration-01/README.md)，不能扩大为新版全功能验收。仍需：
+当前等级：**完整目标的开发基线，尚非最终交付**。第二轮已实现持续仿真/试听、统一时间、有界历史、逐实体剖面及曲面/材质改进；59项工程测试、20项生产版实时流程、11项Web Audio及31+4项生命周期断言通过，见[第二轮证据](../evidence/full-lab/iteration-02/README.md)。A2后续视觉和结构工作见草稿[PR #8](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/8)至[PR #11](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/11)；#11结构讲解已实现并完成本机局部验证，仍未达到A2-F2/F7的最终视觉和设备验收。上述PR依赖完整基线[PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7)，均未作为已合入main的证据。早期38项工程/90项整页证据保留在[第一轮](../evidence/full-lab/iteration-01/README.md)，不能扩大为新版全功能验收。仍需：
 
 | 顺序 | 工作 | 负责人及完成结果 |
 | --- | --- | --- |

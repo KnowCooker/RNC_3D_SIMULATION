@@ -9,4 +9,4 @@
 - [BEV整页原图](bev-guide.png)、[EREV整页原图](erev-guide.png)记录真实渲染和讲解卡片。`pnpm exec tsx --test tests/a2-part-guide.test.ts` 检查四架构模型中列出的部件确实存在、BEV没有燃油系统、EREV发动机不机械驱动车轮。
 - 资料采用[美国能源部汽油车](https://afdc.energy.gov/vehicles/how-do-gasoline-cars-work)、[纯电车](https://afdc.energy.gov/vehicles/how-do-all-electric-cars-work)、[Toyota THS II](https://global.toyota/en/mobility/tnga/powertrain2018/ths2/)、[Stellantis/Leapmotor C10 增程](https://www.media.stellantis.com/uk-en/leapmotor/press/leapmotor-c10-uk-press-information)和[RNC硬件专利](https://patents.google.com/patent/EP3156998B1/en)。模型形状、尺寸和路径绘制是原创教学简化，不代表上述量产车。
 
-本批验证源码 SHA 在后续文档提交中固定。`pnpm check` 结果、PR与CI以交接页及根开发记录为准。截图证明界面交互及可读性，不证明实车声学、游戏参照精细度或目标核显性能。
+经验证源码为 `5f7900aa6169705897becfdbb11ebd1277c25700`；本批 `pnpm check` 通过类型、边界、63/63测试和生产构建，原仓库 [PR #11](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/11) 对该提交的 `verify` CI 通过。该源码构建所得 `dist/index.html` SHA-256 为 `4A8FC17D2F9374BA298D3D17858C01B3BB74FC9B055A2810E750F126D90A4062`。截图证明界面交互及可读性，不证明实车声学、游戏参照精细度或目标核显性能。
