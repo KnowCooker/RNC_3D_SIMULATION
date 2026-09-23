@@ -1,6 +1,6 @@
 # A2-FULL-011 移动剖面真实声场采样平面
 
-本批从 A2-FULL-010 已提交 `97ffcf0` 开始，对应[草稿 PR #16](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/16)。经验证运行源码 SHA 与原仓库 CI 在后续证据固定提交中填写；开放 PR 不等于 main 已集成。
+本批从 A2-FULL-010 已提交 `97ffcf0` 开始，对应[草稿 PR #16](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/16)。经验证运行源码为 `35267d1c6049ac062feb67d8c3def2b47516f9a5`，原仓库 verify CI 通过；本次仅文档提交固定版本。开放 PR 不等于 main 已集成。
 
 ## 实现与物理语义
 
