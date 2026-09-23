@@ -11,34 +11,58 @@ export class Player {
   private offset = 0;
   private startedAt = 0;
   private running = false;
+  private pendingPlay: Promise<void> | null = null;
+  private playGeneration = 0;
   private volume = 0.25;
   private muted = false;
   private channel: Corner = 'fl';
   private mode: 'd' | 'e' = 'e';
 
   get playing() { return this.running && this.currentTime < 16; }
+  get starting() { return this.pendingPlay !== null; }
   get currentTime(): number {
-    return Math.min(16, this.offset + (this.running && this.context ? this.context.currentTime - this.startedAt : 0));
+    return this.positionAt(this.context?.currentTime ?? 0);
   }
   load(result: RunResult) { this.pause(); this.offset = 0; this.result = result; this.buffers.clear(); }
-  async play() {
-    if (!this.result || this.playing) return;
+  play(): Promise<void> {
+    if (!this.result || this.playing) return Promise.resolve();
+    if (this.pendingPlay) return this.pendingPlay;
+    const generation = ++this.playGeneration;
+    const request = this.startPlayback(generation).finally(() => {
+      if (generation === this.playGeneration) this.pendingPlay = null;
+    });
+    this.pendingPlay = request;
+    return request;
+  }
+  private async startPlayback(generation: number) {
     if (!this.context) {
       this.context = new AudioContext(); this.master = this.context.createGain();
       this.master.connect(this.context.destination); this.setVolume(this.volume);
     }
-    await this.context.resume();
-    if (this.currentTime >= 16) this.offset = 0;
-    this.startedAt = this.context.currentTime; this.running = true; this.replaceSource();
+    try { await this.context.resume(); }
+    catch (error) { if (generation === this.playGeneration) throw error; else return; }
+    if (generation !== this.playGeneration) return;
+    const position = this.currentTime >= 16 ? 0 : this.currentTime;
+    // Buffer preparation must finish before the transport clock starts.
+    const buffer = this.selectedBuffer();
+    this.startSource(buffer, position, this.context.currentTime);
   }
   pause() {
+    ++this.playGeneration; this.pendingPlay = null;
     this.offset = this.currentTime; this.running = false; this.stopActive();
   }
   seek(seconds: number) {
+    if (!Number.isFinite(seconds)) return;
+    const wasPlaying = this.playing;
+    this.pause();
     this.offset = Math.max(0, Math.min(16, seconds));
-    if (this.running && this.context) { this.startedAt = this.context.currentTime; this.replaceSource(); }
+    if (wasPlaying && this.offset < 16 && this.context) {
+      const buffer = this.selectedBuffer();
+      this.startSource(buffer, this.offset, this.context.currentTime);
+    }
   }
   setComparison(channel: Corner, mode: 'd' | 'e') {
+    if (this.channel === channel && this.mode === mode) return;
     this.channel = channel; this.mode = mode;
     if (this.playing) this.replaceSource();
   }
@@ -47,16 +71,18 @@ export class Player {
     if (this.context && this.master) this.master.gain.setTargetAtTime(this.muted ? 0 : this.volume, this.context.currentTime, 0.015);
   }
   setMuted(value: boolean) { this.muted = value; this.setVolume(this.volume); }
-  private stopActive() {
+  private positionAt(time: number) {
+    return Math.min(16, this.offset + (this.running ? time - this.startedAt : 0));
+  }
+  private stopActive(time = this.context?.currentTime ?? 0) {
     if (!this.active || !this.context) return;
     const previous = this.active; this.active = null;
-    previous.gain.gain.cancelAndHoldAtTime(this.context.currentTime);
-    previous.gain.gain.linearRampToValueAtTime(0, this.context.currentTime + 0.03);
-    previous.source.stop(this.context.currentTime + 0.035);
+    previous.gain.gain.cancelAndHoldAtTime(time);
+    previous.gain.gain.linearRampToValueAtTime(0, time + 0.03);
+    previous.source.stop(time + 0.035);
   }
-  private replaceSource() {
-    this.stopActive();
-    if (!this.context || !this.master || !this.result || this.currentTime >= 16) return;
+  private selectedBuffer(): AudioBuffer {
+    if (!this.context || !this.result) throw new Error('尚未载入可播放实验');
     const key = `${this.channel}-${this.mode}`;
     let buffer = this.buffers.get(key);
     if (!buffer) {
@@ -66,12 +92,33 @@ export class Player {
       buffer = this.context.createBuffer(1, pcm.length, 16000); buffer.copyToChannel(pcm, 0);
       this.buffers.set(key, buffer);
     }
+    return buffer;
+  }
+  private replaceSource() {
+    if (!this.context || !this.result) return;
+    // Keep the old source audible while a previously unvisited seat/mode is prepared.
+    const buffer = this.selectedBuffer(), now = this.context.currentTime;
+    const position = this.positionAt(now);
+    if (position >= 16) { this.pause(); return; }
+    this.startSource(buffer, position, now);
+  }
+  private startSource(buffer: AudioBuffer, position: number, time: number) {
+    if (!this.context || !this.master) throw new Error('音频尚未初始化');
     const source = this.context.createBufferSource(), gain = this.context.createGain();
     source.buffer = buffer; source.connect(gain); gain.connect(this.master);
-    gain.gain.setValueAtTime(0, this.context.currentTime);
-    gain.gain.linearRampToValueAtTime(1, this.context.currentTime + 0.03);
-    source.onended = () => { source.disconnect(); gain.disconnect(); };
-    source.start(0, this.currentTime); this.active = { source, gain };
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(1, time + 0.03);
+    source.onended = () => {
+      source.disconnect(); gain.disconnect();
+      if (this.active?.source === source) {
+        this.active = null; this.offset = 16; this.running = false;
+      }
+    };
+    try { source.start(time, position); }
+    catch (error) { source.disconnect(); gain.disconnect(); throw error; }
+    this.stopActive(time);
+    this.offset = position; this.startedAt = time; this.running = true;
+    this.active = { source, gain };
   }
 }
 

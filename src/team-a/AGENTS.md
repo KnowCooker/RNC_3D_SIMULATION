@@ -1,6 +1,9 @@
 # A 组边界
 
 - A1：app / charts / player；A2：viewer。
+- 开始前读取 `docs/coordination/README.md` 和 A1/A2 两份交接页；仅更新自己角色的任务状态和证据。每个角色同时只运行一个写代码的 Codex 会话。
+- `app/style.css` 和现有 `tests/player.test.ts` 由 A1 维护；A2 新增样式放在 viewer 内并限定三维容器，新测试使用 `tests/a2-*.test.ts`；A1 新测试使用 `tests/a1-*.test.ts`。不顺手格式化或修复对方目录。
+- 当前 viewer 的创建、render、setBody、setExploded、reset 及点选回调保持兼容；接口需求写入本角色交接页，由接口文件负责人实现。共管接口仍按根规则协调。
 - 通过 AppPorts / DemoEngine 使用接口，不导入 team-b 或 integration。
 - 图表只绘制 B 组分析结果，不另写 SPL、RMS、降噪公式。
 - `pnpm dev:a` 在不运行 FxLMS 核心时用冻结参考数据工作。

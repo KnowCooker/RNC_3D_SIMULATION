@@ -6,6 +6,8 @@
 
 ## 每次开发从这里开始
 
+A 组两个 Codex 的入口：[双端协作流程](docs/coordination/README.md)、[A1 任务与交接](docs/coordination/A1.md)、[A2 任务与交接](docs/coordination/A2.md)。每端只需首次确定角色，后续从仓库和开放 PR 恢复工作；未推送的聊天或本地文件不能被另一端读取。
+
 1. 拉取当前分支和 main 的最新提交。
 2. 先读根目录 [开发记录.md](开发记录.md)，了解当前状态、阻塞和下一步。
 3. 再读 [AGENTS.md](AGENTS.md)、所属组 README/AGENTS 和 [开发计划](docs/plan/00_两周开发总计划.md)。
