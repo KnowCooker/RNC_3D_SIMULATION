@@ -76,6 +76,12 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   guideCard.append(guideClose, guideTitle, guideRole, guidePath, guideNote, guideSource); host.append(guideCard);
   function clearGuide() { guideSelect.value = ''; guideCard.hidden = true; }
   guideClose.onclick = clearGuide;
+  function focusCamera(position: Vec3, target: Vec3) {
+    const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
+    camera.position.set(...position); controls.target.set(...target);
+    controls.update(); controls.enableDamping = damping;
+  }
+  function focusCockpit() { focusCamera([0.05, 1.85, -0.25], [0.1, 1.25, 1.15]); }
   function showGuide(part: VehiclePart) {
     if (!config || editMode) return;
     const guide = describeVehiclePart(config.vehicle, part);
@@ -86,6 +92,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     guideSource.textContent = `结构依据：${guide.sourceLabel}`;
     guideSource.href = guide.sourceUrl;
     guideCard.hidden = false;
+    if (part.object.name === 'cockpit' && body === 'hidden') focusCockpit();
   }
   guideSelect.onchange = () => { const part = partByName.get(guideSelect.value); if (part) showGuide(part); else clearGuide(); };
   const bodyMaterials = new Map<THREE.Material, { opacity: number; transparent: boolean; depthWrite: boolean }>();
@@ -392,7 +399,12 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
     getMountIssues() { return mountIssues.map(issue => ({ ...issue })); },
     setExploded(value: boolean) { exploded = value; },
-    setBody(value: string) { body = value; applyBody(); },
+    setBody(value: string) {
+      const leavingCabin = body === 'hidden' && value !== 'hidden' && camera.position.distanceTo(controls.target) < 3;
+      body = value; controls.minDistance = value === 'hidden' ? 0.6 : 3; applyBody();
+      if (leavingCabin) focusCamera([4, 3.4, 4.8], [0, 0.7, 0]);
+      else if (value === 'hidden' && guideSelect.value === 'cockpit') focusCockpit();
+    },
     setSection(axis: string, value: number) { const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis); },
     setEditMode(value: boolean) { editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
     setWaves(value: boolean) { waveVisible = value; applyClipping(); },
@@ -411,7 +423,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       markerRows.forEach(row => {
         displayPosition(row.anchor, row.mesh.position);
         const active = selected.channel === row.selection.channel && (selected.signal === row.selection.signal || ['d', 'a', 'e'].includes(selected.signal) && row.selection.signal === 'e');
-        row.mesh.scale.setScalar(row.source ? (active ? 1.4 : 1) * (1 + Math.min(0.35, Math.abs(sourceValues[row.selection.channel] ?? 0) * 0.1)) : active ? 1.4 : 1);
+        // Hold marker screen size near the camera instead of letting a headrest marker cover the cockpit.
+        const distanceScale = Math.min(1, Math.max(0.08, camera.position.distanceTo(row.mesh.position) / 3));
+        row.mesh.scale.setScalar(distanceScale * (row.source ? (active ? 1.4 : 1) * (1 + Math.min(0.35, Math.abs(sourceValues[row.selection.channel] ?? 0) * 0.1)) : active ? 1.4 : 1));
         row.button.setAttribute('aria-pressed', String(active));
       });
       updatePathFocus(selected);

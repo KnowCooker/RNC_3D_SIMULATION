@@ -15,6 +15,7 @@ const sources = {
   hybrid: { label: 'Toyota · 双电机机械功率分流', url: 'https://global.toyota/en/mobility/tnga/powertrain2018/ths2/' },
   range: { label: 'Stellantis/Leapmotor · C10 增程架构', url: 'https://www.media.stellantis.com/uk-en/leapmotor/press/leapmotor-c10-uk-press-information' },
   hardware: { label: 'RNC 硬件公开专利 EP3156998B1', url: 'https://patents.google.com/patent/EP3156998B1/en' },
+  cabin: { label: 'Volkswagen · ID.4 座舱布局资料', url: 'https://www.volkswagen-newsroom.com/en/press-releases/freedom-on-the-outside-free-space-on-the-inside-the-interior-of-the-new-id4-6361' },
 } as const;
 
 const architectures: Record<VehicleKind, { path: string; source: keyof typeof sources }> = {
@@ -36,6 +37,7 @@ const roles: Record<string, string> = {
   'fuel-tank': '储存供发动机使用的燃油；BEV 不需要油箱。',
   exhaust: '把发动机排气经催化器、管道和后消声器导出；不是本项目的四轮路噪源。',
   chassis: '承载车身和动力部件。底盘附近的振动参考传感器为 RNC 采集路面激励相关信息。',
+  cockpit: '原创教学座舱的仪表屏、方向盘、踏板、扶手和杯托；屏幕图形仅作车辆控制件示意，不是 RNC 实验数据。隐藏车壳后选择此项可进入座舱近景。',
 };
 
 const categoryRoles: Record<string, string> = {
@@ -54,7 +56,7 @@ export function describeVehiclePart(kind: VehicleKind, part: VehiclePart): PartG
   const id = part.object.name;
   const architecture = architectures[kind];
   const hardware = id === 'chassis' || id.startsWith('wheel-') || id.startsWith('suspension-') || id.startsWith('seat-') || id.startsWith('door-');
-  const sourceKey = hardware ? 'hardware' : id === 'fuel-tank' || id === 'exhaust' || id === 'transmission' ? 'gasoline' : architecture.source;
+  const sourceKey = id === 'cockpit' ? 'cabin' : hardware ? 'hardware' : id === 'fuel-tank' || id === 'exhaust' || id === 'transmission' ? 'gasoline' : architecture.source;
   const source = sources[sourceKey];
   const role = id === 'combustion-engine'
     ? kind === 'erev' ? '增程发动机仅与发电机机械连接；本教学车的前轮没有来自发动机的驱动半轴。'
@@ -69,10 +71,10 @@ export function describeVehiclePart(kind: VehicleKind, part: VehiclePart): PartG
 }
 
 const featured: Record<VehicleKind, readonly string[]> = {
-  ice: ['combustion-engine', 'transmission', 'fuel-tank', 'exhaust', 'chassis', 'wheel-fl', 'door-front-1', 'seat-1'],
-  bev: ['traction-battery', 'inverter', 'traction-motor-rear', 'charge-system', 'chassis', 'wheel-fl', 'door-front-1', 'seat-1'],
-  hev: ['combustion-engine', 'power-split', 'traction-motor-front', 'traction-battery', 'inverter', 'fuel-tank', 'exhaust', 'wheel-fl'],
-  erev: ['combustion-engine', 'range-generator', 'traction-battery', 'inverter', 'traction-motor-rear', 'charge-system', 'fuel-tank', 'exhaust'],
+  ice: ['combustion-engine', 'transmission', 'fuel-tank', 'exhaust', 'chassis', 'wheel-fl', 'door-front-1', 'seat-1', 'cockpit'],
+  bev: ['traction-battery', 'inverter', 'traction-motor-rear', 'charge-system', 'chassis', 'wheel-fl', 'door-front-1', 'seat-1', 'cockpit'],
+  hev: ['combustion-engine', 'power-split', 'traction-motor-front', 'traction-battery', 'inverter', 'fuel-tank', 'exhaust', 'wheel-fl', 'cockpit'],
+  erev: ['combustion-engine', 'range-generator', 'traction-battery', 'inverter', 'traction-motor-rear', 'charge-system', 'fuel-tank', 'exhaust', 'cockpit'],
 };
 
 export function featuredVehicleParts(kind: VehicleKind, parts: readonly VehiclePart[]): VehiclePart[] {

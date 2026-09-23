@@ -43,6 +43,9 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   const taillamp = standard('#bd302e', 0.23); taillamp.emissive.set('#d44131'); taillamp.emissiveIntensity = 0.8;
   const indicator = standard('#b86b2a', 0.31); indicator.emissive.set('#e79639'); indicator.emissiveIntensity = 0.5;
   const display = standard('#162d42', 0.3); display.emissive.set('#183f53'); display.emissiveIntensity = 0.4;
+  const screenAccent = standard('#80c7d8', 0.38, 0.08); screenAccent.emissive.set('#4b91a6'); screenAccent.emissiveIntensity = 0.38;
+  const screenMuted = standard('#536f7e', 0.7, 0.05);
+  const softTrim = standard('#344650', 0.9, 0);
   const weave = new Uint8Array(64 * 64 * 4);
   for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
     const i = (y * 64 + x) * 4, value = 125 + ((x + 2 * y) % 4 < 2 ? 45 : -35);
@@ -66,6 +69,7 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   const tireRubber = standard('#1a2127', 0.98, 0); tireRubber.name = 'procedural-tread-rubber';
   tireRubber.bumpMap = treadTexture; tireRubber.bumpScale = 0.023;
   const stitching = new THREE.LineBasicMaterial({ color: '#ddc9aa', transparent: true, opacity: 0.8 }); materials.push(stitching);
+  const screenStroke = new THREE.LineBasicMaterial({ color: '#80c7d8' }); materials.push(screenStroke);
 
   function part(id: string, name: string, category: string, offset: V3, position: V3 = [0, 0, 0], description = '') {
     const object = new THREE.Group(); object.name = id; object.position.set(...position);
@@ -147,6 +151,14 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   function seam(parent: THREE.Object3D, points: V3[]) {
     const geometry = new THREE.BufferGeometry().setFromPoints(points.map(p => new THREE.Vector3(...p))); geometries.add(geometry);
     const line = new THREE.Line(geometry, stitching); parent.add(line);
+  }
+  function screenRing(parent: THREE.Object3D, x: number, y: number, z: number, radius: number) {
+    const points = Array.from({ length: 24 }, (_, i) => {
+      const angle = i / 24 * Math.PI * 2;
+      return new THREE.Vector3(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius, z);
+    });
+    const geometry = new THREE.BufferGeometry().setFromPoints(points); geometries.add(geometry);
+    parent.add(new THREE.LineLoop(geometry, screenStroke));
   }
 
   // A continuous cushion skin keeps the seat silhouette curved without moving the
@@ -262,17 +274,43 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   }
   mesh(cockpit, skinGeometry(dashboardVertices, dashboardNx, dashboardNz, [0, -0.12, 0]), dark);
   box(cockpit, [1.58, 0.035, 0.02], [0, 1.29, 0.995], trim, 0.005);
-  box(cockpit, [0.4, 0.19, 0.025], [0.45, 1.43, 1.105], display, 0.01);
-  box(cockpit, [0.43, 0.27, 0.035], [0, 1.41, 1.005], display, 0.01);
+  // These are decorative vehicle displays, not RNC readings or a live instrument feed.
+  box(cockpit, [0.42, 0.205, 0.054], [0.45, 1.43, 1.105], black, 0.018);
+  box(cockpit, [0.36, 0.152, 0.005], [0.45, 1.43, 1.074], display, 0);
+  for (const dx of [-0.078, 0.078]) {
+    screenRing(cockpit, 0.45 + dx, 1.435, 1.067, 0.041);
+    box(cockpit, [0.042, 0.005, 0.004], [0.45 + dx, 1.403, 1.066], screenMuted, 0);
+  }
+  box(cockpit, [0.115, 0.007, 0.004], [0.45, 1.49, 1.066], screenMuted, 0);
+  box(cockpit, [0.49, 0.315, 0.055], [0, 1.41, 1.005], black, 0.018);
+  box(cockpit, [0.43, 0.255, 0.005], [0, 1.41, 0.973], display, 0);
+  box(cockpit, [0.39, 0.011, 0.004], [0, 1.515, 0.966], screenAccent, 0);
+  for (const [y, width] of [[1.46, 0.16], [1.415, 0.13], [1.37, 0.18]] as const) {
+    box(cockpit, [width, 0.009, 0.004], [-0.105, y, 0.966], screenMuted, 0);
+  }
+  screenRing(cockpit, 0.125, 1.405, 0.965, 0.048);
+  box(cockpit, [0.082, 0.008, 0.004], [0.125, 1.33, 0.966], screenMuted, 0);
   for (const x of [-0.68, 0.68]) { box(cockpit, [0.17, 0.085, 0.02], [x, 1.28, 0.98], black, 0.007); for (let j = -1; j <= 1; j++) box(cockpit, [0.15, 0.007, 0.024], [x, 1.28 + j * 0.024, 0.973], steel, 0); }
   const steering = mesh(cockpit, new THREE.TorusGeometry(0.17, 0.024, 8, 32), black, [0.48, 1.37, 0.86]); steering.rotation.x = -0.28;
   for (const a of [0, Math.PI * 0.7, -Math.PI * 0.7]) rod(cockpit, [0.48, 1.37, 0.86], [0.48 + Math.sin(a) * 0.145, 1.37 + Math.cos(a) * 0.145, 0.86], 0.022, dark);
   box(cockpit, [0.11, 0.095, 0.04], [0.48, 1.37, 0.85], fabric);
+  for (const x of [0.37, 0.59]) {
+    box(cockpit, [0.045, 0.024, 0.012], [x, 1.375, 0.838], softTrim, 0);
+    box(cockpit, [0.025, 0.006, 0.004], [x, 1.375, 0.829], trim, 0);
+  }
+  rod(cockpit, [0.51, 1.34, 0.93], [0.69, 1.34, 0.93], 0.008, black);
   rod(cockpit, [0.48, 1.37, 0.9], [0.48, 1.19, 1.19], 0.035, dark);
   for (const [x, w] of [[0.57, 0.1], [0.35, 0.075]]) { rod(cockpit, [x, 0.85, 1.01], [x, 0.73, 0.98], 0.012); const pedal = box(cockpit, [w, 0.12, 0.025], [x, 0.72, 0.97], black, 0.01); pedal.rotation.x = -0.25; }
   box(cockpit, [0.27, 0.24, 0.94], [0, 0.93, 0.2], dark, 0.045);
   box(cockpit, [0.3, 0.11, 0.41], [0, 1.09, -0.05], fabric, 0.035);
-  for (const z of [0.32, 0.5]) { const ring = mesh(cockpit, new THREE.TorusGeometry(0.061, 0.012, 6, 20), steel, [0, 1.055, z]); ring.rotation.x = Math.PI / 2; }
+  seam(cockpit, [[0, 1.147, -0.225], [0, 1.147, 0.11]]);
+  box(cockpit, [0.075, 0.015, 0.013], [0, 1.105, 0.163], trim, 0);
+  for (const z of [0.32, 0.5]) {
+    cylinder(cockpit, 0.05, 0.004, [0, 1.054, z], black, 'y', 12);
+    const ring = mesh(cockpit, new THREE.TorusGeometry(0.061, 0.012, 6, 20), steel, [0, 1.055, z]); ring.rotation.x = Math.PI / 2;
+  }
+  box(cockpit, [0.07, 0.035, 0.075], [0, 1.085, 0.62], black, 0);
+  box(cockpit, [0.035, 0.018, 0.045], [0, 1.11, 0.62], trim, 0);
   const luggage = part('cargo-floor', '后备箱地板与行李空间', 'cabin', [0, 0.45, 0]);
   box(luggage, [1.55, 0.1, 0.93], [0, 0.87, -1.68], dark, 0.03);
 
@@ -322,6 +360,9 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
       box(door, [0.045, 0.035, 0.17], [s * 1.019, 1.16, z - 0.22], trim, 0.012, true);
       box(door, [0.06, 0.46, length * 0.88], [s * 0.88, 1.015, z], fabric, 0.035);
       box(door, [0.09, 0.065, 0.44], [s * 0.83, 1.1, z + 0.02], dark);
+      box(door, [0.019, 0.09, length * 0.7], [s * 0.841, 1.18, z], softTrim, 0);
+      box(door, [0.018, 0.012, 0.2], [s * 0.823, 1.205, z + 0.23], trim, 0);
+      seam(door, [[s * 0.837, 1.13, z - length * 0.34], [s * 0.837, 1.13, z + length * 0.34]]);
       const speakerZ = id === 'front' ? 0.65 : -0.75;
       const speaker = cylinder(door, 0.108, 0.027, [s * 0.96, 1.1, speakerZ], dark);
       speaker.name = `speaker-${id === 'front' ? 'f' : 'r'}${s > 0 ? 'l' : 'r'}`; speaker.userData.component = speaker.name;
