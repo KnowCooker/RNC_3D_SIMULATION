@@ -1,0 +1,42 @@
+{
+  "count": 4,
+  "checks": [
+    "actual browser freeze lasts at least two wall-clock seconds",
+    "resume preserves run and graph follows the single transport clock",
+    "transport advancement matches observed AudioContext advancement",
+    "paused recovery keeps playback stopped and refreshes the exact graph position"
+  ],
+  "before": {
+    "audio": 0.32,
+    "audioState": "running",
+    "ui": 0.31,
+    "graph": 0.301,
+    "run": "runId: golden-seed11-taps64-mu008 | source: reference-replay | seed=11 · taps=64 · μ=0.08 | 参考数据 | sampleCount=32000",
+    "wall": 1790173212030
+  },
+  "after": {
+    "audio": 2.3813333333333335,
+    "audioState": "running",
+    "ui": 2.37,
+    "graph": 2.2905,
+    "run": "runId: golden-seed11-taps64-mu008 | source: reference-replay | seed=11 · taps=64 · μ=0.08 | 参考数据 | sampleCount=32000",
+    "wall": 1790173214085
+  },
+  "paused": {
+    "audio": 2.512,
+    "audioState": "running",
+    "ui": 2.49,
+    "graph": 2.461,
+    "run": "runId: golden-seed11-taps64-mu008 | source: reference-replay | seed=11 · taps=64 · μ=0.08 | 参考数据 | sampleCount=32000",
+    "wall": 1790173214223
+  },
+  "resumed": {
+    "audio": 3.56,
+    "audioState": "running",
+    "ui": 2.49,
+    "graph": 2.4905,
+    "run": "runId: golden-seed11-taps64-mu008 | source: reference-replay | seed=11 · taps=64 · μ=0.08 | 参考数据 | sampleCount=32000",
+    "wall": 1790173215269
+  },
+  "scope": "real browser lifecycle freeze/resume plus explicit visibility handler; not physical latency or unmanaged-tab validation"
+}

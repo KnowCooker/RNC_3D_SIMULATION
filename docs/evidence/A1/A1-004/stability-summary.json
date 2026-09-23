@@ -1,0 +1,208 @@
+{
+  "status": "completed",
+  "start": "2026-09-23T14:13:01.279Z",
+  "end": "2026-09-23T14:33:05.662Z",
+  "actualElapsedSeconds": 1203.8519875,
+  "browserElapsedSeconds": 1204.382,
+  "browserMonotonicElapsedSeconds": 1204.382,
+  "samples": 103,
+  "computations": 10,
+  "switches": 103,
+  "replays": 63,
+  "actualSeatChanges": 102,
+  "actualModeChanges": 26,
+  "advancedPlaybackSamples": 40,
+  "maximumSampledPlaybackSeconds": 12.02,
+  "allComputations": [
+    {
+      "type": "real-worker-computation",
+      "index": 1,
+      "configuration": {
+        "taps": "64",
+        "seed": "11",
+        "step": "0.08"
+      },
+      "diagnostics": "runId: 595fe763-7768-40de-93d5-cf2fa52ee904 | source: computed-browser | seed=11 · taps=64 · μ=0.08 | 计算 273 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 2,
+      "configuration": {
+        "taps": "32",
+        "seed": "29",
+        "step": "0.08"
+      },
+      "diagnostics": "runId: 9652cd2c-bbb7-48c4-8d41-bde8500ba426 | source: computed-browser | seed=29 · taps=32 · μ=0.08 | 计算 409 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 3,
+      "configuration": {
+        "taps": "64",
+        "seed": "47",
+        "step": "0.08"
+      },
+      "diagnostics": "runId: 77541da6-0678-4c81-8f3a-0dba2958507d | source: computed-browser | seed=47 · taps=64 · μ=0.08 | 计算 350 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 4,
+      "configuration": {
+        "taps": "32",
+        "seed": "11",
+        "step": "0"
+      },
+      "diagnostics": "runId: 292c4519-0b71-429f-b94f-83b91dcb15c2 | source: computed-browser | seed=11 · taps=32 · μ=0 | 计算 221 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 5,
+      "configuration": {
+        "taps": "64",
+        "seed": "29",
+        "step": "0.08"
+      },
+      "diagnostics": "runId: 8079debd-b8e5-4cee-8e1f-7c9ed2874e46 | source: computed-browser | seed=29 · taps=64 · μ=0.08 | 计算 505 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 6,
+      "configuration": {
+        "taps": "32",
+        "seed": "47",
+        "step": "0.08"
+      },
+      "diagnostics": "runId: 6730f46b-5127-428c-9a5d-96507e315f7d | source: computed-browser | seed=47 · taps=32 · μ=0.08 | 计算 361 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 7,
+      "configuration": {
+        "taps": "64",
+        "seed": "11",
+        "step": "0.08"
+      },
+      "diagnostics": "runId: 2189ef64-1c5a-4dc7-beac-d9506ad893a0 | source: computed-browser | seed=11 · taps=64 · μ=0.08 | 计算 363 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 8,
+      "configuration": {
+        "taps": "32",
+        "seed": "29",
+        "step": "0"
+      },
+      "diagnostics": "runId: 8fc880cb-117b-4a4f-a7d9-71200ff957e2 | source: computed-browser | seed=29 · taps=32 · μ=0 | 计算 162 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 9,
+      "configuration": {
+        "taps": "64",
+        "seed": "47",
+        "step": "0.08"
+      },
+      "diagnostics": "runId: b078d898-c5e0-4500-992d-03040bd95d33 | source: computed-browser | seed=47 · taps=64 · μ=0.08 | 计算 273 ms | sampleCount=32000"
+    },
+    {
+      "type": "real-worker-computation",
+      "index": 10,
+      "configuration": {
+        "taps": "32",
+        "seed": "11",
+        "step": "0.08"
+      },
+      "diagnostics": "runId: 28c1a8a6-070a-40fa-8365-bae0c42ece9c | source: computed-browser | seed=11 · taps=32 · μ=0.08 | 计算 191 ms | sampleCount=32000"
+    }
+  ],
+  "errors": [],
+  "rejections": [],
+  "contextLostObserved": false,
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "liveElements": {
+    "min": 218,
+    "max": 218,
+    "mean": 218,
+    "first": 218,
+    "last": 218
+  },
+  "canvasCount": {
+    "min": 4,
+    "max": 4,
+    "mean": 4,
+    "first": 4,
+    "last": 4
+  },
+  "rendererGeometries": {
+    "min": 101,
+    "max": 118,
+    "mean": 117.83495145631068,
+    "first": 101,
+    "last": 118
+  },
+  "rendererTextures": {
+    "min": 0,
+    "max": 0,
+    "mean": 0,
+    "first": 0,
+    "last": 0
+  },
+  "cdpDomNodes": {
+    "min": 635,
+    "max": 9191,
+    "mean": 2951.893203883495,
+    "first": 3619,
+    "last": 635
+  },
+  "cdpDocuments": {
+    "min": 1,
+    "max": 1,
+    "mean": 1,
+    "first": 1,
+    "last": 1
+  },
+  "cdpEventListeners": {
+    "min": 82,
+    "max": 85,
+    "mean": 82.94174757281553,
+    "first": 84,
+    "last": 82
+  },
+  "jsHeapBytes": {
+    "min": 8711292,
+    "max": 44259764,
+    "mean": 26184479.067961164,
+    "first": 12104020,
+    "last": 30908644
+  },
+  "backingStorageBytes": {
+    "min": 3363024,
+    "max": 11399981,
+    "mean": 4486398.194174757,
+    "first": 11399981,
+    "last": 3363024
+  },
+  "embedderHeapBytes": {
+    "min": 3208856,
+    "max": 27382408,
+    "mean": 11162249.941747572,
+    "first": 14081504,
+    "last": 3630824
+  },
+  "warmWindowHeapBytes": {
+    "min": 20241808,
+    "max": 42174112,
+    "mean": 31570470,
+    "first": 35897968,
+    "last": 40234948
+  },
+  "lastWindowHeapBytes": {
+    "min": 9475932,
+    "max": 44259764,
+    "mean": 29101385.454545453,
+    "first": 32743204,
+    "last": 30908644
+  },
+  "note": "Heap and DOM CDP counters include transient, detached, and instrumentation allocations before GC. These are diagnostic samples, not a heap leak proof; compare warm/end windows and live DOM. No forced garbage collection, fake clock, mocked engine, or altered audio gain was used. Browser rendering and Web Audio transport do not verify physical audible output or audiovisual latency.",
+  "minimumExercisePassed": true
+}
