@@ -36,11 +36,12 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   materials.push(glass);
   const dark = standard('#162530', 0.82), black = standard('#111920', 0.95, 0), steel = standard('#778b98', 0.42, 0.65);
   const underbody = standard('#425562', 0.8, 0.15);
-  const trim = standard('#c1d3da', 0.3, 0.8), fabric = standard('#263542', 0.86, 0), insert = standard('#b2a18c', 0.86, 0);
+  const trim = standard('#c1d3da', 0.3, 0.8), fabric = standard('#263542', 0.86, 0), insert = standard('#77868b', 0.88, 0);
   const copper = standard('#f59039', 0.4, 0.5), battery = standard('#209e91', 0.45, 0.5), engine = standard('#a8adb2', 0.5, 0.55);
   const blue = standard('#398bb8', 0.35, 0.5), red = standard('#bd594f', 0.6, 0.1);
   const headlamp = standard('#d8f5ff', 0.23); headlamp.emissive.set('#d2efff'); headlamp.emissiveIntensity = 1.2;
   const taillamp = standard('#bd302e', 0.23); taillamp.emissive.set('#d44131'); taillamp.emissiveIntensity = 0.8;
+  const indicator = standard('#b86b2a', 0.31); indicator.emissive.set('#e79639'); indicator.emissiveIntensity = 0.5;
   const display = standard('#162d42', 0.3); display.emissive.set('#183f53'); display.emissiveIntensity = 0.4;
   const weave = new Uint8Array(64 * 64 * 4);
   for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
@@ -50,6 +51,20 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   const upholsteryTexture = new THREE.DataTexture(weave, 64, 64); upholsteryTexture.wrapS = upholsteryTexture.wrapT = THREE.RepeatWrapping;
   upholsteryTexture.repeat.set(8, 8); upholsteryTexture.needsUpdate = true; textures.add(upholsteryTexture);
   fabric.bumpMap = insert.bumpMap = upholsteryTexture; fabric.bumpScale = insert.bumpScale = 0.002;
+  // Original procedural tread relief. It affects only the wheel rubber, not the vehicle structure or NVH model.
+  const treadPixels = new Uint8Array(64 * 64 * 4);
+  for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+    const band = y < 13 || y > 51;
+    const groove = band && ((x + Math.floor(y / 4) * 3) % 9 < 2 || x % 24 < 2);
+    const value = groove ? 65 : band ? 150 : 125;
+    const i = (y * 64 + x) * 4;
+    treadPixels[i] = treadPixels[i + 1] = treadPixels[i + 2] = value; treadPixels[i + 3] = 255;
+  }
+  const treadTexture = new THREE.DataTexture(treadPixels, 64, 64);
+  treadTexture.wrapS = treadTexture.wrapT = THREE.RepeatWrapping; treadTexture.repeat.set(3, 1);
+  treadTexture.minFilter = treadTexture.magFilter = THREE.LinearFilter; treadTexture.needsUpdate = true; textures.add(treadTexture);
+  const tireRubber = standard('#1a2127', 0.98, 0); tireRubber.name = 'procedural-tread-rubber';
+  tireRubber.bumpMap = treadTexture; tireRubber.bumpScale = 0.023;
   const stitching = new THREE.LineBasicMaterial({ color: '#ddc9aa', transparent: true, opacity: 0.8 }); materials.push(stitching);
 
   function part(id: string, name: string, category: string, offset: V3, position: V3 = [0, 0, 0], description = '') {
@@ -94,6 +109,12 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   function panel(parent: THREE.Object3D, corners: V3[], material: THREE.Material, isShell = true) {
     const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(corners.flat(), 3));
     geometry.setIndex([0, 1, 2, 0, 2, 3]); geometry.computeVertexNormals(); return mesh(parent, geometry, material, [0, 0, 0], isShell);
+  }
+  function glassSeal(parent: THREE.Object3D, points: V3[]) {
+    const vertices = points.map(point => new THREE.Vector3(...point));
+    const curve = new THREE.CurvePath<THREE.Vector3>();
+    for (let i = 0; i < vertices.length; i++) curve.add(new THREE.LineCurve3(vertices[i], vertices[(i + 1) % vertices.length]));
+    return mesh(parent, new THREE.TubeGeometry(curve, 8, 0.006, 3, true), dark, [0, 0, 0], true);
   }
   function curvedPanel(parent: THREE.Object3D, width: number, z0: number, z1: number, y0: number, y1: number, crown: number) {
     const vertices: number[] = [], nx = 12, nz = 8;
@@ -147,7 +168,8 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
       const u = (i / nx * 2 - 1) * (inlay ? 0.63 : 1);
       const t = inlay ? 0.17 + 0.68 * j / ny : j / ny;
-      const taper = 1 - 0.09 * t - 0.025 * Math.sin(Math.PI * t);
+      const taper = inlay ? 0.98 - 0.18 * Math.pow(t, 4) - 0.04 * Math.pow(1 - t, 4)
+        : 1 - 0.15 * t - 0.035 * Math.sin(Math.PI * t);
       const lumbar = 0.035 * (1 - u * u) * Math.sin(Math.PI * t);
       vertices.push(x + u * width * taper / 2, 1.07 + 0.51 * t, z - 0.14 - 0.085 * t + lumbar + (inlay ? 0.008 : 0));
     }
@@ -201,7 +223,7 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     const wheel = part(`wheel-${corner}`, `${corner.toUpperCase()} 轮胎与轮辋`, 'wheel', [s * 0.55, 0, 0], [x, 0.42, z]);
     wheels.push(wheel);
     const tireGeometry = new THREE.TorusGeometry(0.315, 0.085, 10, 40); tireGeometry.rotateY(Math.PI / 2); tireGeometry.scale(1.5, 1, 1);
-    mesh(wheel, tireGeometry, black);
+    mesh(wheel, tireGeometry, tireRubber);
     const lipGeometry = new THREE.TorusGeometry(0.247, 0.017, 6, 32); lipGeometry.rotateY(Math.PI / 2);
     mesh(wheel, lipGeometry, trim, [s * 0.105, 0, 0]);
     cylinder(wheel, 0.08, 0.19, [0, 0, 0], steel);
@@ -318,12 +340,19 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     box(hood, [0.53, 0.102, 0.035], [s * 0.61, 1.065, 2.353], dark, 0.025, true);
     box(hood, [0.47, 0.027, 0.018], [s * 0.61, 1.079, 2.375], headlamp, 0.009, true);
     box(hood, [0.15, 0.065, 0.025], [s * 0.72, 1.025, 2.373], headlamp, 0.015, true);
+    for (let i = 0; i < 4; i++) box(hood, [0.07, 0.012, 0.012], [s * (0.425 + i * 0.105), 1.102, 2.394], headlamp, 0, true);
+    box(hood, [0.085, 0.027, 0.014], [s * 0.78, 1.073, 2.381], indicator, 0, true);
     box(hood, [0.2, 0.08, 0.03], [s * 0.73, 0.745, 2.373], dark, 0.02, true);
     appendShell(tube(hood, [[s * 0.66, 1.228, 1.28], [s * 0.61, 1.203, 1.68], [s * 0.62, 1.142, 2.2]], 0.003, trim));
   }
   const tail = part('tailgate', '尾门、尾灯与后保险杠', 'shell', [0, 0.46, -0.48]);
   box(tail, [1.87, 0.47, 0.13], [0, 0.98, -2.29], paint, 0.07, true);
   box(tail, [1.8, 0.06, 0.07], [0, 1.16, -2.37], taillamp, 0.02, true);
+  for (const s of [-1, 1]) {
+    box(tail, [0.52, 0.13, 0.023], [s * 0.66, 1.015, -2.383], dark, 0, true);
+    for (let i = 0; i < 4; i++) box(tail, [0.083, 0.028, 0.013], [s * (0.48 + i * 0.115), 1.048, -2.406], taillamp, 0, true);
+    box(tail, [0.12, 0.024, 0.013], [s * 0.48, 0.985, -2.407], headlamp, 0, true);
+  }
   box(tail, [1.77, 0.14, 0.18], [0, 0.63, -2.3], dark, 0.05, true);
   box(tail, [0.45, 0.13, 0.014], [0, 0.89, -2.367], dark, 0.01, true);
   box(tail, [1.6, 0.055, 0.16], [0, 1.89, -1.84], paint, 0.02, true);
@@ -331,10 +360,14 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
   curvedPanel(roof, 1.59, -1.76, 0.7, 1.91, 1.96, 0.035);
   panel(roof, [[-0.89, 1.27, 1.15], [0.89, 1.27, 1.15], [0.755, 1.94, 0.64], [-0.755, 1.94, 0.64]], glass);
   panel(roof, [[0.87, 1.26, -2.19], [-0.87, 1.26, -2.19], [-0.74, 1.91, -1.71], [0.74, 1.91, -1.71]], glass);
+  glassSeal(roof, [[-0.89, 1.275, 1.15], [0.89, 1.275, 1.15], [0.755, 1.945, 0.64], [-0.755, 1.945, 0.64]]);
+  glassSeal(roof, [[0.87, 1.265, -2.19], [-0.87, 1.265, -2.19], [-0.74, 1.915, -1.71], [0.74, 1.915, -1.71]]);
   for (const s of [-1, 1]) {
     const topX = s * 0.775, bottomX = s * 0.92;
     panel(roof, [[bottomX, 1.26, 1.08], [bottomX, 1.26, -0.15], [topX, 1.93, -0.15], [topX, 1.93, 0.61]], glass);
     panel(roof, [[bottomX, 1.26, -0.24], [bottomX, 1.26, -1.89], [topX, 1.90, -1.65], [topX, 1.93, -0.24]], glass);
+    glassSeal(roof, [[bottomX + s * 0.006, 1.265, 1.075], [bottomX + s * 0.006, 1.265, -0.15], [topX + s * 0.006, 1.935, -0.15], [topX + s * 0.006, 1.935, 0.605]]);
+    glassSeal(roof, [[bottomX + s * 0.006, 1.265, -0.245], [bottomX + s * 0.006, 1.265, -1.885], [topX + s * 0.006, 1.905, -1.65], [topX + s * 0.006, 1.935, -0.245]]);
     roofPillar(roof, s, [bottomX, 1.23, 1.14], [topX, 1.96, 0.66], 0.135, 0.095);
     roofPillar(roof, s, [bottomX, 1.24, -0.195], [topX, 1.97, -0.195], 0.085, 0.075);
     roofPillar(roof, s, [bottomX, 1.24, -2.15], [topX, 1.91, -1.72], 0.19, 0.115);
