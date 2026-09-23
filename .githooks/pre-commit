@@ -1,0 +1,2 @@
+#!/bin/sh
+node scripts/check-boundaries.mjs && node scripts/check-progress.mjs

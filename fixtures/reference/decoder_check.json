@@ -1,0 +1,13 @@
+{
+  "decoderPassed": true,
+  "channelsPerSignal": 4,
+  "samplesPerChannel": 32000,
+  "superpositionMaxAbsErrorPa": 1.234002411365509e-8,
+  "reductionDbByMic": [
+    28.899678155342205,
+    28.711028742446917,
+    28.96180208984694,
+    28.816193288413498
+  ],
+  "note": "Checks data transport only; this is not a JavaScript FxLMS implementation."
+}

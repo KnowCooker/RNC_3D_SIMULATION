@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "demo-v2",
+  "vehicleId": "teaching-bev-rwd",
+  "pathProfileId": "synthetic-4x4x4-v1",
+  "algorithm": "fxlms",
+  "sampleRateHz": 2000,
+  "durationSeconds": 16,
+  "adaptationStartsSeconds": 2,
+  "road": "asphalt",
+  "speedKph": 60,
+  "seed": 11,
+  "taps": 64,
+  "stepSize": 0.08
+}

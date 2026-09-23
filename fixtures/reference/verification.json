@@ -1,0 +1,158 @@
+{
+  "cases": [
+    {
+      "seed": 11,
+      "taps": 64,
+      "mu": 0.08,
+      "sampleRateHz": 2000,
+      "durationSeconds": 16,
+      "adaptationStartsSeconds": 2,
+      "measurementWindowSeconds": [
+        12,
+        16
+      ],
+      "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+      "reductionDbByMic": [
+        28.899678154145345,
+        28.711028743240902,
+        28.96180209538674,
+        28.816193285886573
+      ],
+      "aggregateReductionDb": 28.847918337250782,
+      "maxAbsControlDrive": 1.1247848541369885,
+      "maxAbsPressurePa": 0.1587409041615212,
+      "superpositionMaxAbsErrorPa": 6.938893903907228e-18,
+      "referencePythonComputeSeconds": 0.644355500000529,
+      "secondaryNonzeroCrossPaths": 12,
+      "limitations": [
+        "Synthetic controllable FIR paths, not measured vehicle acoustics",
+        "Python elapsed time does not benchmark browser rendering or JavaScript",
+        "Controller has 16 filters; all 16 secondary paths are included"
+      ]
+    },
+    {
+      "seed": 29,
+      "taps": 64,
+      "mu": 0.08,
+      "sampleRateHz": 2000,
+      "durationSeconds": 16,
+      "adaptationStartsSeconds": 2,
+      "measurementWindowSeconds": [
+        12,
+        16
+      ],
+      "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+      "reductionDbByMic": [
+        28.646455369270193,
+        28.715209033733625,
+        28.396953000028283,
+        28.725540904397526
+      ],
+      "aggregateReductionDb": 28.62181239153316,
+      "maxAbsControlDrive": 1.117962081479206,
+      "maxAbsPressurePa": 0.14693419745522382,
+      "superpositionMaxAbsErrorPa": 6.938893903907228e-18,
+      "referencePythonComputeSeconds": 0.622959100001026,
+      "secondaryNonzeroCrossPaths": 12,
+      "limitations": [
+        "Synthetic controllable FIR paths, not measured vehicle acoustics",
+        "Python elapsed time does not benchmark browser rendering or JavaScript",
+        "Controller has 16 filters; all 16 secondary paths are included"
+      ]
+    },
+    {
+      "seed": 47,
+      "taps": 64,
+      "mu": 0.08,
+      "sampleRateHz": 2000,
+      "durationSeconds": 16,
+      "adaptationStartsSeconds": 2,
+      "measurementWindowSeconds": [
+        12,
+        16
+      ],
+      "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+      "reductionDbByMic": [
+        28.66980769151744,
+        28.83278352272205,
+        28.658626516475593,
+        29.010857474210564
+      ],
+      "aggregateReductionDb": 28.791749643821323,
+      "maxAbsControlDrive": 1.029550353762588,
+      "maxAbsPressurePa": 0.13856395317313058,
+      "superpositionMaxAbsErrorPa": 6.938893903907228e-18,
+      "referencePythonComputeSeconds": 0.6245311000093352,
+      "secondaryNonzeroCrossPaths": 12,
+      "limitations": [
+        "Synthetic controllable FIR paths, not measured vehicle acoustics",
+        "Python elapsed time does not benchmark browser rendering or JavaScript",
+        "Controller has 16 filters; all 16 secondary paths are included"
+      ]
+    },
+    {
+      "seed": 11,
+      "taps": 32,
+      "mu": 0.08,
+      "sampleRateHz": 2000,
+      "durationSeconds": 16,
+      "adaptationStartsSeconds": 2,
+      "measurementWindowSeconds": [
+        12,
+        16
+      ],
+      "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+      "reductionDbByMic": [
+        28.984393097994413,
+        28.995616758824646,
+        29.15718819246416,
+        29.032896162130733
+      ],
+      "aggregateReductionDb": 29.041613983993877,
+      "maxAbsControlDrive": 1.1198691393984928,
+      "maxAbsPressurePa": 0.1587409041615212,
+      "superpositionMaxAbsErrorPa": 6.938893903907228e-18,
+      "referencePythonComputeSeconds": 0.6893498999997973,
+      "secondaryNonzeroCrossPaths": 12,
+      "limitations": [
+        "Synthetic controllable FIR paths, not measured vehicle acoustics",
+        "Python elapsed time does not benchmark browser rendering or JavaScript",
+        "Controller has 16 filters; all 16 secondary paths are included"
+      ]
+    },
+    {
+      "seed": 11,
+      "taps": 64,
+      "mu": 0,
+      "sampleRateHz": 2000,
+      "durationSeconds": 16,
+      "adaptationStartsSeconds": 2,
+      "measurementWindowSeconds": [
+        12,
+        16
+      ],
+      "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+      "reductionDbByMic": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aggregateReductionDb": 0.0,
+      "maxAbsControlDrive": 0.0,
+      "maxAbsPressurePa": 0.1587409041615212,
+      "superpositionMaxAbsErrorPa": 0.0,
+      "referencePythonComputeSeconds": 0.9766070000187028,
+      "secondaryNonzeroCrossPaths": 12,
+      "limitations": [
+        "Synthetic controllable FIR paths, not measured vehicle acoustics",
+        "Python elapsed time does not benchmark browser rendering or JavaScript",
+        "Controller has 16 filters; all 16 secondary paths are included"
+      ]
+    }
+  ],
+  "deterministicRepeatPassed": true,
+  "wavFullScalePerPa": 2.0,
+  "wavOutputSampleRateHz": 16000,
+  "audioDescription": "One synthetic driver microphone, mono, same gain; controller learning starts at 2s"
+}

@@ -1,0 +1,33 @@
+name: Engineering checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - run: pnpm install --frozen-lockfile
+      - name: Require development log with code changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/check-progress.mjs --base "$BASE_SHA"
+      - run: pnpm check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rnc-browser-build
+          path: |
+            dist/
+            scripts/serve.mjs
+            启动演示.cmd
+            README.md

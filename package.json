@@ -1,0 +1,30 @@
+{
+  "name": "rnc-3d-simulation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.12.0" },
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "dev:a": "vite --mode reference --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "start": "node scripts/serve.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:b": "tsx --test tests/engine.test.ts tests/analysis.test.ts",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "check:progress": "node scripts/check-progress.mjs",
+    "check": "pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build",
+    "setup": "node scripts/setup-hooks.mjs"
+  },
+  "dependencies": { "three": "0.180.0" },
+  "devDependencies": {
+    "@types/node": "24.7.2",
+    "@types/three": "0.180.0",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vite": "7.1.7"
+  }
+}
