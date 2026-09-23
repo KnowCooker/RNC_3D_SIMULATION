@@ -1,0 +1,101 @@
+{
+  "count": 26,
+  "checks": [
+    "MIC click selects residual for graph and audio after original-noise mode",
+    "original-noise comparison retains MIC highlight and honest legend",
+    "x/fl uses correct unit and keeps prior RR original-noise audition explicit",
+    "x/fr uses correct unit and keeps prior RR original-noise audition explicit",
+    "x/rl uses correct unit and keeps prior RR original-noise audition explicit",
+    "x/rr uses correct unit and keeps prior RR original-noise audition explicit",
+    "u/fl uses correct unit and keeps prior RR original-noise audition explicit",
+    "u/fr uses correct unit and keeps prior RR original-noise audition explicit",
+    "u/rl uses correct unit and keeps prior RR original-noise audition explicit",
+    "u/rr uses correct unit and keeps prior RR original-noise audition explicit",
+    "seat fl maps d graph and MIC highlight",
+    "seat fr maps d graph and MIC highlight",
+    "seat rl maps d graph and MIC highlight",
+    "seat rr maps d graph and MIC highlight",
+    "RMS and PSD show warming up before their windows",
+    "RMS becomes available at 0.5s while PSD still waits",
+    "PSD available at first supported slider tick beyond 1024 samples",
+    "end-position graph shares playback sample and run identity without autoplay",
+    "viewport 1440 has no horizontal overflow and retains metrics/controls",
+    "viewport 900 has no horizontal overflow and retains metrics/controls",
+    "viewport 801 has no horizontal overflow and retains metrics/controls",
+    "viewport 800 has no horizontal overflow and retains metrics/controls",
+    "viewport 390 has no horizontal overflow and retains metrics/controls",
+    "viewport 320 has no horizontal overflow and retains metrics/controls",
+    "rendered graph and transport stay within 100ms in foreground samples",
+    "no uncaught page error"
+  ],
+  "layouts": [
+    {
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "width": 900,
+      "documentWidth": 900
+    },
+    {
+      "width": 801,
+      "documentWidth": 801
+    },
+    {
+      "width": 800,
+      "documentWidth": 800
+    },
+    {
+      "width": 390,
+      "documentWidth": 390
+    },
+    {
+      "width": 320,
+      "documentWidth": 320
+    }
+  ],
+  "samples": [
+    {
+      "time": 2.22,
+      "end": 4400
+    },
+    {
+      "time": 2.39,
+      "end": 4762
+    },
+    {
+      "time": 2.56,
+      "end": 5104
+    },
+    {
+      "time": 2.73,
+      "end": 5423
+    },
+    {
+      "time": 2.91,
+      "end": 5781
+    },
+    {
+      "time": 3.08,
+      "end": 6122
+    },
+    {
+      "time": 3.25,
+      "end": 6464
+    },
+    {
+      "time": 3.42,
+      "end": 6821
+    },
+    {
+      "time": 3.59,
+      "end": 7162
+    },
+    {
+      "time": 3.75,
+      "end": 7504
+    }
+  ],
+  "errors": [],
+  "scope": "UI clock observation, not physical audio/visual latency"
+}
