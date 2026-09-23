@@ -16,12 +16,19 @@ async (page) => {
   await page.waitForFunction(() => Boolean(window.__a2Observed));
   // Only the test container changes: fixed 1280×720 drawing buffer for comparable measurement.
   await page.locator('#viewer').evaluate(host => { host.style.width = '1280px'; host.style.height = '720px'; });
+  // Headed Chrome may retain the DPR from its initial window when the viewport changes.
+  // Normalize only this benchmark renderer, without modifying production pixel-ratio policy.
+  await page.evaluate(() => {
+    const renderer = window.__a2Observed.renderer;
+    renderer.setPixelRatio(1);
+    renderer.setSize(1280, 720);
+  });
   await page.getByRole('button', { name: '复位视角与结构' }).click();
   await page.waitForTimeout(500);
   const environment = await page.evaluate(() => {
     const { renderer } = window.__a2Observed;
     const gl = renderer.getContext(), ext = gl.getExtension('WEBGL_debug_renderer_info');
-    return { userAgent: navigator.userAgent, devicePixelRatio, viewport: [innerWidth, innerHeight], buffer: [gl.drawingBufferWidth, gl.drawingBufferHeight], gpu: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER), vendor: ext ? gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR) };
+    return { userAgent: navigator.userAgent, devicePixelRatio, benchmarkPixelRatio: renderer.getPixelRatio(), viewport: [innerWidth, innerHeight], buffer: [gl.drawingBufferWidth, gl.drawingBufferHeight], gpu: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER), vendor: ext ? gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR) };
   });
   const measure = () => page.evaluate(() => new Promise(resolve => {
     const startedAt = new Date().toISOString(), start = performance.now(), intervals = [];

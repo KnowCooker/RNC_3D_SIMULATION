@@ -1,0 +1,16 @@
+{
+  "measuredAtUtc": "2026-09-23T15:37:57.8872625Z",
+  "testedCodeCommit": "838cdf38503cb2a8dc7512ace28f7894d3f283c9",
+  "url": "http://127.0.0.1:5176/",
+  "headed": false,
+  "cliVersion": "0.1.21 (when using npx; explicit CliPath version recorded below)",
+  "cliReportedVersion": "0.1.21",
+  "nodeVersion": "v24.13.1",
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "dimensionsMatch": true,
+  "durationMatch": true,
+  "bothScenesAtLeast30Fps": true,
+  "geometryWithinBudget": true,
+  "localPerformancePassed": true,
+  "targetIntegratedGpuAcceptance": "pending explicit target-device and renderer verification; local pass alone is insufficient"
+}
