@@ -1,0 +1,138 @@
+{
+  "checkedAt": "2026-09-23T13:09:08.361Z",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "run": "runId: golden-seed11-taps64-mu008 | source: reference-replay | seed=11 · taps=64 · μ=0.08 | 参考数据 | sampleCount=32000",
+  "checks": [
+    {
+      "check": "pause freezes time",
+      "passed": true,
+      "time": 0.53
+    },
+    {
+      "check": "resume keeps position",
+      "passed": true
+    },
+    {
+      "check": "continuous fl/d",
+      "passed": true,
+      "before": 0.55,
+      "after": 0.63
+    },
+    {
+      "check": "selected signal fl/d",
+      "passed": true
+    },
+    {
+      "check": "continuous fl/e",
+      "passed": true,
+      "before": 0.64,
+      "after": 0.72
+    },
+    {
+      "check": "selected signal fl/e",
+      "passed": true
+    },
+    {
+      "check": "continuous fr/d",
+      "passed": true,
+      "before": 0.76,
+      "after": 0.84
+    },
+    {
+      "check": "selected signal fr/d",
+      "passed": true
+    },
+    {
+      "check": "continuous fr/e",
+      "passed": true,
+      "before": 0.85,
+      "after": 0.94
+    },
+    {
+      "check": "selected signal fr/e",
+      "passed": true
+    },
+    {
+      "check": "continuous rl/d",
+      "passed": true,
+      "before": 0.97,
+      "after": 1.07
+    },
+    {
+      "check": "selected signal rl/d",
+      "passed": true
+    },
+    {
+      "check": "continuous rl/e",
+      "passed": true,
+      "before": 1.07,
+      "after": 1.14
+    },
+    {
+      "check": "selected signal rl/e",
+      "passed": true
+    },
+    {
+      "check": "continuous rr/d",
+      "passed": true,
+      "before": 1.17,
+      "after": 1.27
+    },
+    {
+      "check": "selected signal rr/d",
+      "passed": true
+    },
+    {
+      "check": "continuous rr/e",
+      "passed": true,
+      "before": 1.27,
+      "after": 1.34
+    },
+    {
+      "check": "selected signal rr/e",
+      "passed": true
+    },
+    {
+      "check": "volume adjustment retains mute",
+      "passed": true
+    },
+    {
+      "check": "unmute retains selected volume",
+      "passed": true,
+      "volume": "0.1"
+    },
+    {
+      "check": "seek after end stays paused",
+      "passed": true
+    },
+    {
+      "check": "replay while playing restarts",
+      "passed": true
+    },
+    {
+      "check": "replay while paused starts",
+      "passed": true
+    },
+    {
+      "check": "natural end followed by seek stays paused",
+      "passed": true
+    },
+    {
+      "check": "replay after natural completion",
+      "passed": true
+    },
+    {
+      "check": "cancel pending audio start",
+      "passed": true
+    },
+    {
+      "check": "load cancels pending audio start",
+      "passed": true
+    },
+    {
+      "check": "no uncaught page errors",
+      "passed": true,
+      "pageErrors": []
+    }
+  ]
+}
