@@ -1,6 +1,6 @@
 # A2-FULL-005：V7 分层、V8 三轴截面与完整页标记
 
-日期：2026-09-24。基线为 A2-FULL-004 的 `3a965fd`，[草稿 PR #10](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/10) 依赖 #9→#8→#7；本批经验证源码 SHA 在代码提交后固定。此处是 A2 局部视觉/交互证据，不表示 main 已合并或完整 A 组交付。
+日期：2026-09-24。基线为 A2-FULL-004 的 `3a965fd`，[草稿 PR #10](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/10) 依赖 #9→#8→#7；经验证的运行源码提交为 [`9f8b7aa8bc96386ab28c617d88e932cc4c5e54fa`](https://github.com/lzhdai/RNC_3D_SIMULATION/commit/9f8b7aa8bc96386ab28c617d88e932cc4c5e54fa)。此处是 A2 局部视觉/交互证据，不表示 main 已合并或完整 A 组交付。
 
 ## 实际改动
 
