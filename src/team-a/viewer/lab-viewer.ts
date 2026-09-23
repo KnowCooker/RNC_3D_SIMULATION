@@ -94,7 +94,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const micAnchor = (i: number): Anchor => ({ origin: MIC_POSITIONS[i], mountPart: `seat-${[1, 2, 3, 5][i]}` });
   const markerRows: { mesh: THREE.Mesh; button: HTMLButtonElement; line: SVGLineElement; selection: LabSelection; source: boolean; anchor: Anchor }[] = [];
   const waveRows: THREE.Mesh[] = [];
-  const pathRows: { line: THREE.Line; dot: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; start: Anchor; end: Anchor; primary: boolean; channel: number }[] = [];
+  const pathRows: { line: THREE.Line; dot: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; start: Anchor; end: Anchor; primary: boolean; channel: number; mic: number }[] = [];
   const fieldPoints = createFieldPoints();
   const fieldMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.48, depthWrite: false });
   const fieldMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(0.085, 8, 6), fieldMaterial, fieldPoints.length);
@@ -114,8 +114,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   const fieldNote = document.createElement('div'); fieldNote.className = 'lab-field-interpolation-note'; fieldNote.hidden = true;
   host.append(fieldNote);
+  const pathFocusNote = document.createElement('div'); pathFocusNote.className = 'lab-path-focus-note'; pathFocusNote.hidden = true;
+  const pathFocusDetail = document.createElement('span'); pathFocusDetail.className = 'lab-path-focus-detail';
+  const pathFocusCompact = document.createElement('span'); pathFocusCompact.className = 'lab-path-focus-compact';
+  pathFocusNote.append(pathFocusDetail, pathFocusCompact); host.append(pathFocusNote);
   const matrix = new THREE.Matrix4(), color = new THREE.Color();
   let frame: FieldFrame | null = null;
+  let pathFocusKey = '';
 
   function displayPosition(anchor: Anchor, target: THREE.Vector3) {
     target.set(...anchor.origin);
@@ -142,8 +147,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     clipPlane.constant = -clipValue;
     const planes = clipAxis === 'none' ? [] : [clipPlane];
     // Retain computed field samples while letting cut geometry remain legible.
-    fieldMaterial.opacity = clipAxis === 'none' ? 0.48 : 0.18;
-    sliceMaterials.forEach(material => { material.opacity = clipAxis === 'none' ? 0.52 : 0.32; });
+    const layered = waveVisible || pathMode !== 'none';
+    fieldMaterial.opacity = clipAxis === 'none' ? (layered ? 0.36 : 0.48) : 0.18;
+    sliceMaterials.forEach(material => { material.opacity = clipAxis === 'none' ? (layered ? 0.44 : 0.52) : 0.32; });
     for (const material of model?.materials ?? []) { material.clippingPlanes = planes; material.needsUpdate = true; }
     for (const group of [markers, waves, paths, field]) group.traverse(object => {
       const material = (object as THREE.Mesh).material;
@@ -197,6 +203,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     });
     markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); markerRows.length = 0;
     clear(markers); clear(paths); clear(waves); pathRows.length = 0; waveRows.length = 0;
+    pathFocusKey = '';
     mountIssues = [];
     next.references.forEach((sensor, i) => {
       // Old recipes have no mount metadata. Their four default suspension locations are still identifiable geometrically.
@@ -221,8 +228,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const geometry = new THREE.BufferGeometry().setFromPoints([from, to]);
       const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: primary ? '#d4a3ff' : '#6ab8ff', transparent: true, opacity: 0.25 }));
       line.userData = { primary, channel, mic }; line.frustumCulled = false; paths.add(line);
-      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.023, 6, 6), new THREE.MeshBasicMaterial({ color: primary ? '#e4c2ff' : '#92c9ff' }));
-      paths.add(dot); pathRows.push({ line, dot, from, to, start, end, primary, channel });
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.023, 6, 6), new THREE.MeshBasicMaterial({ color: primary ? '#e4c2ff' : '#92c9ff', transparent: true, depthWrite: false }));
+      paths.add(dot); pathRows.push({ line, dot, from, to, start, end, primary, channel, mic });
     }
     applyBody(); applyClipping();
   }
@@ -256,6 +263,51 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       colors.needsUpdate = true;
     }
     if (!fieldNote.hidden) fieldNote.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${fieldSlice.toUpperCase()} 切片 · 真实采样点间三角插值/透视叠层 · 30–80 dB SPL`;
+  }
+  function pathIsShown(row: (typeof pathRows)[number]) {
+    return (row.primary || !!config?.speakerEnabled[row.channel]) && (pathMode === 'both' || (row.primary ? pathMode === 'primary' : pathMode === 'secondary'));
+  }
+  function pathMatchesSelection(row: (typeof pathRows)[number], selected: LabSelection) {
+    if (selected.signal === 'q') return row.primary && row.channel === selected.channel;
+    if (selected.signal === 'u') return !row.primary && row.channel === selected.channel;
+    if (selected.signal === 'd') return row.primary && row.mic === selected.channel;
+    if (selected.signal === 'a') return !row.primary && row.mic === selected.channel;
+    return selected.signal === 'e' && row.mic === selected.channel;
+  }
+  function updatePathFocus(selected: LabSelection) {
+    const key = `${selected.signal}:${selected.channel}:${pathMode}:${config?.speakerEnabled.join(',')}`;
+    if (key === pathFocusKey) return;
+    pathFocusKey = key;
+    pathFocusNote.hidden = pathMode === 'none';
+    if (pathFocusNote.hidden) return;
+    const shown = pathRows.filter(pathIsShown), focused = shown.filter(row => pathMatchesSelection(row, selected));
+    const hasFocus = focused.length > 0;
+    for (const row of pathRows) {
+      const highlight = hasFocus && pathIsShown(row) && pathMatchesSelection(row, selected);
+      const material = row.line.material as THREE.LineBasicMaterial;
+      material.opacity = hasFocus ? (highlight ? 0.78 : 0.08) : 0.23;
+      material.depthTest = !highlight; material.needsUpdate = true;
+      row.line.renderOrder = highlight ? 5 : 0;
+      const dotMaterial = row.dot.material as THREE.MeshBasicMaterial;
+      dotMaterial.opacity = hasFocus ? (highlight ? 0.92 : 0.12) : 0.4;
+      dotMaterial.depthTest = !highlight; dotMaterial.needsUpdate = true;
+      row.dot.renderOrder = highlight ? 5 : 0;
+    }
+    const corner = corners[selected.channel]?.toUpperCase() ?? String(selected.channel + 1);
+    const identity = selected.signal === 'q' ? `轮端源 Q${selected.channel + 1} → 四误差点`
+      : selected.signal === 'u' ? config?.speakerEnabled[selected.channel]
+        ? `扬声器 OUT ${selected.channel + 1} → 四误差点` : `扬声器 OUT ${selected.channel + 1} 已停用，无次级传播路径`
+        : selected.signal === 'd' ? `MIC ${corner} 原声 d · 初级路径`
+          : selected.signal === 'a' ? `MIC ${corner} 控制声 a · 次级路径`
+            : selected.signal === 'e' ? `MIC ${corner} 残余声 e · 初级+次级路径`
+              : '参考 x 是测量信号，不是轮端源 q';
+    pathFocusDetail.textContent = `直线示意路径 · ${identity} · 高亮 ${focused.length}/${shown.length} 条；其余淡化但保留`;
+    const shortIdentity = selected.signal === 'q' ? `Q${selected.channel + 1} → 四麦克风`
+      : selected.signal === 'u' ? config?.speakerEnabled[selected.channel] ? `OUT ${selected.channel + 1} → 四麦克风` : `OUT ${selected.channel + 1} 停用`
+        : selected.signal === 'x' ? '参考 x ≠ 轮端 q' : `MIC ${corner} ${selected.signal}`;
+    pathFocusCompact.textContent = `示意路径 ${focused.length}/${shown.length} · ${shortIdentity}`;
+    pathFocusNote.dataset.focusedPaths = String(focused.length);
+    pathFocusNote.dataset.shownPaths = String(shown.length);
   }
   const raycaster = new THREE.Raycaster(), pointer = new THREE.Vector2();
   let down = [0, 0];
@@ -313,9 +365,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     setBody(value: string) { body = value; applyBody(); },
     setSection(axis: string, value: number) { const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; applyClipping(); if (changed) focusSection(axis); },
     setEditMode(value: boolean) { editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
-    setWaves(value: boolean) { waveVisible = value; },
-    setPaths(value: string) { pathMode = value; },
-    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { fieldMode = mode; fieldSlice = slice; paintField(); },
+    setWaves(value: boolean) { waveVisible = value; applyClipping(); },
+    setPaths(value: string) { pathMode = value; pathFocusKey = ''; applyClipping(); },
+    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { fieldMode = mode; fieldSlice = slice; applyClipping(); paintField(); },
     updateField(value: FieldFrame) { frame = value; paintField(); },
     render(time: number, selected: LabSelection, drives: number[], sourceValues: number[]) {
       const now = performance.now(), dt = Math.min(0.1, (now - lastTime) / 1000); lastTime = now;
@@ -332,6 +384,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.mesh.scale.setScalar(row.source ? (active ? 1.4 : 1) * (1 + Math.min(0.35, Math.abs(sourceValues[row.selection.channel] ?? 0) * 0.1)) : active ? 1.4 : 1);
         row.button.setAttribute('aria-pressed', String(active));
       });
+      updatePathFocus(selected);
       field.position.y = amount * 0.45;
       (contactShade.material as THREE.MeshBasicMaterial).opacity = clipAxis === 'none' ? 1 - amount * 0.8 : 0.12;
       waves.visible = waveVisible;
@@ -339,11 +392,11 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         const i = row.userData.speaker, phase = (time * 1.5 + row.userData.phase) % 1;
         displayPosition(speakerAnchor(i), row.position); row.scale.setScalar(0.12 + phase * 1.1);
         row.visible = !!config?.speakerEnabled[i] && Math.abs(drives[i] ?? 0) > 1e-8;
-        (row.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * 0.16;
+        (row.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (field.visible ? 0.10 : 0.16);
       });
       paths.visible = pathMode !== 'none';
       pathRows.forEach((row, i) => {
-        const visible = (row.primary || !!config?.speakerEnabled[row.channel]) && (pathMode === 'both' || (row.primary ? pathMode === 'primary' : pathMode === 'secondary'));
+        const visible = pathIsShown(row);
         row.line.visible = row.dot.visible = visible;
         displayPosition(row.start, row.from); displayPosition(row.end, row.to);
         const positions = row.line.geometry.getAttribute('position');
@@ -367,6 +420,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }

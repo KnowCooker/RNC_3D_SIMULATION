@@ -99,3 +99,23 @@
   font-size: 10px;
   pointer-events: none;
 }
+.lab-path-focus-note {
+  position: absolute;
+  z-index: 3;
+  left: 12px;
+  top: 12px;
+  max-width: min(52%, 470px);
+  padding: 5px 8px;
+  border: 1px solid #668496;
+  border-radius: 5px;
+  background: #102230e8;
+  color: #d5e6f2;
+  font-size: 10px;
+  pointer-events: none;
+}
+.lab-path-focus-compact { display: none; }
+@media (max-width: 600px) {
+  .lab-path-focus-note { max-width: min(150px, calc(100% - 250px)); font-size: 9px; line-height: 1.25; }
+  .lab-path-focus-detail { display: none; }
+  .lab-path-focus-compact { display: inline; }
+}
