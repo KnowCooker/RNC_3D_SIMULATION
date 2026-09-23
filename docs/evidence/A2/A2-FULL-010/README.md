@@ -1,6 +1,6 @@
 # A2-FULL-010 四车型动态剖面与真实场录像
 
-本批基于 A2-FULL-009 已提交 `569b6a9`，对应[草稿 PR #15](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/15)。经验证运行源码 SHA 在后续证据固定提交中填写；开放 PR 不等于 main 已集成。
+本批基于 A2-FULL-009 已提交 `569b6a9`，对应[草稿 PR #15](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/15)。经验证运行源码为 `5e383705e83c11eace5f4ca5ccbbfd8b5896c000`，原仓库 verify CI 通过；本次仅文档提交固定版本。开放 PR 不等于 main 已集成。
 
 ## 动态证据与实际结论
 
