@@ -1,6 +1,6 @@
 # A2-001 标签与点选验证
 
-日期：2026-09-23。执行者：Codex root-a2-markers。分支 `a/a2-001-markers`，基线 `9b2fb8e`；最终代码版本由 [PR #3 HEAD](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/3) 定位。Windows 本机 Chromium、Vite 参考回放，默认 seed 11 / taps 64 / μ 0.08；没有混入 A1 播放器或状态修复。
+日期：2026-09-23。执行者：Codex root-a2-markers。分支 `a/a2-001-markers`，基线 `9b2fb8e`；最终代码版本由 [PR #3 HEAD](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/3) 定位。Windows 本机 Chromium、Vite 参考回放，默认 seed 11 / taps 64 / μ 0.08。独立验证后合入已发布 main d4e191b（A1-001）并再次完整验证，未引入 A1-002。
 
 ## 复现与修复
 
@@ -32,7 +32,7 @@ pnpm check
 
 ## 实际结果
 
-- `pnpm check` 通过：类型、源码边界、9/9测试、生产构建（含2项 A2 碰撞布局测试）。
+- 独立分支 `pnpm check` 通过：类型、源码边界、9/9测试、生产构建（含2项 A2 碰撞布局测试）。合入 main d4e191b 后再次通过类型、边界、19/19测试、生产构建，并复跑90/90浏览器断言通过。
 - [浏览器结果](browser-result.json)：90/90断言；五种视图 × 12标签逐点点击，图表信号/通道和 MIC 试听座位一致，全部标签在视口内且无矩形重叠。含小球射线点选、旋转拖动不误选、Enter/Tab/Space键盘操作。
 - 视图：1440×1100 默认、旋转、展开、实体车身展开；390×844 窄窗。实际无头窄窗 viewer 390px，headed 带滚动条为375px。
 - 截图：[修复前](before.png)、[默认](default.png)、[旋转](rotated.png)、[展开](exploded.png)、[窄窗](narrow.png)。已逐张检查。
