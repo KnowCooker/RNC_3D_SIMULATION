@@ -25,7 +25,7 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
         <button id="calculate" class="primary">计算新实验</button><button id="cancel" hidden>取消计算</button><button id="reference" class="subtle">载入参考算例</button>
         <p id="status" role="status" aria-live="polite">读取经过验证的默认算例…</p>
         <div class="divider"></div><div class="section-label">02 / 硬件与信号</div><div id="hardware"></div>
-        <div class="source-key">● 4 轮激励源：独立合成噪声<br>● REF：悬架单轴振动参考<br>● OUT：车门扬声器驱动<br>● MIC：头枕附近误差声压</div>
+        <div class="source-key">● 4 轮激励源：教学示意，点选查看同角 REF<br>● REF：悬架单轴振动参考，并非独立的源测量<br>● OUT：车门扬声器驱动<br>● MIC：头枕附近误差声压</div>
       </aside>
       <section class="center-panel"><div class="viewer-top"><div><div class="section-label">03 / 车辆与点位</div><h2>看见控制系统</h2></div><span class="pill quiet">+Y 上 · +Z 车头 · +X 左侧</span></div>
         <div id="viewer"><div class="viewer-hint">拖动旋转 · 滚轮缩放 · 点击彩色硬件点</div></div>
@@ -36,7 +36,7 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
         <div class="steady"><small>后 4 秒总功率降噪</small><strong id="aggregate">—<em> dB</em></strong><span>由完整实验结果计算</span></div>
         <p class="muted small">颜色只代表 4 个测点，不代表连续三维声场。前 2 秒关闭控制，随后开始学习。</p>
       </aside>
-      <section class="charts"><article><div class="chart-title"><strong id="wave-title">MIC FL · e / Pa</strong><span>原声灰色 / 所选信号绿色</span></div><canvas id="wave"></canvas></article><article><div class="chart-title"><strong>单边 PSD</strong><span id="psd-unit">dB re 1 Pa²/Hz · Hann 1024</span></div><canvas id="spectrum"></canvas></article><article><div class="chart-title"><strong>四点收敛 · dB</strong><span>FL / FR / RL / RR</span></div><canvas id="convergence"></canvas></article></section>
+      <section class="charts"><p id="selection-note" class="chart-context"></p><article><div class="chart-title"><strong id="wave-title">MIC FL · e / Pa</strong><span id="wave-legend">原声灰色 / 残余绿色</span></div><canvas id="wave" aria-label="所选信号波形"></canvas><p id="chart-time" class="chart-context">波形准备中</p></article><article><div class="chart-title"><strong>单边 PSD</strong><span id="psd-unit">dB re 1 Pa²/Hz · Hann 1024</span></div><canvas id="spectrum" aria-label="所选信号频谱"></canvas><p id="spectrum-status" class="chart-context">频谱准备中</p></article><article><div class="chart-title"><strong>四点收敛 · dB</strong><span>FL / FR / RL / RR</span></div><canvas id="convergence" aria-label="完整实验四点收敛曲线"></canvas><p class="chart-context">完整 16 秒实验 · 无有效指标的区间留空</p></article></section>
     </main>
     <footer><div class="transport"><button id="play" class="primary" disabled>播放</button><button id="replay" disabled>重播</button><span id="time">00.00 / 16.00 s</span></div><input id="seek" type="range" min="0" max="16" step="0.01" value="0" aria-label="播放进度" disabled><div class="listen"><select id="mic" aria-label="试听座位">${ORDER.map(c => `<option value="${c}">${CORNER_NAMES[c]}</option>`).join('')}</select><select id="comparison" aria-label="声音对比"><option value="e">对比 RNC 结果</option><option value="d">对比原噪声</option></select><button id="mute">静音</button><input id="volume" type="range" min="0" max="1" step="0.01" value="0.25" aria-label="音量"></div></footer>
     <div class="diagnostics" id="diagnostics">接口 demo-v2 · 教学路径 synthetic-4x4x4-v1</div>`;
@@ -44,7 +44,7 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
   const player = new Player();
   let result: RunResult | null = null, busy = false, muted = false, exploded = false;
   let selected: { signal: SignalKind; channel: Corner } = { signal: 'e', channel: 'fl' };
-  let frame: AnalysisFrame | null = null, curves: number[][] = [], lastCharts = -1;
+  let frame: AnalysisFrame | null = null, curves: (number | null)[][] = [], lastCharts = -1;
   type Request = { id: string; kind: 'calculation' | 'reference' };
   let activeRequest: Request | null = null;
   function select(signal: SignalKind, channel: Corner) {
@@ -52,8 +52,16 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
     const unit = signal === 'x' ? 'm/s²' : signal === 'u' ? 'drive' : 'Pa';
     $('wave-title').textContent = `${channel.toUpperCase()} · ${signal} / ${unit}`;
     $('psd-unit').textContent = `dB re 1 (${unit})²/Hz · Hann 1024`;
-    root.querySelectorAll<HTMLButtonElement>('[data-signal]').forEach(b => b.classList.toggle('selected', b.dataset.signal === signal && b.dataset.corner === channel));
-    if (['d', 'e', 'a'].includes(signal)) { $<HTMLSelectElement>('mic').value = channel; updateComparison(); }
+    const hardwareSignal = signal === 'd' ? 'e' : signal;
+    root.querySelectorAll<HTMLButtonElement>('#hardware [data-signal]').forEach(b => b.classList.toggle('selected', b.dataset.signal === hardwareSignal && b.dataset.corner === channel));
+    if (signal === 'd' || signal === 'e') {
+      $<HTMLSelectElement>('mic').value = channel;
+      $<HTMLSelectElement>('comparison').value = signal;
+      updateComparison();
+    }
+    $('wave-legend').textContent = signal === 'e' ? '原声 d 灰色 / 残余 e 绿色' : signal === 'd' ? '原噪声 d 灰色' : `${signal} 绿色 · ${unit}`;
+    const listening = $<HTMLSelectElement>('comparison').value === 'd' ? '原噪声 d' : '残余声 e';
+    $('selection-note').textContent = `图表：${channel.toUpperCase()} / ${signal}（${unit}）；试听：MIC ${$<HTMLSelectElement>('mic').value.toUpperCase()} / ${listening}。${signal === 'x' || signal === 'u' ? '参考与驱动只供查看，试听保持原座位。' : '图表与试听使用同一座位和信号。'}`;
   }
   $('hardware').innerHTML = ([['x', 'REF / 振动参考'], ['u', 'OUT / 扬声器'], ['e', 'MIC / 误差点']] as const).map(([kind, title]) =>
     `<div class="hardware-group ${kind}"><span>${title}</span><div>${ORDER.map(c => `<button data-signal="${kind}" data-corner="${c}" title="${CORNER_NAMES[c]}">${c.toUpperCase()}</button>`).join('')}</div></div>`).join('');
@@ -105,7 +113,7 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
     curves = ORDER.map(() => []);
     for (let sample = 1000; sample <= 32000; sample += 500) {
       const f = ports.engine.analyzeAt(next, sample, selected);
-      f.microphones.forEach((m, i) => curves[i].push(m.reductionDb ?? 0));
+      f.microphones.forEach((m, i) => curves[i].push(m.reductionDb));
     }
     drawConvergence($<HTMLCanvasElement>('convergence'), curves);
   }
@@ -156,16 +164,25 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
     $('play').textContent = player.starting ? '取消启动' : player.playing ? '暂停' : '播放';
     $('time').textContent = `${time.toFixed(2).padStart(5, '0')} / 16.00 s`;
     $<HTMLInputElement>('seek').value = String(time);
-    if (result && (lastCharts < 0 || now - lastCharts > 100)) {
+    if (result && (lastCharts < 0 || now - lastCharts > 80)) {
       const end = Math.floor(time * 2000); frame = ports.engine.analyzeAt(result, end, selected); lastCharts = now;
+      $('chart-time').textContent = end === 0 ? '波形准备中 · 点击播放或拖动进度' : `图表位置 ${(end / 2000).toFixed(2)} s · 最近 0.25 s`;
+      $('spectrum-status').textContent = frame.spectrum ? `频谱截至 ${(end / 2000).toFixed(2)} s` : '频谱准备中 · 需要至少 0.512 s 数据';
+      for (const id of ['wave', 'spectrum']) {
+        const canvas = $(id); canvas.dataset.runId = frame.runId; canvas.dataset.endSample = String(frame.endSampleExclusive);
+        canvas.dataset.signal = selected.signal; canvas.dataset.channel = selected.channel;
+      }
       drawWaveform($<HTMLCanvasElement>('wave'), result, end, selected); drawSpectrum($<HTMLCanvasElement>('spectrum'), frame);
       drawConvergence($<HTMLCanvasElement>('convergence'), curves);
-      $('metrics').innerHTML = frame.microphones.map((m, i) => `<div class="metric-card"><div><strong>${ORDER[i].toUpperCase()}</strong><span>${CORNER_NAMES[ORDER[i]]}</span><b>${m.reductionDb === null ? '准备中' : `${m.reductionDb.toFixed(1)} dB`}</b></div><p>原声 ${m.primaryRmsPa === null ? '—' : ports.syntheticSpl(m.primaryRmsPa).toFixed(1)} <span>→</span> 残余 ${m.residualRmsPa === null ? '—' : ports.syntheticSpl(m.residualRmsPa).toFixed(1)} <small>dB SPL</small></p></div>`).join('');
+      $('metrics').innerHTML = frame.microphones.map((m, i) => `<div class="metric-card"><div><strong>${ORDER[i].toUpperCase()}</strong><span>${CORNER_NAMES[ORDER[i]]}</span><b>${m.reductionDb === null ? m.primaryRmsPa === null ? '准备中' : '能量过低' : `${m.reductionDb.toFixed(1)} dB`}</b></div><p>原声 ${m.primaryRmsPa === null ? '—' : ports.syntheticSpl(m.primaryRmsPa).toFixed(1)} <span>→</span> 残余 ${m.residualRmsPa === null ? '—' : ports.syntheticSpl(m.residualRmsPa).toFixed(1)} <small>dB SPL</small></p></div>`).join('');
     }
-    viewer?.render(time, selected, frame ? frame.microphones.map(m => m.residualRmsPa === null ? null : ports.syntheticSpl(m.residualRmsPa)) : [null, null, null, null]);
+    viewer?.render(time, selected.signal === 'd' ? { ...selected, signal: 'e' } : selected, frame ? frame.microphones.map(m => m.residualRmsPa === null ? null : ports.syntheticSpl(m.residualRmsPa)) : [null, null, null, null]);
     count++; if (now - fpsTime > 1000) { $('fps').textContent = `${Math.round(count * 1000 / (now - fpsTime))} fps`; count = 0; fpsTime = now; }
-    requestAnimationFrame(render);
   }
-  requestAnimationFrame(render);
+  function tick(now: number) { render(now); requestAnimationFrame(tick); }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') { lastCharts = -1; render(performance.now()); }
+  });
+  requestAnimationFrame(tick);
   await reference();
 }
