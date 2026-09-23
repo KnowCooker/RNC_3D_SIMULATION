@@ -1,9 +1,15 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ORDER, type Corner, type SignalKind } from '../../shared/contracts';
+import { placeLabels } from './labels';
+import './viewer.css';
 
 type Select = (signal: SignalKind, channel: Corner) => void;
 export function createViewer(host: HTMLElement, onSelect: Select) {
+  host.classList.add('rnc-viewer');
+  const leaders = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  leaders.classList.add('rnc-marker-leaders'); leaders.setAttribute('aria-hidden', 'true');
+  host.append(leaders);
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#14232e');
   scene.fog = new THREE.Fog('#14232e', 12, 30);
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
@@ -17,7 +23,7 @@ export function createViewer(host: HTMLElement, onSelect: Select) {
   const vehicle = new THREE.Group(); scene.add(vehicle);
   const layers: { mesh: THREE.Object3D; y: number; lift: number }[] = [];
   const shell: THREE.Mesh[] = [], wheels: THREE.Mesh[] = [];
-  const markers: THREE.Mesh[] = [], labels: { el: HTMLSpanElement; object: THREE.Object3D }[] = [];
+  const markers: THREE.Mesh[] = [], labels: { el: HTMLButtonElement; line: SVGLineElement; object: THREE.Object3D }[] = [];
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#a9cad0', metalness: 0.48, roughness: 0.32, transparent: true, opacity: 0.34, depthWrite: false });
   function box(size: number[], position: number[], color: string, lift = 0, material?: THREE.Material) {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size as [number, number, number]), material ?? new THREE.MeshStandardMaterial({ color, roughness: 0.62 }));
@@ -66,8 +72,17 @@ export function createViewer(host: HTMLElement, onSelect: Select) {
     marker.position.set(i % 2 === 0 ? kind.x : -kind.x, kind.y, i < 2 ? kind.front : kind.rear);
     marker.userData = { signal: kind.signal, corner }; marker.renderOrder = 5; vehicle.add(marker); markers.push(marker);
     layers.push({ mesh: marker, y: kind.y, lift: kind.lift });
-    const el = document.createElement('span'); el.className = 'model-label'; el.style.color = kind.color; el.textContent = `${kind.prefix} ${corner.toUpperCase()}`;
-    host.append(el); labels.push({ el, object: marker });
+    const el = document.createElement('button'); el.type = 'button'; el.className = 'rnc-marker-label';
+    el.style.color = kind.color; el.textContent = `${kind.prefix} ${corner.toUpperCase()}`;
+    const position = ['前左', '前右', '后左', '后右'][i];
+    const hardware = { x: '悬架振动参考', u: '车门扬声器驱动', e: '头枕误差声压' }[kind.signal];
+    el.title = `${position} · ${hardware} · ${kind.signal}`;
+    el.setAttribute('aria-label', `${kind.prefix} ${corner.toUpperCase()} · ${position}${hardware}`);
+    el.dataset.viewerSignal = kind.signal; el.dataset.viewerCorner = corner;
+    el.addEventListener('click', () => onSelect(kind.signal, corner));
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('stroke', kind.color); leaders.append(line);
+    host.append(el); labels.push({ el, line, object: marker });
   });
   const road = new THREE.Mesh(new THREE.PlaneGeometry(9, 100), new THREE.MeshStandardMaterial({ color: '#22323c', roughness: 1 }));
   road.rotation.x = -Math.PI / 2; road.position.y = 0.01; scene.add(road);
@@ -89,7 +104,7 @@ export function createViewer(host: HTMLElement, onSelect: Select) {
   });
   const resize = new ResizeObserver(() => {
     const w = host.clientWidth, h = host.clientHeight;
-    renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   }); resize.observe(host);
   function reset() {
     camera.position.set(6.7, 4.9, 7.4); controls.target.set(0, 1.05, 0); controls.update();
@@ -114,12 +129,24 @@ export function createViewer(host: HTMLElement, onSelect: Select) {
         }
       });
       controls.update(); renderer.render(scene, camera);
-      for (const label of labels) {
+      const width = host.clientWidth, height = host.clientHeight;
+      const projected = labels.map(label => {
         const p = label.object.getWorldPosition(new THREE.Vector3()).project(camera);
-        label.el.style.display = p.z > 1 || Math.abs(p.x) > 1 || Math.abs(p.y) > 1 ? 'none' : '';
-        label.el.style.left = `${(p.x + 1) / 2 * host.clientWidth}px`;
-        label.el.style.top = `${(1 - p.y) / 2 * host.clientHeight - 15}px`;
-      }
+        const visible = p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1;
+        label.el.hidden = !visible; label.line.style.display = visible ? '' : 'none';
+        const active = label.object.userData.signal === selected.signal && label.object.userData.corner === selected.channel;
+        label.el.setAttribute('aria-pressed', String(active));
+        return { label, visible, x: (p.x + 1) / 2 * width, y: (1 - p.y) / 2 * height };
+      }).filter(point => point.visible);
+      const positions = placeLabels(projected, width, height);
+      projected.forEach(({ label, x, y }, i) => {
+        const position = positions[i];
+        label.el.style.left = `${position.x}px`; label.el.style.top = `${position.y}px`;
+        // Leaders preserve the hardware location when a label moves to avoid another label.
+        label.line.setAttribute('x1', String(x)); label.line.setAttribute('y1', String(y));
+        label.line.setAttribute('x2', String(Math.max(position.x, Math.min(position.x + 64, x))));
+        label.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
+      });
     },
   };
 }
