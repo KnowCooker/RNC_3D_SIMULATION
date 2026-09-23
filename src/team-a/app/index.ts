@@ -68,7 +68,7 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
   $('mute').onclick = () => { muted = !muted; player.setMuted(muted); $('mute').textContent = muted ? '取消静音' : '静音'; };
   $('seek').oninput = () => { player.seek(Number($<HTMLInputElement>('seek').value)); lastCharts = -1; };
   async function play() { try { await player.play(); } catch (e) { $('status').textContent = `音频启动失败：${String(e)}`; } }
-  $('play').onclick = () => player.playing ? player.pause() : void play();
+  $('play').onclick = () => player.playing || player.starting ? player.pause() : void play();
   $('replay').onclick = () => { player.seek(0); void play(); };
   function setBusy(value: boolean) {
     busy = value;
@@ -111,7 +111,7 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
   let fpsTime = performance.now(), count = 0;
   function render(now: number) {
     const time = player.currentTime;
-    $('play').textContent = player.playing ? '暂停' : '播放';
+    $('play').textContent = player.starting ? '取消启动' : player.playing ? '暂停' : '播放';
     $('time').textContent = `${time.toFixed(2).padStart(5, '0')} / 16.00 s`;
     $<HTMLInputElement>('seek').value = String(time);
     if (result && (lastCharts < 0 || now - lastCharts > 100)) {
