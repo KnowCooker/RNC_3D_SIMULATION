@@ -1,6 +1,6 @@
 # A2-FULL-004：四架构动力与车底检视
 
-日期：2026-09-24。本批基于 A2-FULL-003 的 `19973ca`，开发分支 `a/a2-full-004-architecture`、[草稿 PR #9](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/9)，依赖 #8→#7；确切运行源码提交在本批代码推送后固定。当前构建主包 `dist/assets/index-DJCirg5A.js` SHA-256 为 `53b6b992918d6b689834cc95ba2b876c1f4f07de28b8493d95ab039f7c4171f8`，viewer 包 `dist/assets/index-Y1rfaRRu.js` 为 `577599665254a3a009b12949b95d4366bd58ac06b5457e0561236a0f3ae9abfa`。未合并的源码、同机运行与正式集成版本分别对待。
+日期：2026-09-24。本批基于 A2-FULL-003 的 `19973ca`，开发分支 `a/a2-full-004-architecture`、[草稿 PR #9](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/9)，依赖 #8→#7；经验证的运行源码提交为 [`fd501054114b3e92ea6cc71cf152bcca5c9543f6`](https://github.com/lzhdai/RNC_3D_SIMULATION/commit/fd501054114b3e92ea6cc71cf152bcca5c9543f6)。当前构建主包 `dist/assets/index-DJCirg5A.js` SHA-256 为 `53b6b992918d6b689834cc95ba2b876c1f4f07de28b8493d95ab039f7c4171f8`，viewer 包 `dist/assets/index-Y1rfaRRu.js` 为 `577599665254a3a009b12949b95d4366bd58ac06b5457e0561236a0f3ae9abfa`。未合并的源码、同机运行与正式集成版本分别对待。
 
 ## 本轮实作与来源
 
