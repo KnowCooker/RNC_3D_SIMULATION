@@ -104,7 +104,7 @@ A1/A2从同一已提交基线开各自分支/PR，每角色同一时间只有一
 
 ## 7. 当前差距与下一步
 
-当前等级：**完整目标开发中，尚非最终交付**。完整基线在草稿[PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7)，A2批次堆叠至[PR #20](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/20)，A1暂停态移动场修复在独立[PR #21](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/21)，同版组合由[PR #22](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/22)验证，A1试听预取续作在[PR #23](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/23)。开放PR按各自SHA与证据判断，不能写成main已有。[#22组合长稳](../evidence/full-lab/integration-021/stability/README.md)1210.65秒、15项门槛通过，首实时run2次补缓冲；[#23 A1候选长稳](../evidence/A1/A1-FULL-008/stability/README.md)1204.22秒、15项门槛通过，补缓冲抽样最大0。旧版 `6e982b7` 离线候选不证明组合版可正式分发。历史demo-v2另见[第一轮](../evidence/full-lab/iteration-01/README.md)。
+当前等级：**完整目标开发中，尚非最终交付**。阶段分支已按[当前分支表](CURRENT_BRANCHES.md)收拢：fork/main及[A1/整合草稿PR #23](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/23)包含旧#7～#19、#21、#22成果，A2当前独立进度仍在[PR #20](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/20)。旧阶段PR关闭不等于已合入原仓库main，原仓库main仍为旧阶段。[#22组合长稳](../evidence/full-lab/integration-021/stability/README.md)1210.65秒、15项门槛通过，首实时run2次补缓冲；[#23 A1候选长稳](../evidence/A1/A1-FULL-008/stability/README.md)1204.22秒、15项门槛通过，补缓冲抽样最大0。旧版 `6e982b7` 离线候选不证明组合版可正式分发。历史demo-v2另见[第一轮](../evidence/full-lab/iteration-01/README.md)。
 
 | 优先次序 | 尚需达成的结果 | 责任与交接 |
 | --- | --- | --- |

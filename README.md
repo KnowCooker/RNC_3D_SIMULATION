@@ -2,13 +2,13 @@
 
 目标是四类双排SUV的交互式RNC展示、调试与试听应用。当前lab-v3包含ICE/BEV/HEV/EREV、参考改制、四门扬声器启禁、FxLMS调参、信号图、空间SPL采样与逐部件剖面；提供**16秒预计算回放**和**实时连续仿真**两种方式。所有源/路径为合成教学模型，没有连接实车采集设备。
 
-当前为**完整目标开发基线，尚非最终交付**。旧阶段A1/A2的PR #5/#6已合入main；四车型完整目标由[草稿PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7)至[同版组合PR #22](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/22)交接，开放PR不等于main已合并。[组合验证](docs/evidence/full-lab/integration-021/README.md)包括67项工程测试、四车真实场/改制及1210.65秒长稳；首实时run仍有两次补缓冲。旧demo-v2报告仅作历史参照；模型精细度、目标设备与正式发布仍有缺口。
+当前为**完整目标开发基线，尚非最终交付**。旧阶段A1/A2的PR #5/#6已合入原仓库main；完整目标的阶段分支已收拢到 fork 的[当前分支表](docs/coordination/CURRENT_BRANCHES.md)，由[A1/整合草稿PR #23](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/23)和[A2草稿PR #20](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/20)继续交接。原仓库main仍未包含完整目标。[组合验证](docs/evidence/full-lab/integration-021/README.md)包括67项工程测试、四车真实场/改制及1210.65秒长稳；A1最新[音频质量验证](docs/evidence/A1/A1-FULL-008/README.md)另有1204.22秒长稳。旧demo-v2报告仅作历史参照；模型精细度、目标设备与正式发布仍有缺口。
 
 A组最终交付内容、责任与验收门槛统一见[A组最终交付清单](docs/coordination/A_FINAL_DELIVERY.md)。本机功能完成与最终设备验收分别记录。
 
 ## 每次开发从这里开始
 
-A 组两个 Codex 的入口：[双端协作流程](docs/coordination/README.md)、[A1 任务与交接](docs/coordination/A1.md)、[A2 任务与交接](docs/coordination/A2.md)。每端只需首次确定角色，后续从仓库和开放 PR 恢复工作；未推送的聊天或本地文件不能被另一端读取。
+A 组两个 Codex 的入口：[当前分支](docs/coordination/CURRENT_BRANCHES.md)、[双端协作流程](docs/coordination/README.md)、[A1 任务与交接](docs/coordination/A1.md)、[A2 任务与交接](docs/coordination/A2.md)。每端只需首次确定角色，后续从仓库和开放 PR 恢复工作；未推送的聊天或本地文件不能被另一端读取。
 
 1. 拉取当前分支和 main 的最新提交。
 2. 先读根目录 [开发记录.md](开发记录.md)，了解当前状态、阻塞和下一步。
@@ -21,13 +21,15 @@ A 组两个 Codex 的入口：[双端协作流程](docs/coordination/README.md)�
 推荐 Node.js 24 LTS（最低 22.12）与 pnpm 11.19.0；Git 用于协作。首次安装需要联网。
 
 ```bash
-git clone https://github.com/KnowCooker/RNC_3D_SIMULATION.git
+git clone https://github.com/lzhdai/RNC_3D_SIMULATION.git
 cd RNC_3D_SIMULATION
 npm install -g pnpm@11.19.0
 pnpm install --frozen-lockfile
 pnpm setup
 pnpm dev
 ```
+
+上述 fork/main 当前含完整目标开发快照；原仓库 main 仍只含已正式合并的旧阶段，合并状态以开放 PR 与提交核对。
 
 打开终端打印的本机地址。无需 Python 服务、数据库、外部模型、CDN 或 AI API。Python 只用于独立核对参考数据。
 
