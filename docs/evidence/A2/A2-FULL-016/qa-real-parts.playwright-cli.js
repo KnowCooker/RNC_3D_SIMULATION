@@ -39,13 +39,18 @@ async (page) => {
   await page.locator('#lab-viewer').screenshot({ path: 'docs/evidence/A2/A2-FULL-016/real-workshop-interior.png' });
   await page.locator('#lab-reset').click();
   const afterReset = await panel.locator('p').innerText();
+  for (const seat of ['front-left', 'front-right', 'rear-bench']) await panel.locator(`[data-part="seat-${seat}"]`).click();
+  await page.waitForTimeout(850);
+  const afterThreeSeats = await panel.locator('p').innerText();
+  await page.locator('#lab-viewer').screenshot({ path: 'docs/evidence/A2/A2-FULL-016/real-workshop-three-seats.png' });
+  await page.locator('#lab-reset').click();
   for (const corner of ['fl', 'fr', 'rl', 'rr']) await panel.locator(`[data-part="wheel-${corner}"]`).click();
   await page.waitForTimeout(850);
   const afterFourWheels = await panel.locator('p').innerText();
   await page.locator('#lab-viewer').screenshot({ path: 'docs/evidence/A2/A2-FULL-016/real-workshop-four-wheels.png' });
   await page.locator('#lab-reset').click();
   await panel.getByRole('button', { name: '自动拆解' }).click();
-  await page.waitForFunction(() => document.querySelector('.lab-showroom-assembly p')?.textContent?.startsWith('已拆 27'), undefined, { timeout: 30000 });
+  await page.waitForFunction(() => document.querySelector('.lab-showroom-assembly p')?.textContent?.startsWith('已拆 30'), undefined, { timeout: 30000 });
   await page.waitForTimeout(850);
   const afterFullDetach = await panel.locator('p').innerText();
   await page.locator('#lab-viewer').screenshot({ path: 'docs/evidence/A2/A2-FULL-016/real-workshop-all-parts.png' });
@@ -68,7 +73,8 @@ async (page) => {
       const pivot = model.group.getObjectByName(`assembly-${part.id}`);
       const before = pivot?.position.clone();
       model.setPartProgress(part.id, 1);
-      return { id: part.id, meshCount: pivot?.children.length ?? 0, displacement: pivot && before ? pivot.position.distanceTo(before) : 0 };
+      const triangles = pivot?.children.reduce((count, child) => count + ((child.geometry.index?.count ?? child.geometry.attributes.position.count) / 3), 0) ?? 0;
+      return { id: part.id, meshCount: pivot?.children.length ?? 0, triangles, displacement: pivot && before ? pivot.position.distanceTo(before) : 0 };
     });
     const disposalCounts = new Map();
     for (const resource of [...geometries, ...materials]) {
@@ -96,9 +102,10 @@ async (page) => {
     await page.getByRole('button', { name: '返回四类动力教学模型和声学实验' }).click();
   }
   const externalResources = await page.evaluate(() => performance.getEntriesByType('resource').filter(resource => !resource.name.startsWith(location.origin)).map(resource => resource.name));
-  const authoredCounts = { 'fender-front-left': 4, 'fender-front-right': 4, 'headlight-left': 6, 'headlight-right': 6, 'front-inner-panels': 1, 'taillight-left': 5, 'taillight-right': 5, 'rear-quarters': 5, 'rear-inner-panels': 2, 'side-skirts': 4, glazing: 6, 'engine-bay': 1, 'chassis-shell': 1 };
-  if (count !== 27 || !roadStageVisible || !markersHidden || !afterTwo.startsWith('已拆 2') || stateAcrossStages !== afterTwo || !afterOne.startsWith('已拆 1') || !afterAuto.startsWith('已拆 0') || !afterEngine.startsWith('已拆 2') || !afterReset.startsWith('已拆 0') || !afterFourWheels.startsWith('已拆 4') || !afterFullDetach.startsWith('已拆 27') || !afterFullRestore.startsWith('已拆 0') || meshAudit.meshes !== 180 || meshAudit.triangles !== 74127 || meshAudit.rows.some(row => row.meshCount < 1 || row.displacement < 0.25 || (row.id.startsWith('wheel-') && row.meshCount !== 7) || (row.id in authoredCounts && row.meshCount !== authoredCounts[row.id])) || !meshAudit.resourcesDisposedOnce || !narrowClosed || !narrowUsable || fallbackPartsHidden.some(row => !row.hidden) || errors.length || externalResources.length) {
-    throw new Error(JSON.stringify({ count, roadStageVisible, markersHidden, afterTwo, stateAcrossStages, afterOne, afterAuto, afterEngine, afterReset, afterFourWheels, afterFullDetach, afterFullRestore, meshAudit, narrowClosed, narrowUsable, fallbackPartsHidden, errors, externalResources }));
+  const authoredCounts = { 'fender-front-left': 4, 'fender-front-right': 4, 'headlight-left': 6, 'headlight-right': 6, 'front-inner-panels': 1, 'taillight-left': 5, 'taillight-right': 5, 'rear-quarters': 5, 'rear-inner-panels': 2, 'side-skirts': 4, glazing: 6, 'engine-bay': 1, 'seat-front-left': 1, 'seat-front-right': 1, 'seat-rear-bench': 1, interior: 5, 'chassis-shell': 1 };
+  const seatTriangles = { 'seat-front-left': 636, 'seat-front-right': 630, 'seat-rear-bench': 498, interior: 3119 };
+  if (count !== 30 || !roadStageVisible || !markersHidden || !afterTwo.startsWith('已拆 2') || stateAcrossStages !== afterTwo || !afterOne.startsWith('已拆 1') || !afterAuto.startsWith('已拆 0') || !afterEngine.startsWith('已拆 2') || !afterReset.startsWith('已拆 0') || !afterThreeSeats.startsWith('已拆 3') || !afterFourWheels.startsWith('已拆 4') || !afterFullDetach.startsWith('已拆 30') || !afterFullRestore.startsWith('已拆 0') || meshAudit.meshes !== 183 || meshAudit.triangles !== 74127 || meshAudit.rows.some(row => row.meshCount < 1 || row.displacement < 0.25 || (row.id.startsWith('wheel-') && row.meshCount !== 7) || (row.id in authoredCounts && row.meshCount !== authoredCounts[row.id]) || (row.id in seatTriangles && row.triangles !== seatTriangles[row.id])) || !meshAudit.resourcesDisposedOnce || !narrowClosed || !narrowUsable || fallbackPartsHidden.some(row => !row.hidden) || errors.length || externalResources.length) {
+    throw new Error(JSON.stringify({ count, roadStageVisible, markersHidden, afterTwo, stateAcrossStages, afterOne, afterAuto, afterEngine, afterReset, afterThreeSeats, afterFourWheels, afterFullDetach, afterFullRestore, meshAudit, narrowClosed, narrowUsable, fallbackPartsHidden, errors, externalResources }));
   }
-  return { count, roadStageVisible, markersHidden, afterTwo, stateAcrossStages, afterOne, afterAuto, afterEngine, afterReset, afterFourWheels, afterFullDetach, afterFullRestore, meshAudit, narrowClosed, narrowUsable, fallbackPartsHidden, errors, externalResources };
+  return { count, roadStageVisible, markersHidden, afterTwo, stateAcrossStages, afterOne, afterAuto, afterEngine, afterReset, afterThreeSeats, afterFourWheels, afterFullDetach, afterFullRestore, meshAudit, narrowClosed, narrowUsable, fallbackPartsHidden, errors, externalResources };
 }

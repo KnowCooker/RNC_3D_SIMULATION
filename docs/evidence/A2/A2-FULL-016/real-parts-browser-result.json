@@ -2,11 +2,11 @@
   "viewport": "1600x900; narrow 360x800",
   "asset": "Range Rover Sport SVR",
   "sourceMeshCount": 171,
-  "runtimeRenderMeshCount": 180,
+  "runtimeRenderMeshCount": 183,
   "trianglesBeforeAndAfterWheelSplit": 74127,
-  "runtimeGeometriesDisposedOnce": 180,
+  "runtimeGeometriesDisposedOnce": 183,
   "uniqueMaterialsDisposedOnce": 30,
-  "authoredGeometryAssemblies": 27,
+  "authoredGeometryAssemblies": 30,
   "assemblyMeshCounts": {
     "front-bumper": 13,
     "hood": 6,
@@ -32,12 +32,22 @@
     "glazing": 6,
     "engine-bay": 1,
     "steering-wheel": 2,
+    "seat-front-left": 1,
+    "seat-front-right": 1,
+    "seat-rear-bench": 1,
     "interior": 5,
     "chassis-shell": 1,
     "exhaust": 3
   },
   "assembledToTwoRemoved": true,
-  "automaticallyDetachedAll27AndRestoredToZero": true,
+  "seatTriangleCounts": {
+    "seat-front-left": 636,
+    "seat-front-right": 630,
+    "seat-rear-bench": 498,
+    "interior-remainder": 3119
+  },
+  "threeSeatGroupsIndependentlyRemoved": true,
+  "automaticallyDetachedAll30AndRestoredToZero": true,
   "fourWheelsIndependentlyRemoved": true,
   "statePreservedAcrossRoadAndWorkshop": true,
   "reverseSinglePart": true,
@@ -49,7 +59,7 @@
   "externalResources": [],
   "productionPreview": {
     "sameOriginGlbLoads": 1,
-    "partCount": 27,
+    "partCount": 30,
     "statePreservedAcrossRoadAndWorkshop": true,
     "pageErrors": [],
     "externalResources": []

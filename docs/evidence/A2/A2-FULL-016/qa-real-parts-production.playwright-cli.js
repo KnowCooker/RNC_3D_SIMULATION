@@ -14,11 +14,12 @@ async (page) => {
   const partCount=await panel.locator('.lab-assembly-list button').count();
   await panel.locator('[data-part="hood"]').click();
   await panel.locator('[data-part="wheel-fl"]').click();
+  await panel.locator('[data-part="seat-front-left"]').click();
   const before=await panel.locator('p').innerText();
   await road.click(); await workshop.click();
   const after=await panel.locator('p').innerText();
   const loaded=await page.evaluate(()=>performance.getEntriesByType('resource').filter(resource=>resource.name.includes('range-rover-sport-svr')&&resource.name.startsWith(location.origin)).length);
   const external=await page.evaluate(()=>performance.getEntriesByType('resource').filter(resource=>!resource.name.startsWith(location.origin)).map(resource=>resource.name));
-  if(partCount!==27||!before.startsWith('已拆 2')||after!==before||loaded!==1||errors.length||external.length)throw new Error(JSON.stringify({partCount,before,after,loaded,errors,external}));
+  if(partCount!==30||!before.startsWith('已拆 3')||after!==before||loaded!==1||errors.length||external.length)throw new Error(JSON.stringify({partCount,before,after,loaded,errors,external}));
   return {partCount,before,after,loaded,errors,external};
 }

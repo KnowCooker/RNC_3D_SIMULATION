@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import type { VehicleKind } from '../../shared/lab-contracts';
 import { splitFourWheelMesh, wheelCorners, type WheelCorner } from './wheel-geometry';
+import { splitInteriorSeatIslands } from './interior-geometry';
 
 // Offline assets. Their exterior groups are not RNC geometry or physical anchors.
 const assets = {
@@ -65,6 +66,8 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
   group.add(exterior);
 
   const wheelMeshes = new Map<WheelCorner, THREE.Mesh[]>(wheelCorners.map(corner => [corner, []]));
+  const seatMeshes = new Map<string, THREE.Mesh>();
+  const seatMeshSet = new Set<THREE.Mesh>();
   const replacedGeometries = new Set<THREE.BufferGeometry>();
   if (asset.id === 'range-rover') {
     group.updateMatrixWorld(true);
@@ -90,6 +93,24 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
       wheelMeshes.get(corner)!.push(mesh);
     }
     if (wheelCorners.some(corner => wheelMeshes.get(corner)!.length !== 7)) throw new Error('Incomplete Range Rover wheel corner');
+    const interiorSources: THREE.Mesh[] = [];
+    exterior.traverse(object => {
+      const mesh = object as THREE.Mesh;
+      if (mesh.isMesh && mesh.name === 'Object_88' && !Array.isArray(mesh.material) && mesh.material.name === 'rM_Interior_Max1') {
+        interiorSources.push(mesh);
+      }
+    });
+    if (interiorSources.length !== 1) throw new Error('Unexpected Range Rover interior topology');
+    const seats = splitInteriorSeatIslands(interiorSources[0]);
+    replacedGeometries.add(seats.sourceGeometry);
+    for (const [partId, region] of [
+      ['seat-front-left', 'front-left'],
+      ['seat-front-right', 'front-right'],
+      ['seat-rear-bench', 'rear-bench'],
+    ] as const) {
+      seatMeshes.set(partId, seats.pieces[region]);
+      seatMeshSet.add(seats.pieces[region]);
+    }
   }
 
   // This source has material-split meshes. Regroup only visibly distinct
@@ -119,6 +140,9 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
     { id: 'glazing', name: '车窗玻璃组', labels: ['Glass6'], offset: [0, 0.82, 0] },
     { id: 'engine-bay', name: '机舱动力几何（原模型）', labels: [], materials: ['Chassis6/rM_Engine_Max1'], offset: [0, 0.75, 0.18] },
     { id: 'steering-wheel', name: '方向盘总成', labels: ['SteeringWheel5'], offset: [0, 0.40, 0.30] },
+    { id: 'seat-front-left', name: '左前座椅与头枕', labels: [], offset: [0.56, 0.46, 0.12] },
+    { id: 'seat-front-right', name: '右前座椅与头枕', labels: [], offset: [-0.56, 0.46, 0.12] },
+    { id: 'seat-rear-bench', name: '后排三座长椅与头枕', labels: [], offset: [0, 0.62, -0.34] },
     { id: 'interior', name: '座舱内饰总成', labels: ['Interior5'], offset: [0, 0.72, 0] },
     { id: 'chassis-shell', name: '车身与底盘主体网格', labels: [], materials: ['Chassis6/rM_Chassis_Max1'], offset: [0, -0.38, 0] },
     { id: 'exhaust', name: '排气总成', labels: ['Exhausts6'], offset: [0, -0.30, -0.20] },
@@ -128,6 +152,7 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
   exterior.traverse(object => {
     const mesh = object as THREE.Mesh;
     if (!mesh.isMesh) return;
+    if (seatMeshSet.has(mesh)) return;
     let ancestor: THREE.Object3D | null = mesh.parent;
     while (ancestor && !/^r[A-Za-z]/.test(ancestor.name)) ancestor = ancestor.parent;
     const label = /^r([^_]+)_/.exec(ancestor?.name ?? '')?.[1];
@@ -143,7 +168,7 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
   const partPivots = new Map<string, { pivot: THREE.Group; origin: THREE.Vector3; offset: THREE.Vector3 }>();
   group.updateMatrixWorld(true);
   for (const spec of partSpecs) {
-    const meshes = [...spec.labels.flatMap(label => semanticMeshes.get(label) ?? []), ...(spec.materials?.flatMap(material => materialMeshes.get(material) ?? []) ?? []), ...(spec.id.startsWith('wheel-') ? wheelMeshes.get(spec.id.slice(6) as WheelCorner) ?? [] : [])];
+    const meshes = [...spec.labels.flatMap(label => semanticMeshes.get(label) ?? []), ...(spec.materials?.flatMap(material => materialMeshes.get(material) ?? []) ?? []), ...(spec.id.startsWith('wheel-') ? wheelMeshes.get(spec.id.slice(6) as WheelCorner) ?? [] : []), ...(seatMeshes.has(spec.id) ? [seatMeshes.get(spec.id)!] : [])];
     if (meshes.length === 0) throw new Error(`Missing authored assembly ${spec.id}`);
     const partBounds = new THREE.Box3();
     for (const mesh of meshes) partBounds.expandByObject(mesh);
