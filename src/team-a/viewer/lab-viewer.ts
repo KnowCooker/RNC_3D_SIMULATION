@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createVehicleModel, type VehiclePart } from './vehicle-model';
+import type { ShowroomModel } from './showroom-model';
 import { createSectionDisplay } from './section-display';
+import { createSceneStage, type RoadSurface, type StageMode } from './scene-stage';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
 import { describeVehiclePart, featuredVehicleParts } from './part-guide';
@@ -13,11 +15,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   select(selection: LabSelection): void;
   add(position: Vec3, mountPart?: string): void;
   context(selection: LabSelection, x: number, y: number): void;
+  /** A1 may connect visual road presets to the lab configuration and invalidate the previous run. */
+  roadPreset?(surface: RoadSurface, roughness: number): void;
 }) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#101a25');
   const camera = new THREE.PerspectiveCamera(40, 1, 0.08, 100);
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.localClippingEnabled = true;
+  renderer.setPixelRatio(1); renderer.localClippingEnabled = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace; host.append(renderer.domElement);
   const leaders = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   leaders.classList.add('lab-marker-leaders'); leaders.setAttribute('aria-hidden', 'true'); host.append(leaders);
@@ -49,13 +53,76 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const line = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.01, 1.1), new THREE.MeshBasicMaterial({ color: '#688391' }));
     line.position.set(x, -0.025, i * 3 - 48); stripes.add(line);
   }
+  const stage = createSceneStage(scene);
+  const stageBar = document.createElement('div'); stageBar.className = 'lab-stage-switch';
+  stageBar.setAttribute('role', 'group'); stageBar.setAttribute('aria-label', '三维场景');
+  for (const [label, mode] of [['道路', 'road'], ['车间', 'workshop']] as [string, StageMode][]) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
+    button.setAttribute('aria-label', `${label}三维场景`);
+    button.onclick = () => {
+      stage.setMode(mode);
+      if (mode === 'workshop') {
+        assemblyPanel.open = host.clientWidth >= 600;
+        showroomAssemblyPanel.open = host.clientWidth >= 600;
+      }
+      applyStage(); if (clipAxis === 'none') focusStageCamera(); else focusSection(clipAxis);
+    };
+    stageBar.append(button);
+  }
+  host.append(stageBar);
+  const roadSurfaceBar = document.createElement('div'); roadSurfaceBar.className = 'lab-road-surface';
+  roadSurfaceBar.setAttribute('role', 'group'); roadSurfaceBar.setAttribute('aria-label', '三维路面类型');
+  const roadSurfaceTitle = document.createElement('span'); roadSurfaceTitle.textContent = '路面 / SURFACE';
+  const roadSurfaceButtons = document.createElement('div');
+  const roadSurfaceInfo = document.createElement('small');
+  const surfaces: { id: RoadSurface; name: string; roughness: number }[] = [
+    { id: 'smooth', name: '平整沥青', roughness: 0.6 },
+    { id: 'coarse', name: '粗糙沥青', roughness: 1.2 },
+    { id: 'gravel', name: '碎石路', roughness: 2.2 },
+  ];
+  for (const surface of surfaces) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = surface.name;
+    button.dataset.surface = surface.id; button.setAttribute('aria-label', `切换三维路面为${surface.name}`);
+    button.onclick = () => {
+      stage.setRoadSurface(surface.id); refreshRoadSurface();
+      callbacks.roadPreset?.(surface.id, surface.roughness);
+    };
+    roadSurfaceButtons.append(button);
+  }
+  roadSurfaceBar.append(roadSurfaceTitle, roadSurfaceButtons, roadSurfaceInfo); host.append(roadSurfaceBar);
+  function refreshRoadSurface() {
+    roadSurfaceButtons.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String((button as HTMLButtonElement).dataset.surface === stage.roadSurface)));
+    roadSurfaceInfo.textContent = callbacks.roadPreset
+      ? `选中路面将设粗糙度 ${surfaces.find(row => row.id === stage.roadSurface)!.roughness.toFixed(2)} 并要求重算`
+      : `路面材质预览 · 声学计算仍按左侧粗糙度 ${config?.roadRoughness.toFixed(2) ?? '—'}`;
+  }
+  function focusStageCamera() {
+    if (stage.mode === 'road') focusCamera([0, 2.45, -7.5], [0, 1.1, 2]);
+    else focusCamera([6.8, 4.6, 7.8], [0, 0.8, -0.4]);
+  }
+  function applyStage() {
+    stage.road.visible = stage.mode === 'road'; stage.workshop.visible = stage.mode === 'workshop';
+    ground.visible = false; stripes.visible = stage.mode === 'road';
+    scene.background = new THREE.Color(stage.mode === 'road' ? '#bbd3dc' : '#263744');
+    scene.environmentIntensity = stage.mode === 'road' ? 1 : 0.8;
+    renderer.toneMappingExposure = stage.mode === 'road' ? 1.1 : 1.0;
+    stageBar.hidden = false;
+    roadSurfaceBar.hidden = stage.mode !== 'road' || fieldMode !== 'off';
+    refreshRoadSurface();
+    assemblyPanel.hidden = showroomActive || stage.mode !== 'workshop';
+    showroomAssemblyPanel.hidden = !showroomActive || stage.mode !== 'workshop' || !showroomModel?.parts.length || config?.vehicle !== 'ice';
+    stageBar.querySelectorAll('button').forEach((button, index) => button.setAttribute('aria-pressed', String(index === (stage.mode === 'road' ? 0 : 1))));
+  }
   let model: ReturnType<typeof createVehicleModel> | null = null;
   let sections: ReturnType<typeof createSectionDisplay> | null = null;
   let mountIssues: { sensorId: string; mountPart: string }[] = [];
   let config: LabConfig | null = null, signature = '';
   let exploded = false, amount = 0, lastTime = performance.now();
+  const detached = new Set<string>(), partProgress = new Map<string, number>();
+  let assemblyOrder: VehiclePart[] = [], autoAssembly: 'detach' | 'attach' | null = null, autoSeconds = 0;
   let body = 'transparent', editMode = false, waveVisible = false, pathMode = 'none';
   let fieldMode = 'off', fieldSlice: 'volume' | 'x' | 'y' | 'z' = 'volume';
+  let fieldFocus = false;
   let clipAxis = 'none', clipValue = 0;
   const clipPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
   const markers = new THREE.Group(), paths = new THREE.Group(), waves = new THREE.Group(), field = new THREE.Group();
@@ -63,6 +130,42 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   type Anchor = { origin: Vec3; mountPart?: string };
   const corners = ['fl', 'fr', 'rl', 'rr'];
   const partByName = new Map<string, VehiclePart>();
+  const assemblyPanel = document.createElement('details'); assemblyPanel.className = 'lab-assembly-panel'; assemblyPanel.hidden = true;
+  const assemblySummary = document.createElement('summary'); assemblySummary.textContent = '逐件拆装';
+  const assemblyStatus = document.createElement('p'); assemblyStatus.setAttribute('aria-live', 'polite');
+  const assemblyActions = document.createElement('div'); assemblyActions.className = 'lab-assembly-actions';
+  const detachButton = document.createElement('button'); detachButton.type = 'button'; detachButton.textContent = '拆下一件';
+  const attachButton = document.createElement('button'); attachButton.type = 'button'; attachButton.textContent = '逆序回装';
+  const autoButton = document.createElement('button'); autoButton.type = 'button'; autoButton.textContent = '自动拆解';
+  const restoreButton = document.createElement('button'); restoreButton.type = 'button'; restoreButton.textContent = '自动回装';
+  assemblyActions.append(detachButton, attachButton, autoButton, restoreButton);
+  const assemblyList = document.createElement('div'); assemblyList.className = 'lab-assembly-list';
+  assemblyPanel.append(assemblySummary, assemblyStatus, assemblyActions, assemblyList); host.append(assemblyPanel);
+  function refreshAssembly() {
+    assemblyStatus.textContent = `已拆 ${detached.size} / ${assemblyOrder.length} 个可动部件组`;
+    detachButton.disabled = detached.size === assemblyOrder.length;
+    attachButton.disabled = restoreButton.disabled = detached.size === 0;
+    autoButton.textContent = autoAssembly === 'detach' ? '暂停自动拆解' : '自动拆解';
+    restoreButton.textContent = autoAssembly === 'attach' ? '暂停自动回装' : '自动回装';
+    assemblyList.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(detached.has((button as HTMLButtonElement).dataset.part ?? ''))));
+  }
+  function detachNext() {
+    const part = assemblyOrder.find(item => !detached.has(item.object.name));
+    if (!part) { autoAssembly = null; refreshAssembly(); return; }
+    detached.add(part.object.name);
+    if (detached.size === assemblyOrder.length) autoAssembly = null;
+    refreshAssembly();
+  }
+  function attachLast(manual = true) {
+    const part = [...assemblyOrder].reverse().find(item => detached.has(item.object.name));
+    if (part) detached.delete(part.object.name);
+    if (manual || !part || detached.size === 0) autoAssembly = null;
+    refreshAssembly();
+  }
+  detachButton.onclick = () => { autoAssembly = null; detachNext(); };
+  attachButton.onclick = () => attachLast();
+  autoButton.onclick = () => { autoAssembly = autoAssembly === 'detach' ? null : 'detach'; autoSeconds = 0; refreshAssembly(); };
+  restoreButton.onclick = () => { autoAssembly = autoAssembly === 'attach' ? null : 'attach'; autoSeconds = 0; refreshAssembly(); };
   const guidePicker = document.createElement('label'); guidePicker.className = 'lab-part-picker';
   guidePicker.textContent = '查看车辆结构';
   const guideSelect = document.createElement('select'); guideSelect.setAttribute('aria-label', '选择车辆结构');
@@ -82,6 +185,143 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     controls.update(); controls.enableDamping = damping;
   }
   function focusCockpit() { focusCamera([0.05, 1.85, -0.25], [0.1, 1.25, 1.15]); }
+  let showroomModel: ShowroomModel | null = null;
+  let showroomActive = false, showroomRequest = 0, disposed = false;
+  const showroomToggle = document.createElement('button');
+  showroomToggle.type = 'button'; showroomToggle.className = 'lab-showroom-toggle';
+  showroomToggle.textContent = '写实外观'; showroomToggle.setAttribute('aria-label', '打开写实 SUV 外观范例');
+  const showroomPanel = document.createElement('aside');
+  showroomPanel.className = 'lab-showroom-panel'; showroomPanel.hidden = true;
+  showroomPanel.innerHTML = '<strong>写实 SUV 外观范例</strong><p></p><div class="lab-showroom-views" aria-label="外观视角"></div><div class="lab-showroom-colors" aria-label="车漆颜色"></div><a target="_blank" rel="noopener noreferrer"></a>';
+  const showroomTitle = showroomPanel.querySelector('strong')!;
+  const showroomDescription = showroomPanel.querySelector('p')!;
+  const showroomCredit = showroomPanel.querySelector('a')!;
+  const showroomAssemblyPanel = document.createElement('details');
+  showroomAssemblyPanel.className = 'lab-assembly-panel lab-showroom-assembly'; showroomAssemblyPanel.hidden = true;
+  const showroomAssemblySummary = document.createElement('summary'); showroomAssemblySummary.textContent = '写实车外观分件';
+  const showroomAssemblyStatus = document.createElement('p'); showroomAssemblyStatus.setAttribute('aria-live', 'polite');
+  const showroomAssemblyActions = document.createElement('div'); showroomAssemblyActions.className = 'lab-assembly-actions';
+  const showroomDetach = document.createElement('button'); showroomDetach.type = 'button'; showroomDetach.textContent = '拆下一件';
+  const showroomAttach = document.createElement('button'); showroomAttach.type = 'button'; showroomAttach.textContent = '逆序回装';
+  const showroomAutoDetach = document.createElement('button'); showroomAutoDetach.type = 'button'; showroomAutoDetach.textContent = '自动拆解';
+  const showroomAutoAttach = document.createElement('button'); showroomAutoAttach.type = 'button'; showroomAutoAttach.textContent = '自动回装';
+  showroomAssemblyActions.append(showroomDetach, showroomAttach, showroomAutoDetach, showroomAutoAttach);
+  const showroomAssemblyList = document.createElement('div'); showroomAssemblyList.className = 'lab-assembly-list';
+  showroomAssemblyPanel.append(showroomAssemblySummary, showroomAssemblyStatus, showroomAssemblyActions, showroomAssemblyList);
+  const showroomDetached = new Set<string>(), showroomProgress = new Map<string, number>();
+  let showroomAuto: 'detach' | 'attach' | null = null, showroomSeconds = 0;
+  function refreshShowroomAssembly() {
+    const total = showroomModel?.parts.length ?? 0;
+    showroomAssemblyStatus.textContent = `已拆 ${showroomDetached.size} / ${total} 个原资产几何总成`;
+    showroomDetach.disabled = showroomDetached.size === total;
+    showroomAttach.disabled = showroomAutoAttach.disabled = showroomDetached.size === 0;
+    showroomAutoDetach.textContent = showroomAuto === 'detach' ? '暂停自动拆解' : '自动拆解';
+    showroomAutoAttach.textContent = showroomAuto === 'attach' ? '暂停自动回装' : '自动回装';
+    showroomAssemblyList.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(showroomDetached.has((button as HTMLButtonElement).dataset.part ?? ''))));
+  }
+  function stepShowroomAssembly(direction: 'detach' | 'attach') {
+    const parts = showroomModel?.parts ?? [];
+    const part = direction === 'detach' ? parts.find(item => !showroomDetached.has(item.id)) : [...parts].reverse().find(item => showroomDetached.has(item.id));
+    if (!part) { showroomAuto = null; refreshShowroomAssembly(); return; }
+    if (direction === 'detach') showroomDetached.add(part.id); else showroomDetached.delete(part.id);
+    if (showroomDetached.size === 0 || showroomDetached.size === parts.length) showroomAuto = null;
+    refreshShowroomAssembly();
+  }
+  showroomDetach.onclick = () => { showroomAuto = null; stepShowroomAssembly('detach'); };
+  showroomAttach.onclick = () => { showroomAuto = null; stepShowroomAssembly('attach'); };
+  showroomAutoDetach.onclick = () => { showroomAuto = showroomAuto === 'detach' ? null : 'detach'; showroomSeconds = 0; refreshShowroomAssembly(); };
+  showroomAutoAttach.onclick = () => { showroomAuto = showroomAuto === 'attach' ? null : 'attach'; showroomSeconds = 0; refreshShowroomAssembly(); };
+  const showroomViews = showroomPanel.querySelector('.lab-showroom-views')!;
+  for (const [label, position] of [
+    ['前侧', [4.6, 2.45, 4.6]], ['侧面', [5.7, 2, 0]], ['后侧', [4.6, 2.45, -4.6]],
+  ] as [string, Vec3][]) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
+    button.onclick = () => focusCamera(position, [0, 0.85, 0]); showroomViews.append(button);
+  }
+  const showroomColors = showroomPanel.querySelector('.lab-showroom-colors')!;
+  for (const [label, color] of [
+    ['湖蓝', '#2465a8'], ['珍珠白', '#d8dde0'], ['曜石黑', '#18202a'], ['深红', '#873c43'],
+  ]) {
+    const button = document.createElement('button'); button.type = 'button'; button.title = label;
+    button.setAttribute('aria-label', `${label}车漆`); button.style.backgroundColor = color;
+    button.onclick = () => { showroomModel?.setPaint(color); showroomColors.querySelectorAll('button').forEach(item => item.setAttribute('aria-pressed', String(item === button))); };
+    showroomColors.append(button);
+  }
+  host.append(showroomToggle, showroomPanel, showroomAssemblyPanel);
+  function leaveShowroom() {
+    ++showroomRequest;
+    if (!showroomActive) {
+      showroomToggle.disabled = false; showroomToggle.textContent = '写实外观';
+      return;
+    }
+    showroomActive = false;
+    showroomAuto = null;
+    showroomAssemblyPanel.hidden = true;
+    showroomPanel.hidden = true; showroomToggle.textContent = '写实外观';
+    showroomToggle.setAttribute('aria-label', '打开写实 SUV 外观范例');
+    (ground.material as THREE.MeshStandardMaterial).color.set('#1b2832');
+    ground.scale.set(1, 1, 1);
+    applyStage();
+    if (model) model.group.visible = true;
+    if (sections) sections.group.visible = true;
+    if (showroomModel) showroomModel.group.visible = false;
+    guidePicker.style.display = ''; guideCard.style.display = '';
+    fieldNote.style.display = ''; fieldHud.style.display = ''; fieldFocusButton.style.display = ''; pathFocusNote.style.display = '';
+    paintField(); reset();
+    if (fieldMode !== 'off') focusCamera([4.6, 2.9, -4.6], [0, 1.15, 0]);
+  }
+  showroomToggle.onclick = async () => {
+    if (showroomActive) { leaveShowroom(); return; }
+    const request = ++showroomRequest;
+    const vehicle = config?.vehicle ?? 'ice';
+    const wantedAssetId = vehicle === 'bev' ? 'tesla-model-y' : 'range-rover';
+    showroomToggle.disabled = true; showroomToggle.textContent = '加载外观…';
+    try {
+      if (showroomModel && showroomModel.assetId !== wantedAssetId) {
+        scene.remove(showroomModel.group); showroomModel.dispose(); showroomModel = null;
+      }
+      if (!showroomModel) {
+        const loaded = await (await import('./showroom-model')).loadShowroomModel(vehicle);
+        if (disposed || request !== showroomRequest) { loaded.dispose(); return; }
+        showroomModel = loaded; showroomModel.group.visible = false; scene.add(showroomModel.group);
+        showroomModel.setPaint('#d8dde0');
+        showroomColors.querySelectorAll('button').forEach((button, index) => button.setAttribute('aria-pressed', String(index === 1)));
+      }
+      if (request !== showroomRequest || disposed) return;
+      showroomDetached.clear(); showroomProgress.clear(); showroomAuto = null;
+      showroomAssemblyList.replaceChildren();
+      for (const part of showroomModel.parts) {
+        showroomModel.setPartProgress(part.id, 0);
+        const button = document.createElement('button'); button.type = 'button'; button.dataset.part = part.id;
+        button.textContent = part.name; button.setAttribute('aria-label', `拆装 ${part.name}`);
+        button.onclick = () => { if (showroomDetached.has(part.id)) showroomDetached.delete(part.id); else showroomDetached.add(part.id); showroomAuto = null; refreshShowroomAssembly(); };
+        showroomAssemblyList.append(button);
+      }
+      refreshShowroomAssembly();
+      showroomTitle.textContent = `${showroomModel.title} · 同车外观验证`;
+      showroomDescription.textContent = vehicle === 'hev' || vehicle === 'erev'
+        ? '当前尚无经过授权和质量核验的同动力车型外观；此车仅作 SUV 外观参考。动力结构、声学点位和剖面请返回教学模型查看。'
+        : vehicle === 'ice'
+          ? '同一写实资产在道路与车间复用；车间只拆原资产可辨的外观总成。座舱细件、动力结构和声学坐标尚未完成配准。'
+          : '同一写实外观可在道路与车间查看；此资产尚无核实的独立拆件，不代表教学结构或声学安装坐标。';
+      showroomCredit.href = showroomModel.source;
+      showroomCredit.textContent = `模型：${showroomModel.credit} · CC BY 4.0`;
+      showroomActive = true;
+      showroomModel.group.visible = true;
+      if (model) model.group.visible = false;
+      if (sections) sections.group.visible = false;
+      applyStage();
+      autoAssembly = null; refreshAssembly();
+      guidePicker.style.display = 'none'; guideCard.style.display = 'none';
+      fieldNote.style.display = 'none'; fieldHud.style.display = 'none'; fieldFocusButton.style.display = 'none'; pathFocusNote.style.display = 'none';
+      showroomPanel.hidden = false; showroomToggle.textContent = '返回结构实验';
+      showroomToggle.setAttribute('aria-label', '返回四类动力教学模型和声学实验');
+      focusStageCamera();
+    } catch (error) {
+      showroomToggle.textContent = '外观加载失败 · 重试';
+      showroomToggle.title = error instanceof Error ? error.message : String(error);
+    } finally { if (!disposed) showroomToggle.disabled = false; }
+  };
   function showGuide(part: VehiclePart) {
     if (!config || editMode) return;
     const guide = describeVehiclePart(config.vehicle, part);
@@ -123,6 +363,25 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const fieldNoteDetail = document.createElement('span'); fieldNoteDetail.className = 'lab-field-note-detail';
   const fieldNoteCompact = document.createElement('span'); fieldNoteCompact.className = 'lab-field-note-compact';
   fieldNote.append(fieldNoteDetail, fieldNoteCompact); host.append(fieldNote);
+  const fieldHud = document.createElement('aside'); fieldHud.className = 'lab-field-hud'; fieldHud.hidden = true;
+  fieldHud.setAttribute('aria-label', '三维声场热力图图例');
+  const fieldHudTitle = document.createElement('strong'), fieldHudRange = document.createElement('span');
+  const fieldHudScale = document.createElement('div'); fieldHudScale.className = 'lab-field-scale';
+  fieldHudScale.innerHTML = '<span>30 dB</span><i></i><span>80 dB</span>';
+  const fieldHudHotspot = document.createElement('p'), fieldHudProbe = document.createElement('p');
+  fieldHud.append(fieldHudTitle, fieldHudRange, fieldHudScale, fieldHudHotspot, fieldHudProbe); host.append(fieldHud);
+  const fieldFocusButton = document.createElement('button'); fieldFocusButton.type = 'button';
+  fieldFocusButton.className = 'lab-field-focus'; fieldFocusButton.hidden = true;
+  fieldFocusButton.onclick = () => { fieldFocus = !fieldFocus; refreshFieldFocus(); };
+  host.append(fieldFocusButton);
+  function refreshFieldFocus() {
+    fieldFocusButton.hidden = fieldMode === 'off';
+    fieldFocusButton.textContent = fieldFocus ? '声场聚焦 · 显示硬件' : '显示硬件 · 聚焦声场';
+    fieldFocusButton.setAttribute('aria-pressed', String(fieldFocus));
+  }
+  const probeMarker = new THREE.Mesh(new THREE.SphereGeometry(0.065, 12, 8), new THREE.MeshBasicMaterial({ color: '#fff4b2', depthTest: false }));
+  probeMarker.name = 'field-sample-probe'; probeMarker.visible = false; probeMarker.renderOrder = 7; field.add(probeMarker);
+  let probeIndex: number | null = null;
   const pathFocusNote = document.createElement('div'); pathFocusNote.className = 'lab-path-focus-note'; pathFocusNote.hidden = true;
   const pathFocusDetail = document.createElement('span'); pathFocusDetail.className = 'lab-path-focus-detail';
   const pathFocusCompact = document.createElement('span'); pathFocusCompact.className = 'lab-path-focus-compact';
@@ -134,7 +393,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   function displayPosition(anchor: Anchor, target: THREE.Vector3) {
     target.set(...anchor.origin);
     const part = anchor.mountPart ? partByName.get(anchor.mountPart) : undefined;
-    if (part) target.addScaledVector(part.offset, amount);
+    if (part) target.addScaledVector(part.offset, partProgress.get(part.object.name) ?? amount);
     return target;
   }
   function visibleInHierarchy(object: THREE.Object3D) {
@@ -157,8 +416,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const planes = clipAxis === 'none' ? [] : [clipPlane];
     // Retain computed field samples while letting cut geometry remain legible.
     const layered = waveVisible || pathMode !== 'none';
-    fieldMaterial.opacity = clipAxis === 'none' ? (layered ? 0.36 : 0.48) : 0.18;
-    sliceMaterials.forEach(material => { material.opacity = clipAxis === 'none' ? (layered ? 0.44 : 0.52) : 0.32; });
+    fieldMaterial.opacity = fieldSlice === 'volume' ? (layered ? 0.10 : 0.16) : 0.18;
+    sliceMaterials.forEach(material => { material.opacity = fieldSlice === 'volume' ? (layered ? 0.22 : 0.30) : clipAxis === 'none' ? (layered ? 0.44 : 0.52) : 0.32; });
     for (const material of model?.materials ?? []) { material.clippingPlanes = planes; material.needsUpdate = true; }
     // The moving field plane lies exactly on the section boundary. Float32 vertex rounding
     // can place it on the discarded side, so clip the car but not that coincident overlay.
@@ -195,7 +454,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     host.append(button); markerRows.push({ mesh, button, line, selection, source, anchor });
   }
   function setConfig(next: LabConfig) {
+    if (config && config.vehicle !== next.vehicle) leaveShowroom();
     config = structuredClone(next);
+    refreshRoadSurface();
     const key = JSON.stringify([next.vehicle, next.references, next.speakerEnabled]);
     if (key === signature) return;
     signature = key;
@@ -205,6 +466,17 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     model = createVehicleModel(next.vehicle); scene.add(model.group);
     sections = createSectionDisplay(model.group); scene.add(sections.group);
     partByName.clear(); model.parts.forEach(part => partByName.set(part.object.name, part));
+    detached.clear(); partProgress.clear(); autoAssembly = null;
+    const priority: Record<string, number> = { shell: 0, wheel: 1, cabin: 2, powertrain: 3, energy: 4, suspension: 5, chassis: 6 };
+    assemblyOrder = [...model.parts].sort((a, b) => (priority[a.category] ?? 7) - (priority[b.category] ?? 7));
+    assemblyList.replaceChildren();
+    for (const part of assemblyOrder) {
+      const button = document.createElement('button'); button.type = 'button'; button.dataset.part = part.object.name;
+      button.textContent = part.name; button.setAttribute('aria-label', `拆装 ${part.name}`);
+      button.onclick = () => { if (detached.has(part.object.name)) detached.delete(part.object.name); else detached.add(part.object.name); autoAssembly = null; refreshAssembly(); };
+      assemblyList.append(button);
+    }
+    refreshAssembly();
     guideSelect.replaceChildren(new Option('选择关键部件，或点击车模', ''));
     featuredVehicleParts(next.vehicle, model.parts).forEach(part => guideSelect.add(new Option(part.name, part.object.name)));
     clearGuide();
@@ -262,8 +534,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   function paintField() {
     const valid = fieldMode !== 'off' && !!frame && fieldFrameMatchesPoints(frame, fieldPoints);
     field.visible = valid;
+    fieldHud.hidden = !valid;
     if (!valid || !frame) {
-      fieldNote.hidden = fieldMode === 'off' || fieldSlice === 'volume' || (!movingFieldSlice() && !frame?.valid);
+      probeMarker.visible = false;
+      fieldNote.hidden = fieldMode === 'off';
       if (!fieldNote.hidden) {
         fieldNoteDetail.textContent = frame?.valid ? '空间采样点与模型不匹配，已隐藏声场'
           : frame ? '当前车身剖面暂无有效声场' : '当前车身剖面声场待查询，旧位置色片已隐藏';
@@ -272,8 +546,26 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       }
       return;
     }
-    fieldNote.hidden = fieldSlice === 'volume';
+    fieldNote.hidden = false;
     const values = fieldMode === 'primary' ? frame.primarySpl : frame.residualSpl;
+    let low = Infinity, high = -Infinity, hot = 0;
+    values.forEach((value, index) => {
+      if (value < low) low = value;
+      if (value > high) { high = value; hot = index; }
+    });
+    fieldHud.dataset.sampleCount = String(values.length);
+    fieldHud.dataset.mode = fieldMode;
+    fieldHudTitle.textContent = `${fieldMode === 'primary' ? '原声 d' : '残余声 e'} · 车内声场`;
+    fieldHudRange.textContent = `${frame.time.toFixed(2)} s / 采样范围 ${low.toFixed(1)}–${high.toFixed(1)} dB SPL`;
+    fieldHudHotspot.textContent = `本帧最高采样点 ${high.toFixed(1)} dB · (${fieldPoints[hot].map(v => v.toFixed(2)).join(', ')}) m`;
+    if (probeIndex !== null && probeIndex < values.length) {
+      const point = fieldPoints[probeIndex];
+      probeMarker.position.set(...point); probeMarker.visible = true;
+      fieldHudProbe.textContent = `探针 ${values[probeIndex].toFixed(1)} dB · (${point.map(v => v.toFixed(2)).join(', ')}) m`;
+    } else {
+      probeMarker.visible = false;
+      fieldHudProbe.textContent = '点击热力切片读取最近的真实采样点';
+    }
     fieldMesh.visible = fieldSlice === 'volume';
     if (fieldMesh.visible) {
       fieldPoints.forEach((p, i) => {
@@ -284,7 +576,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       fieldMesh.instanceMatrix.needsUpdate = true; if (fieldMesh.instanceColor) fieldMesh.instanceColor.needsUpdate = true;
     }
     for (const [axis, row] of sliceMeshes) {
-      row.mesh.visible = fieldSlice === axis;
+      row.mesh.visible = fieldSlice === 'volume' || fieldSlice === axis;
       if (!row.mesh.visible) continue;
       const colors = row.mesh.geometry.getAttribute('color') as THREE.BufferAttribute;
       row.sampleIndices.forEach((sample, i) => {
@@ -294,11 +586,16 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       colors.needsUpdate = true;
     }
     if (!fieldNote.hidden) {
-      const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
-      const coordinate = fieldPoints[sample][{ x: 0, y: 1, z: 2 }[axis]];
-      const provenance = movingFieldSlice() ? '当前车身剖面真实采样切片' : '固定采样切片 · 车身剖面另行移动';
-      fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m ${provenance} · 三角插值/透视叠层 · 30–80 dB SPL`;
-      fieldNoteCompact.textContent = `${fieldMode === 'primary' ? '原声' : '残余'} ${axis.toUpperCase()}=${coordinate.toFixed(2)}m ${movingFieldSlice() ? '当前剖面真实采样' : '固定场片；车身剖面另移'}`;
+      if (fieldSlice === 'volume') {
+        fieldNoteDetail.textContent = '280个真实计算采样点 + 三正交热力切片；面内颜色为相邻采样点插值，固定30–80 dB SPL色标';
+        fieldNoteCompact.textContent = '280点 · 三正交热力切片 · 面内插值';
+      } else {
+        const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
+        const coordinate = fieldPoints[sample][{ x: 0, y: 1, z: 2 }[axis]];
+        const provenance = movingFieldSlice() ? '当前车身剖面真实采样切片' : '固定采样切片 · 车身剖面另行移动';
+        fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m ${provenance} · 三角插值/透视叠层 · 30–80 dB SPL`;
+        fieldNoteCompact.textContent = `${fieldMode === 'primary' ? '原声' : '残余'} ${axis.toUpperCase()}=${coordinate.toFixed(2)}m ${movingFieldSlice() ? '当前剖面真实采样' : '固定场片；车身剖面另移'}`;
+      }
     }
   }
   function pathIsShown(row: (typeof pathRows)[number]) {
@@ -350,15 +647,30 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   let down = [0, 0];
   renderer.domElement.onpointerdown = event => { down = [event.clientX, event.clientY]; };
   function hitAt(event: MouseEvent | PointerEvent) {
+    if (showroomActive) return undefined;
     const rect = renderer.domElement.getBoundingClientRect();
     pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1); raycaster.setFromCamera(pointer, camera);
     scene.updateMatrixWorld(true);
     return raycaster.intersectObjects(markers.children).find(hit => visibleInHierarchy(hit.object) && unclipped(hit.point));
   }
   renderer.domElement.onpointerup = event => {
+    if (showroomActive) return;
     if (event.button !== 0 || Math.hypot(event.clientX - down[0], event.clientY - down[1]) > 5) return;
     const marker = hitAt(event);
     if (marker) { callbacks.select(marker.object.userData.selection); return; }
+    if (field.visible && frame && !editMode) {
+      const planes = [...sliceMeshes.values()].filter(row => row.mesh.visible);
+      const hit = raycaster.intersectObjects(planes.map(row => row.mesh))[0];
+      if (hit) {
+        const row = planes.find(item => item.mesh === hit.object)!;
+        probeIndex = row.sampleIndices.reduce((best, sample) => {
+          const point = new THREE.Vector3(...fieldPoints[sample]); point.y += field.position.y;
+          const bestPoint = new THREE.Vector3(...fieldPoints[best]); bestPoint.y += field.position.y;
+          return point.distanceToSquared(hit.point) < bestPoint.distanceToSquared(hit.point) ? sample : best;
+        }, row.sampleIndices[0]);
+        paintField(); return;
+      }
+    }
     if (model) {
       const hits = raycaster.intersectObject(model.group, true).filter(hit => visibleInHierarchy(hit.object) && unclipped(hit.point));
       const owner = (object: THREE.Object3D) => {
@@ -371,17 +683,32 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       if (hit) {
         const part = owner(hit.object);
         if (editMode) {
-          const physical = hit.point.clone(); if (part) physical.sub(part.offset.clone().multiplyScalar(amount));
+          const physical = hit.point.clone(); if (part) physical.sub(part.offset.clone().multiplyScalar(partProgress.get(part.object.name) ?? amount));
           callbacks.add(physical.toArray() as [number, number, number], part?.object.name);
         } else if (part) showGuide(part);
       }
     }
   };
   renderer.domElement.oncontextmenu = event => { event.preventDefault(); const hit = hitAt(event); if (hit) callbacks.context(hit.object.userData.selection, event.clientX, event.clientY); };
-  const resize = new ResizeObserver(() => { renderer.setSize(host.clientWidth, host.clientHeight, false); camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); }); resize.observe(host);
+  let wasNarrow = host.clientWidth < 600;
+  function resizeViewer() {
+    const width = Math.max(1, host.clientWidth), height = Math.max(1, host.clientHeight);
+    const isNarrow = width < 600;
+    if (isNarrow && !wasNarrow) { assemblyPanel.open = false; showroomAssemblyPanel.open = false; }
+    wasNarrow = isNarrow;
+    // Keep the physical canvas within the 1280×720 pixel budget while retaining
+    // the host's aspect ratio and CSS-resolution labels/pointer coordinates.
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5, Math.sqrt(1280 * 720 / (width * height)));
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  }
+  const resize = new ResizeObserver(resizeViewer); resize.observe(host);
+  window.addEventListener('resize', resizeViewer);
   function reset() {
-    const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
-    camera.position.set(4, 3.4, 4.8); controls.target.set(0, 0.7, 0); controls.update(); controls.enableDamping = damping; exploded = false;
+    if (showroomActive) { focusStageCamera(); showroomDetached.clear(); showroomAuto = null; refreshShowroomAssembly(); return; }
+    focusStageCamera(); exploded = false; detached.clear(); autoAssembly = null; refreshAssembly();
   }
   function focusSection(axis: string) {
     const views: Record<string, { position: Vec3; target: Vec3 }> = {
@@ -394,22 +721,30 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
     camera.position.set(...view.position); controls.target.set(...view.target); controls.update(); controls.enableDamping = damping;
   }
-  reset();
+  applyStage(); reset();
   return {
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
     getMountIssues() { return mountIssues.map(issue => ({ ...issue })); },
-    setExploded(value: boolean) { exploded = value; },
+    setExploded(value: boolean) { leaveShowroom(); exploded = value; },
     setBody(value: string) {
+      leaveShowroom();
       const leavingCabin = body === 'hidden' && value !== 'hidden' && camera.position.distanceTo(controls.target) < 3;
       body = value; controls.minDistance = value === 'hidden' ? 0.6 : 3; applyBody();
-      if (leavingCabin) focusCamera([4, 3.4, 4.8], [0, 0.7, 0]);
+      if (leavingCabin) focusStageCamera();
       else if (value === 'hidden' && guideSelect.value === 'cockpit') focusCockpit();
     },
-    setSection(axis: string, value: number) { const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis); },
-    setEditMode(value: boolean) { editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
-    setWaves(value: boolean) { waveVisible = value; applyClipping(); },
-    setPaths(value: string) { pathMode = value; pathFocusKey = ''; applyClipping(); },
-    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { fieldMode = mode; fieldSlice = slice; syncFieldSampling(); applyClipping(); paintField(); },
+    setSection(axis: string, value: number) { leaveShowroom(); const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis); },
+    setEditMode(value: boolean) { if (value) leaveShowroom(); editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
+    setWaves(value: boolean) { if (value) leaveShowroom(); waveVisible = value; applyClipping(); },
+    setPaths(value: string) { if (value !== 'none') leaveShowroom(); pathMode = value; pathFocusKey = ''; applyClipping(); },
+    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') {
+      if (mode !== 'off') leaveShowroom();
+      const entering = fieldMode === 'off' && mode !== 'off';
+      fieldMode = mode; fieldSlice = slice; probeIndex = null;
+      if (entering) { fieldFocus = true; focusCamera([4.6, 2.9, -4.6], [0, 1.15, 0]); }
+      if (mode === 'off') fieldFocus = false;
+      refreshFieldFocus(); applyStage(); syncFieldSampling(); applyClipping(); paintField();
+    },
     updateField(value: FieldFrame) { frame = value; paintField(); },
     render(time: number, selected: LabSelection, drives: number[], sourceValues: number[]) {
       const now = performance.now(), dt = Math.min(0.1, (now - lastTime) / 1000); lastTime = now;
@@ -417,9 +752,34 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       amount += (targetAmount - amount) * (1 - Math.exp(-dt * 5));
       // Below 0.1 mm of displacement, snap to the exact pose so section geometry stops rebuilding.
       if (Math.abs(targetAmount - amount) < 1e-4) amount = targetAmount;
-      for (const part of model?.parts ?? []) part.object.position.copy(part.origin).addScaledVector(part.offset, amount);
+      if (autoAssembly && stage.mode === 'workshop' && !showroomActive) {
+        autoSeconds += dt;
+        if (autoSeconds >= 0.75) { autoSeconds = 0; if (autoAssembly === 'detach') detachNext(); else attachLast(false); }
+      }
+      if (showroomAuto && showroomActive && stage.mode === 'workshop') {
+        showroomSeconds += dt;
+        if (showroomSeconds >= 0.75) { showroomSeconds = 0; stepShowroomAssembly(showroomAuto); }
+      }
+      for (const part of showroomModel?.parts ?? []) {
+        const target = showroomDetached.has(part.id) ? 1 : 0;
+        let progress = showroomProgress.get(part.id) ?? 0;
+        progress += (target - progress) * (1 - Math.exp(-dt * 5));
+        if (Math.abs(target - progress) < 1e-4) progress = target;
+        showroomProgress.set(part.id, progress);
+        showroomModel?.setPartProgress(part.id, progress);
+      }
+      for (const part of model?.parts ?? []) {
+        const target = exploded || detached.has(part.object.name) ? 1 : 0;
+        let progress = partProgress.get(part.object.name) ?? 0;
+        progress += (target - progress) * (1 - Math.exp(-dt * 5));
+        if (Math.abs(target - progress) < 1e-4) progress = target;
+        partProgress.set(part.object.name, progress);
+        part.object.position.copy(part.origin).addScaledVector(part.offset, progress);
+      }
       model?.wheels.forEach(wheel => { wheel.rotation.x = time * ((config?.speedKph ?? 60) / 3.6) / 0.4; });
+      stripes.visible = stage.mode === 'road' && stage.roadSurface !== 'gravel';
       stripes.children.forEach((line, i) => { line.position.z = (Math.floor(i / 2) * 3 + time * ((config?.speedKph ?? 60) / 3.6)) % 96 - 48; });
+      stage.update(time, config?.speedKph ?? 60);
       markerRows.forEach(row => {
         displayPosition(row.anchor, row.mesh.position);
         const active = selected.channel === row.selection.channel && (selected.signal === row.selection.signal || ['d', 'a', 'e'].includes(selected.signal) && row.selection.signal === 'e');
@@ -431,14 +791,16 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       updatePathFocus(selected);
       field.position.y = amount * 0.45;
       (contactShade.material as THREE.MeshBasicMaterial).opacity = clipAxis === 'none' ? 1 - amount * 0.8 : 0.12;
-      waves.visible = waveVisible;
+      markers.visible = !showroomActive && !fieldFocus;
+      waves.visible = waveVisible && !showroomActive && !fieldFocus;
       waveRows.forEach(row => {
         const i = row.userData.speaker, phase = (time * 1.5 + row.userData.phase) % 1;
         displayPosition(speakerAnchor(i), row.position); row.scale.setScalar(0.12 + phase * 1.1);
         row.visible = !!config?.speakerEnabled[i] && Math.abs(drives[i] ?? 0) > 1e-8;
         (row.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (field.visible ? 0.10 : 0.16);
       });
-      paths.visible = pathMode !== 'none';
+      paths.visible = pathMode !== 'none' && !showroomActive && !fieldFocus;
+      if (showroomActive) field.visible = false;
       pathRows.forEach((row, i) => {
         const visible = pathIsShown(row);
         row.line.visible = row.dot.visible = visible;
@@ -452,7 +814,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const width = host.clientWidth, height = host.clientHeight;
       const visible = markerRows.map(row => {
         const p = row.mesh.position.clone().project(camera);
-        const show = p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1 && (clipAxis === 'none' || clipPlane.distanceToPoint(row.mesh.position) >= 0);
+        const show = !showroomActive && !fieldFocus && p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1 && (clipAxis === 'none' || clipPlane.distanceToPoint(row.mesh.position) >= 0);
         row.button.hidden = !show; row.line.style.display = show ? '' : 'none';
         return { row, visible: show, x: (p.x + 1) / 2 * width, y: (1 - p.y) / 2 * height };
       }).filter(row => row.visible);
@@ -464,6 +826,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); fieldHud.remove(); fieldFocusButton.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); roadSurfaceBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }
