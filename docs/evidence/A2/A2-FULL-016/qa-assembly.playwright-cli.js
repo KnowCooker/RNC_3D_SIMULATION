@@ -7,7 +7,7 @@ async (page) => {
   const vehicle = page.getByRole('combobox', { name: '动力类型' });
   const road = page.getByRole('button', { name: '道路三维场景' });
   const workshop = page.getByRole('button', { name: '车间三维场景' });
-  const panel = page.locator('.lab-assembly-panel');
+  const panel = page.locator('.lab-assembly-panel:not(.lab-showroom-assembly)');
   const anchor = async index => page.locator('.lab-marker-leaders line').nth(index).evaluate(line => [Number(line.getAttribute('x1')), Number(line.getAttribute('y1'))]);
   const distance = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
   const partsByVehicle = [];

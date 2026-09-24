@@ -31,18 +31,19 @@ async (page) => {
   await page.getByRole('button', { name: '打开写实 SUV 外观范例' }).click();
   const leave = page.getByRole('button', { name: '返回四类动力教学模型和声学实验' });
   await leave.waitFor();
-  const stageHiddenInReference = await stage.isHidden();
+  const stageVisibleWithSameAsset = await stage.isVisible();
   await leave.click();
   const workshopRestored = (await workshop.getAttribute('aria-pressed')) === 'true';
   await page.setViewportSize({ width: 360, height: 800 });
   await page.locator('#lab-viewer').screenshot({ path: 'docs/evidence/A2/A2-FULL-016/workshop-stage-narrow.png' });
   const narrowButtonsVisible = await road.isVisible() && await workshop.isVisible();
-  const narrowAssemblyClosed = await page.locator('.lab-assembly-panel').evaluate(panel => !panel.open);
-  await page.locator('.lab-assembly-panel summary').click();
-  const narrowAssemblyUsable = await page.locator('.lab-assembly-list button').first().isVisible();
+  const teachingPanel = page.locator('.lab-assembly-panel:not(.lab-showroom-assembly)');
+  const narrowAssemblyClosed = await teachingPanel.evaluate(panel => !panel.open);
+  await teachingPanel.locator('summary').click();
+  const narrowAssemblyUsable = await teachingPanel.locator('.lab-assembly-list button').first().isVisible();
   const externalResources = await page.evaluate(() => performance.getEntriesByType('resource').filter(resource => !resource.name.startsWith(location.origin)).map(resource => resource.name));
-  if (errors.length || externalResources.length || counts.some(row => row.roadMarkers !== 16 || row.workshopMarkers !== 16) || !explodePreserved || !stageHiddenInReference || !workshopRestored || !narrowButtonsVisible || !narrowAssemblyClosed || !narrowAssemblyUsable) {
-    throw new Error(JSON.stringify({ errors, externalResources, counts, explodePreserved, stageHiddenInReference, workshopRestored, narrowButtonsVisible, narrowAssemblyClosed, narrowAssemblyUsable }));
+  if (errors.length || externalResources.length || counts.some(row => row.roadMarkers !== 16 || row.workshopMarkers !== 16) || !explodePreserved || !stageVisibleWithSameAsset || !workshopRestored || !narrowButtonsVisible || !narrowAssemblyClosed || !narrowAssemblyUsable) {
+    throw new Error(JSON.stringify({ errors, externalResources, counts, explodePreserved, stageVisibleWithSameAsset, workshopRestored, narrowButtonsVisible, narrowAssemblyClosed, narrowAssemblyUsable }));
   }
-  return { counts, explodePreserved, stageHiddenInReference, workshopRestored, narrowButtonsVisible, narrowAssemblyClosed, narrowAssemblyUsable, externalResources, errors };
+  return { counts, explodePreserved, stageVisibleWithSameAsset, workshopRestored, narrowButtonsVisible, narrowAssemblyClosed, narrowAssemblyUsable, externalResources, errors };
 }

@@ -5,7 +5,7 @@ async (page) => {
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto('http://127.0.0.1:5182/');
   await page.getByRole('button', { name: '车间三维场景' }).click();
-  const panel = page.locator('.lab-assembly-panel');
+  const panel = page.locator('.lab-assembly-panel:not(.lab-showroom-assembly)');
   await panel.locator('[data-part="seat-1"]').click();
   const state = await panel.locator('p').innerText();
   await page.getByRole('button', { name: '道路三维场景' }).click();

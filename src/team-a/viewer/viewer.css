@@ -207,7 +207,7 @@
   position: absolute;
   z-index: 6;
   top: 12px;
-  left: 12px;
+  right: 12px;
   width: min(260px, calc(100% - 24px));
   box-sizing: border-box;
   padding: 12px;
@@ -244,7 +244,7 @@
   .lab-stage-switch { top: 82px; left: 8px; transform: none; }
   .lab-stage-switch button { padding: 4px 7px; font-size: 10px; }
   .lab-assembly-panel { top: 122px; left: 74px; width: min(190px, calc(100% - 148px)); max-height: 55%; }
-  .lab-showroom-panel { width: min(190px, calc(100% - 24px)); padding: 9px; font-size: 10px; }
+  .lab-showroom-panel { width: min(190px, calc(100% - 24px)); max-height: 102px; overflow: auto; padding: 9px; font-size: 10px; }
   .lab-showroom-panel strong { font-size: 12px; }
   .lab-showroom-toggle { right: 8px; bottom: 8px; padding: 7px 9px; }
 }
