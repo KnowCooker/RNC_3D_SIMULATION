@@ -201,11 +201,16 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       if (token === generation) { busy = false; $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = !liveSession; }
     }
   }
+  // Cover observed ~0.6 s first-view and ~1 s tab-scheduling stalls. Each pull
+  // adds 0.2 s, so the queue stays below the player's 2 s hard limit and the
+  // 2.048 s rolling snapshot still contains the 0.5 s analysis window at the
+  // audio clock time. Rendering never follows the producer's ahead position.
+  const liveBufferTargetSeconds = 1.2;
   async function pumpLive() {
     if (!liveSession || !livePlayer.playing || livePullPending) return;
     const token = generation; livePullPending = true;
     try {
-      while (token === generation && liveSession && livePlayer.playing && livePlayer.bufferedUntil - livePlayer.currentTime < 0.4) {
+      while (token === generation && liveSession && livePlayer.playing && livePlayer.bufferedUntil - livePlayer.currentTime < liveBufferTargetSeconds) {
         const packet = await ports.pullLive(400);
         if (token !== generation) return;
         livePlayer.enqueue(packet.chunk); liveSnapshot = packet.snapshot; result = packet.snapshot.result;
