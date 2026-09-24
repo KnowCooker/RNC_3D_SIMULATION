@@ -8,7 +8,7 @@
 
 资源是 Mona x Supercars 的 [Range Rover Sport SVR](https://sketchfab.com/3d-models/land-rover-range-rover-sport-svr-5462d65acb0e4dca8c20da82360261db)，原模型 Sketchfab API 与文件内元数据均写 CC BY 4.0；原镜像、作者、SHA-256、改动与许可见 [资产说明](../../../../src/team-a/viewer/assets/README.md)。GLB 内嵌纹理，5.73 MB、74,127 三角形；仅用户点“写实外观”后加载，加载失败可重试。提供前侧/侧面/后侧、拖动和四种临时车漆。
 
-其他候选并未混入产品：二次仓库标为 CC0 的 Audi Q3 GLB，其原始文件元数据为 CC-BY-NC-SA-4.0；另一仓库名叫 `suv.glb` 的文件元数据实际为 Bugatti 跑车；若干合规 CC0 SUV 外形仍明显偏低模。本批选用经许可核对且实渲染检查的车型。该写实模型是一个外观范例，不能据此宣称四类 SUV 都已达到最终参照精细度；四种动力结构仍由原创教学模型表达。
+其他候选并未混入产品：二次仓库标为 CC0 的 Audi Q3 GLB，其原始文件元数据为 CC-BY-NC-SA-4.0；另一仓库名叫 `suv.glb` 的文件元数据实际为 Bugatti 跑车；若干合规 CC0 SUV 外形仍明显偏低模。[候选初筛表](asset-candidates.md)保存后续可接续的来源、授权和几何负担。本批选用经许可核对且实渲染检查的车型。该写实模型是一个外观范例，不能据此宣称四类 SUV 都已达到最终参照精细度；四种动力结构仍由原创教学模型表达。
 
 ## 本机验证
 

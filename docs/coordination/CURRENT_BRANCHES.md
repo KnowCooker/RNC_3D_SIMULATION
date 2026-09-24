@@ -2,7 +2,7 @@
 
 本页是 A1/A2 下一次接续时的分支入口。**原仓库 `KnowCooker/main` 仍为 `1bb8a23`，完整目标成果尚未合入原仓库。** fork `lzhdai/main` 是当前 A1+A2+B 同版整合快照；原仓库开放草稿 PR 仅保留 [A1/整合 #23](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/23) 和 [A2 写实看车 #24](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/24)。#24 尚未进入 fork/main，接续 A2 时须检出其角色分支。
 
-| 用途 | fork 分支 | 当前远端提交 | 接续方式 |
+| 用途 | fork 分支 | 已核对的运行源码 | 接续方式 |
 | --- | --- | --- | --- |
 | 可运行整合快照 | `main` | `cac96a41c922315dffa8ab0e33f8b2d7519d4c82` | 从 fork 拉取；与原仓库 main 分开比较。#24 的写实外观尚未在此 |
 | A1 页面/音频及集成协调 | `a/a1-full-008-audio-buffer` | `cac96a41c922315dffa8ab0e33f8b2d7519d4c82` | A1 继续独占 lab/app/charts/player，负责后续整合；先读 A2 #24 的改动与交接 |
