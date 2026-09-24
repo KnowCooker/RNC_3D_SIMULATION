@@ -33,14 +33,19 @@ async (page) => {
   await page.locator('#lab-viewer').screenshot({ path: 'docs/evidence/A2/A2-FULL-016/real-workshop-interior.png' });
   await page.locator('#lab-reset').click();
   const afterReset = await panel.locator('p').innerText();
+  for (const corner of ['fl', 'fr', 'rl', 'rr']) await panel.locator(`[data-part="wheel-${corner}"]`).click();
+  await page.waitForTimeout(850);
+  const afterFourWheels = await panel.locator('p').innerText();
+  await page.locator('#lab-viewer').screenshot({ path: 'docs/evidence/A2/A2-FULL-016/real-workshop-four-wheels.png' });
+  await page.locator('#lab-reset').click();
   const meshAudit = await page.evaluate(async () => {
     const { loadShowroomModel } = await import('/src/team-a/viewer/showroom-model.ts');
     const model = await loadShowroomModel('ice');
-    let meshes = 0;
+    let meshes = 0, triangles = 0;
     const geometries = new Set(), materials = new Set();
     model.group.traverse(object => {
       if (!object.isMesh) return;
-      meshes++; geometries.add(object.geometry);
+      meshes++; triangles += (object.geometry.index?.count ?? object.geometry.attributes.position.count) / 3; geometries.add(object.geometry);
       for (const material of Array.isArray(object.material) ? object.material : [object.material]) materials.add(material);
     });
     const rows = model.parts.map(part => {
@@ -55,7 +60,7 @@ async (page) => {
       resource.addEventListener('dispose', () => disposalCounts.set(resource, disposalCounts.get(resource) + 1));
     }
     model.dispose();
-    return { meshes, rows, geometryCount: geometries.size, materialCount: materials.size, resourcesDisposedOnce: [...disposalCounts.values()].every(count => count === 1) };
+    return { meshes, triangles, rows, geometryCount: geometries.size, materialCount: materials.size, resourcesDisposedOnce: [...disposalCounts.values()].every(count => count === 1) };
   });
   await page.setViewportSize({ width: 360, height: 800 });
   await page.locator('#lab-viewer').screenshot({ path: 'docs/evidence/A2/A2-FULL-016/real-workshop-narrow.png' });
@@ -75,8 +80,8 @@ async (page) => {
     await page.getByRole('button', { name: '返回四类动力教学模型和声学实验' }).click();
   }
   const externalResources = await page.evaluate(() => performance.getEntriesByType('resource').filter(resource => !resource.name.startsWith(location.origin)).map(resource => resource.name));
-  if (count !== 10 || !roadStageVisible || !markersHidden || !afterTwo.startsWith('已拆 2') || stateAcrossStages !== afterTwo || !afterOne.startsWith('已拆 1') || !afterAuto.startsWith('已拆 0') || !afterReset.startsWith('已拆 0') || meshAudit.meshes !== 171 || meshAudit.rows.some(row => row.meshCount < 1 || row.displacement < 0.25) || !meshAudit.resourcesDisposedOnce || !narrowClosed || !narrowUsable || fallbackPartsHidden.some(row => !row.hidden) || errors.length || externalResources.length) {
-    throw new Error(JSON.stringify({ count, roadStageVisible, markersHidden, afterTwo, stateAcrossStages, afterOne, afterAuto, afterReset, meshAudit, narrowClosed, narrowUsable, fallbackPartsHidden, errors, externalResources }));
+  if (count !== 14 || !roadStageVisible || !markersHidden || !afterTwo.startsWith('已拆 2') || stateAcrossStages !== afterTwo || !afterOne.startsWith('已拆 1') || !afterAuto.startsWith('已拆 0') || !afterReset.startsWith('已拆 0') || !afterFourWheels.startsWith('已拆 4') || meshAudit.meshes !== 180 || meshAudit.triangles !== 74127 || meshAudit.rows.some(row => row.meshCount < 1 || row.displacement < 0.25 || (row.id.startsWith('wheel-') && row.meshCount !== 7)) || !meshAudit.resourcesDisposedOnce || !narrowClosed || !narrowUsable || fallbackPartsHidden.some(row => !row.hidden) || errors.length || externalResources.length) {
+    throw new Error(JSON.stringify({ count, roadStageVisible, markersHidden, afterTwo, stateAcrossStages, afterOne, afterAuto, afterReset, afterFourWheels, meshAudit, narrowClosed, narrowUsable, fallbackPartsHidden, errors, externalResources }));
   }
-  return { count, roadStageVisible, markersHidden, afterTwo, stateAcrossStages, afterOne, afterAuto, afterReset, meshAudit, narrowClosed, narrowUsable, fallbackPartsHidden, errors, externalResources };
+  return { count, roadStageVisible, markersHidden, afterTwo, stateAcrossStages, afterOne, afterAuto, afterReset, afterFourWheels, meshAudit, narrowClosed, narrowUsable, fallbackPartsHidden, errors, externalResources };
 }

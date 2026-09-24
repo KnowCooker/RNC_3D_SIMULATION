@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import type { VehicleKind } from '../../shared/lab-contracts';
+import { splitFourWheelMesh, wheelCorners, type WheelCorner } from './wheel-geometry';
 
 // Offline assets. Their exterior groups are not RNC geometry or physical anchors.
 const assets = {
@@ -55,6 +56,34 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
   exterior.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale);
   group.add(exterior);
 
+  const wheelMeshes = new Map<WheelCorner, THREE.Mesh[]>(wheelCorners.map(corner => [corner, []]));
+  const replacedGeometries = new Set<THREE.BufferGeometry>();
+  if (asset.id === 'range-rover') {
+    group.updateMatrixWorld(true);
+    const combinedWheelMeshes: THREE.Mesh[] = [], rimMeshes: THREE.Mesh[] = [];
+    exterior.traverse(object => {
+      const mesh = object as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const parent = mesh.parent?.name ?? '';
+      if (/car_landrover_rangeroversport_2014_MeshM_(Tire|BrakeDisc|Caliper)_High/.test(parent)) combinedWheelMeshes.push(mesh);
+      else if (/^r?WheelFL6_/.test(parent)) rimMeshes.push(mesh);
+    });
+    if (combinedWheelMeshes.length !== 3 || rimMeshes.length !== 16) throw new Error('Unexpected Range Rover wheel topology');
+    for (const mesh of combinedWheelMeshes) {
+      const result = splitFourWheelMesh(mesh);
+      replacedGeometries.add(result.sourceGeometry);
+      for (const corner of wheelCorners) wheelMeshes.get(corner)!.push(result.pieces[corner]);
+    }
+    group.updateMatrixWorld(true);
+    for (const mesh of rimMeshes) {
+      const bounds = new THREE.Box3().setFromObject(mesh);
+      const point = bounds.getCenter(new THREE.Vector3());
+      const corner = `${point.z > 0 ? 'f' : 'r'}${point.x > 0 ? 'l' : 'r'}` as WheelCorner;
+      wheelMeshes.get(corner)!.push(mesh);
+    }
+    if (wheelCorners.some(corner => wheelMeshes.get(corner)!.length !== 7)) throw new Error('Incomplete Range Rover wheel corner');
+  }
+
   // This source has material-split meshes. Regroup only visibly distinct
   // authored assemblies; a mesh/material count must never become a part count.
   const partSpecs = asset.id === 'range-rover' ? [
@@ -62,6 +91,10 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
     { id: 'hood', name: '前舱盖', labels: ['Hood6'], offset: [0, 0.85, 0.30] },
     { id: 'door-left', name: '左前车门及后视镜', labels: ['DoorL6', 'DoorL', 'MirrorBaseL6', 'MirrorL6'], offset: [0.86, 0.28, 0] },
     { id: 'door-right', name: '右前车门及后视镜', labels: ['DoorR6', 'DoorR', 'MirrorBaseR6', 'MirrorR6'], offset: [-0.86, 0.28, 0] },
+    { id: 'wheel-fl', name: '左前轮胎、轮辋与制动总成', labels: [], offset: [0.72, 0.12, 0.12] },
+    { id: 'wheel-fr', name: '右前轮胎、轮辋与制动总成', labels: [], offset: [-0.72, 0.12, 0.12] },
+    { id: 'wheel-rl', name: '左后轮胎、轮辋与制动总成', labels: [], offset: [0.72, 0.12, -0.12] },
+    { id: 'wheel-rr', name: '右后轮胎、轮辋与制动总成', labels: [], offset: [-0.72, 0.12, -0.12] },
     { id: 'tailgate', name: '尾门及后窗', labels: ['Boot6', 'Boot', 'Spoiler6'], offset: [0, 0.65, -0.55] },
     { id: 'rear-bumper', name: '后保险杠与扩散器', labels: ['BumperR6', 'BumperChassisR6', 'Diffuser6'], offset: [0, 0.14, -0.85] },
     { id: 'roof', name: '车顶面板', labels: ['Roof6'], offset: [0, 0.85, 0] },
@@ -83,7 +116,7 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
   const partPivots = new Map<string, { pivot: THREE.Group; origin: THREE.Vector3; offset: THREE.Vector3 }>();
   group.updateMatrixWorld(true);
   for (const spec of partSpecs) {
-    const meshes = spec.labels.flatMap(label => semanticMeshes.get(label) ?? []);
+    const meshes = [...spec.labels.flatMap(label => semanticMeshes.get(label) ?? []), ...(spec.id.startsWith('wheel-') ? wheelMeshes.get(spec.id.slice(6) as WheelCorner) ?? [] : [])];
     if (meshes.length === 0) throw new Error(`Missing authored assembly ${spec.id}`);
     const partBounds = new THREE.Box3();
     for (const mesh of meshes) partBounds.expandByObject(mesh);
@@ -117,6 +150,7 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
       for (const value of Object.values(material)) if (value instanceof THREE.Texture) textures.add(value);
     }
   });
+  for (const geometry of replacedGeometries) geometries.add(geometry);
   return {
     assetId: asset.id,
     title: asset.title,

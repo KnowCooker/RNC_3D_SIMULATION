@@ -1,15 +1,21 @@
 {
   "viewport": "1600x900; narrow 360x800",
   "asset": "Range Rover Sport SVR",
-  "sourceMeshCountBeforeAndAfterGrouping": 171,
-  "uniqueGeometriesDisposedOnce": 171,
+  "sourceMeshCount": 171,
+  "runtimeRenderMeshCount": 180,
+  "trianglesBeforeAndAfterWheelSplit": 74127,
+  "runtimeGeometriesDisposedOnce": 180,
   "uniqueMaterialsDisposedOnce": 30,
-  "authoredGeometryAssemblies": 10,
+  "authoredGeometryAssemblies": 14,
   "assemblyMeshCounts": {
     "front-bumper": 13,
     "hood": 6,
     "door-left": 17,
     "door-right": 16,
+    "wheel-fl": 7,
+    "wheel-fr": 7,
+    "wheel-rl": 7,
+    "wheel-rr": 7,
     "tailgate": 19,
     "rear-bumper": 8,
     "roof": 3,
@@ -18,6 +24,7 @@
     "exhaust": 3
   },
   "assembledToTwoRemoved": true,
+  "fourWheelsIndependentlyRemoved": true,
   "statePreservedAcrossRoadAndWorkshop": true,
   "reverseSinglePart": true,
   "automaticReverseToZero": true,
@@ -28,7 +35,7 @@
   "externalResources": [],
   "productionPreview": {
     "sameOriginGlbLoads": 1,
-    "partCount": 10,
+    "partCount": 14,
     "statePreservedAcrossRoadAndWorkshop": true,
     "pageErrors": [],
     "externalResources": []
