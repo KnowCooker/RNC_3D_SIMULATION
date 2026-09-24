@@ -4,7 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createVehicleModel, type VehiclePart } from './vehicle-model';
 import type { ShowroomModel } from './showroom-model';
 import { createSectionDisplay } from './section-display';
-import { createSceneStage, type StageMode } from './scene-stage';
+import { createSceneStage, type RoadSurface, type StageMode } from './scene-stage';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
 import { describeVehiclePart, featuredVehicleParts } from './part-guide';
@@ -15,6 +15,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   select(selection: LabSelection): void;
   add(position: Vec3, mountPart?: string): void;
   context(selection: LabSelection, x: number, y: number): void;
+  /** A1 may connect visual road presets to the lab configuration and invalidate the previous run. */
+  roadPreset?(surface: RoadSurface, roughness: number): void;
 }) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#101a25');
   const camera = new THREE.PerspectiveCamera(40, 1, 0.08, 100);
@@ -68,6 +70,32 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     stageBar.append(button);
   }
   host.append(stageBar);
+  const roadSurfaceBar = document.createElement('div'); roadSurfaceBar.className = 'lab-road-surface';
+  roadSurfaceBar.setAttribute('role', 'group'); roadSurfaceBar.setAttribute('aria-label', '三维路面类型');
+  const roadSurfaceTitle = document.createElement('span'); roadSurfaceTitle.textContent = '路面 / SURFACE';
+  const roadSurfaceButtons = document.createElement('div');
+  const roadSurfaceInfo = document.createElement('small');
+  const surfaces: { id: RoadSurface; name: string; roughness: number }[] = [
+    { id: 'smooth', name: '平整沥青', roughness: 0.6 },
+    { id: 'coarse', name: '粗糙沥青', roughness: 1.2 },
+    { id: 'gravel', name: '碎石路', roughness: 2.2 },
+  ];
+  for (const surface of surfaces) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = surface.name;
+    button.dataset.surface = surface.id; button.setAttribute('aria-label', `切换三维路面为${surface.name}`);
+    button.onclick = () => {
+      stage.setRoadSurface(surface.id); refreshRoadSurface();
+      callbacks.roadPreset?.(surface.id, surface.roughness);
+    };
+    roadSurfaceButtons.append(button);
+  }
+  roadSurfaceBar.append(roadSurfaceTitle, roadSurfaceButtons, roadSurfaceInfo); host.append(roadSurfaceBar);
+  function refreshRoadSurface() {
+    roadSurfaceButtons.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String((button as HTMLButtonElement).dataset.surface === stage.roadSurface)));
+    roadSurfaceInfo.textContent = callbacks.roadPreset
+      ? `选中路面将设粗糙度 ${surfaces.find(row => row.id === stage.roadSurface)!.roughness.toFixed(2)} 并要求重算`
+      : `路面材质预览 · 声学计算仍按左侧粗糙度 ${config?.roadRoughness.toFixed(2) ?? '—'}`;
+  }
   function focusStageCamera() {
     if (stage.mode === 'road') focusCamera([0, 2.45, -7.5], [0, 1.1, 2]);
     else focusCamera([6.8, 4.6, 7.8], [0, 0.8, -0.4]);
@@ -79,6 +107,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     scene.environmentIntensity = stage.mode === 'road' ? 1 : 0.8;
     renderer.toneMappingExposure = stage.mode === 'road' ? 1.1 : 1.0;
     stageBar.hidden = false;
+    roadSurfaceBar.hidden = stage.mode !== 'road' || fieldMode !== 'off';
+    refreshRoadSurface();
     assemblyPanel.hidden = showroomActive || stage.mode !== 'workshop';
     showroomAssemblyPanel.hidden = !showroomActive || stage.mode !== 'workshop' || !showroomModel?.parts.length || config?.vehicle !== 'ice';
     stageBar.querySelectorAll('button').forEach((button, index) => button.setAttribute('aria-pressed', String(index === (stage.mode === 'road' ? 0 : 1))));
@@ -92,6 +122,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   let assemblyOrder: VehiclePart[] = [], autoAssembly: 'detach' | 'attach' | null = null, autoSeconds = 0;
   let body = 'transparent', editMode = false, waveVisible = false, pathMode = 'none';
   let fieldMode = 'off', fieldSlice: 'volume' | 'x' | 'y' | 'z' = 'volume';
+  let fieldFocus = false;
   let clipAxis = 'none', clipValue = 0;
   const clipPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
   const markers = new THREE.Group(), paths = new THREE.Group(), waves = new THREE.Group(), field = new THREE.Group();
@@ -235,8 +266,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     if (sections) sections.group.visible = true;
     if (showroomModel) showroomModel.group.visible = false;
     guidePicker.style.display = ''; guideCard.style.display = '';
-    fieldNote.style.display = ''; pathFocusNote.style.display = '';
+    fieldNote.style.display = ''; fieldHud.style.display = ''; fieldFocusButton.style.display = ''; pathFocusNote.style.display = '';
     paintField(); reset();
+    if (fieldMode !== 'off') focusCamera([4.6, 2.9, -4.6], [0, 1.15, 0]);
   }
   showroomToggle.onclick = async () => {
     if (showroomActive) { leaveShowroom(); return; }
@@ -281,7 +313,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       applyStage();
       autoAssembly = null; refreshAssembly();
       guidePicker.style.display = 'none'; guideCard.style.display = 'none';
-      fieldNote.style.display = 'none'; pathFocusNote.style.display = 'none';
+      fieldNote.style.display = 'none'; fieldHud.style.display = 'none'; fieldFocusButton.style.display = 'none'; pathFocusNote.style.display = 'none';
       showroomPanel.hidden = false; showroomToggle.textContent = '返回结构实验';
       showroomToggle.setAttribute('aria-label', '返回四类动力教学模型和声学实验');
       focusStageCamera();
@@ -331,6 +363,25 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const fieldNoteDetail = document.createElement('span'); fieldNoteDetail.className = 'lab-field-note-detail';
   const fieldNoteCompact = document.createElement('span'); fieldNoteCompact.className = 'lab-field-note-compact';
   fieldNote.append(fieldNoteDetail, fieldNoteCompact); host.append(fieldNote);
+  const fieldHud = document.createElement('aside'); fieldHud.className = 'lab-field-hud'; fieldHud.hidden = true;
+  fieldHud.setAttribute('aria-label', '三维声场热力图图例');
+  const fieldHudTitle = document.createElement('strong'), fieldHudRange = document.createElement('span');
+  const fieldHudScale = document.createElement('div'); fieldHudScale.className = 'lab-field-scale';
+  fieldHudScale.innerHTML = '<span>30 dB</span><i></i><span>80 dB</span>';
+  const fieldHudHotspot = document.createElement('p'), fieldHudProbe = document.createElement('p');
+  fieldHud.append(fieldHudTitle, fieldHudRange, fieldHudScale, fieldHudHotspot, fieldHudProbe); host.append(fieldHud);
+  const fieldFocusButton = document.createElement('button'); fieldFocusButton.type = 'button';
+  fieldFocusButton.className = 'lab-field-focus'; fieldFocusButton.hidden = true;
+  fieldFocusButton.onclick = () => { fieldFocus = !fieldFocus; refreshFieldFocus(); };
+  host.append(fieldFocusButton);
+  function refreshFieldFocus() {
+    fieldFocusButton.hidden = fieldMode === 'off';
+    fieldFocusButton.textContent = fieldFocus ? '声场聚焦 · 显示硬件' : '显示硬件 · 聚焦声场';
+    fieldFocusButton.setAttribute('aria-pressed', String(fieldFocus));
+  }
+  const probeMarker = new THREE.Mesh(new THREE.SphereGeometry(0.065, 12, 8), new THREE.MeshBasicMaterial({ color: '#fff4b2', depthTest: false }));
+  probeMarker.name = 'field-sample-probe'; probeMarker.visible = false; probeMarker.renderOrder = 7; field.add(probeMarker);
+  let probeIndex: number | null = null;
   const pathFocusNote = document.createElement('div'); pathFocusNote.className = 'lab-path-focus-note'; pathFocusNote.hidden = true;
   const pathFocusDetail = document.createElement('span'); pathFocusDetail.className = 'lab-path-focus-detail';
   const pathFocusCompact = document.createElement('span'); pathFocusCompact.className = 'lab-path-focus-compact';
@@ -365,8 +416,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const planes = clipAxis === 'none' ? [] : [clipPlane];
     // Retain computed field samples while letting cut geometry remain legible.
     const layered = waveVisible || pathMode !== 'none';
-    fieldMaterial.opacity = clipAxis === 'none' ? (layered ? 0.36 : 0.48) : 0.18;
-    sliceMaterials.forEach(material => { material.opacity = clipAxis === 'none' ? (layered ? 0.44 : 0.52) : 0.32; });
+    fieldMaterial.opacity = fieldSlice === 'volume' ? (layered ? 0.10 : 0.16) : 0.18;
+    sliceMaterials.forEach(material => { material.opacity = fieldSlice === 'volume' ? (layered ? 0.22 : 0.30) : clipAxis === 'none' ? (layered ? 0.44 : 0.52) : 0.32; });
     for (const material of model?.materials ?? []) { material.clippingPlanes = planes; material.needsUpdate = true; }
     // The moving field plane lies exactly on the section boundary. Float32 vertex rounding
     // can place it on the discarded side, so clip the car but not that coincident overlay.
@@ -405,6 +456,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   function setConfig(next: LabConfig) {
     if (config && config.vehicle !== next.vehicle) leaveShowroom();
     config = structuredClone(next);
+    refreshRoadSurface();
     const key = JSON.stringify([next.vehicle, next.references, next.speakerEnabled]);
     if (key === signature) return;
     signature = key;
@@ -482,8 +534,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   function paintField() {
     const valid = fieldMode !== 'off' && !!frame && fieldFrameMatchesPoints(frame, fieldPoints);
     field.visible = valid;
+    fieldHud.hidden = !valid;
     if (!valid || !frame) {
-      fieldNote.hidden = fieldMode === 'off' || fieldSlice === 'volume' || (!movingFieldSlice() && !frame?.valid);
+      probeMarker.visible = false;
+      fieldNote.hidden = fieldMode === 'off';
       if (!fieldNote.hidden) {
         fieldNoteDetail.textContent = frame?.valid ? '空间采样点与模型不匹配，已隐藏声场'
           : frame ? '当前车身剖面暂无有效声场' : '当前车身剖面声场待查询，旧位置色片已隐藏';
@@ -492,8 +546,26 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       }
       return;
     }
-    fieldNote.hidden = fieldSlice === 'volume';
+    fieldNote.hidden = false;
     const values = fieldMode === 'primary' ? frame.primarySpl : frame.residualSpl;
+    let low = Infinity, high = -Infinity, hot = 0;
+    values.forEach((value, index) => {
+      if (value < low) low = value;
+      if (value > high) { high = value; hot = index; }
+    });
+    fieldHud.dataset.sampleCount = String(values.length);
+    fieldHud.dataset.mode = fieldMode;
+    fieldHudTitle.textContent = `${fieldMode === 'primary' ? '原声 d' : '残余声 e'} · 车内声场`;
+    fieldHudRange.textContent = `${frame.time.toFixed(2)} s / 采样范围 ${low.toFixed(1)}–${high.toFixed(1)} dB SPL`;
+    fieldHudHotspot.textContent = `本帧最高采样点 ${high.toFixed(1)} dB · (${fieldPoints[hot].map(v => v.toFixed(2)).join(', ')}) m`;
+    if (probeIndex !== null && probeIndex < values.length) {
+      const point = fieldPoints[probeIndex];
+      probeMarker.position.set(...point); probeMarker.visible = true;
+      fieldHudProbe.textContent = `探针 ${values[probeIndex].toFixed(1)} dB · (${point.map(v => v.toFixed(2)).join(', ')}) m`;
+    } else {
+      probeMarker.visible = false;
+      fieldHudProbe.textContent = '点击热力切片读取最近的真实采样点';
+    }
     fieldMesh.visible = fieldSlice === 'volume';
     if (fieldMesh.visible) {
       fieldPoints.forEach((p, i) => {
@@ -504,7 +576,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       fieldMesh.instanceMatrix.needsUpdate = true; if (fieldMesh.instanceColor) fieldMesh.instanceColor.needsUpdate = true;
     }
     for (const [axis, row] of sliceMeshes) {
-      row.mesh.visible = fieldSlice === axis;
+      row.mesh.visible = fieldSlice === 'volume' || fieldSlice === axis;
       if (!row.mesh.visible) continue;
       const colors = row.mesh.geometry.getAttribute('color') as THREE.BufferAttribute;
       row.sampleIndices.forEach((sample, i) => {
@@ -514,11 +586,16 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       colors.needsUpdate = true;
     }
     if (!fieldNote.hidden) {
-      const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
-      const coordinate = fieldPoints[sample][{ x: 0, y: 1, z: 2 }[axis]];
-      const provenance = movingFieldSlice() ? '当前车身剖面真实采样切片' : '固定采样切片 · 车身剖面另行移动';
-      fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m ${provenance} · 三角插值/透视叠层 · 30–80 dB SPL`;
-      fieldNoteCompact.textContent = `${fieldMode === 'primary' ? '原声' : '残余'} ${axis.toUpperCase()}=${coordinate.toFixed(2)}m ${movingFieldSlice() ? '当前剖面真实采样' : '固定场片；车身剖面另移'}`;
+      if (fieldSlice === 'volume') {
+        fieldNoteDetail.textContent = '280个真实计算采样点 + 三正交热力切片；面内颜色为相邻采样点插值，固定30–80 dB SPL色标';
+        fieldNoteCompact.textContent = '280点 · 三正交热力切片 · 面内插值';
+      } else {
+        const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
+        const coordinate = fieldPoints[sample][{ x: 0, y: 1, z: 2 }[axis]];
+        const provenance = movingFieldSlice() ? '当前车身剖面真实采样切片' : '固定采样切片 · 车身剖面另行移动';
+        fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m ${provenance} · 三角插值/透视叠层 · 30–80 dB SPL`;
+        fieldNoteCompact.textContent = `${fieldMode === 'primary' ? '原声' : '残余'} ${axis.toUpperCase()}=${coordinate.toFixed(2)}m ${movingFieldSlice() ? '当前剖面真实采样' : '固定场片；车身剖面另移'}`;
+      }
     }
   }
   function pathIsShown(row: (typeof pathRows)[number]) {
@@ -581,6 +658,19 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     if (event.button !== 0 || Math.hypot(event.clientX - down[0], event.clientY - down[1]) > 5) return;
     const marker = hitAt(event);
     if (marker) { callbacks.select(marker.object.userData.selection); return; }
+    if (field.visible && frame && !editMode) {
+      const planes = [...sliceMeshes.values()].filter(row => row.mesh.visible);
+      const hit = raycaster.intersectObjects(planes.map(row => row.mesh))[0];
+      if (hit) {
+        const row = planes.find(item => item.mesh === hit.object)!;
+        probeIndex = row.sampleIndices.reduce((best, sample) => {
+          const point = new THREE.Vector3(...fieldPoints[sample]); point.y += field.position.y;
+          const bestPoint = new THREE.Vector3(...fieldPoints[best]); bestPoint.y += field.position.y;
+          return point.distanceToSquared(hit.point) < bestPoint.distanceToSquared(hit.point) ? sample : best;
+        }, row.sampleIndices[0]);
+        paintField(); return;
+      }
+    }
     if (model) {
       const hits = raycaster.intersectObject(model.group, true).filter(hit => visibleInHierarchy(hit.object) && unclipped(hit.point));
       const owner = (object: THREE.Object3D) => {
@@ -647,7 +737,14 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     setEditMode(value: boolean) { if (value) leaveShowroom(); editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
     setWaves(value: boolean) { if (value) leaveShowroom(); waveVisible = value; applyClipping(); },
     setPaths(value: string) { if (value !== 'none') leaveShowroom(); pathMode = value; pathFocusKey = ''; applyClipping(); },
-    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { if (mode !== 'off') leaveShowroom(); fieldMode = mode; fieldSlice = slice; syncFieldSampling(); applyClipping(); paintField(); },
+    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') {
+      if (mode !== 'off') leaveShowroom();
+      const entering = fieldMode === 'off' && mode !== 'off';
+      fieldMode = mode; fieldSlice = slice; probeIndex = null;
+      if (entering) { fieldFocus = true; focusCamera([4.6, 2.9, -4.6], [0, 1.15, 0]); }
+      if (mode === 'off') fieldFocus = false;
+      refreshFieldFocus(); applyStage(); syncFieldSampling(); applyClipping(); paintField();
+    },
     updateField(value: FieldFrame) { frame = value; paintField(); },
     render(time: number, selected: LabSelection, drives: number[], sourceValues: number[]) {
       const now = performance.now(), dt = Math.min(0.1, (now - lastTime) / 1000); lastTime = now;
@@ -680,6 +777,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         part.object.position.copy(part.origin).addScaledVector(part.offset, progress);
       }
       model?.wheels.forEach(wheel => { wheel.rotation.x = time * ((config?.speedKph ?? 60) / 3.6) / 0.4; });
+      stripes.visible = stage.mode === 'road' && stage.roadSurface !== 'gravel';
       stripes.children.forEach((line, i) => { line.position.z = (Math.floor(i / 2) * 3 + time * ((config?.speedKph ?? 60) / 3.6)) % 96 - 48; });
       stage.update(time, config?.speedKph ?? 60);
       markerRows.forEach(row => {
@@ -693,15 +791,15 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       updatePathFocus(selected);
       field.position.y = amount * 0.45;
       (contactShade.material as THREE.MeshBasicMaterial).opacity = clipAxis === 'none' ? 1 - amount * 0.8 : 0.12;
-      markers.visible = !showroomActive;
-      waves.visible = waveVisible && !showroomActive;
+      markers.visible = !showroomActive && !fieldFocus;
+      waves.visible = waveVisible && !showroomActive && !fieldFocus;
       waveRows.forEach(row => {
         const i = row.userData.speaker, phase = (time * 1.5 + row.userData.phase) % 1;
         displayPosition(speakerAnchor(i), row.position); row.scale.setScalar(0.12 + phase * 1.1);
         row.visible = !!config?.speakerEnabled[i] && Math.abs(drives[i] ?? 0) > 1e-8;
         (row.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (field.visible ? 0.10 : 0.16);
       });
-      paths.visible = pathMode !== 'none' && !showroomActive;
+      paths.visible = pathMode !== 'none' && !showroomActive && !fieldFocus;
       if (showroomActive) field.visible = false;
       pathRows.forEach((row, i) => {
         const visible = pathIsShown(row);
@@ -716,7 +814,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const width = host.clientWidth, height = host.clientHeight;
       const visible = markerRows.map(row => {
         const p = row.mesh.position.clone().project(camera);
-        const show = !showroomActive && p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1 && (clipAxis === 'none' || clipPlane.distanceToPoint(row.mesh.position) >= 0);
+        const show = !showroomActive && !fieldFocus && p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1 && (clipAxis === 'none' || clipPlane.distanceToPoint(row.mesh.position) >= 0);
         row.button.hidden = !show; row.line.style.display = show ? '' : 'none';
         return { row, visible: show, x: (p.x + 1) / 2 * width, y: (1 - p.y) / 2 * height };
       }).filter(row => row.visible);
@@ -728,6 +826,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); fieldHud.remove(); fieldFocusButton.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); roadSurfaceBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }
