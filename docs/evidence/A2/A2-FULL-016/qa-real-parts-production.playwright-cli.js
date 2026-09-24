@@ -19,6 +19,6 @@ async (page) => {
   const after=await panel.locator('p').innerText();
   const loaded=await page.evaluate(()=>performance.getEntriesByType('resource').filter(resource=>resource.name.includes('range-rover-sport-svr')&&resource.name.startsWith(location.origin)).length);
   const external=await page.evaluate(()=>performance.getEntriesByType('resource').filter(resource=>!resource.name.startsWith(location.origin)).map(resource=>resource.name));
-  if(partCount!==14||!before.startsWith('已拆 2')||after!==before||loaded!==1||errors.length||external.length)throw new Error(JSON.stringify({partCount,before,after,loaded,errors,external}));
+  if(partCount!==27||!before.startsWith('已拆 2')||after!==before||loaded!==1||errors.length||external.length)throw new Error(JSON.stringify({partCount,before,after,loaded,errors,external}));
   return {partCount,before,after,loaded,errors,external};
 }
