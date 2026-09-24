@@ -12,7 +12,7 @@
   stroke-width: 1;
   opacity: .65;
 }
-.rnc-viewer .rnc-marker-label {
+.rnc-viewer :is(.rnc-marker-label, .rnc-source-label) {
   position: absolute;
   width: 64px;
   height: 24px;
@@ -30,7 +30,11 @@
   background: #284853;
   box-shadow: 0 0 0 1px currentColor;
 }
-.rnc-viewer .rnc-marker-label:focus-visible {
+.rnc-viewer :is(.rnc-marker-label, .rnc-source-label):focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
+}
+.rnc-viewer .rnc-source-label {
+  border-style: dashed;
+  font-size: 9px;
 }

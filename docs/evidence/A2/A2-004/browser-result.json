@@ -1,0 +1,44 @@
+{
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "devicePixelRatio": 1,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "buffer": [
+      1280,
+      720
+    ],
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)"
+  },
+  "defaultView": {
+    "startedAt": "2026-09-23T14:05:44.402Z",
+    "endedAt": "2026-09-23T14:05:59.413Z",
+    "elapsedMs": 15001.7,
+    "frames": 2475,
+    "averageFps": 164.98130211909316,
+    "p95FrameMs": 6.200000000000728,
+    "maxRenderedTriangles": 5086,
+    "memory": {
+      "geometries": 101,
+      "textures": 0
+    }
+  },
+  "expandedView": {
+    "startedAt": "2026-09-23T14:05:59.48Z",
+    "endedAt": "2026-09-23T14:06:14.492Z",
+    "elapsedMs": 15005.900000000744,
+    "frames": 2473,
+    "averageFps": 164.80184460777943,
+    "p95FrameMs": 6.200000000000728,
+    "maxRenderedTriangles": 5086,
+    "memory": {
+      "geometries": 101,
+      "textures": 0
+    }
+  },
+  "totalAverageFps": 164.89156080459207,
+  "scope": "Local browser frame sampling only; GPU identity determines whether this is a target integrated-GPU result. Not an audio latency or second-machine test."
+}

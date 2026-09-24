@@ -1,0 +1,54 @@
+{
+  "codeCommit": "838cdf38503cb2a8dc7512ace28f7894d3f283c9",
+  "a2RuntimeCommit": "2760f434dd7b86f7d8b724319f9c77902d3f89bc",
+  "file": "a2-final-demo.webm",
+  "bytes": 20347472,
+  "sha256": "990f422b9a17b8e4355d355efcf2ee03ae44978cdf3bb73a10f866d7993efb6a",
+  "containerDurationSeconds": 380,
+  "realInteractionMilliseconds": 300150,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "1/6 结构：原创教学SUV、车身与内部部件（合成模型）",
+      "actualElapsedMs": 50018,
+      "hardware": 12,
+      "sources": 4
+    },
+    {
+      "chapter": 2,
+      "title": "2/6 结构展开、绕车观察、缩放与一键复位",
+      "actualElapsedMs": 50021,
+      "hardware": 12,
+      "sources": 4
+    },
+    {
+      "chapter": 3,
+      "title": "3/6 四个REF与四个OUT：点位对应真实参考/驱动通道",
+      "actualElapsedMs": 50024,
+      "hardware": 12,
+      "sources": 4
+    },
+    {
+      "chapter": 4,
+      "title": "4/6 四轮SOURCE是示意；点选查看同角REF，不新增测量信号",
+      "actualElapsedMs": 50012,
+      "hardware": 12,
+      "sources": 4
+    },
+    {
+      "chapter": 5,
+      "title": "5/6 四个MIC与d/e试听选择；录像不验证实物音质或延迟",
+      "actualElapsedMs": 50048,
+      "hardware": 12,
+      "sources": 4
+    },
+    {
+      "chapter": 6,
+      "title": "6/6 播放与道路/轮胎同步；复位结构保持播放时间",
+      "actualElapsedMs": 50027,
+      "hardware": 12,
+      "sources": 4
+    }
+  ],
+  "note": "Raw video includes tool pauses between chapters. Silent visual demonstration, not an audio or performance acceptance test."
+}
