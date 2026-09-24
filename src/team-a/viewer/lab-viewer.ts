@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createVehicleModel, type VehiclePart } from './vehicle-model';
+import type { ShowroomModel } from './showroom-model';
 import { createSectionDisplay } from './section-display';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
@@ -82,6 +83,84 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     controls.update(); controls.enableDamping = damping;
   }
   function focusCockpit() { focusCamera([0.05, 1.85, -0.25], [0.1, 1.25, 1.15]); }
+  let showroomModel: ShowroomModel | null = null;
+  let showroomActive = false, showroomRequest = 0, disposed = false;
+  const showroomToggle = document.createElement('button');
+  showroomToggle.type = 'button'; showroomToggle.className = 'lab-showroom-toggle';
+  showroomToggle.textContent = '写实外观'; showroomToggle.setAttribute('aria-label', '打开写实 SUV 外观范例');
+  const showroomPanel = document.createElement('aside');
+  showroomPanel.className = 'lab-showroom-panel'; showroomPanel.hidden = true;
+  showroomPanel.innerHTML = '<strong>写实 SUV 外观范例</strong><p>此车仅供外观与材质欣赏；四类动力结构、声学点位和剖面请返回教学模型查看。</p><div class="lab-showroom-views" aria-label="外观视角"></div><div class="lab-showroom-colors" aria-label="车漆颜色"></div><a href="https://sketchfab.com/3d-models/land-rover-range-rover-sport-svr-5462d65acb0e4dca8c20da82360261db" target="_blank" rel="noopener noreferrer">模型：Mona x Supercars · CC BY 4.0</a>';
+  const showroomViews = showroomPanel.querySelector('.lab-showroom-views')!;
+  for (const [label, position] of [
+    ['前侧', [4.6, 2.45, 4.6]], ['侧面', [5.7, 2, 0]], ['后侧', [4.6, 2.45, -4.6]],
+  ] as [string, Vec3][]) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
+    button.onclick = () => focusCamera(position, [0, 0.85, 0]); showroomViews.append(button);
+  }
+  const showroomColors = showroomPanel.querySelector('.lab-showroom-colors')!;
+  for (const [label, color] of [
+    ['湖蓝', '#2465a8'], ['珍珠白', '#d8dde0'], ['曜石黑', '#18202a'], ['深红', '#873c43'],
+  ]) {
+    const button = document.createElement('button'); button.type = 'button'; button.title = label;
+    button.setAttribute('aria-label', `${label}车漆`); button.style.backgroundColor = color;
+    button.onclick = () => { showroomModel?.setPaint(color); showroomColors.querySelectorAll('button').forEach(item => item.setAttribute('aria-pressed', String(item === button))); };
+    showroomColors.append(button);
+  }
+  host.append(showroomToggle, showroomPanel);
+  function leaveShowroom() {
+    ++showroomRequest;
+    if (!showroomActive) {
+      showroomToggle.disabled = false; showroomToggle.textContent = '写实外观';
+      return;
+    }
+    showroomActive = false;
+    showroomPanel.hidden = true; showroomToggle.textContent = '写实外观';
+    showroomToggle.setAttribute('aria-label', '打开写实 SUV 外观范例');
+    scene.background = new THREE.Color('#101a25');
+    scene.environmentIntensity = 0.7; renderer.toneMappingExposure = 0.95;
+    (ground.material as THREE.MeshStandardMaterial).color.set('#1b2832');
+    ground.scale.set(1, 1, 1);
+    stripes.visible = true;
+    if (model) model.group.visible = true;
+    if (sections) sections.group.visible = true;
+    if (showroomModel) showroomModel.group.visible = false;
+    guidePicker.style.display = ''; guideCard.style.display = '';
+    fieldNote.style.display = ''; pathFocusNote.style.display = '';
+    paintField(); reset();
+  }
+  showroomToggle.onclick = async () => {
+    if (showroomActive) { leaveShowroom(); return; }
+    const request = ++showroomRequest;
+    showroomToggle.disabled = true; showroomToggle.textContent = '加载外观…';
+    try {
+      if (!showroomModel) {
+        const loaded = await (await import('./showroom-model')).loadShowroomModel();
+        if (disposed) { loaded.dispose(); return; }
+        showroomModel = loaded; showroomModel.group.visible = false; scene.add(showroomModel.group);
+        showroomModel.setPaint('#18202a');
+        showroomColors.querySelectorAll('button')[2].setAttribute('aria-pressed', 'true');
+      }
+      if (request !== showroomRequest || disposed) return;
+      showroomActive = true;
+      showroomModel.group.visible = true;
+      if (model) model.group.visible = false;
+      if (sections) sections.group.visible = false;
+      scene.background = new THREE.Color('#d7dfe4');
+      scene.environmentIntensity = 1; renderer.toneMappingExposure = 1.2;
+      (ground.material as THREE.MeshStandardMaterial).color.set('#bbc7ce');
+      ground.scale.set(10, 3, 1);
+      stripes.visible = false;
+      guidePicker.style.display = 'none'; guideCard.style.display = 'none';
+      fieldNote.style.display = 'none'; pathFocusNote.style.display = 'none';
+      showroomPanel.hidden = false; showroomToggle.textContent = '返回结构实验';
+      showroomToggle.setAttribute('aria-label', '返回四类动力教学模型和声学实验');
+      focusCamera([4.6, 2.45, 4.6], [0, 0.85, 0]);
+    } catch (error) {
+      showroomToggle.textContent = '外观加载失败 · 重试';
+      showroomToggle.title = error instanceof Error ? error.message : String(error);
+    } finally { if (!disposed) showroomToggle.disabled = false; }
+  };
   function showGuide(part: VehiclePart) {
     if (!config || editMode) return;
     const guide = describeVehiclePart(config.vehicle, part);
@@ -195,6 +274,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     host.append(button); markerRows.push({ mesh, button, line, selection, source, anchor });
   }
   function setConfig(next: LabConfig) {
+    if (config && config.vehicle !== next.vehicle) leaveShowroom();
     config = structuredClone(next);
     const key = JSON.stringify([next.vehicle, next.references, next.speakerEnabled]);
     if (key === signature) return;
@@ -350,12 +430,14 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   let down = [0, 0];
   renderer.domElement.onpointerdown = event => { down = [event.clientX, event.clientY]; };
   function hitAt(event: MouseEvent | PointerEvent) {
+    if (showroomActive) return undefined;
     const rect = renderer.domElement.getBoundingClientRect();
     pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1); raycaster.setFromCamera(pointer, camera);
     scene.updateMatrixWorld(true);
     return raycaster.intersectObjects(markers.children).find(hit => visibleInHierarchy(hit.object) && unclipped(hit.point));
   }
   renderer.domElement.onpointerup = event => {
+    if (showroomActive) return;
     if (event.button !== 0 || Math.hypot(event.clientX - down[0], event.clientY - down[1]) > 5) return;
     const marker = hitAt(event);
     if (marker) { callbacks.select(marker.object.userData.selection); return; }
@@ -380,6 +462,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   renderer.domElement.oncontextmenu = event => { event.preventDefault(); const hit = hitAt(event); if (hit) callbacks.context(hit.object.userData.selection, event.clientX, event.clientY); };
   const resize = new ResizeObserver(() => { renderer.setSize(host.clientWidth, host.clientHeight, false); camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); }); resize.observe(host);
   function reset() {
+    if (showroomActive) { focusCamera([4.6, 2.45, 4.6], [0, 0.85, 0]); return; }
     const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
     camera.position.set(4, 3.4, 4.8); controls.target.set(0, 0.7, 0); controls.update(); controls.enableDamping = damping; exploded = false;
   }
@@ -398,18 +481,19 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   return {
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
     getMountIssues() { return mountIssues.map(issue => ({ ...issue })); },
-    setExploded(value: boolean) { exploded = value; },
+    setExploded(value: boolean) { leaveShowroom(); exploded = value; },
     setBody(value: string) {
+      leaveShowroom();
       const leavingCabin = body === 'hidden' && value !== 'hidden' && camera.position.distanceTo(controls.target) < 3;
       body = value; controls.minDistance = value === 'hidden' ? 0.6 : 3; applyBody();
       if (leavingCabin) focusCamera([4, 3.4, 4.8], [0, 0.7, 0]);
       else if (value === 'hidden' && guideSelect.value === 'cockpit') focusCockpit();
     },
-    setSection(axis: string, value: number) { const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis); },
-    setEditMode(value: boolean) { editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
-    setWaves(value: boolean) { waveVisible = value; applyClipping(); },
-    setPaths(value: string) { pathMode = value; pathFocusKey = ''; applyClipping(); },
-    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { fieldMode = mode; fieldSlice = slice; syncFieldSampling(); applyClipping(); paintField(); },
+    setSection(axis: string, value: number) { leaveShowroom(); const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis); },
+    setEditMode(value: boolean) { if (value) leaveShowroom(); editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
+    setWaves(value: boolean) { if (value) leaveShowroom(); waveVisible = value; applyClipping(); },
+    setPaths(value: string) { if (value !== 'none') leaveShowroom(); pathMode = value; pathFocusKey = ''; applyClipping(); },
+    setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') { if (mode !== 'off') leaveShowroom(); fieldMode = mode; fieldSlice = slice; syncFieldSampling(); applyClipping(); paintField(); },
     updateField(value: FieldFrame) { frame = value; paintField(); },
     render(time: number, selected: LabSelection, drives: number[], sourceValues: number[]) {
       const now = performance.now(), dt = Math.min(0.1, (now - lastTime) / 1000); lastTime = now;
@@ -431,14 +515,16 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       updatePathFocus(selected);
       field.position.y = amount * 0.45;
       (contactShade.material as THREE.MeshBasicMaterial).opacity = clipAxis === 'none' ? 1 - amount * 0.8 : 0.12;
-      waves.visible = waveVisible;
+      markers.visible = !showroomActive;
+      waves.visible = waveVisible && !showroomActive;
       waveRows.forEach(row => {
         const i = row.userData.speaker, phase = (time * 1.5 + row.userData.phase) % 1;
         displayPosition(speakerAnchor(i), row.position); row.scale.setScalar(0.12 + phase * 1.1);
         row.visible = !!config?.speakerEnabled[i] && Math.abs(drives[i] ?? 0) > 1e-8;
         (row.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (field.visible ? 0.10 : 0.16);
       });
-      paths.visible = pathMode !== 'none';
+      paths.visible = pathMode !== 'none' && !showroomActive;
+      if (showroomActive) field.visible = false;
       pathRows.forEach((row, i) => {
         const visible = pathIsShown(row);
         row.line.visible = row.dot.visible = visible;
@@ -452,7 +538,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const width = host.clientWidth, height = host.clientHeight;
       const visible = markerRows.map(row => {
         const p = row.mesh.position.clone().project(camera);
-        const show = p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1 && (clipAxis === 'none' || clipPlane.distanceToPoint(row.mesh.position) >= 0);
+        const show = !showroomActive && p.z >= -1 && p.z <= 1 && Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1 && (clipAxis === 'none' || clipPlane.distanceToPoint(row.mesh.position) >= 0);
         row.button.hidden = !show; row.line.style.display = show ? '' : 'none';
         return { row, visible: show, x: (p.x + 1) / 2 * width, y: (1 - p.y) / 2 * height };
       }).filter(row => row.visible);
@@ -464,6 +550,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }
