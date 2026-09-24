@@ -45,3 +45,9 @@
 | ICE 换车后 | [ice-range-rover-after-switch.png](ice-range-rover-after-switch.png) |
 
 视觉复核：Model Y 轮廓、车门/玻璃、两排座椅和灯组可辨，但漆面反射与细部真实感弱于 Range Rover；本批不宣布最终视觉参照达标。HEV 和 EREV 的独立、授权清楚的写实外观仍缺；搜索到的 [RAV4 Hybrid CC BY-NC-SA](https://sketchfab.com/3d-models/2023-toyota-rav4-hybrid-ed155ad0cb7d447085a519eaff9aa2df) 和 [Li Auto L7 CC BY-NC](https://sketchfab.com/3d-models/li-auto-l7-0203b32240124b228168de2e89a2f4f2) 未导入。下一步重点是找到许可链可靠、质感至少达到 Range Rover 范例的 HEV/EREV 模型，并测指定核显与第二机离线包。A1 可依据本批截图与生产预览脚本在其独立工作区复核，不需要改它的源码。
+
+## 同批续进：三维内部像素预算
+
+此前[当前整合版性能基线](../../full-lab/current-performance/README.md)在1920×1080完整页面得到1588×618的WebGL绘图缓冲，超过约定的1280×720等效像素量。本批在A2 viewer根据实际容器宽高和设备DPR动态限制内部缓冲**总像素数**，保留原CSS宽高比、HTML标记和鼠标坐标；不会拉伸成固定16:9画布。监听容器与窗口尺寸变化。
+
+[浏览器脚本](qa-pixel-budget.playwright-cli.js)和[原始结果](pixel-budget-browser-log.txt)显示：1920×1080页面的1588×618 CSS区域使用1538×598缓冲；1600×900为1268×618；360×800窄窗为332×398。模拟2×DPR的1920×1080仍为1538×598。各场景都≤921,600像素、16个硬件/轮端标记存在、实际点击REF FL进入对应信号、页面异常0；写实外观和窄窗原图见[showroom-pixel-budget.png](showroom-pixel-budget.png)、[technical-narrow-pixel-budget.png](technical-narrow-pixel-budget.png)。这只是离屏像素策略与本机浏览器交互复核，**不证明指定核显≥30fps**；后者仍需目标机器、驱动和供电环境实测。

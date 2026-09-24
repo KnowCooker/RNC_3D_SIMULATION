@@ -2,7 +2,13 @@
 async (page) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
   await page.goto('http://127.0.0.1:5182/');
+  await page.waitForTimeout(200);
+  const drawingBuffer = await page.evaluate(() => {
+    const canvas = document.querySelector('#lab-viewer canvas');
+    return [canvas.width, canvas.height];
+  });
   const vehicle = page.getByRole('combobox', { name: '动力类型' });
   const enter = page.getByRole('button', { name: '打开写实 SUV 外观范例' });
   const leave = page.getByRole('button', { name: '返回四类动力教学模型和声学实验' });
@@ -19,5 +25,6 @@ async (page) => {
   const externalResources = await page.evaluate(() => performance.getEntriesByType('resource')
     .filter(resource => !resource.name.startsWith(location.origin))
     .map(resource => resource.name));
-  return { bev, ice, assets, externalResources, pageErrors: errors };
+  return { bev, ice, drawingBuffer, withinPixelBudget: drawingBuffer[0] * drawingBuffer[1] <= 1280 * 720,
+    assets, externalResources, pageErrors: errors };
 }

@@ -18,7 +18,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#101a25');
   const camera = new THREE.PerspectiveCamera(40, 1, 0.08, 100);
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.localClippingEnabled = true;
+  renderer.setPixelRatio(1); renderer.localClippingEnabled = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace; host.append(renderer.domElement);
   const leaders = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   leaders.classList.add('lab-marker-leaders'); leaders.setAttribute('aria-hidden', 'true'); host.append(leaders);
@@ -474,7 +474,18 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     }
   };
   renderer.domElement.oncontextmenu = event => { event.preventDefault(); const hit = hitAt(event); if (hit) callbacks.context(hit.object.userData.selection, event.clientX, event.clientY); };
-  const resize = new ResizeObserver(() => { renderer.setSize(host.clientWidth, host.clientHeight, false); camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); }); resize.observe(host);
+  function resizeViewer() {
+    const width = Math.max(1, host.clientWidth), height = Math.max(1, host.clientHeight);
+    // Keep the physical canvas within the 1280×720 pixel budget while retaining
+    // the host's aspect ratio and CSS-resolution labels/pointer coordinates.
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5, Math.sqrt(1280 * 720 / (width * height)));
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  }
+  const resize = new ResizeObserver(resizeViewer); resize.observe(host);
+  window.addEventListener('resize', resizeViewer);
   function reset() {
     if (showroomActive) { focusCamera([4.6, 2.45, 4.6], [0, 0.85, 0]); return; }
     const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
@@ -564,6 +575,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); contactShade.material.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }
