@@ -93,3 +93,18 @@ test('the BEV and EREV battery enclosure remains directly visible from the under
     model.dispose();
   }
 });
+
+test('the closed side sill hides the floor and battery at door level on all four vehicles', () => {
+  for (const kind of ['ice', 'bev', 'hev', 'erev'] as VehicleKind[]) {
+    const model = createVehicleModel(kind);
+    model.group.updateMatrixWorld(true);
+    const hit = new THREE.Raycaster(new THREE.Vector3(3, 0.54, 0), new THREE.Vector3(-1, 0, 0))
+      .intersectObject(model.group, true)[0];
+    assert.ok(hit, `${kind} has a side surface below the doors`);
+    let part: THREE.Object3D | null = hit.object;
+    while (part && part.parent !== model.group) part = part.parent;
+    assert.equal(part?.name, 'side-1', `${kind} first visible part below the doors is the side shell`);
+    assert.ok(hit.point.x > 0.98, `${kind} sill covers the outboard floor edge`);
+    model.dispose();
+  }
+});

@@ -385,7 +385,17 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
     smooth.forEach(normal => normal.normalize());
     for (let i = 0; i < skin.count; i++) { const normal = smooth.get(vertexKey(i))!; normals.setXYZ(i, normal.x, normal.y, normal.z); }
     mesh(side, g, paint, [s > 0 ? 0.91 : -0.965, 0, 0], true);
-    box(side, [0.075, 0.085, 1.81], [s * 0.957, 0.615, 0], dark, 0.032, true);
+    // The sill closes the visible gap below the doors while remaining part of
+    // the removable side shell, so it never changes the acoustic floor position.
+    const sillVertices: number[] = [], sillLevels = [0.49, 0.56, 0.68, 0.758], sillSegments = 10;
+    for (const [row, y] of sillLevels.entries()) for (let i = 0; i <= sillSegments; i++) {
+      const z = -0.975 + 1.95 * i / sillSegments;
+      const endBlend = 0.045 * Math.pow(Math.abs(z) / 0.975, 4);
+      const profile = [1.006, 1.045, 1.033, 0.995][row];
+      sillVertices.push(s * (profile - endBlend), y, z);
+    }
+    mesh(side, skinGeometry(sillVertices, sillSegments, sillLevels.length - 1, [-s * 0.025, 0, 0]), paint, [0, 0, 0], true);
+    box(side, [0.022, 0.023, 1.76], [s * 1.048, 0.585, 0], dark, 0.008, true);
     for (const z of [-1.45, 1.45]) {
       const linerVertices: number[] = [], segments = 18;
       for (let radiusIndex = 0; radiusIndex <= 1; radiusIndex++) for (let i = 0; i <= segments; i++) {
@@ -393,8 +403,15 @@ export function createVehicleModel(kind: VehicleKind): VehicleModel {
         linerVertices.push(s * 0.966, 0.49 + Math.sin(angle) * radius, z + Math.cos(angle) * radius);
       }
       mesh(side, skinGeometry(linerVertices, segments, 1, [-s * 0.012, 0, 0]), dark, [0, 0, 0], true);
-      const arch: V3[] = []; for (let i = 0; i <= 24; i++) { const a = i / 24 * Math.PI; arch.push([s * 0.994, 0.49 + Math.sin(a) * 0.445, z + Math.cos(a) * 0.49]); }
-      appendShell(tube(side, arch, 0.031, dark));
+      const flareVertices: number[] = [], flareSegments = 16;
+      for (let radial = 0; radial <= 1; radial++) for (let i = 0; i <= flareSegments; i++) {
+        const angle = 0.2 + i / flareSegments * (Math.PI - 0.4);
+        const outer = radial === 0, horizontalRadius = outer ? 0.55 : 0.49, verticalRadius = outer ? 0.5 : 0.445;
+        const ridge = Math.sin(angle) * 0.06;
+        flareVertices.push(s * (0.977 + (outer ? 0 : ridge)), 0.49 + Math.sin(angle) * verticalRadius,
+          z + Math.cos(angle) * horizontalRadius);
+      }
+      mesh(side, skinGeometry(flareVertices, flareSegments, 1, [-s * 0.018, 0, 0]), paint, [0, 0, 0], true);
     }
     for (const [id, z, length] of [['front', 0.62, 1.19], ['rear', -0.73, 1.35]] as [string, number, number][]) {
       const door = part(`door-${id}-${s}`, `${s > 0 ? '左' : '右'}${id === 'front' ? '前' : '后'}车门及扬声器`, 'shell', [s * 0.72, 0.35, 0]);
