@@ -76,7 +76,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   let realtime = false, liveSession = false, livePullPending = false, liveSnapshot: LabLiveSnapshot | null = null;
   let lastCurveTime = 0, backgroundPaused = false;
   const curveTimes: number[] = [];
-  let fieldPending = false, fieldEpoch = 0, lastFieldAt = -1, lastFieldClock = 0, lastChart = 0;
+  let fieldPending = false, fieldInFlight = 0, fieldEpoch = 0, lastFieldAt = -1, lastFieldClock = 0, lastChart = 0;
   let curves: (number | null)[][] = [[], [], [], []];
   const flow = createSignalFlow($('flow'), (signal, channel) => select({ signal, channel }));
   const viewer = createLabViewer($('viewer'), { select, add: addReference, context });
@@ -235,7 +235,11 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   $('body').onchange = () => viewer.setBody($<HTMLSelectElement>('body').value);
   $('explode').onclick = () => { exploded = !exploded; viewer.setExploded(exploded); $('explode').setAttribute('aria-pressed', String(exploded)); };
   $('reset').onclick = () => { viewer.reset(); exploded = false; $('explode').setAttribute('aria-pressed', 'false'); };
-  function section() { viewer.setSection($<HTMLSelectElement>('section').value, Number($<HTMLInputElement>('section-position').value)); }
+  function section() {
+    const points = viewer.fieldPoints;
+    viewer.setSection($<HTMLSelectElement>('section').value, Number($<HTMLInputElement>('section-position').value));
+    if (viewer.fieldPoints !== points) clearField();
+  }
   $('section').onchange = section; $('section-position').oninput = section;
   function fieldOptions() { clearField(); viewer.setField($<HTMLSelectElement>('field').value, $<HTMLSelectElement>('field-slice').value as 'volume' | 'x' | 'y' | 'z'); }
   $('field').onchange = fieldOptions; $('field-slice').onchange = fieldOptions;
@@ -273,9 +277,10 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       if (!busy) $('status').textContent = `${livePlayer.starting ? '正在恢复试听' : !livePlayer.playing ? '实时已暂停' : livePlayer.status === 'buffering' ? '等待新样本' : '实时运行'} · ${time.toFixed(1)} s · 缓冲 ${(livePlayer.bufferedUntil - time).toFixed(2)} s · 共同安全增益 ${livePlayer.safetyGain.toFixed(3)} · 补缓冲 ${livePlayer.underruns} 次`;
     }
     if (now - lastChart >= 100) { draw(); lastChart = now; }
-    if (result && !busy && $<HTMLSelectElement>('field').value !== 'off' && !fieldPending && now - lastFieldClock > 350 && Math.abs(time - lastFieldAt) > 0.15) {
-      const token = generation, epoch = fieldEpoch; fieldPending = true; lastFieldAt = time; lastFieldClock = now;
-      ports.field(time, viewer.fieldPoints).then(frame => { if (token === generation && epoch === fieldEpoch) { viewer.updateField(frame); $('field-status').textContent = frame.valid ? `空间窗口截至 ${frame.time.toFixed(2)} s` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场'; } }).catch(error => { if (token === generation && epoch === fieldEpoch) $('field-status').textContent = `声场计算失败：${String(error)}`; }).finally(() => { if (token === generation && epoch === fieldEpoch) fieldPending = false; });
+    if (result && !busy && $<HTMLSelectElement>('field').value !== 'off' && !fieldPending && fieldInFlight < 2 && now - lastFieldClock > 350 && Math.abs(time - lastFieldAt) > 0.15) {
+      const token = generation, epoch = fieldEpoch, points = viewer.fieldPoints;
+      fieldPending = true; fieldInFlight++; lastFieldAt = time; lastFieldClock = now;
+      ports.field(time, points).then(frame => { if (token === generation && epoch === fieldEpoch) { viewer.updateField(frame); $('field-status').textContent = frame.valid ? `空间窗口截至 ${frame.time.toFixed(2)} s` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场'; } }).catch(error => { if (token === generation && epoch === fieldEpoch) $('field-status').textContent = `声场计算失败：${String(error)}`; }).finally(() => { fieldInFlight--; if (token === generation && epoch === fieldEpoch) fieldPending = false; });
     }
     requestAnimationFrame(tick);
   };
