@@ -90,7 +90,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   showroomToggle.textContent = '写实外观'; showroomToggle.setAttribute('aria-label', '打开写实 SUV 外观范例');
   const showroomPanel = document.createElement('aside');
   showroomPanel.className = 'lab-showroom-panel'; showroomPanel.hidden = true;
-  showroomPanel.innerHTML = '<strong>写实 SUV 外观范例</strong><p>此车仅供外观与材质欣赏；四类动力结构、声学点位和剖面请返回教学模型查看。</p><div class="lab-showroom-views" aria-label="外观视角"></div><div class="lab-showroom-colors" aria-label="车漆颜色"></div><a href="https://sketchfab.com/3d-models/land-rover-range-rover-sport-svr-5462d65acb0e4dca8c20da82360261db" target="_blank" rel="noopener noreferrer">模型：Mona x Supercars · CC BY 4.0</a>';
+  showroomPanel.innerHTML = '<strong>写实 SUV 外观范例</strong><p></p><div class="lab-showroom-views" aria-label="外观视角"></div><div class="lab-showroom-colors" aria-label="车漆颜色"></div><a target="_blank" rel="noopener noreferrer"></a>';
+  const showroomTitle = showroomPanel.querySelector('strong')!;
+  const showroomDescription = showroomPanel.querySelector('p')!;
+  const showroomCredit = showroomPanel.querySelector('a')!;
   const showroomViews = showroomPanel.querySelector('.lab-showroom-views')!;
   for (const [label, position] of [
     ['前侧', [4.6, 2.45, 4.6]], ['侧面', [5.7, 2, 0]], ['后侧', [4.6, 2.45, -4.6]],
@@ -132,16 +135,27 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   showroomToggle.onclick = async () => {
     if (showroomActive) { leaveShowroom(); return; }
     const request = ++showroomRequest;
+    const vehicle = config?.vehicle ?? 'ice';
+    const wantedAssetId = vehicle === 'bev' ? 'tesla-model-y' : 'range-rover';
     showroomToggle.disabled = true; showroomToggle.textContent = '加载外观…';
     try {
+      if (showroomModel && showroomModel.assetId !== wantedAssetId) {
+        scene.remove(showroomModel.group); showroomModel.dispose(); showroomModel = null;
+      }
       if (!showroomModel) {
-        const loaded = await (await import('./showroom-model')).loadShowroomModel();
-        if (disposed) { loaded.dispose(); return; }
+        const loaded = await (await import('./showroom-model')).loadShowroomModel(vehicle);
+        if (disposed || request !== showroomRequest) { loaded.dispose(); return; }
         showroomModel = loaded; showroomModel.group.visible = false; scene.add(showroomModel.group);
         showroomModel.setPaint('#18202a');
-        showroomColors.querySelectorAll('button')[2].setAttribute('aria-pressed', 'true');
+        showroomColors.querySelectorAll('button').forEach((button, index) => button.setAttribute('aria-pressed', String(index === 2)));
       }
       if (request !== showroomRequest || disposed) return;
+      showroomTitle.textContent = `${showroomModel.title} · 外观展示`;
+      showroomDescription.textContent = vehicle === 'hev' || vehicle === 'erev'
+        ? '当前尚无经过授权和质量核验的同动力车型外观；此车仅作 SUV 外观参考。动力结构、声学点位和剖面请返回教学模型查看。'
+        : '此车是同类动力的外观参考，不代表教学模型的实车结构或声学安装坐标；请返回教学模型查看实验。';
+      showroomCredit.href = showroomModel.source;
+      showroomCredit.textContent = `模型：${showroomModel.credit} · CC BY 4.0`;
       showroomActive = true;
       showroomModel.group.visible = true;
       if (model) model.group.visible = false;
