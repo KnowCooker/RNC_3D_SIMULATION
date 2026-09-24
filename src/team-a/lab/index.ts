@@ -6,6 +6,7 @@ import { createLabViewer } from '../viewer/lab-viewer';
 import { createSignalFlow } from './signal-flow';
 import { drawConvergence } from '../charts';
 import './style.css';
+import './game-ui.css';
 
 export interface LabPorts {
   calculate(config: LabConfig, runId: string): Promise<LabResult>;
@@ -46,10 +47,11 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   root.innerHTML = `
     <header class="lab-header"><div><span class="lab-eyebrow">INTERACTIVE ACOUSTICS / RNC</span><h1>车辆声学实验室</h1></div><span class="lab-badge">完整目标 · 开发中</span><a href="?legacy=1">两周基准版本</a></header>
     <div class="lab-disclosure">原创教学车型 · 公开结构依据 · 合成空间路径 · <span id="lab-disclosure-mode">16秒预计算回放</span> · 非实车预测 / 非有限元结果</div>
-    <main class="lab-main"><aside class="lab-controls">
+    <main class="lab-main"><aside id="lab-controls" class="lab-controls"><button id="lab-controls-close" type="button">返回三维场景</button>
       <h2>01 / 车辆与工况</h2><label>运行方式<select id="lab-mode"><option value="replay">16秒计算后回放</option><option value="live">实时连续仿真</option></select></label><p id="lab-mode-help">一次计算完整实验，可定位和重放。</p><label>动力类型<select id="lab-vehicle">${types.map(key => `<option value="${key}" ${key === 'bev' ? 'selected' : ''}>${VEHICLE_NAMES[key]}</option>`).join('')}</select></label><p id="lab-architecture"></p>
       <label>车速 / km/h<input id="lab-speed" type="range" min="0" max="130" step="5" value="60"><output id="lab-speed-value">60</output></label>
-      <label>路面粗糙度 / 相对值<input id="lab-road" type="range" min="0.1" max="3" step="0.1" value="1"><output id="lab-road-value">1</output></label>
+      <label>路面粗糙度 / 相对值<input id="lab-road" type="range" min="0.1" max="3" step="0.1" value="0.6"><output id="lab-road-value">0.6</output></label>
+      <p id="lab-road-acoustic-note" class="lab-road-acoustic-note" role="status">平整沥青 · 声学粗糙度 0.6 已同步。</p>
       <label>胎面粗糙度 / 相对值<input id="lab-tread" type="range" min="0.1" max="3" step="0.1" value="1"><output id="lab-tread-value">1</output></label>
       <div class="lab-pair"><label>胎压 / kPa<input id="lab-pressure" type="number" min="160" max="320" value="240"></label><label>温度 / °C<input id="lab-temperature" type="number" min="-20" max="50" value="20"></label></div>
       <p class="lab-help">车速和粗糙度改变源能量。胎压/温度用于教学谱峰与阻尼变化，不宣称普适单调关系。</p>
@@ -58,7 +60,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <label class="lab-check"><input id="lab-edit" type="checkbox">车辆改制：点击结构添加参考传感器</label><p class="lab-help">参考1–8个；右击标记可查看或移除。误差点固定。所有改制将要求重新计算。</p><div id="lab-references"></div><p id="lab-mount-warning" role="status" hidden></p>
       <fieldset><legend>车门扬声器</legend><div id="lab-speakers">${ORDER.map((name, i) => `<label class="lab-check"><input type="checkbox" data-speaker="${i}" checked>${name.toUpperCase()}</label>`).join('')}</div></fieldset>
       <button id="lab-calculate" class="lab-primary">计算当前实验</button><button id="lab-cancel" disabled>取消计算</button><p id="lab-status" role="status">准备计算默认实验</p>
-    </aside><section class="lab-workspace"><div class="lab-view-heading"><h2>03 / 结构与空间声场</h2><span id="lab-run">尚无实验结果</span></div>
+    </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">LIVE 3D / INTERACTIVE BAY</span><h2>03 / 结构与空间声场</h2></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
       <div id="lab-viewer"><span class="lab-view-help">左键旋转 · 滚轮缩放 · 右击硬件查看信号</span></div>
       <div class="lab-view-tools"><label>车身<select id="lab-body"><option value="transparent">透明</option><option value="solid">实体</option><option value="hidden">隐藏</option></select></label><button id="lab-explode" aria-pressed="false">分解动画</button><button id="lab-reset">复位</button><label>剖面<select id="lab-section"><option value="none">关闭</option><option value="x">纵剖 X</option><option value="y">水平 Y</option><option value="z">横剖 Z</option></select></label><label>剖面位置 / m<input id="lab-section-position" type="range" min="-2.5" max="2.5" step="0.05" value="0"></label></div>
       <div class="lab-view-tools"><label>声压场<select id="lab-field"><option value="off">关闭</option><option value="residual">残余 e / SPL</option><option value="primary">原始 d / SPL</option></select></label><label>场显示<select id="lab-field-slice"><option value="volume">三维采样体</option><option value="x">中央纵切片</option><option value="y">头部水平切片</option><option value="z">前排横切片</option></select></label><label>传播路径<select id="lab-paths"><option value="none">关闭</option><option value="primary">初级路径</option><option value="secondary">次级路径</option><option value="both">全部</option></select></label><label class="lab-check"><input id="lab-waves" type="checkbox">扬声器波前</label></div>
@@ -72,14 +74,53 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   const player = new Player(); player.setVolume(0.15);
   const livePlayer = new LivePlayer(); livePlayer.setVolume(0.15);
   let config = defaultLabConfig(), result: LabResult | null = null, selected: LabSelection = { signal: 'e', channel: 0 };
+  // Match the viewer's initial smooth asphalt rather than starting with two road states.
+  config.roadRoughness = 0.6;
   let generation = 0, busy = false, exploded = false, muted = false, nextReference = 5, disposed = false;
   let realtime = false, liveSession = false, livePullPending = false, liveSnapshot: LabLiveSnapshot | null = null;
   let lastCurveTime = 0, backgroundPaused = false;
   const curveTimes: number[] = [];
   let fieldPending = false, fieldInFlight = 0, fieldEpoch = 0, lastFieldAt = -1, lastFieldClock = 0, lastChart = 0;
   let curves: (number | null)[][] = [[], [], [], []];
+  let visualRoad: { name: string; roughness: number } | null = { name: '平整沥青', roughness: 0.6 };
+  const roadNames = { smooth: '平整沥青', coarse: '粗糙沥青', gravel: '碎石路' } as const;
   const flow = createSignalFlow($('flow'), (signal, channel) => select({ signal, channel }));
-  const viewer = createLabViewer($('viewer'), { select, add: addReference, context });
+  const viewer = createLabViewer($('viewer'), {
+    select, add: addReference, context,
+    roadPreset(surface, roughness) {
+      visualRoad = { name: roadNames[surface], roughness };
+      if (config.roadRoughness !== roughness) {
+        config.roadRoughness = roughness;
+        $<HTMLInputElement>('road').value = String(roughness);
+        $('road-value').textContent = roughness.toFixed(1);
+        updateRoadNote();
+        dirty();
+      } else updateRoadNote();
+    },
+  });
+  const controlsToggle = $<HTMLButtonElement>('controls-toggle');
+  const controlsClose = $<HTMLButtonElement>('controls-close');
+  function setControlsCollapsed(collapsed: boolean) {
+    root.classList.toggle('lab-controls-collapsed', collapsed);
+    controlsToggle.setAttribute('aria-expanded', String(!collapsed));
+    controlsToggle.textContent = collapsed ? '展开控制台' : '收起控制台';
+  }
+  controlsToggle.onclick = () => {
+    const collapsed = !root.classList.contains('lab-controls-collapsed');
+    setControlsCollapsed(collapsed);
+    if (!collapsed && matchMedia('(max-width: 680px)').matches) controlsClose.focus();
+  };
+  controlsClose.onclick = () => { setControlsCollapsed(true); controlsToggle.focus(); };
+  if (matchMedia('(max-width: 680px)').matches) setControlsCollapsed(true);
+  function updateRoadNote() {
+    const actual = config.roadRoughness.toFixed(1);
+    const applied = result?.config.roadRoughness === config.roadRoughness;
+    $('road-acoustic-note').textContent = visualRoad
+      ? config.roadRoughness === visualRoad.roughness
+        ? `${visualRoad.name} · 声学粗糙度 ${actual} 已同步；${applied ? '当前实验已采用。' : '重新运行后生效。'}`
+        : `手动粗糙度 ${actual} 将用于声学计算；三维路面仍显示${visualRoad.name}材质。`
+      : `尚未选择三维路面预设；声学计算使用当前粗糙度 ${actual}。`;
+  }
   const transport = () => liveSession ? livePlayer : player;
   const timeOffset = () => liveSnapshot ? liveSnapshot.startSample / config.sampleRateHz : 0;
   const mountIssues = () => (viewer as typeof viewer & { getMountIssues?: () => { sensorId: string; mountPart: string }[] }).getMountIssues?.() ?? [];
@@ -169,6 +210,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       const computed = await ports.calculate(structuredClone(config), runId);
       if (token !== generation) return;
       result = computed;
+      updateRoadNote();
       const audio = prepareLabPlayback(computed); player.load(audio.result);
       player.setComparison(ORDER[Number($<HTMLSelectElement>('seat').value)], $<HTMLSelectElement>('comparison').value as 'd' | 'e');
       curves = [[], [], [], []];
@@ -213,7 +255,9 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       while (token === generation && liveSession && livePlayer.playing && livePlayer.bufferedUntil - livePlayer.currentTime < liveBufferTargetSeconds) {
         const packet = await ports.pullLive(400);
         if (token !== generation) return;
+        const firstPacket = !result;
         livePlayer.enqueue(packet.chunk); liveSnapshot = packet.snapshot; result = packet.snapshot.result;
+        if (firstPacket) updateRoadNote();
       }
     } catch (error) {
       if (token === generation) { dirty(); $('status').textContent = `实时运行已停止：${String(error)}`; }
@@ -232,6 +276,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   for (const [id, key] of Object.entries(numeric)) $<HTMLInputElement>(id).onchange = () => {
     config[key as typeof numeric[keyof typeof numeric]] = Number($<HTMLInputElement>(id).value);
     const output = root.querySelector(`#lab-${id}-value`); if (output) output.textContent = $<HTMLInputElement>(id).value; dirty();
+    if (id === 'road') updateRoadNote();
   };
   $<HTMLInputElement>('rnc').onchange = () => { config.rncEnabled = $<HTMLInputElement>('rnc').checked; dirty(); };
   $<HTMLInputElement>('edit').onchange = () => { viewer.setEditMode($<HTMLInputElement>('edit').checked); refreshConfig(); };
