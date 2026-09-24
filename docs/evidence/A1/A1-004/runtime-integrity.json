@@ -1,0 +1,30 @@
+[
+  {
+    "path": "dist/assets/engine.worker-DAEd859z.js",
+    "matches": true
+  },
+  {
+    "path": "dist/assets/engine.worker-DAEd859z.js.map",
+    "matches": true
+  },
+  {
+    "path": "dist/assets/golden_browser_fixture-BhKaGSeS.json",
+    "matches": true
+  },
+  {
+    "path": "dist/assets/index-C1sMH_1o.css",
+    "matches": true
+  },
+  {
+    "path": "dist/assets/index-Dkq6D6qF.js",
+    "matches": true
+  },
+  {
+    "path": "dist/assets/index-Dkq6D6qF.js.map",
+    "matches": true
+  },
+  {
+    "path": "dist/index.html",
+    "matches": true
+  }
+]

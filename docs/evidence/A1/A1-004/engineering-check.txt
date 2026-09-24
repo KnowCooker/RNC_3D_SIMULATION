@@ -1,0 +1,52 @@
+$ pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build
+$ tsc --noEmit
+$ node scripts/check-boundaries.mjs
+源码边界通过：A/B 互不导入；shared 独立；integration 负责装配。
+$ tsx --test tests/*.test.ts
+✔ A1: unavailable convergence values leave gaps rather than zero gain or connecting across missing data (2.001ms)
+✔ A1: original noise draws once in grey, residual compares against the same original channel (0.9212ms)
+✔ A1: preparing first audio buffer does not skip the requested playback position (36.6716ms)
+✔ A1: pause cancels pending audio resume; repeated play creates one start (22.29ms)
+✔ A1: loading a new experiment cancels an earlier pending play (1.3326ms)
+✔ A1: reaching the end stays stopped when seeking, including before ended is delivered (20.4408ms)
+✔ A1: seeking to the end stops; replay starts only on explicit play (22.0733ms)
+✔ A1: cold seat/mode switches prepare audio before fading, keep time and use the same gain (362.9156ms)
+✔ A1: audio resume failure leaves a retryable paused player (19.0779ms)
+✔ A1: an obsolete resume cannot clear or start a newer play request (19.0238ms)
+✔ A1: seeking while playing continues at the new position without a retired ended event stopping it (18.6484ms)
+✔ A1: a cold comparison prepared across the end never restarts the clip (39.1367ms)
+✔ 12 coincident projections remain separate and inside the narrow supported viewer (2.946ms)
+✔ four source illustrations can share a narrow view with all 12 hardware labels (2.9289ms)
+✔ labels at viewport edges and densely grouped hardware remain clickable (7.6331ms)
+✔ Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak (15.5671ms)
+✔ analysis warming-up, window boundary, channel identity and pressure calibration (4.925ms)
+✔ B01/B03: all 640,000 samples match immutable Python Float32 golden and e=d+a (32.7136ms)
+✔ B02/B04/B05: five configurations match Python metrics; repeat is deterministic (926.5359ms)
+✔ B06: every output reaches every mic; removing one cross-path removes only that response (3.8126ms)
+✔ B07: rejects invalid taps, negative/NaN step, wrong fixed dimensions, null config (0.8202ms)
+✔ audio paths use the same linear gain and sinc resampling (19.7822ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2726.7761
+$ tsc --noEmit && vite build
+vite v7.1.7 building for production...
+transforming...
+✓ 19 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                       0.47 kB │ gzip:     0.33 kB
+dist/assets/engine.worker-DAEd859z.js                 4.16 kB
+dist/assets/golden_browser_fixture-BhKaGSeS.json  3,414.19 kB │ gzip: 2,407.80 kB
+dist/assets/index-C1sMH_1o.css                        7.47 kB │ gzip:     2.44 kB
+dist/assets/index-Dkq6D6qF.js                       525.51 kB │ gzip:   136.55 kB │ map: 2,827.31 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.97s

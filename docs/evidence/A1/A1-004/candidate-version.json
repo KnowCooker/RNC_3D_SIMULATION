@@ -1,0 +1,50 @@
+{
+  "label": "A1+A2 combination candidate; not merged main",
+  "codeCommit": "838cdf38503cb2a8dc7512ace28f7894d3f283c9",
+  "a1Commit": "45fe841",
+  "a2Commit": "2760f43",
+  "upstreamMain": "d4e191b",
+  "builtAt": "2026-09-23T14:12:20.6297084Z",
+  "nodeVersion": "v24.13.1",
+  "pnpmVersion": "11.19.0",
+  "minimumNode": "22.12.0",
+  "bundledNode": false,
+  "runtimeFiles": [
+    {
+      "path": "dist/assets/engine.worker-DAEd859z.js",
+      "bytes": 4156,
+      "sha256": "ca755abb6a017f5401f174c6f859e68c54366bfcc2d301da7607330c6b4850f9"
+    },
+    {
+      "path": "dist/assets/engine.worker-DAEd859z.js.map",
+      "bytes": 21083,
+      "sha256": "363647676a8b0377092139f14b87bd78620828187d937f491f16e4b979f4ec21"
+    },
+    {
+      "path": "dist/assets/golden_browser_fixture-BhKaGSeS.json",
+      "bytes": 3414194,
+      "sha256": "a84793dd6134347c06bf4729fcd3cfec672f06688d6a2c4cab4e9ae31481fde2"
+    },
+    {
+      "path": "dist/assets/index-C1sMH_1o.css",
+      "bytes": 7465,
+      "sha256": "db9d71df0cf1359fe0f695a137ab937eb3017feb7767941e97c3a402540800c7"
+    },
+    {
+      "path": "dist/assets/index-Dkq6D6qF.js",
+      "bytes": 525506,
+      "sha256": "f5aebfe5169f50ab26c49fe88bbde5de3016f6ef7045498a0e1fe6769d696f50"
+    },
+    {
+      "path": "dist/assets/index-Dkq6D6qF.js.map",
+      "bytes": 2827310,
+      "sha256": "66b114e5c5c1c5f0f3a0e3ca6cf0fbc7a0c33f094afed614220a1fbf50527461"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 470,
+      "sha256": "22541f195fc8a61564261344146b375d03430c81a07ba2fdb1a85728577923cc"
+    }
+  ],
+  "sourceUrl": "https://github.com/lzhdai/RNC_3D_SIMULATION/tree/a/candidate-20260923"
+}
