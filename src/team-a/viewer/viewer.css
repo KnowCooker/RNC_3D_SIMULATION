@@ -139,6 +139,68 @@
   font: 600 12px system-ui, sans-serif;
   cursor: pointer;
 }
+.lab-stage-switch {
+  position: absolute;
+  z-index: 6;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #7493a3;
+  border-radius: 7px;
+  background: #152b39e8;
+}
+.lab-stage-switch[hidden] { display: none; }
+.lab-stage-switch button {
+  padding: 5px 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #d8e8f2;
+  background: transparent;
+  font: 600 11px system-ui, sans-serif;
+  cursor: pointer;
+}
+.lab-stage-switch button[aria-pressed=true] { border-color: #f4c66a; color: #ffe1a1; background: #32505e; }
+.lab-stage-switch button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.lab-assembly-panel {
+  position: absolute;
+  z-index: 6;
+  top: 58px;
+  left: 76px;
+  width: min(240px, calc(100% - 152px));
+  max-height: calc(100% - 100px);
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 8px;
+  border: 1px solid #7f9cab;
+  border-radius: 7px;
+  color: #e7f0f3;
+  background: #172c3bea;
+  box-shadow: 0 8px 24px #0005;
+  font: 11px/1.35 system-ui, sans-serif;
+}
+.lab-assembly-panel[hidden] { display: none; }
+.lab-assembly-panel summary { cursor: pointer; font-weight: 700; font-size: 13px; }
+.lab-assembly-panel p { margin: 7px 0; color: #bed4df; }
+.lab-assembly-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 7px; }
+.lab-assembly-actions button,
+.lab-assembly-list button {
+  padding: 6px;
+  border: 1px solid #607c8d;
+  border-radius: 4px;
+  color: #e6f1f5;
+  background: #243e4d;
+  font: inherit;
+  cursor: pointer;
+}
+.lab-assembly-actions button:disabled { opacity: .45; cursor: default; }
+.lab-assembly-list { display: grid; gap: 3px; max-height: 275px; overflow: auto; }
+.lab-assembly-list button { text-align: left; }
+.lab-assembly-list button[aria-pressed=true] { border-color: #f1c068; color: #ffdc97; background: #4a4b3b; }
+.lab-assembly-panel button:focus-visible,
+.lab-assembly-panel summary:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .lab-showroom-toggle:focus-visible,
 .lab-showroom-panel button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .lab-showroom-panel {
@@ -179,6 +241,9 @@
 .lab-showroom-colors button[aria-pressed=true] { border-color: white; box-shadow: 0 0 0 2px #142b37; }
 .lab-showroom-panel a { color: #b9e1f5; }
 @media (max-width: 600px) {
+  .lab-stage-switch { top: 82px; left: 8px; transform: none; }
+  .lab-stage-switch button { padding: 4px 7px; font-size: 10px; }
+  .lab-assembly-panel { top: 122px; left: 74px; width: min(190px, calc(100% - 148px)); max-height: 55%; }
   .lab-showroom-panel { width: min(190px, calc(100% - 24px)); padding: 9px; font-size: 10px; }
   .lab-showroom-panel strong { font-size: 12px; }
   .lab-showroom-toggle { right: 8px; bottom: 8px; padding: 7px 9px; }

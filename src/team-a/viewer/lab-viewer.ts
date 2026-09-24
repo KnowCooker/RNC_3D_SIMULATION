@@ -4,6 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createVehicleModel, type VehiclePart } from './vehicle-model';
 import type { ShowroomModel } from './showroom-model';
 import { createSectionDisplay } from './section-display';
+import { createSceneStage, type StageMode } from './scene-stage';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
 import { describeVehiclePart, featuredVehicleParts } from './part-guide';
@@ -50,11 +51,42 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const line = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.01, 1.1), new THREE.MeshBasicMaterial({ color: '#688391' }));
     line.position.set(x, -0.025, i * 3 - 48); stripes.add(line);
   }
+  const stage = createSceneStage(scene);
+  const stageBar = document.createElement('div'); stageBar.className = 'lab-stage-switch';
+  stageBar.setAttribute('role', 'group'); stageBar.setAttribute('aria-label', '三维场景');
+  for (const [label, mode] of [['道路', 'road'], ['车间', 'workshop']] as [string, StageMode][]) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
+    button.setAttribute('aria-label', `${label}三维场景`);
+    button.onclick = () => {
+      stage.setMode(mode);
+      if (mode === 'workshop') assemblyPanel.open = host.clientWidth >= 600;
+      applyStage(); if (clipAxis === 'none') focusStageCamera(); else focusSection(clipAxis);
+    };
+    stageBar.append(button);
+  }
+  host.append(stageBar);
+  function focusStageCamera() {
+    if (stage.mode === 'road') focusCamera([0, 2.45, -7.5], [0, 1.1, 2]);
+    else focusCamera([6.8, 4.6, 7.8], [0, 0.8, -0.4]);
+  }
+  function applyStage() {
+    if (showroomActive) return;
+    stage.road.visible = stage.mode === 'road'; stage.workshop.visible = stage.mode === 'workshop';
+    ground.visible = false; stripes.visible = stage.mode === 'road';
+    scene.background = new THREE.Color(stage.mode === 'road' ? '#bbd3dc' : '#263744');
+    scene.environmentIntensity = stage.mode === 'road' ? 1 : 0.8;
+    renderer.toneMappingExposure = stage.mode === 'road' ? 1.1 : 1.0;
+    stageBar.hidden = false;
+    assemblyPanel.hidden = stage.mode !== 'workshop';
+    stageBar.querySelectorAll('button').forEach((button, index) => button.setAttribute('aria-pressed', String(index === (stage.mode === 'road' ? 0 : 1))));
+  }
   let model: ReturnType<typeof createVehicleModel> | null = null;
   let sections: ReturnType<typeof createSectionDisplay> | null = null;
   let mountIssues: { sensorId: string; mountPart: string }[] = [];
   let config: LabConfig | null = null, signature = '';
   let exploded = false, amount = 0, lastTime = performance.now();
+  const detached = new Set<string>(), partProgress = new Map<string, number>();
+  let assemblyOrder: VehiclePart[] = [], autoAssembly: 'detach' | 'attach' | null = null, autoSeconds = 0;
   let body = 'transparent', editMode = false, waveVisible = false, pathMode = 'none';
   let fieldMode = 'off', fieldSlice: 'volume' | 'x' | 'y' | 'z' = 'volume';
   let clipAxis = 'none', clipValue = 0;
@@ -64,6 +96,42 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   type Anchor = { origin: Vec3; mountPart?: string };
   const corners = ['fl', 'fr', 'rl', 'rr'];
   const partByName = new Map<string, VehiclePart>();
+  const assemblyPanel = document.createElement('details'); assemblyPanel.className = 'lab-assembly-panel'; assemblyPanel.hidden = true;
+  const assemblySummary = document.createElement('summary'); assemblySummary.textContent = '逐件拆装';
+  const assemblyStatus = document.createElement('p'); assemblyStatus.setAttribute('aria-live', 'polite');
+  const assemblyActions = document.createElement('div'); assemblyActions.className = 'lab-assembly-actions';
+  const detachButton = document.createElement('button'); detachButton.type = 'button'; detachButton.textContent = '拆下一件';
+  const attachButton = document.createElement('button'); attachButton.type = 'button'; attachButton.textContent = '逆序回装';
+  const autoButton = document.createElement('button'); autoButton.type = 'button'; autoButton.textContent = '自动拆解';
+  const restoreButton = document.createElement('button'); restoreButton.type = 'button'; restoreButton.textContent = '自动回装';
+  assemblyActions.append(detachButton, attachButton, autoButton, restoreButton);
+  const assemblyList = document.createElement('div'); assemblyList.className = 'lab-assembly-list';
+  assemblyPanel.append(assemblySummary, assemblyStatus, assemblyActions, assemblyList); host.append(assemblyPanel);
+  function refreshAssembly() {
+    assemblyStatus.textContent = `已拆 ${detached.size} / ${assemblyOrder.length} 个可动部件组`;
+    detachButton.disabled = detached.size === assemblyOrder.length;
+    attachButton.disabled = restoreButton.disabled = detached.size === 0;
+    autoButton.textContent = autoAssembly === 'detach' ? '暂停自动拆解' : '自动拆解';
+    restoreButton.textContent = autoAssembly === 'attach' ? '暂停自动回装' : '自动回装';
+    assemblyList.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(detached.has((button as HTMLButtonElement).dataset.part ?? ''))));
+  }
+  function detachNext() {
+    const part = assemblyOrder.find(item => !detached.has(item.object.name));
+    if (!part) { autoAssembly = null; refreshAssembly(); return; }
+    detached.add(part.object.name);
+    if (detached.size === assemblyOrder.length) autoAssembly = null;
+    refreshAssembly();
+  }
+  function attachLast(manual = true) {
+    const part = [...assemblyOrder].reverse().find(item => detached.has(item.object.name));
+    if (part) detached.delete(part.object.name);
+    if (manual || !part || detached.size === 0) autoAssembly = null;
+    refreshAssembly();
+  }
+  detachButton.onclick = () => { autoAssembly = null; detachNext(); };
+  attachButton.onclick = () => attachLast();
+  autoButton.onclick = () => { autoAssembly = autoAssembly === 'detach' ? null : 'detach'; autoSeconds = 0; refreshAssembly(); };
+  restoreButton.onclick = () => { autoAssembly = autoAssembly === 'attach' ? null : 'attach'; autoSeconds = 0; refreshAssembly(); };
   const guidePicker = document.createElement('label'); guidePicker.className = 'lab-part-picker';
   guidePicker.textContent = '查看车辆结构';
   const guideSelect = document.createElement('select'); guideSelect.setAttribute('aria-label', '选择车辆结构');
@@ -120,11 +188,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     showroomActive = false;
     showroomPanel.hidden = true; showroomToggle.textContent = '写实外观';
     showroomToggle.setAttribute('aria-label', '打开写实 SUV 外观范例');
-    scene.background = new THREE.Color('#101a25');
-    scene.environmentIntensity = 0.7; renderer.toneMappingExposure = 0.95;
     (ground.material as THREE.MeshStandardMaterial).color.set('#1b2832');
     ground.scale.set(1, 1, 1);
-    stripes.visible = true;
+    applyStage();
     if (model) model.group.visible = true;
     if (sections) sections.group.visible = true;
     if (showroomModel) showroomModel.group.visible = false;
@@ -163,7 +229,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       scene.background = new THREE.Color('#d7dfe4');
       scene.environmentIntensity = 1; renderer.toneMappingExposure = 1.2;
       (ground.material as THREE.MeshStandardMaterial).color.set('#bbc7ce');
-      ground.scale.set(10, 3, 1);
+      ground.scale.set(10, 3, 1); ground.visible = true;
+      stage.road.visible = stage.workshop.visible = false; stageBar.hidden = assemblyPanel.hidden = true;
+      autoAssembly = null; refreshAssembly();
       stripes.visible = false;
       guidePicker.style.display = 'none'; guideCard.style.display = 'none';
       fieldNote.style.display = 'none'; pathFocusNote.style.display = 'none';
@@ -227,7 +295,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   function displayPosition(anchor: Anchor, target: THREE.Vector3) {
     target.set(...anchor.origin);
     const part = anchor.mountPart ? partByName.get(anchor.mountPart) : undefined;
-    if (part) target.addScaledVector(part.offset, amount);
+    if (part) target.addScaledVector(part.offset, partProgress.get(part.object.name) ?? amount);
     return target;
   }
   function visibleInHierarchy(object: THREE.Object3D) {
@@ -299,6 +367,17 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     model = createVehicleModel(next.vehicle); scene.add(model.group);
     sections = createSectionDisplay(model.group); scene.add(sections.group);
     partByName.clear(); model.parts.forEach(part => partByName.set(part.object.name, part));
+    detached.clear(); partProgress.clear(); autoAssembly = null;
+    const priority: Record<string, number> = { shell: 0, wheel: 1, cabin: 2, powertrain: 3, energy: 4, suspension: 5, chassis: 6 };
+    assemblyOrder = [...model.parts].sort((a, b) => (priority[a.category] ?? 7) - (priority[b.category] ?? 7));
+    assemblyList.replaceChildren();
+    for (const part of assemblyOrder) {
+      const button = document.createElement('button'); button.type = 'button'; button.dataset.part = part.object.name;
+      button.textContent = part.name; button.setAttribute('aria-label', `拆装 ${part.name}`);
+      button.onclick = () => { if (detached.has(part.object.name)) detached.delete(part.object.name); else detached.add(part.object.name); autoAssembly = null; refreshAssembly(); };
+      assemblyList.append(button);
+    }
+    refreshAssembly();
     guideSelect.replaceChildren(new Option('选择关键部件，或点击车模', ''));
     featuredVehicleParts(next.vehicle, model.parts).forEach(part => guideSelect.add(new Option(part.name, part.object.name)));
     clearGuide();
@@ -467,15 +546,19 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       if (hit) {
         const part = owner(hit.object);
         if (editMode) {
-          const physical = hit.point.clone(); if (part) physical.sub(part.offset.clone().multiplyScalar(amount));
+          const physical = hit.point.clone(); if (part) physical.sub(part.offset.clone().multiplyScalar(partProgress.get(part.object.name) ?? amount));
           callbacks.add(physical.toArray() as [number, number, number], part?.object.name);
         } else if (part) showGuide(part);
       }
     }
   };
   renderer.domElement.oncontextmenu = event => { event.preventDefault(); const hit = hitAt(event); if (hit) callbacks.context(hit.object.userData.selection, event.clientX, event.clientY); };
+  let wasNarrow = host.clientWidth < 600;
   function resizeViewer() {
     const width = Math.max(1, host.clientWidth), height = Math.max(1, host.clientHeight);
+    const isNarrow = width < 600;
+    if (isNarrow && !wasNarrow) assemblyPanel.open = false;
+    wasNarrow = isNarrow;
     // Keep the physical canvas within the 1280×720 pixel budget while retaining
     // the host's aspect ratio and CSS-resolution labels/pointer coordinates.
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5, Math.sqrt(1280 * 720 / (width * height)));
@@ -488,8 +571,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   window.addEventListener('resize', resizeViewer);
   function reset() {
     if (showroomActive) { focusCamera([4.6, 2.45, 4.6], [0, 0.85, 0]); return; }
-    const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
-    camera.position.set(4, 3.4, 4.8); controls.target.set(0, 0.7, 0); controls.update(); controls.enableDamping = damping; exploded = false;
+    focusStageCamera(); exploded = false; detached.clear(); autoAssembly = null; refreshAssembly();
   }
   function focusSection(axis: string) {
     const views: Record<string, { position: Vec3; target: Vec3 }> = {
@@ -502,7 +584,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
     camera.position.set(...view.position); controls.target.set(...view.target); controls.update(); controls.enableDamping = damping;
   }
-  reset();
+  applyStage(); reset();
   return {
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
     getMountIssues() { return mountIssues.map(issue => ({ ...issue })); },
@@ -511,7 +593,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       leaveShowroom();
       const leavingCabin = body === 'hidden' && value !== 'hidden' && camera.position.distanceTo(controls.target) < 3;
       body = value; controls.minDistance = value === 'hidden' ? 0.6 : 3; applyBody();
-      if (leavingCabin) focusCamera([4, 3.4, 4.8], [0, 0.7, 0]);
+      if (leavingCabin) focusStageCamera();
       else if (value === 'hidden' && guideSelect.value === 'cockpit') focusCockpit();
     },
     setSection(axis: string, value: number) { leaveShowroom(); const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis); },
@@ -526,9 +608,21 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       amount += (targetAmount - amount) * (1 - Math.exp(-dt * 5));
       // Below 0.1 mm of displacement, snap to the exact pose so section geometry stops rebuilding.
       if (Math.abs(targetAmount - amount) < 1e-4) amount = targetAmount;
-      for (const part of model?.parts ?? []) part.object.position.copy(part.origin).addScaledVector(part.offset, amount);
+      if (autoAssembly && stage.mode === 'workshop' && !showroomActive) {
+        autoSeconds += dt;
+        if (autoSeconds >= 0.75) { autoSeconds = 0; if (autoAssembly === 'detach') detachNext(); else attachLast(false); }
+      }
+      for (const part of model?.parts ?? []) {
+        const target = exploded || detached.has(part.object.name) ? 1 : 0;
+        let progress = partProgress.get(part.object.name) ?? 0;
+        progress += (target - progress) * (1 - Math.exp(-dt * 5));
+        if (Math.abs(target - progress) < 1e-4) progress = target;
+        partProgress.set(part.object.name, progress);
+        part.object.position.copy(part.origin).addScaledVector(part.offset, progress);
+      }
       model?.wheels.forEach(wheel => { wheel.rotation.x = time * ((config?.speedKph ?? 60) / 3.6) / 0.4; });
       stripes.children.forEach((line, i) => { line.position.z = (Math.floor(i / 2) * 3 + time * ((config?.speedKph ?? 60) / 3.6)) % 96 - 48; });
+      stage.update(time, config?.speedKph ?? 60);
       markerRows.forEach(row => {
         displayPosition(row.anchor, row.mesh.position);
         const active = selected.channel === row.selection.channel && (selected.signal === row.selection.signal || ['d', 'a', 'e'].includes(selected.signal) && row.selection.signal === 'e');
@@ -575,6 +669,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); stageBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }
