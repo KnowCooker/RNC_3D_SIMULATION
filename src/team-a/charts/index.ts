@@ -42,6 +42,6 @@ export function drawSpectrum(canvas: HTMLCanvasElement, frame: AnalysisFrame) {
   plot(canvas, [{ values, color: colors[1] }], -140, 0, '0 Hz', '1000 Hz');
 }
 
-export function drawConvergence(canvas: HTMLCanvasElement, curves: (number | null)[][]) {
-  plot(canvas, curves.map((values, i) => ({ values, color: colors[i] })), -5, 35, '0.5 s', '16 s');
+export function drawConvergence(canvas: HTMLCanvasElement, curves: (number | null)[][], start = 0.5, end = 16) {
+  plot(canvas, curves.map((values, i) => ({ values, color: colors[i] })), -5, 35, `${start.toFixed(1)} s`, `${end.toFixed(1)} s`);
 }

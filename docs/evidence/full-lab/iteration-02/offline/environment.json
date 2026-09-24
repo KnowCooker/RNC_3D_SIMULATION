@@ -1,0 +1,37 @@
+{
+  "capturedAt": "2026-09-24T01:19:01.5625677+08:00",
+  "node": "v24.13.1",
+  "os": {
+    "Caption": "Microsoft Windows 11 家庭版 中文版",
+    "Version": "10.0.26200",
+    "OSArchitecture": "64 位"
+  },
+  "cpu": {
+    "Name": "12th Gen Intel(R) Core(TM) i7-12800HX",
+    "NumberOfCores": 16,
+    "NumberOfLogicalProcessors": 24
+  },
+  "display": [
+    {
+      "Name": "GameViewer Virtual Display Adapter",
+      "DriverVersion": "17.13.25.697"
+    },
+    {
+      "Name": "OrayIddDriver Device",
+      "DriverVersion": "17.1.58.818"
+    },
+    {
+      "Name": "Sharing Monitor",
+      "DriverVersion": "17.1.40.460"
+    },
+    {
+      "Name": "MuMu Virtual Display Adapter",
+      "DriverVersion": "20.36.41.498"
+    },
+    {
+      "Name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "DriverVersion": "32.0.16.1074"
+    }
+  ],
+  "scope": "Same Windows host; browser network interception only, not physical disconnection or a second computer."
+}

@@ -1,0 +1,3 @@
+# Keep manifest/checksum evidence bytes unchanged across Windows/Linux checkout.
+*.json -text
+*.jsonl -text

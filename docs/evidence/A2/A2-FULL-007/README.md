@@ -1,0 +1,13 @@
+# A2-FULL-007：真实采样驱动的空间场切片
+
+本批保留原 7×5×8、共 280 个空间查询点和B组任意点场计算。体积模式仍显示离散采样球；X/Y/Z 切片分别连接位于固定物理平面上的 40/56/35 个真实采样顶点，形成 56/84/48 个彩色三角形。顶点颜色来自同一帧 `primarySpl` 或 `residualSpl`，面内仅使用显卡的三角插值，**没有增加物理计算点，也不把插值当成新的声学求解**。色标继续固定为 30–80 dB SPL。切片以标明的半透明透视叠层绘制，便于看见座舱内部中央平面；它不表示结构遮挡或声线传播。
+
+viewer 在接受场帧前核对 `valid`、280个点的顺序/物理位置、两组SPL长度及有限值；车型/拓扑重建时清空旧帧。检查失败则隐藏旧场并给出点位不匹配提示。场数据仍由 A1 的统一时钟和真实 Worker 提供；爆炸与剖面只改变显示，未改变B组空间坐标或算法。
+
+## 可复现证据
+
+- [浏览器脚本](real-slices.js)和[原始结果](result.json)：在真实 lab-v3 页面先计算 BEV，再按同一进度查看体积、三轴色片、原声/残余、后期时刻和 Y 剖面+爆炸；随后分别计算 ICE/HEV/EREV 并显示对应切片。10组状态均收到“空间窗口截至”真实场帧，且没有页面脚本错误。
+- 截图：[BEV X](bev-x.png)、[Y](bev-y.png)、[Z](bev-z.png)、[体积](bev-volume.png)、[原声 Y](bev-y-primary.png)、[后期残余 Y](bev-y-late.png)、[Y 剖面+爆炸](bev-y-section-exploded.png)、[ICE X](ice-x.png)、[HEV Y](hev-y.png)、[EREV Z](erev-z.png)。图片为1108×508真实 WebGL viewer，不是模型夹具或合成热图。
+- 环境：Windows Headless Chromium 153，1440×1000视口、WebGL ANGLE RTX 4070 Laptop / Direct3D11。**没有目标核显性能结论**。`pnpm check` 通过类型、源码边界、65/65测试及生产构建；其中新增映射/错位帧拒绝测试。经验证源码为 `f6fb267cc4bb40183ca0140f615a3d7ad205d077`；原仓库 [PR #12](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/12) 对该提交的 `verify` CI 通过。该源码构建所得 `dist/index.html` SHA-256 为 `27260C39ACBFB60FA8F902749A7B1D1F3F7ED0FACE203E2060627D7F9EF6E637`。本次仅文档提交固定证据版本。
+
+仍有限制：这是三个固定采样平面的可视化，不是任意位置的连续有限元切片；当前时刻在固定 30–80 dB 色标下局部可能接近同一颜色，不能为了视觉对比人为拉伸声压值。游戏参照车型精细度、全开叠层细节、目标核显、正式录像和整组交付仍未验收。

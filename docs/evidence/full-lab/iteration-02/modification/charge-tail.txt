@@ -1,0 +1,17 @@
+ await page.locator('#lab-vehicle').selectOption('bev');await page.locator('#lab-body').selectOption('hidden');await page.locator('#lab-paths').selectOption('none');await page.locator('#lab-waves').uncheck();await page.locator('#lab-section').selectOption('none');
+ const point=await mountPoint('charge-system');await page.mouse.click(point.x,point.y);await page.waitForFunction(()=>document.querySelectorAll('#lab-references .lab-reference-row').length===5);
+ const old=await page.evaluate(()=>modQA.sent.length);await page.locator('#lab-calculate').click();await page.waitForFunction(n=>modQA.sent.length>n&&modQA.result.runId===modQA.sent.at(-1).runId,old);
+ const mounted=await page.evaluate(()=>modQA.result.config.references.at(-1));if(mounted.mountPart!=='charge-system')throw Error('wrong charge mount');
+ await page.locator('#lab-vehicle').selectOption('hev');await page.waitForFunction(()=>!document.querySelector('#lab-mount-warning').hidden);
+ const before=await page.evaluate(()=>modQA.sent.length);await page.locator('#lab-calculate').click();
+ const blocked=await page.evaluate(before=>({sentBefore:before,sentAfter:modQA.sent.length,warning:document.querySelector('#lab-mount-warning').textContent,status:document.querySelector('#lab-status').textContent,rows:[...document.querySelectorAll('#lab-references .lab-reference-row')].map(o=>o.textContent)}),before);
+ if(blocked.sentAfter!==blocked.sentBefore||!blocked.status.includes('修正缺失'))throw Error('invalid mount experiment not blocked');
+ await page.screenshot({path:'output/playwright/modification-full/missing-mount-blocked.png',fullPage:true});
+ await page.locator('#lab-viewer button[data-signal="x"][data-channel="4"]').click({button:'right'});await page.locator('#lab-context button').filter({hasText:'移除此参考传感器'}).click();
+ const repairedPoint=await mountPoint('cockpit');await page.mouse.click(repairedPoint.x,repairedPoint.y);await page.waitForFunction(()=>document.querySelectorAll('#lab-references .lab-reference-row').length===5);
+ const last=await page.evaluate(()=>modQA.sent.length);await page.locator('#lab-calculate').click();await page.waitForFunction(n=>modQA.sent.length>n&&modQA.result.runId===modQA.sent.at(-1).runId,last);
+ const repaired=await page.evaluate(()=>({config:modQA.result.config,runId:modQA.result.runId,warningHidden:document.querySelector('#lab-mount-warning').hidden,status:document.querySelector('#lab-status').textContent}));
+ if(!repaired.warningHidden||repaired.config.references.at(-1).mountPart!=='cockpit')throw Error('repaired mount not usable');
+ await page.screenshot({path:'output/playwright/modification-full/mount-repaired.png',fullPage:true});
+ await page.evaluate(value=>modQA.charge=value,{point,mounted,blocked,repaired});return {point,mounted,blocked,repaired};
+}

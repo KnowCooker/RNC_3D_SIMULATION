@@ -1,0 +1,9 @@
+﻿{
+    "durationMinimumSeconds":  1200,
+    "buildManifestSha256":  "1fc91605b891fa26e70e757762709c56894932b5f99fc684ab8201eae3aed13c",
+    "sourceManifestSha256":  "063c64a772e32e9c119a5d3ab8b81a4d51be5bd0c0986720cc36c8db73e5316d",
+    "session":  "rnc-live-stability",
+    "revision":  "2512c471e51330d692da68344d0f06a04389b111",
+    "url":  "http://127.0.0.1:5187/",
+    "smokeOnly":  false
+}

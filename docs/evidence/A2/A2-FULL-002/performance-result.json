@@ -1,0 +1,11 @@
+{
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "viewport": [1500, 1000],
+  "pixelRatio": 1,
+  "results": [
+    {"section":"none","renderMs":{"median":8.300000000745058,"p95":10.700000002980232,"max":12.200000002980232},"rafIntervalMs":{"median":9.100000001490116,"p95":11.5,"max":13.300000000745058},"caps":0,"maxPlaneError":0,"settledCabinY":0.45},
+    {"section":"x","renderMs":{"median":6.699999999254942,"p95":8.600000001490116,"max":13.399999998509884},"rafIntervalMs":{"median":7.400000002235174,"p95":9.300000000745058,"max":14.199999999254942},"caps":44,"maxPlaneError":5.520589624330441e-9,"settledCabinY":0.44978651321904267},
+    {"section":"y","renderMs":{"median":10.399999998509884,"p95":14.200000002980232,"max":18.300000000745058},"rafIntervalMs":{"median":11,"p95":15,"max":19.300000000745058},"caps":20,"maxPlaneError":2.6226043559063328e-8,"settledCabinY":0.45}
+  ],
+  "hiddenBodySectionLeaks": 0
+}

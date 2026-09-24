@@ -1,0 +1,19 @@
+﻿{
+    "browserElapsedSeconds":  1210.663,
+    "switches":  110,
+    "startedAt":  "2026-09-24T00:59:16.2037560+00:00",
+    "config":  {
+                   "durationMinimumSeconds":  1200,
+                   "buildManifestSha256":  "c7d2b4aa4e7a8ea78bf9ce79d859a33a43f3c0114f0b948b2cbd1b7ce164b280",
+                   "sourceManifestSha256":  "85b470d117824655f22ffe78b1ca4d8996df62819c83095182af67ec11823aa7",
+                   "session":  "rnc-live-stability",
+                   "revision":  "e87753d98ec8ca5108be4833f5080e0713a35ab7",
+                   "url":  "http://127.0.0.1:5186/",
+                   "smokeOnly":  false
+               },
+    "restarts":  12,
+    "endedAt":  "2026-09-24T01:19:28.2068874+00:00",
+    "actualElapsedSeconds":  1210.6539191,
+    "buildUnchanged":  true,
+    "status":  "completed"
+}

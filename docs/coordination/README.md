@@ -4,6 +4,8 @@
 
 A1/A2共同交付范围以[A组最终交付清单](A_FINAL_DELIVERY.md)核对；个人任务页记录进度，不单独定义整个A组是否最终完成。
 
+当前完整目标尚在 fork，先读[当前分支与备份](CURRENT_BRANCHES.md)：原仓库main只含已合并的旧阶段，完整整合快照在 fork/main。旧阶段PR关闭表示已由当前整合分支包含，不表示合入原仓库main。
+
 ## 首次确定角色
 
 建议发起协作的一端使用 A1，另一端使用 A2。首次由用户在任务中指定，随后 Codex 在各自独立克隆中执行以下其中一条；不要在同一个活动目录运行两端。
@@ -17,7 +19,7 @@ git config --local rnc.role A1
 
 | 角色 | 独占范围 | 交接页 |
 | --- | --- | --- |
-| A1 | src/team-a/app、charts、player；tests/player.test.ts 和 tests/a1-*.test.ts | [A1](A1.md) |
+| A1 | src/team-a/lab、app、charts、player；tests/player.test.ts 和 tests/a1-*.test.ts | [A1](A1.md) |
 | A2 | src/team-a/viewer；tests/a2-*.test.ts | [A2](A2.md) |
 
 每端可更新自己的交接页、根开发记录中自己的状态行及追加历史。公共入口、配置、依赖、接口、汇总验收记录由协调任务指定单一修改者。B 组的实现职责保持不变。
@@ -25,7 +27,7 @@ git config --local rnc.role A1
 ## 每次启动先恢复真实状态
 
 1. 查看 `git status`、当前分支、角色和 remotes。保护未提交工作，不覆盖、不强制切分支。
-2. 确认哪个 remote 指向 KnowCooker/RNC_3D_SIMULATION，fetch 该 remote。新任务从其最新 main 创建分支；已有任务保留原分支并按需合入最新 main。
+2. 确认哪个 remote 指向 KnowCooker/RNC_3D_SIMULATION，哪个指向 lzhdai fork，fetch 两者。完整目标新任务从 fork 最新整合 `main` 创建角色分支；原仓库 main 只作为已正式合并状态核对。已有角色任务先保护未提交工作，再按依赖合入当前整合基线。
 3. 读取根 `开发记录.md`、`AGENTS.md`、A 组规则及本目录的两份交接页，再读当前任务相关计划和代码。
 4. 查询**原仓库**开放 PR，包含草稿和来自 fork 的 PR，读取同角色/同任务的 PR 正文、最新提交和分支上的交接页。使用 GitHub CLI 时：
 
@@ -36,7 +38,7 @@ gh pr list --repo KnowCooker/RNC_3D_SIMULATION --state open --limit 100 --json n
 5. 已有属于本会话的任务就继续；新会话接续同一成员的工作时，先核对执行者标识和用户的接续指令，确认旧会话已停止，再沿用原任务与 PR。属于另一活动会话的同角色任务不重复认领。状态不清楚时保留占用并核对，不按“很久没有提交”自动抢占。
 6. 没有活动任务时，从自己队列中取第一个无阻塞的任务。仅访问网页能了解状态；开发、提交和验证需要本地克隆及相应工具。
 
-main 是已合并状态，开放 PR 是未合并工作索引，PR 分支上的交接页是该任务的最新状态。若三者不同，按提交与 PR 状态核对，不把分支成果写成已进入 main。
+原仓库 main 是正式已合并状态；fork/main 是完整目标的当前整合快照；开放 PR 是尚待原仓库审查的工作索引。若三者不同，按提交与 PR 状态核对，不把 fork 分支成果写成已进入原仓库 main。
 
 ## 先认领，再修改功能
 
@@ -51,7 +53,8 @@ main 是已合并状态，开放 PR 是未合并工作索引，PR 分支上的�
 ## 工作、验证与交接
 
 - 每次只完成一个可验证的小任务，不重写整个 A 组。先复现问题；已有行为正确时记录证据，不为了产生提交改写代码。
-- A1/A2 日常用 `pnpm dev:a` 参考回放并行开发，需要真实重算时使用 `pnpm dev`。不改原始基准，不重新定义 B 组指标。
+- 当前lab-v3日常使用 `pnpm dev`，页面由integration注入真实Worker；`pnpm dev:a`只维护旧demo-v2参考回放。A1/A2可分别使用第二轮证据目录的生命周期夹具和A2-FULL-002的独立viewer夹具，按各README复制到自己的output目录运行；夹具不替代最终真实引擎组合验收。不改原始基准，不重新定义B组指标。
+- 独立验证分别运行 `pnpm exec tsx --test tests/a1-*.test.ts`、`pnpm exec tsx --test tests/a2-*.test.ts`，提交前仍执行 `pnpm check`。实时处理器归B，Worker/契约归指定集成者，A1拥有播放时钟，A2只消费时间与场帧。
 - 保持 viewer 现有接口兼容。A1 提供统一播放时间、选中通道和残余指标；A2 回传点选事件并消费这些值，不另建播放时钟。
 - 跨边界需求写入自己交接页的“依赖/请求”：目标角色、问题、所需接口、验收条件、关联 PR。对方下一次同步读取；不假定写入即获同意。无阻塞部分继续推进。
 - 每个可验证批次同时更新自己的交接页和根开发记录，提交并推送。结束前无论完成或阻塞，都保存精确下一步、实际检查和失败信息。
