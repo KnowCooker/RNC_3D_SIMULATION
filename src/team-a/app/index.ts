@@ -44,7 +44,9 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
   const player = new Player();
   let result: RunResult | null = null, busy = false, muted = false, exploded = false;
   let selected: { signal: SignalKind; channel: Corner } = { signal: 'e', channel: 'fl' };
-  let frame: AnalysisFrame | null = null, curves: number[][] = [], lastCharts = -1, requestId = '';
+  let frame: AnalysisFrame | null = null, curves: number[][] = [], lastCharts = -1;
+  type Request = { id: string; kind: 'calculation' | 'reference' };
+  let activeRequest: Request | null = null;
   function select(signal: SignalKind, channel: Corner) {
     selected = { signal, channel }; lastCharts = -1;
     const unit = signal === 'x' ? 'm/s²' : signal === 'u' ? 'drive' : 'Pa';
@@ -74,14 +76,32 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
     busy = value;
     for (const id of ['calculate', 'reference', 'taps', 'step', 'seed']) ($<HTMLButtonElement | HTMLSelectElement>(id)).disabled = value || (ports.referenceOnly && id !== 'reference');
     for (const id of ['play', 'replay', 'seek']) $<HTMLButtonElement | HTMLInputElement>(id).disabled = value || !result;
-    $('cancel').hidden = !value || ports.referenceOnly;
+    $('cancel').hidden = !value;
+    $('cancel').textContent = activeRequest?.kind === 'reference' ? '取消加载' : '取消计算';
+  }
+  function beginRequest(kind: Request['kind']): Request {
+    player.pause();
+    const request = { id: crypto.randomUUID(), kind };
+    activeRequest = request; setBusy(true);
+    return request;
+  }
+  function finishRequest(request: Request) {
+    // A cancelled request may settle after a newer request has started.
+    if (activeRequest !== request) return;
+    activeRequest = null; setBusy(false);
+  }
+  function retainedResultMessage() {
+    return result ? '下方仍是上一次实验，已暂停，可点击播放继续。' : '尚无可播放数据，请重试或载入参考算例。';
   }
   function useResult(next: RunResult) {
     result = next; player.load(next); frame = null; lastCharts = -1;
+    $<HTMLSelectElement>('taps').value = String(next.config.taps);
+    $<HTMLSelectElement>('step').value = String(next.config.stepSize);
+    $<HTMLSelectElement>('seed').value = String(next.config.seed);
     $('source').textContent = next.source === 'reference-replay' ? '参考算例回放' : '浏览器计算 · 预计算回放';
     $('aggregate').innerHTML = `${next.metrics.aggregateReductionDb.toFixed(2)}<em> dB</em>`;
     $('diagnostics').textContent = `runId: ${next.runId} | source: ${next.source} | seed=${next.config.seed} · taps=${next.config.taps} · μ=${next.config.stepSize} | ${next.computeMilliseconds === null ? '参考数据' : `计算 ${next.computeMilliseconds.toFixed(0)} ms`} | sampleCount=32000`;
-    $('status').textContent = `就绪：${next.config.taps} taps / μ ${next.config.stepSize} / seed ${next.config.seed}。修改参数后需重新计算。`;
+    $('status').textContent = `就绪：${next.config.taps} taps / μ ${next.config.stepSize} / seed ${next.config.seed}。${ports.referenceOnly ? '参考回放模式，实验参数固定。' : '修改参数后需重新计算。'}`;
     curves = ORDER.map(() => []);
     for (let sample = 1000; sample <= 32000; sample += 500) {
       const f = ports.engine.analyzeAt(next, sample, selected);
@@ -91,20 +111,42 @@ export async function mountApp(root: HTMLElement, ports: AppPorts) {
   }
   $('calculate').onclick = async () => {
     if (busy) return;
-    player.pause(); setBusy(true); requestId = crypto.randomUUID(); const id = requestId;
+    const request = beginRequest('calculation');
     const config = { ...DEFAULT_CONFIG, taps: Number($<HTMLSelectElement>('taps').value) as 32 | 64,
       stepSize: Number($<HTMLSelectElement>('step').value) as 0 | 0.08, seed: Number($<HTMLSelectElement>('seed').value) as 11 | 29 | 47 };
     $('status').textContent = 'Worker 正在计算 16 秒实验…';
-    try { const next = await ports.engine.calculate(config, id); if (id === requestId) useResult(next); }
-    catch (error) { $('status').textContent = `计算未完成：${(error as Error).message}。${result ? '下方仍是上一次实验，可点击播放继续。' : ''}`; }
-    finally { setBusy(false); }
+    try {
+      const next = await ports.engine.calculate(config, request.id);
+      if (activeRequest !== request) return;
+      if (next.runId !== request.id || next.source !== 'computed-browser' ||
+          (Object.keys(config) as (keyof typeof config)[]).some(key => next.config[key] !== config[key])) {
+        throw new Error('返回结果与本次实验请求不一致');
+      }
+      useResult(next);
+    }
+    catch (error) { if (activeRequest === request) $('status').textContent = `计算未完成：${String(error)}。${retainedResultMessage()}`; }
+    finally { finishRequest(request); }
   };
-  $('cancel').onclick = () => ports.engine.cancel();
+  $('cancel').onclick = () => {
+    const request = activeRequest;
+    if (!request) return;
+    // Invalidate before cancelling: cancellation can reject the engine promise immediately.
+    activeRequest = null;
+    if (request.kind === 'calculation') ports.engine.cancel();
+    setBusy(false);
+    $('status').textContent = `${request.kind === 'calculation' ? '计算' : '参考数据加载'}已取消。${retainedResultMessage()}`;
+  };
   async function reference() {
-    player.pause(); setBusy(true);
-    try { useResult(await ports.loadReference()); }
-    catch (error) { $('status').textContent = `参考数据加载失败：${String(error)}`; }
-    finally { setBusy(false); }
+    const request = beginRequest('reference');
+    $('status').textContent = '正在加载参考数据…';
+    try {
+      const next = await ports.loadReference();
+      if (activeRequest !== request) return;
+      if (next.source !== 'reference-replay') throw new Error('返回数据不是参考算例');
+      useResult(next);
+    }
+    catch (error) { if (activeRequest === request) $('status').textContent = `参考数据加载失败：${String(error)}。${retainedResultMessage()}`; }
+    finally { finishRequest(request); }
   }
   $('reference').onclick = () => { if (!busy) void reference(); };
   select('e', 'fl');

@@ -1,0 +1,30 @@
+{
+  "transport": "injected AppPorts; not a numeric engine test",
+  "checks": [
+    "calculation locks all parameter, transport and submit controls",
+    "duplicate calculation does not reach engine",
+    "cancel invokes engine once, restores controls and retains previous identity",
+    "late cancelled calculation success cannot replace data or unlock newer job",
+    "worker rejection retains old identity and exposes a readable retry state",
+    "wrong runId rejected without relabelling old data",
+    "wrong source rejected without relabelling old data",
+    "wrong config rejected without relabelling old data",
+    "reference load has its own cancel action",
+    "reference cancellation does not call worker cancel",
+    "late cancelled reference success cannot overwrite or unlock active calculation",
+    "matching calculation accepted with correct source and chosen config",
+    "reference rejection pauses playback, retains computed source and handles non-Error rejection",
+    "late reference rejection cannot overwrite status or unlock current load",
+    "successful reference resets controls to actual fixture parameters",
+    "reference endpoint cannot present a computed response as reference",
+    "late calculation rejection cannot finish newer calculation",
+    "initial reference-only loading is cancellable",
+    "cancel before first data keeps playback unavailable and retry available",
+    "cancelled initial response cannot load data",
+    "initial reference failure leaves no fake playable result",
+    "reference-only recovery retains locked parameters and enables playback",
+    "no uncaught page errors in injected request scenarios"
+  ],
+  "count": 23,
+  "errors": []
+}
