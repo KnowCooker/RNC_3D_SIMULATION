@@ -1,6 +1,6 @@
 # A2-FULL-015 四车型侧围、门槛与轮眉连续性
 
-状态：局部实现与本机验证完成，待[草稿 PR #20](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/20)审查；完整 A2-F2 视觉参照质量、目标核显和 A 组最终交付仍未通过。基线为 A2-FULL-014 已提交 `ee0ef2d`，本批经验证运行源码 SHA 在后续文档固定提交中写明。模型为原创教学形态，不声称量产钣金尺寸或实车标定。
+状态：局部实现与本机验证完成，待[草稿 PR #20](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/20)审查；完整 A2-F2 视觉参照质量、目标核显和 A 组最终交付仍未通过。基线为 A2-FULL-014 已提交 `ee0ef2d`，本批经验证运行源码为 `356731f4a61463968c3ad3ed3a66f34a16a7a78d`；本次仅文档固定提交。模型为原创教学形态，不声称量产钣金尺寸或实车标定。
 
 ## 改动与视觉结论
 
@@ -14,6 +14,7 @@
 - 代表视角：[BEV侧面改前](before-bev-side.png) / [改后](after-bev-side.png)，[门槛改前](before-bev-rocker.png) / [改后](after-bev-rocker.png)，[前轮眉改前](before-bev-front-arch.png) / [改后](after-bev-front-arch.png)。四车型三角数 ICE 45,416→41,680；BEV 45,404→41,668；HEV 47,660→43,924；EREV 48,332→44,596。
 - [`check-full-app.js`](check-full-app.js) 在真实 `pnpm dev` 页面取同一 BEV 实验，复测实体、透明、隐藏、展开、X 剖面五状态。[`full-app.json`](full-app.json) 与 `full-app-*.png` 记录同一运行身份、每状态 16 个硬件/源标记、无页面异常和 WebGL 上下文丢失。
 - `pnpm exec tsx --test tests/a2-vehicle-model.test.ts`：4/4，含新增的四车侧门下方可见表面射线断言；既有轮心、MIC/扬声器物理位置、车底电池可见、资源释放与几何预算断言通过。`pnpm check`：类型、边界、67/67 自动测试及生产构建通过；构建保留超过 500 kB 的非阻断提示。
+- 该源码构建的 `dist/index.html` SHA-256 为 `96722c59a145b4cd16f9f1f57ae6b0f98ad9d836591931dbe9a246ceeac0efdc`，车型所在 `dist/assets/index-BpwjiFFv.js` SHA-256 为 `0afa74a3a42d37fc7bdd4f6bea4b85e55391db8cc4cbd179b3a587cf5fd25620`；此为验证产物，不是正式离线交付包。
 
 ## 未覆盖范围
 
