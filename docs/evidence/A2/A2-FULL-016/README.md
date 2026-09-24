@@ -2,6 +2,8 @@
 
 用户要求优先提升车辆的真实质感，并允许直接找现成模型。本批在既有四类教学 SUV 旁增加一个独立外观欣赏模式；**没有**用品牌模型替换教学车的机械/电驱结构或声学坐标。外观模式隐藏物理标记、声场和剖面讲解；返回后原教学模型及交互恢复。更换动力类型也自动返回教学视图，避免把真实品牌外观当成所选动力架构的实车。
 
+经验证运行源码：`cc055329e164704bd4e74d6fd601f6e59f83de28`；[草稿 PR #24](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/24) 的 verify 已通过，尚未合并原仓库 main。
+
 ## 资产与适用边界
 
 资源是 Mona x Supercars 的 [Range Rover Sport SVR](https://sketchfab.com/3d-models/land-rover-range-rover-sport-svr-5462d65acb0e4dca8c20da82360261db)，原模型 Sketchfab API 与文件内元数据均写 CC BY 4.0；原镜像、作者、SHA-256、改动与许可见 [资产说明](../../../../src/team-a/viewer/assets/README.md)。GLB 内嵌纹理，5.73 MB、74,127 三角形；仅用户点“写实外观”后加载，加载失败可重试。提供前侧/侧面/后侧、拖动和四种临时车漆。
