@@ -1,0 +1,1375 @@
+{
+  "config": {
+    "durationMinimumSeconds": 1200,
+    "buildManifestSha256": "c7d2b4aa4e7a8ea78bf9ce79d859a33a43f3c0114f0b948b2cbd1b7ce164b280",
+    "sourceManifestSha256": "85b470d117824655f22ffe78b1ca4d8996df62819c83095182af67ec11823aa7",
+    "session": "rnc-live-stability",
+    "revision": "e87753d98ec8ca5108be4833f5080e0713a35ab7",
+    "url": "http://127.0.0.1:5186/",
+    "smokeOnly": false
+  },
+  "status": "completed",
+  "start": "2026-09-24T00:59:16.2037560+00:00",
+  "end": "2026-09-24T01:19:28.2068874+00:00",
+  "actualElapsedSeconds": 1210.6539191,
+  "browserElapsedSeconds": 1210.663,
+  "samples": 110,
+  "gates": {
+    "completed": true,
+    "frozenBuild": true,
+    "realWallAtLeast1200": true,
+    "realWorkerRunsAtLeast10": true,
+    "actualSeatChangesAtLeast20": true,
+    "actualComparisonChangesAtLeast20": true,
+    "playsOrResumesAtLeast20": true,
+    "oneContinuousRunOver300": true,
+    "newSamplesBeyond16Seconds": true,
+    "boundedSnapshots": true,
+    "boundedAudio": true,
+    "oneActiveWorker": true,
+    "noRuntimeErrors": true,
+    "noObservedContextLoss": true,
+    "noObviousSteadyHeapGrowth": true
+  },
+  "counts": {
+    "readyRuns": 14,
+    "batchRuns": 7,
+    "liveRuns": 7,
+    "actualSeatChanges": 110,
+    "actualComparisonChanges": 110,
+    "playActions": 39,
+    "workerMessages": 7685
+  },
+  "continuous": {
+    "runId": "bb41273e-fc80-46e9-9080-e32ade326e2e",
+    "maximumDisplayedSeconds": 375.99,
+    "generatedSeconds": 387.4,
+    "chunks": 1937,
+    "new16Blocks": 1857,
+    "repeated16Blocks": 0,
+    "firstChunkAt": 1790211554379,
+    "lastChunkAt": 1790211941893
+  },
+  "background": {
+    "original": {
+      "time": 353.26,
+      "runId": "bb41273e-fc80-46e9-9080-e32ade326e2e",
+      "visibility": "visible"
+    },
+    "hidden": {
+      "state": "visible",
+      "time": 353.41,
+      "play": "暂停"
+    },
+    "later": {
+      "state": "visible",
+      "time": 353.41,
+      "play": "暂停"
+    },
+    "foreground": {
+      "state": "visible",
+      "time": 354.05,
+      "play": "暂停"
+    },
+    "actuallyHidden": false,
+    "frozenWhileHidden": null,
+    "staysPausedOnReturn": null,
+    "note": "Headless tab switch did not hide this document; background behavior remains unverified here."
+  },
+  "visibilityEvents": [],
+  "runs": [
+    {
+      "runId": "87019bd6-1d6a-486f-9b2b-07f06cb2a69c",
+      "mode": "batch",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790211553702,
+      "ready": true,
+      "chunks": 0,
+      "endSample": 0,
+      "pending": 0,
+      "peakPending": 0,
+      "fields": 0,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 0,
+      "readyAt": 1790211554040,
+      "computeMilliseconds": 241.5,
+      "batchSampleCount": 32000,
+      "terminatedAt": 1790211554131,
+      "storedFirst16Hashes": 0
+    },
+    {
+      "runId": "bb41273e-fc80-46e9-9080-e32ade326e2e",
+      "mode": "live",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790211554325,
+      "ready": true,
+      "chunks": 1937,
+      "endSample": 774800,
+      "pending": 0,
+      "peakPending": 2,
+      "fields": 1088,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 1857,
+      "readyAt": 1790211554355,
+      "computeMilliseconds": null,
+      "lastChunkAt": 1790211941893,
+      "lastSnapshotStart": 770704,
+      "lastSnapshotEnd": 774800,
+      "lastSourceHash": "ae6e630f",
+      "firstChunkAt": 1790211554379,
+      "lastFieldTime": 386.5045,
+      "lastFieldValid": true,
+      "terminatedAt": 1790211941924,
+      "storedFirst16Hashes": 80
+    },
+    {
+      "runId": "8a5237a1-7852-4eaa-b570-d6146b9cf5a5",
+      "mode": "batch",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "ice",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 32,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790211942220,
+      "ready": true,
+      "chunks": 0,
+      "endSample": 0,
+      "pending": 0,
+      "peakPending": 1,
+      "fields": 158,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 0,
+      "readyAt": 1790211942405,
+      "computeMilliseconds": 171.60000000149012,
+      "batchSampleCount": 32000,
+      "lastFieldTime": 10.709,
+      "lastFieldValid": true,
+      "terminatedAt": 1790211998328,
+      "storedFirst16Hashes": 0
+    },
+    {
+      "runId": "801d5fd6-79bb-4070-8f53-1306eb2b9ae2",
+      "mode": "live",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790211998635,
+      "ready": true,
+      "chunks": 333,
+      "endSample": 133200,
+      "pending": 0,
+      "peakPending": 2,
+      "fields": 187,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 253,
+      "readyAt": 1790211998649,
+      "computeMilliseconds": null,
+      "lastChunkAt": 1790212064688,
+      "lastSnapshotStart": 129104,
+      "lastSnapshotEnd": 133200,
+      "lastSourceHash": "b89d8500",
+      "firstChunkAt": 1790211998663,
+      "lastFieldTime": 65.819,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212064773,
+      "storedFirst16Hashes": 80
+    },
+    {
+      "runId": "f1d92402-2e59-49b3-87f8-62193cc1c8dc",
+      "mode": "batch",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "hev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          false,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212065192,
+      "ready": true,
+      "chunks": 0,
+      "endSample": 0,
+      "pending": 0,
+      "peakPending": 1,
+      "fields": 158,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 0,
+      "readyAt": 1790212065475,
+      "computeMilliseconds": 266,
+      "batchSampleCount": 32000,
+      "lastFieldTime": 10.7785,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212121144,
+      "storedFirst16Hashes": 0
+    },
+    {
+      "runId": "407584c9-cfb7-4f83-ab47-cd34d3ed6f5b",
+      "mode": "live",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "erev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 32,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212121460,
+      "ready": true,
+      "chunks": 280,
+      "endSample": 112000,
+      "pending": 0,
+      "peakPending": 2,
+      "fields": 157,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 200,
+      "readyAt": 1790212121475,
+      "computeMilliseconds": null,
+      "lastChunkAt": 1790212176904,
+      "lastSnapshotStart": 107904,
+      "lastSnapshotEnd": 112000,
+      "lastSourceHash": "736bbba4",
+      "firstChunkAt": 1790212121484,
+      "lastFieldTime": 55.1605,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212176915,
+      "storedFirst16Hashes": 80
+    },
+    {
+      "runId": "2e54bd3e-047d-43f0-bf80-6054c6f5f25b",
+      "mode": "batch",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "ice",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212177151,
+      "ready": true,
+      "chunks": 0,
+      "endSample": 0,
+      "pending": 1,
+      "peakPending": 1,
+      "fields": 188,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 0,
+      "readyAt": 1790212177227,
+      "computeMilliseconds": 60.19999999552965,
+      "batchSampleCount": 32000,
+      "lastFieldTime": 10.5305,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212243707,
+      "storedFirst16Hashes": 0
+    },
+    {
+      "runId": "71940ba4-bfe7-4f96-a796-25ed81d8ba39",
+      "mode": "live",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212243868,
+      "ready": true,
+      "chunks": 279,
+      "endSample": 111600,
+      "pending": 0,
+      "peakPending": 2,
+      "fields": 156,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 199,
+      "readyAt": 1790212243879,
+      "computeMilliseconds": null,
+      "lastChunkAt": 1790212299110,
+      "lastSnapshotStart": 107504,
+      "lastSnapshotEnd": 111600,
+      "lastSourceHash": "7de4956e",
+      "firstChunkAt": 1790212243890,
+      "lastFieldTime": 55.011,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212299265,
+      "storedFirst16Hashes": 80
+    },
+    {
+      "runId": "808ad89e-5189-4e79-a7cf-2d10603b263e",
+      "mode": "batch",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "hev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 32,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          false,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212299630,
+      "ready": true,
+      "chunks": 0,
+      "endSample": 0,
+      "pending": 0,
+      "peakPending": 1,
+      "fields": 188,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 0,
+      "readyAt": 1790212299876,
+      "computeMilliseconds": 225.30000000447035,
+      "batchSampleCount": 32000,
+      "lastFieldTime": 10.8185,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212366501,
+      "storedFirst16Hashes": 0
+    },
+    {
+      "runId": "3a0b70be-665c-4319-8039-5200bddc3f18",
+      "mode": "live",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "erev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212366868,
+      "ready": true,
+      "chunks": 279,
+      "endSample": 111600,
+      "pending": 0,
+      "peakPending": 2,
+      "fields": 157,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 199,
+      "readyAt": 1790212366881,
+      "computeMilliseconds": null,
+      "lastChunkAt": 1790212422103,
+      "lastSnapshotStart": 107504,
+      "lastSnapshotEnd": 111600,
+      "lastSourceHash": "7de4956e",
+      "firstChunkAt": 1790212366890,
+      "lastFieldTime": 55.211,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212422215,
+      "storedFirst16Hashes": 80
+    },
+    {
+      "runId": "b102711e-9044-4f7d-9539-18560464c5b6",
+      "mode": "batch",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "ice",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212422473,
+      "ready": true,
+      "chunks": 0,
+      "endSample": 0,
+      "pending": 0,
+      "peakPending": 1,
+      "fields": 158,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 0,
+      "readyAt": 1790212422751,
+      "computeMilliseconds": 259.30000000447035,
+      "batchSampleCount": 32000,
+      "lastFieldTime": 10.789,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212478461,
+      "storedFirst16Hashes": 0
+    },
+    {
+      "runId": "1df1e3ae-0a09-4419-af27-8165eaf57028",
+      "mode": "live",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 32,
+        "stepSize": 0,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212478784,
+      "ready": true,
+      "chunks": 333,
+      "endSample": 133200,
+      "pending": 0,
+      "peakPending": 2,
+      "fields": 187,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 253,
+      "readyAt": 1790212478797,
+      "computeMilliseconds": null,
+      "lastChunkAt": 1790212544823,
+      "lastSnapshotStart": 129104,
+      "lastSnapshotEnd": 133200,
+      "lastSourceHash": "b89d8500",
+      "firstChunkAt": 1790212478804,
+      "lastFieldTime": 65.8005,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212544943,
+      "storedFirst16Hashes": 80
+    },
+    {
+      "runId": "6f7d97df-a565-4605-a9dd-adf2accb0353",
+      "mode": "batch",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "hev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          false,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212545319,
+      "ready": true,
+      "chunks": 0,
+      "endSample": 0,
+      "pending": 0,
+      "peakPending": 1,
+      "fields": 157,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 0,
+      "readyAt": 1790212545524,
+      "computeMilliseconds": 189.70000000298023,
+      "batchSampleCount": 32000,
+      "lastFieldTime": 10.629,
+      "lastFieldValid": true,
+      "terminatedAt": 1790212601124,
+      "storedFirst16Hashes": 0
+    },
+    {
+      "runId": "6083d1da-f3da-4cd2-89d1-dc7d779f07ff",
+      "mode": "live",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "erev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790212601473,
+      "ready": true,
+      "chunks": 826,
+      "endSample": 330400,
+      "pending": 2,
+      "peakPending": 2,
+      "fields": 465,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 746,
+      "readyAt": 1790212601487,
+      "computeMilliseconds": null,
+      "lastChunkAt": 1790212766115,
+      "lastSnapshotStart": 326304,
+      "lastSnapshotEnd": 330400,
+      "lastSourceHash": "cc55cb3f",
+      "firstChunkAt": 1790212601496,
+      "lastFieldTime": 164.4405,
+      "lastFieldValid": true,
+      "storedFirst16Hashes": 80
+    }
+  ],
+  "errors": [],
+  "rejections": [],
+  "violations": [],
+  "glLosses": [],
+  "environment": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "viewport": {
+      "width": 1920,
+      "height": 1080,
+      "dpr": 1
+    },
+    "drawingBuffer": {
+      "width": 1588,
+      "height": 618
+    }
+  },
+  "sampled": {
+    "heapBytes": {
+      "count": 110,
+      "min": 14671168,
+      "max": 44950372,
+      "mean": 28795115.381818183,
+      "first": 15496216,
+      "last": 24659504
+    },
+    "backingStorageBytes": {
+      "count": 110,
+      "min": 6739467,
+      "max": 15320068,
+      "mean": 8618033.318181818,
+      "first": 12645725,
+      "last": 7260876
+    },
+    "audioSources": {
+      "count": 110,
+      "min": 1,
+      "max": 4,
+      "mean": 2.5454545454545454,
+      "first": 3,
+      "last": 2
+    },
+    "audioBufferBytes": {
+      "count": 110,
+      "min": 204800,
+      "max": 4096000,
+      "mean": 720784.2909090909,
+      "first": 307200,
+      "last": 204800
+    },
+    "queueSeconds": {
+      "count": 78,
+      "min": 0.39,
+      "max": 0.59,
+      "mean": 0.500897435897436,
+      "first": 0.51,
+      "last": 0.4
+    },
+    "underruns": {
+      "count": 78,
+      "min": 0,
+      "max": 2,
+      "mean": 0.44871794871794873,
+      "first": 0,
+      "last": 0
+    },
+    "domNodes": {
+      "count": 110,
+      "min": 1084,
+      "max": 3104,
+      "mean": 1457.4,
+      "first": 3104,
+      "last": 1305
+    },
+    "liveElements": {
+      "count": 110,
+      "min": 404,
+      "max": 405,
+      "mean": 404.1454545454545,
+      "first": 404,
+      "last": 404
+    },
+    "rendererGeometries": {
+      "count": 110,
+      "min": 459,
+      "max": 731,
+      "mean": 625.0181818181818,
+      "first": 567,
+      "last": 650
+    },
+    "rendererTextures": {
+      "count": 110,
+      "min": 4,
+      "max": 5,
+      "mean": 4.918181818181818,
+      "first": 4,
+      "last": 5
+    },
+    "recentFps": {
+      "count": 110,
+      "min": 103.49288486416559,
+      "max": 130.2507326603712,
+      "mean": 125.9297399571261,
+      "first": 112.79058329781304,
+      "last": 126.58227848101265
+    }
+  },
+  "steadyMemory": {
+    "warm60to130Seconds": {
+      "count": 6,
+      "min": 15855060,
+      "max": 40745420,
+      "mean": 28811748,
+      "first": 15855060,
+      "last": 40356620
+    },
+    "later260to335Seconds": {
+      "count": 7,
+      "min": 22228884,
+      "max": 37461976,
+      "mean": 32107783.42857143,
+      "first": 37401392,
+      "last": 37461976
+    },
+    "heapGrowthNeedsInvestigation": false
+  },
+  "limitations": [
+    "This headless browser run is not target integrated-GPU acceptance, physical audio listening, or measured audiovisual latency.",
+    "Audio is muted through the normal UI; transport scheduling and buffers remain active.",
+    "Read-only wrappers observe real Worker messages and Web Audio node lifecycles; they do not inject results, change DSP gains, force GC, or accelerate time.",
+    "Heap measurements include transient allocations; bounded snapshots/audio and steady windows are evidence against obvious growth, not a formal absence-of-leaks proof.",
+    "Background behavior is proven only if the actual document visibility changed; headless tab behavior is reported explicitly."
+  ],
+  "minimumExercisePassed": true,
+  "smokeOnly": false
+}

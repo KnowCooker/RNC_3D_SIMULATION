@@ -104,13 +104,13 @@ A1/A2从同一已提交基线开各自分支/PR，每角色同一时间只有一
 
 ## 7. 当前差距与下一步
 
-当前等级：**完整目标开发中，尚非最终交付**。完整基线在草稿[PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7)，A2批次堆叠至[PR #20](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/20)，A1暂停态移动场修复在独立[PR #21](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/21)，同版组合由[PR #22](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/22)认领并验证。开放PR按各自SHA与证据判断，不能写成main已有。第二轮冻结源码 `6e982b7` 的1207.85秒长稳、全车型改制和同机隔离启动已验证，见[第二轮证据](../evidence/full-lab/iteration-02/README.md)；旧运行包不证明组合版通过。历史demo-v2另见[第一轮](../evidence/full-lab/iteration-01/README.md)。
+当前等级：**完整目标开发中，尚非最终交付**。完整基线在草稿[PR #7](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/7)，A2批次堆叠至[PR #20](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/20)，A1暂停态移动场修复在独立[PR #21](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/21)，同版组合由[PR #22](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/22)验证，A1试听质量续作在[PR #23](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/23)。开放PR按各自SHA与证据判断，不能写成main已有。[#22组合长稳](../evidence/full-lab/integration-021/stability/README.md)1210.65秒、15项门槛通过，仍有2次补缓冲；旧版 `6e982b7` 离线候选不证明组合版可正式分发。历史demo-v2另见[第一轮](../evidence/full-lab/iteration-01/README.md)。
 
 | 优先次序 | 尚需达成的结果 | 责任与交接 |
 | --- | --- | --- |
 | 并行 | A2完成四车型参照视觉的逐视角检查与必要修复，当前#20车侧连续性是局部批次；在真实完整页复测结构/场/点位及目标核显 | A2只改viewer并提交同机位图、差距表、性能与源码SHA；A1核查整页可读性 |
 | 并行 | A1 #21已完成暂停态新平面查询及旧请求失效；继续核查持续试听的补缓冲质量、真实后台及音画同步 | A1只改页面/播放器；任意点查询负载和数值问题交B/指定集成者 |
-| 其后 | #22同版组合复核四车型改制、调参、真实空间场、信号、持续/预计算试听；对**组合最终版**重新做20分钟稳定性，不沿用旧版结果 | A1牵头，A2修三维缺陷，B修数值缺陷；保存原始运行结果与精确版本 |
+| 其后 | #22同版组合已复核所列四车型场/改制及此版20分钟稳定性；A1 #23及后续视觉源码改动后，对**最终运行版**重新做试听、完整组合与20分钟稳定性 | A1牵头，A2修三维缺陷，B修数值缺陷；保存原始运行结果与精确版本 |
 | 其后 | 指定核显、实物声音及≤100ms音画目标、第二台Windows真实断网启动和三次重开 | 按第6节设备门槛分别验收；没有设备时保持待测，不将独显或模拟断网换算为通过 |
 | 最后 | 审核并依次合入依赖PR，冻结源码，重新构建离线包，核对包哈希、说明、证据、约五分钟讲解/录像和双端接续页 | 指定集成协调者统一改共管文件；A1汇总发布，A2提供三维材料，维护者按权限合并 |
 
