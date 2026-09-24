@@ -1,0 +1,11 @@
+{
+  "windowsVersion": "Microsoft Windows NT 10.0.26200.0",
+  "nodeVersion": "v24.13.1",
+  "pnpmVersion": "11.19.0",
+  "browserVersion": "153.0.8010.48",
+  "browserUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+  "viewport": "1500x1050",
+  "hostScope": "Same Windows machine, network requests blocked in browser context except loopback",
+  "gpuScope": "Headless browser; no target integrated-GPU acceptance",
+  "audioScope": "Browser flow only; no physical speaker or AV latency measurement"
+}

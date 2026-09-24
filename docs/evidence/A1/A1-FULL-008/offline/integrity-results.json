@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "sourceCommit": "abf1d2eac6e24f30fa4834773492194a08d5af82",
+  "distDigest": "0d905b531b36fb03f7fc70fca47fa4e4952a40b658b455c969404fa6a550c99b",
+  "checkedBuildFiles": 27,
+  "checkedPackageFiles": 31,
+  "checkedArchiveFiles": 31,
+  "manifestSha256": "be95587a23e7aa4eb32d7c7282750248aa5ded4245d899457b1f726913d69e81",
+  "zipSha256": "85233a6412da65777f85b24ad36bc1b92f7779c70166a8c7817b518abc91a6ce",
+  "zipBytes": 3366910
+}
