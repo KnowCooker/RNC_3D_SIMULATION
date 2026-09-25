@@ -4,7 +4,11 @@
 
 依据：[B组需求](../plan/02_B组独立需求.md)、[每日任务与验收](../plan/03_每日任务与验收.md)、[固定接口](../../src/shared/contracts.ts)。以下拆分针对当前已合入 main 的 demo-v2 范围；A 组未合并草稿中的扩展不自动改变 B 组验收或契约，有跨组新需求时另行确认。
 
-## 当前本地批次：B1-ANALYSIS-001（2026-09-25）
+## 当前发布：B1-PR-001（2026-09-25）
+
+角色B1；Identity-Source: local-config；执行者Codex。用户授权集中发布，代码提交8698b2c已推送origin/b/b1-coordination，[PR #28](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/28)已创建，目标main、非草稿、未合并。83项测试及类型/边界/构建通过；原始录音、MATLAB、个人本地规则未上传。下一步审核/CI；详细见[发布证据](../evidence/B/B1-PR-001/README.md)。下方本地批次为开发时历史，现已包含在PR中。
+
+## 上一开发批次：B1-ANALYSIS-001（2026-09-25）
 
 - 角色B1；执行者Codex；Identity-Source: local-config；3c43a99 + 未提交本地批次；仅本地、尚未远端同步或认领。
 - 已完成：声压PSD默认A/可切Z，横轴默认20～500Hz可调；总级/收敛/声场默认dBA可切dB；NFxLMS联合能量归一化函数统一；可变预计算时长及播放器真实终点；教学60dBA基准/±12dB修正。
