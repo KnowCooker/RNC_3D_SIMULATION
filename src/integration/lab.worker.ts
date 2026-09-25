@@ -1,4 +1,5 @@
 import { calculateLab, createLabStream, sampleField } from '../team-b/lab';
+import { LAB_STREAM_CABIN_PREROLL_SAMPLES } from '../team-b/lab/stream';
 import type { LabResult } from '../shared/lab-contracts';
 let result: LabResult | null = null;
 let live: ReturnType<typeof createLabStream> | null = null;
@@ -21,12 +22,12 @@ self.onmessage = ({ data }) => {
       if (live) {
         const snapshot = live.snapshot(32000), offset = snapshot.startSample / snapshot.result.config.sampleRateHz;
         const localTime = data.time - offset;
-        if (localTime < 0 || (snapshot.startSample > 0 && localTime < 0.6)) throw new Error('所选声场时间已离开实时历史窗口');
-        const frame = sampleField(snapshot.result, localTime, data.points);
+        if (localTime < 0 || (snapshot.startSample > 0 && localTime < 0.5 + LAB_STREAM_CABIN_PREROLL_SAMPLES / snapshot.result.config.sampleRateHz)) throw new Error('所选声场时间已离开实时历史窗口');
+        const frame = sampleField(snapshot.result, localTime, data.points, data.weighting);
         frame.time += offset;
         self.postMessage({ type: 'field', id: data.id, runId, frame });
       } else if (result) {
-        self.postMessage({ type: 'field', id: data.id, runId, frame: sampleField(result, data.time, data.points) });
+        self.postMessage({ type: 'field', id: data.id, runId, frame: sampleField(result, data.time, data.points, data.weighting) });
       } else throw new Error('尚无实验结果');
     }
   } catch (error) { self.postMessage({ type: 'error', id: data.id, runId, message: error instanceof Error ? error.message : String(error) }); }

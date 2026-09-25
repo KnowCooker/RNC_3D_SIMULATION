@@ -1,20 +1,21 @@
 import type { Four } from '../../shared/contracts';
 import { MIC_POSITIONS, type LabChunk, type LabConfig, type LabLiveSnapshot, type LabResult } from '../../shared/lab-contracts';
 import { primaryPath, referencePath, secondaryPath, type SparsePath } from './paths';
-import { sourceParameters } from './sources';
+import { createSourceShape, sourceParameters } from './sources';
 import { validateLabConfig } from './validation';
+import { nfxlmsGain } from './nfxlms';
 
 const four = <T>(values: T[]) => values as unknown as Four<T>;
 const blank = (channels: number, count: number) => Array.from({ length: channels }, () => new Float32Array(count));
-const SHORT_CAPACITY = 256;
+const SHORT_CAPACITY = 512;
 const SHORT_MASK = SHORT_CAPACITY - 1;
 /** Conservative prefix for points inside the assembled SUV; remote points may need longer paths. */
-export const LAB_STREAM_CABIN_PREROLL_SAMPLES = 64;
+export const LAB_STREAM_CABIN_PREROLL_SAMPLES = 256;
 
 /**
  * Stateful low-frequency simulator. process boundaries never reset sources, delays, or adaptation.
  * snapshot returns at most maxSamples in chronological order; its first samples are convolution
- * pre-roll when startSample > 0. Request >= 1064 samples for a latest 0.5 s cabin field window.
+ * pre-roll when startSample > 0. Request >= 1256 samples for a latest 0.5 s A-weighted field window.
  */
 export function createLabStream(input: LabConfig, runId: string, historySamples = 40000) {
   validateLabConfig(input);
@@ -40,13 +41,8 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
   const powers = new Float64Array(4), states = Uint32Array.from({ length: 4 }, (_, i) => config.seed + i * 101);
   arrays.push(powers, states);
   const source = sourceParameters(config);
-  const sinc = (value: number) => value === 0 ? 1 : Math.sin(Math.PI * value) / (Math.PI * value);
-  const shape = Float64Array.from({ length: 97 }, (_, i) => {
-    const t = i - 48;
-    return (0.36 * sinc(0.36 * t) - 0.035 * sinc(0.035 * t)) * (0.54 - 0.46 * Math.cos(2 * Math.PI * i / 96));
-  });
-  const norm = Math.sqrt(shape.reduce((sum, value) => sum + value * value, 0) / 3);
-  for (let i = 0; i < shape.length; i++) shape[i] /= norm;
+  const shape = createSourceShape(config);
+  if (shape.length > SHORT_CAPACITY) throw new Error('源整形滤波器超出流式历史容量');
   arrays.push(shape);
   const historySources = four(blank(4, historySamples));
   const history: LabResult['signals'] = { x: blank(nReferences, historySamples), u: four(blank(4, historySamples)),
@@ -79,10 +75,7 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
         put(raw[i], index, ((states[i] + 0.5) / 4294967296) * 2 - 1);
         let broad = 0;
         for (let j = 0; j < shape.length; j++) broad += shape[j] * raw[i][end - j];
-        const phase = 0.67 * i;
-        const value = Math.fround(source.amplitude * (broad * 0.88
-          + 0.24 * Math.sin(2 * Math.PI * source.stiffnessPeakHz * absolute / config.sampleRateHz + phase)
-          + 0.18 * Math.sin(2 * Math.PI * source.cavityPeakHz * absolute / config.sampleRateHz + 2 * phase)));
+        const value = Math.fround(source.amplitude * broad);
         put(q[i], index, value); sources[i][n] = value; historySources[i][historyIndex] = value;
       }
       for (let k = 0; k < nReferences; k++) {
@@ -118,7 +111,7 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
           powers[output] = Math.max(0, powers[output] + change);
         }
         if (absolute >= config.adaptationStartsSeconds * config.sampleRateHz) {
-          const gain = config.stepSize / (1e-6 + powers.reduce((sum, value) => sum + value, 0));
+          const gain = nfxlmsGain(config.stepSize, powers);
           const e0 = signals.e[0][n], e1 = signals.e[1][n], e2 = signals.e[2][n], e3 = signals.e[3][n];
           for (const output of active) for (let k = 0; k < nReferences; k++) {
             const w = weights[output][k], f0 = filtered[0][output][k], f1 = filtered[1][output][k], f2 = filtered[2][output][k], f3 = filtered[3][output][k];

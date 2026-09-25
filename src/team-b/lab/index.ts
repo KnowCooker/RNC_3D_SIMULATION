@@ -2,10 +2,12 @@ import { validateLabConfig } from './validation';
 export { validateLabConfig } from './validation';
 export { createLabStream, LAB_STREAM_CABIN_PREROLL_SAMPLES } from './stream';
 import type { Four } from '../../shared/contracts';
-import { MIC_POSITIONS, type FieldFrame, type LabAnalysis, type LabConfig, type LabResult, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
+import { MIC_POSITIONS, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabResult, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { meanPower, welchPsd } from '../analysis';
 import { applyPath, primaryPath, referencePath, secondaryPath, samplePath, type SparsePath } from './paths';
 import { createSources } from './sources';
+import { A_WEIGHTING_HISTORY, weightedPower, weightedSpectrum } from './weighting';
+import { nfxlmsGain } from './nfxlms';
 
 export const LAB_WINDOW_SAMPLES = 1000;
 const POWER_FLOOR = 1e-20;
@@ -69,7 +71,7 @@ export function calculateLab(config: LabConfig, runId: string): LabResult {
       if (n < config.adaptationStartsSeconds * config.sampleRateHz) continue;
       const error0 = e[0][n], error1 = e[1][n], error2 = e[2][n], error3 = e[3][n];
       // Joint energy also accounts for coherent loudspeaker columns of the multichannel plant.
-      const gain = config.stepSize / (1e-6 + powers.reduce((sum, power) => sum + power, 0));
+      const gain = nfxlmsGain(config.stepSize, powers);
       for (const output of active) {
         for (let k = 0; k < x.length; k++) {
           const w = weights[output][k], f0 = filtered[0][output][k], f1 = filtered[1][output][k], f2 = filtered[2][output][k], f3 = filtered[3][output][k];
@@ -83,7 +85,7 @@ export function calculateLab(config: LabConfig, runId: string): LabResult {
   } else {
     for (let m = 0; m < 4; m++) e[m].set(d[m]);
   }
-  const start = count - config.sampleRateHz * 4;
+  const start = Math.max(0, count - config.sampleRateHz * 4);
   const dp = d.map(channel => meanPower(channel, start, count)), ep = e.map(channel => meanPower(channel, start, count));
   const signals = { x, u, d, a, e };
   for (const channels of Object.values(signals)) for (const channel of channels) {
@@ -97,17 +99,20 @@ export function calculateLab(config: LabConfig, runId: string): LabResult {
 
 const endAt = (result: LabResult, time: number) => Math.min(result.sampleCount, Math.max(0, Math.floor((Number.isFinite(time) ? time : 0) * result.config.sampleRateHz)));
 
-export function analyzeLab(result: LabResult, time: number, selection: LabSelection): LabAnalysis {
+export function analyzeLab(result: LabResult, time: number, selection: LabSelection, options: LabAnalysisOptions = {}): LabAnalysis {
   const end = endAt(result, time), prepared = end >= LAB_WINDOW_SAMPLES;
   const signal = selection.signal === 'q' ? result.sources[selection.channel] : result.signals[selection.signal]?.[selection.channel];
   if (!signal) throw new Error('所选信号通道不存在');
-  const dp = result.signals.d.map(channel => prepared ? meanPower(channel, end - LAB_WINDOW_SAMPLES, end) : null);
-  const ep = result.signals.e.map(channel => prepared ? meanPower(channel, end - LAB_WINDOW_SAMPLES, end) : null);
-  return { time: end / result.config.sampleRateHz, valid: prepared && dp.every(power => power !== null && power > POWER_FLOOR),
+  const levelWeighting = options.levelWeighting ?? 'Z';
+  // A-weighting describes sound pressure; vibration/drive spectra retain their physical linear units.
+  const spectrumWeighting = ['d','a','e'].includes(selection.signal) ? options.spectrumWeighting ?? 'Z' : 'Z';
+  const dp = result.signals.d.map(channel => prepared ? weightedPower(channel, end - LAB_WINDOW_SAMPLES, end, levelWeighting) : null);
+  const ep = result.signals.e.map(channel => prepared ? weightedPower(channel, end - LAB_WINDOW_SAMPLES, end, levelWeighting) : null);
+  return { spectrumWeighting, levelWeighting, time: end / result.config.sampleRateHz, valid: prepared && dp.every(power => power !== null && power > POWER_FLOOR),
     primarySpl: four(dp.map(power => power === null || power <= POWER_FLOOR ? null : spl(power))),
     residualSpl: four(ep.map(power => power === null || power <= POWER_FLOOR ? null : spl(power))),
     reductionDb: four(dp.map((power, i) => power === null || power <= POWER_FLOOR || ep[i] === null ? null : reduction(power, ep[i]!))),
-    waveform: signal.slice(Math.max(0, end - 400), end), spectrum: welchPsd(signal, end, result.config.sampleRateHz),
+    waveform: options.levelsOnly ? new Float32Array() : signal.slice(Math.max(0, end - 400), end), spectrum: options.levelsOnly ? null : weightedSpectrum(welchPsd(signal, end, result.config.sampleRateHz), result.config.sampleRateHz, spectrumWeighting),
     unit: selection.signal === 'q' ? 'm/s²（等效轮端激励）' : selection.signal === 'x' ? 'm/s²' : selection.signal === 'u' ? 'drive' : 'Pa' };
 }
 
@@ -120,24 +125,30 @@ function accumulateWindow(input: Float32Array, path: SparsePath, start: number, 
 }
 
 /** Every field point reuses the physical q/P/u/S system, never microphone interpolation or target colours. */
-export function sampleField(result: LabResult, time: number, points: Vec3[]): FieldFrame {
+export function sampleField(result: LabResult, time: number, points: Vec3[], weighting: AcousticWeighting = 'Z'): FieldFrame {
   if (points.length > 4096 || points.some(point => point.length !== 3 || !point.every(Number.isFinite))) throw new Error('声场点必须为有限三维坐标，单次最多4096点');
   const end = endAt(result, time), prepared = end >= LAB_WINDOW_SAMPLES;
   const primarySpl = new Float32Array(points.length).fill(NaN), residualSpl = new Float32Array(points.length).fill(NaN), reductionDb = new Float32Array(points.length).fill(NaN);
   let hasEnergy = false;
   if (prepared) for (let p = 0; p < points.length; p++) {
-    const d = new Float64Array(LAB_WINDOW_SAMPLES), a = new Float64Array(LAB_WINDOW_SAMPLES);
+    const pre = weighting === 'A' ? Math.min(A_WEIGHTING_HISTORY, end - LAB_WINDOW_SAMPLES) : 0;
+    const d = new Float64Array(LAB_WINDOW_SAMPLES + pre), a = new Float64Array(LAB_WINDOW_SAMPLES + pre);
     for (let i = 0; i < 4; i++) {
-      accumulateWindow(result.sources[i], primaryPath(result.config, i, points[p]), end - LAB_WINDOW_SAMPLES, d);
-      if (result.config.speakerEnabled[i]) accumulateWindow(result.signals.u[i], secondaryPath(result.config, i, points[p]), end - LAB_WINDOW_SAMPLES, a);
+      accumulateWindow(result.sources[i], primaryPath(result.config, i, points[p]), end - LAB_WINDOW_SAMPLES - pre, d);
+      if (result.config.speakerEnabled[i]) accumulateWindow(result.signals.u[i], secondaryPath(result.config, i, points[p]), end - LAB_WINDOW_SAMPLES - pre, a);
     }
     let dp = 0, ep = 0;
-    for (let i = 0; i < LAB_WINDOW_SAMPLES; i++) { dp += d[i] ** 2; ep += (d[i] + a[i]) ** 2; }
-    dp /= LAB_WINDOW_SAMPLES; ep /= LAB_WINDOW_SAMPLES;
+    if (weighting === 'A') {
+      dp = weightedPower(Float32Array.from(d), pre, d.length, weighting);
+      ep = weightedPower(Float32Array.from(d, (v, i) => Math.fround(v) + Math.fround(a[i])), pre, d.length, weighting);
+    } else {
+      for (let i = 0; i < LAB_WINDOW_SAMPLES; i++) { dp += d[i] ** 2; ep += (d[i] + a[i]) ** 2; }
+      dp /= LAB_WINDOW_SAMPLES; ep /= LAB_WINDOW_SAMPLES;
+    }
     if (dp > POWER_FLOOR) {
       hasEnergy = true;
       primarySpl[p] = spl(dp); residualSpl[p] = spl(ep); reductionDb[p] = reduction(dp, ep);
     }
   }
-  return { time: end / result.config.sampleRateHz, valid: prepared && hasEnergy, points: points.map(point => [...point] as Vec3), primarySpl, residualSpl, reductionDb };
+  return { weighting, time: end / result.config.sampleRateHz, valid: prepared && hasEnergy, points: points.map(point => [...point] as Vec3), primarySpl, residualSpl, reductionDb };
 }

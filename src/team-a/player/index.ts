@@ -8,6 +8,7 @@ export class Player {
   private active: { source: AudioBufferSourceNode; gain: GainNode } | null = null;
   private buffers = new Map<string, AudioBuffer>();
   private result: { signals: Pick<RunResult['signals'], 'd' | 'e'> } | null = null;
+  private duration = 16;
   private offset = 0;
   private startedAt = 0;
   private running = false;
@@ -18,12 +19,12 @@ export class Player {
   private channel: Corner = 'fl';
   private mode: 'd' | 'e' = 'e';
 
-  get playing() { return this.running && this.currentTime < 16; }
+  get playing() { return this.running && this.currentTime < this.duration; }
   get starting() { return this.pendingPlay !== null; }
   get currentTime(): number {
     return this.positionAt(this.context?.currentTime ?? 0);
   }
-  load<T extends { signals: Pick<RunResult['signals'], 'd' | 'e'> }>(result: T) { this.pause(); this.offset = 0; this.result = result; this.buffers.clear(); }
+  load<T extends { signals: Pick<RunResult['signals'], 'd' | 'e'> }>(result: T) { this.pause(); this.offset = 0; this.result = result; this.duration = result.signals.d[0].length / 2000; this.buffers.clear(); }
   play(): Promise<void> {
     if (!this.result || this.playing) return Promise.resolve();
     if (this.pendingPlay) return this.pendingPlay;
@@ -42,7 +43,7 @@ export class Player {
     try { await this.context.resume(); }
     catch (error) { if (generation === this.playGeneration) throw error; else return; }
     if (generation !== this.playGeneration) return;
-    const position = this.currentTime >= 16 ? 0 : this.currentTime;
+    const position = this.currentTime >= this.duration ? 0 : this.currentTime;
     // Buffer preparation must finish before the transport clock starts.
     const buffer = this.selectedBuffer();
     this.startSource(buffer, position, this.context.currentTime);
@@ -55,8 +56,8 @@ export class Player {
     if (!Number.isFinite(seconds)) return;
     const wasPlaying = this.playing;
     this.pause();
-    this.offset = Math.max(0, Math.min(16, seconds));
-    if (wasPlaying && this.offset < 16 && this.context) {
+    this.offset = Math.max(0, Math.min(this.duration, seconds));
+    if (wasPlaying && this.offset < this.duration && this.context) {
       const buffer = this.selectedBuffer();
       this.startSource(buffer, this.offset, this.context.currentTime);
     }
@@ -72,7 +73,7 @@ export class Player {
   }
   setMuted(value: boolean) { this.muted = value; this.setVolume(this.volume); }
   private positionAt(time: number) {
-    return Math.min(16, this.offset + (this.running ? time - this.startedAt : 0));
+    return Math.min(this.duration, this.offset + (this.running ? time - this.startedAt : 0));
   }
   private stopActive(time = this.context?.currentTime ?? 0) {
     if (!this.active || !this.context) return;
@@ -99,7 +100,7 @@ export class Player {
     // Keep the old source audible while a previously unvisited seat/mode is prepared.
     const buffer = this.selectedBuffer(), now = this.context.currentTime;
     const position = this.positionAt(now);
-    if (position >= 16) { this.pause(); return; }
+    if (position >= this.duration) { this.pause(); return; }
     this.startSource(buffer, position, now);
   }
   private startSource(buffer: AudioBuffer, position: number, time: number) {
@@ -111,7 +112,7 @@ export class Player {
     source.onended = () => {
       source.disconnect(); gain.disconnect();
       if (this.active?.source === source) {
-        this.active = null; this.offset = 16; this.running = false;
+        this.active = null; this.offset = this.duration; this.running = false;
       }
     };
     try { source.start(time, position); }

@@ -2,14 +2,19 @@
 import type { Four, SignalKind } from './contracts';
 
 export type VehicleKind = 'ice' | 'bev' | 'hev' | 'erev';
+export type AcousticWeighting = 'A' | 'Z';
+export interface LabAnalysisOptions { spectrumWeighting?: AcousticWeighting; levelWeighting?: AcousticWeighting; /** Skip FFTs when collecting convergence history. */ levelsOnly?: boolean }
 export type Vec3 = readonly [number, number, number];
 export interface ReferenceSensor { id: string; name: string; position: Vec3; /** Visual attachment only; position remains an unexpanded physical coordinate. */ mountPart?: string }
 export interface LabConfig {
   schemaVersion: 'lab-v3';
   vehicle: VehicleKind;
   sampleRateHz: 2000;
-  durationSeconds: 16;
-  adaptationStartsSeconds: 2;
+  durationSeconds: number;
+  /** Relative to the declared teaching pressure calibration; not a DSP V/Pa sensitivity. */
+  levelOffsetDb?: number;
+  /** New experiments learn immediately; 2 retains compatibility with saved lab-v3 runs. */
+  adaptationStartsSeconds: 0 | 2;
   seed: number;
   taps: number;
   stepSize: number;
@@ -48,6 +53,8 @@ export interface LabLiveSnapshot {
 export interface LabLivePacket { chunk: LabChunk; snapshot: LabLiveSnapshot }
 export interface LabSelection { signal: SignalKind | 'q'; channel: number }
 export interface LabAnalysis {
+  spectrumWeighting?: AcousticWeighting;
+  levelWeighting?: AcousticWeighting;
   time: number;
   valid: boolean;
   primarySpl: Four<number | null>;
@@ -58,6 +65,7 @@ export interface LabAnalysis {
   unit: string;
 }
 export interface FieldFrame {
+  weighting?: AcousticWeighting;
   time: number;
   valid: boolean;
   points: Vec3[];
@@ -71,9 +79,17 @@ export const VEHICLE_NAMES: Record<VehicleKind, string> = {
 export const MIC_POSITIONS: Four<Vec3> = [[0.48, 1.65, 0.4], [-0.48, 1.65, 0.4], [0.48, 1.65, -1.01], [-0.48, 1.65, -1.01]];
 export const SPEAKER_POSITIONS: Four<Vec3> = [[0.96, 1.1, 0.65], [-0.96, 1.1, 0.65], [0.96, 1.1, -0.75], [-0.96, 1.1, -0.75]];
 export const SOURCE_POSITIONS: Four<Vec3> = [[1, 0.1, 1.45], [-1, 0.1, 1.45], [1, 0.1, -1.45], [-1, 0.1, -1.45]];
+/** Conservative 256MiB working budget: worker arrays, transfers, weighted signals
+ * and all eight cached 16kHz playback buffers. It is not a browser RAM probe. */
+export function labDurationLimit(config: Pick<LabConfig, 'references' | 'taps'>): number {
+  const refs = config.references.length;
+  const bytesPerSample = 3 * (20 + refs) * 4 + (16 * refs + refs) * 8 + 8 * 4 + 8 * 8 * 4;
+  const reserved = 16 * refs * (config.taps + 512) * 8 + 16 * 1024 * 1024;
+  return Math.min(300, Math.floor((256 * 1024 * 1024 - reserved) / (2000 * bytesPerSample)));
+}
 export function defaultLabConfig(): LabConfig {
   return { schemaVersion: 'lab-v3', vehicle: 'bev', sampleRateHz: 2000, durationSeconds: 16,
-    adaptationStartsSeconds: 2, seed: 11, taps: 64, stepSize: 0.08, rncEnabled: true,
+    adaptationStartsSeconds: 0, seed: 11, taps: 64, stepSize: 0.08, rncEnabled: true,
     speedKph: 60, roadRoughness: 1, treadRoughness: 1, pressureKpa: 240, temperatureC: 20,
     references: SOURCE_POSITIONS.map(([x, , z], i) => ({ id: `ref-${i + 1}`, name: `REF ${['FL', 'FR', 'RL', 'RR'][i]}`, position: [x * 0.85, 0.67, z] })),
     speakerEnabled: [true, true, true, true] };
