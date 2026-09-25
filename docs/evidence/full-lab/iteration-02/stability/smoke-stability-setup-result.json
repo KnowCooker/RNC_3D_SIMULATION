@@ -1,0 +1,21 @@
+﻿{
+    "config":  {
+                   "durationMinimumSeconds":  15,
+                   "buildManifestSha256":  "d898df357065067cac05c0a5f745346d9b9bf202ede7cdca5d6e2587db0adb90",
+                   "sourceManifestSha256":  "17d42b11e20c29911bf2d69b152c4a6cea552117d48ede2f1c2bbcd13c13f837",
+                   "session":  "rnc-live-stability",
+                   "revision":  "79df17b+source-c2e43d7994ac8941ca7f820546010e1d28a23dc3d2590d5cd90fecb9ca7f90f1",
+                   "url":  "http://127.0.0.1:5180/",
+                   "smokeOnly":  true
+               },
+    "startedAt":  "2026-09-23T17:01:39.828Z",
+    "exerciseStartedAt":  "2026-09-23T17:01:42.119Z",
+    "userAgent":  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "hardwareConcurrency":  24,
+    "deviceMemory":  16,
+    "initialLiveRun":  "a964896b-889e-437d-b03f-8c0151c3aeff",
+    "notes":  [
+                  "Real Worker messages are observed read-only; no fake clock or substituted result.",
+                  "Muted browser transport verifies scheduling only, not physical audible output or AV latency."
+              ]
+}

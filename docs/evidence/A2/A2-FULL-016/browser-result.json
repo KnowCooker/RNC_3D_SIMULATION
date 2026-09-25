@@ -1,0 +1,21 @@
+{
+  "viewport": "1600x900",
+  "browser": "Playwright Chromium",
+  "url": "http://127.0.0.1:5176/",
+  "inShowroom": {
+    "panel": true,
+    "visibleMarkers": 0,
+    "modelLoads": 1,
+    "externalResources": []
+  },
+  "onReturn": {
+    "panelHidden": true,
+    "visibleMarkers": 16
+  },
+  "onVehicleChange": {
+    "panelHidden": true,
+    "visibleMarkers": 16,
+    "selectedVehicle": "ice"
+  },
+  "pageErrors": []
+}

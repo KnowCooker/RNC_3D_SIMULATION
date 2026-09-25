@@ -1,0 +1,340 @@
+{
+  "config": {
+    "durationMinimumSeconds": 15,
+    "buildManifestSha256": "d898df357065067cac05c0a5f745346d9b9bf202ede7cdca5d6e2587db0adb90",
+    "sourceManifestSha256": "17d42b11e20c29911bf2d69b152c4a6cea552117d48ede2f1c2bbcd13c13f837",
+    "session": "rnc-live-stability",
+    "revision": "79df17b+source-c2e43d7994ac8941ca7f820546010e1d28a23dc3d2590d5cd90fecb9ca7f90f1",
+    "url": "http://127.0.0.1:5180/",
+    "smokeOnly": true
+  },
+  "status": "completed",
+  "start": "2026-09-23T17:01:42.7124855+00:00",
+  "end": "2026-09-23T17:02:08.0039448+00:00",
+  "actualElapsedSeconds": 23.628784099999997,
+  "browserElapsedSeconds": 23.66,
+  "samples": 3,
+  "gates": {
+    "completed": true,
+    "frozenBuild": true,
+    "realWallAtLeast1200": false,
+    "realWorkerRunsAtLeast10": false,
+    "actualSeatChangesAtLeast20": false,
+    "actualComparisonChangesAtLeast20": false,
+    "playsOrResumesAtLeast20": false,
+    "oneContinuousRunOver300": false,
+    "newSamplesBeyond16Seconds": false,
+    "boundedSnapshots": true,
+    "boundedAudio": true,
+    "oneActiveWorker": true,
+    "noRuntimeErrors": true,
+    "noObservedContextLoss": true,
+    "noObviousSteadyHeapGrowth": false
+  },
+  "counts": {
+    "readyRuns": 2,
+    "batchRuns": 1,
+    "liveRuns": 1,
+    "actualSeatChanges": 3,
+    "actualComparisonChanges": 3,
+    "playActions": 1,
+    "workerMessages": 197
+  },
+  "continuous": {
+    "runId": "a964896b-889e-437d-b03f-8c0151c3aeff",
+    "maximumDisplayedSeconds": 24.85,
+    "generatedSeconds": 25.4,
+    "chunks": 127,
+    "new16Blocks": 47,
+    "repeated16Blocks": 0,
+    "firstChunkAt": 1790182900849,
+    "lastChunkAt": 1790182925733
+  },
+  "background": null,
+  "visibilityEvents": [],
+  "runs": [
+    {
+      "runId": "2405b2fc-0a41-46a5-8e71-1c6b1ffb281a",
+      "mode": "batch",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790182899956,
+      "ready": true,
+      "chunks": 0,
+      "endSample": 0,
+      "pending": 0,
+      "peakPending": 0,
+      "fields": 0,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 0,
+      "readyAt": 1790182900387,
+      "computeMilliseconds": 301.4000000022352,
+      "batchSampleCount": 32000,
+      "terminatedAt": 1790182900562,
+      "storedFirst16Hashes": 0
+    },
+    {
+      "runId": "a964896b-889e-437d-b03f-8c0151c3aeff",
+      "mode": "live",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "startedAt": 1790182900794,
+      "ready": true,
+      "chunks": 127,
+      "endSample": 50800,
+      "pending": 0,
+      "peakPending": 2,
+      "fields": 68,
+      "errors": [],
+      "repeated16Blocks": 0,
+      "new16Blocks": 47,
+      "readyAt": 1790182900826,
+      "computeMilliseconds": null,
+      "lastChunkAt": 1790182925733,
+      "lastSnapshotStart": 46704,
+      "lastSnapshotEnd": 50800,
+      "lastSourceHash": "3bb083bc",
+      "firstChunkAt": 1790182900849,
+      "lastFieldTime": 24.7415,
+      "lastFieldValid": true,
+      "storedFirst16Hashes": 80
+    }
+  ],
+  "errors": [],
+  "rejections": [],
+  "violations": [],
+  "glLosses": [],
+  "environment": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "viewport": {
+      "width": 1920,
+      "height": 1080,
+      "dpr": 1
+    },
+    "drawingBuffer": {
+      "width": 1588,
+      "height": 618
+    }
+  },
+  "sampled": {
+    "heapBytes": {
+      "count": 3,
+      "min": 30356356,
+      "max": 50780404,
+      "mean": 38512742.666666664,
+      "first": 34401468,
+      "last": 30356356
+    },
+    "backingStorageBytes": {
+      "count": 3,
+      "min": 15350050,
+      "max": 20616755,
+      "mean": 17627809,
+      "first": 20616755,
+      "last": 15350050
+    },
+    "audioSources": {
+      "count": 3,
+      "min": 3,
+      "max": 3,
+      "mean": 3,
+      "first": 3,
+      "last": 3
+    },
+    "audioBufferBytes": {
+      "count": 3,
+      "min": 307200,
+      "max": 307200,
+      "mean": 307200,
+      "first": 307200,
+      "last": 307200
+    },
+    "queueSeconds": {
+      "count": 3,
+      "min": 0.45,
+      "max": 0.55,
+      "mean": 0.4833333333333334,
+      "first": 0.45,
+      "last": 0.55
+    },
+    "underruns": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "first": 0,
+      "last": 0
+    },
+    "domNodes": {
+      "count": 3,
+      "min": 3353,
+      "max": 4310,
+      "mean": 3775,
+      "first": 4310,
+      "last": 3353
+    },
+    "liveElements": {
+      "count": 3,
+      "min": 361,
+      "max": 361,
+      "mean": 361,
+      "first": 361,
+      "last": 361
+    },
+    "rendererGeometries": {
+      "count": 3,
+      "min": 504,
+      "max": 504,
+      "mean": 504,
+      "first": 504,
+      "last": 504
+    },
+    "rendererTextures": {
+      "count": 3,
+      "min": 3,
+      "max": 3,
+      "mean": 3,
+      "first": 3,
+      "last": 3
+    },
+    "recentFps": {
+      "count": 3,
+      "min": 119.97254632807154,
+      "max": 138.08022461049873,
+      "mean": 129.90226139724697,
+      "first": 119.97254632807154,
+      "last": 138.08022461049873
+    }
+  },
+  "steadyMemory": {
+    "warm60to130Seconds": null,
+    "later260to335Seconds": null,
+    "heapGrowthNeedsInvestigation": null
+  },
+  "limitations": [
+    "This headless browser run is not target integrated-GPU acceptance, physical audio listening, or measured audiovisual latency.",
+    "Audio is muted through the normal UI; transport scheduling and buffers remain active.",
+    "Read-only wrappers observe real Worker messages and Web Audio node lifecycles; they do not inject results, change DSP gains, force GC, or accelerate time.",
+    "Heap measurements include transient allocations; bounded snapshots/audio and steady windows are evidence against obvious growth, not a formal absence-of-leaks proof.",
+    "Background behavior is proven only if the actual document visibility changed; headless tab behavior is reported explicitly."
+  ],
+  "minimumExercisePassed": false,
+  "smokeOnly": true
+}

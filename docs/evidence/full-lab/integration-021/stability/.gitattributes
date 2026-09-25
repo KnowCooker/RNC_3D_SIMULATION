@@ -1,0 +1,3 @@
+# Preserve raw stability JSON and JSONL bytes across platforms.
+*.json -text whitespace=cr-at-eol
+*.jsonl -text whitespace=cr-at-eol

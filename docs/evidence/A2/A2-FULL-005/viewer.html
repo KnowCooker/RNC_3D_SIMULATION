@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh">
+<meta charset="utf-8">
+<title>A2 V7/V8 结构检视</title>
+<style>
+  body { margin: 0; background: #101a25; color: #dce9f0; font: 14px Arial; }
+  #view { width: 1500px; height: 1000px; position: relative; }
+  #title { position: absolute; top: 20px; left: 24px; z-index: 4; font: 20px monospace; pointer-events: none; }
+  .lab-marker, .lab-marker-leaders { display: none; }
+  canvas { display: block; }
+</style>
+<div id="view"><div id="title">A2 V7/V8 结构检视</div></div>
+<script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  import { createLabViewer } from '/src/team-a/viewer/lab-viewer.ts';
+  import { defaultLabConfig } from '/src/shared/lab-contracts.ts';
+
+  const host = document.querySelector('#view'), qa = { host, THREE };
+  const realUpdate = OrbitControls.prototype.update;
+  OrbitControls.prototype.update = function (...args) { qa.controls = this; return realUpdate.apply(this, args); };
+  Object.defineProperty(THREE.WebGLRenderer.prototype, 'render', {
+    configurable: true,
+    set(fn) {
+      const renderer = this;
+      Object.defineProperty(this, 'render', {
+        configurable: true, writable: true,
+        value(scene, camera) {
+          qa.scene = scene; qa.camera = camera; qa.renderer = renderer;
+          return fn.call(renderer, scene, camera);
+        },
+      });
+    },
+  });
+  qa.viewer = createLabViewer(host, { select: () => {}, add: () => {}, context: () => {} });
+  delete THREE.WebGLRenderer.prototype.render;
+  OrbitControls.prototype.update = realUpdate;
+  qa.config = defaultLabConfig();
+  qa.selection = { signal: 'e', channel: 0 };
+  qa.draw = () => qa.viewer.render(0, qa.selection, [0, 0, 0, 0], [0, 0, 0, 0]);
+  qa.clean = () => {
+    for (const object of qa.scene.children) {
+      if (object instanceof THREE.Group && !object.name.startsWith('teaching-suv-') && object.name !== 'vehicle-sections') object.visible = false;
+    }
+    qa.renderer.render(qa.scene, qa.camera);
+  };
+  qa.show = (kind, position, target, label) => {
+    qa.config.vehicle = kind;
+    qa.viewer.setConfig(qa.config);
+    qa.viewer.reset();
+    qa.viewer.setBody('hidden');
+    qa.viewer.setSection('none', 0);
+    qa.controls.target.set(...target);
+    qa.camera.position.set(...position);
+    qa.controls.update();
+    qa.draw();
+    qa.clean();
+    document.querySelector('#title').textContent = `A2 ${kind.toUpperCase()} / ${label}`;
+  };
+  qa.viewer.setConfig(qa.config);
+  qa.viewer.setBody('hidden');
+  qa.draw();
+  window.qa = qa;
+  window.ready = true;
+</script>
+</html>

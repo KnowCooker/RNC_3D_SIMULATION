@@ -1,0 +1,64 @@
+{
+  "date": "2026-09-24T00:20:52.3489182+08:00",
+  "url": "http://127.0.0.1:5177/",
+  "baseCommit": "af98743cf5b9d7a96a09ab6d9cc144773699ee15",
+  "browser": "Playwright bundled Chromium, headless",
+  "sourceHashes": [
+    {
+      "path": "src/team-a/lab/index.ts",
+      "sha256": "9b085b0d4bada0baa76d228ae9b867dac7433202ccafdbc2bf092fbc4a9cab68"
+    },
+    {
+      "path": "src/team-a/lab/signal-flow.ts",
+      "sha256": "462b9ec0c8cda23629993084d3303b409dfb32306501abbc89f4aa2531df57a4"
+    },
+    {
+      "path": "src/team-a/viewer/index.ts",
+      "sha256": "7c06f74e8291df9d8ce501ea702a76524c8e2dd4698194cb8369ff8b10fceee5"
+    },
+    {
+      "path": "src/team-a/viewer/lab-viewer.ts",
+      "sha256": "f6cb8499f6e92a77e7db268e8c88be6fc56264c6deef3e34c6a9844d019768f3"
+    },
+    {
+      "path": "src/team-a/viewer/labels.ts",
+      "sha256": "ac38bb241fd5820bd94e2b1fafdaceecc96c981dcf0dfa957190c79bc14dd917"
+    },
+    {
+      "path": "src/team-a/viewer/vehicle-model.ts",
+      "sha256": "f788b1025049ccf328a563b8255c817858f003527bf199e87588a4bf9d220c59"
+    },
+    {
+      "path": "src/team-b/lab/index.ts",
+      "sha256": "e3990eb8302ccec48e1f7d2e86fcef42232c5abcdf09c547a745cf996d17a88b"
+    },
+    {
+      "path": "src/team-b/lab/paths.ts",
+      "sha256": "d2513040818a8b1385f3891e1886629417869684619ddce8aa664992cf215e1d"
+    },
+    {
+      "path": "src/team-b/lab/sources.ts",
+      "sha256": "e6bd0f273e377e016f59a26ef118e1fe2904070e0fc7fde9f77d5a51c4ca08e8"
+    },
+    {
+      "path": "src/integration/engine.ts",
+      "sha256": "3b1aa110114e9ed8c725329a4e1b309a8e2f01f23cdfd2ef49208df6a9563ff4"
+    },
+    {
+      "path": "src/integration/engine.worker.ts",
+      "sha256": "5a4d4a3938777004a87bd22bbeb62ef9e1feaba13b2cb70c9e70a20f4f7fd240"
+    },
+    {
+      "path": "src/integration/lab-engine.ts",
+      "sha256": "d8fc60b04ef633e236b75655c95ee289366b38faa7a868f673ee752b9517dd03"
+    },
+    {
+      "path": "src/integration/lab.worker.ts",
+      "sha256": "96627afd543aa898bd268ad90f0ce41b0a8d28fb27afe6ec4998ecbd81c3cef0"
+    },
+    {
+      "path": "src/integration/main.ts",
+      "sha256": "24eabb7488b972b0da016e117fdc1596c5ad2fe4763d98bf2637c285106f3b1d"
+    }
+  ]
+}
