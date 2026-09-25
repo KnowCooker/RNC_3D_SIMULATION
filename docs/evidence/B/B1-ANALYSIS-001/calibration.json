@@ -1,0 +1,6 @@
+{
+  "beforeDba": 49.2184922586097,
+  "targetDba": 60,
+  "gain": 3.459994329744977,
+  "scope": "0-1000Hz synthetic road-noise component; illustrative level, not calibrated measurement"
+}

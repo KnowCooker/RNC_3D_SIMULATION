@@ -8,7 +8,11 @@ A组最终交付内容、责任与验收门槛统一见[A组最终交付清单](
 
 ## 每次开发从这里开始
 
-A 组两个 Codex 的入口：[当前分支](docs/coordination/CURRENT_BRANCHES.md)、[双端协作流程](docs/coordination/README.md)、[A1 任务与交接](docs/coordination/A1.md)、[A2 任务与交接](docs/coordination/A2.md)。每端只需首次确定角色，后续从仓库和开放 PR 恢复工作；未推送的聊天或本地文件不能被另一端读取。
+A 组两个 Codex 的入口：[双端协作流程](docs/coordination/README.md)、[A1 任务与交接](docs/coordination/A1.md)、[A2 任务与交接](docs/coordination/A2.md)。B 组入口：[B1/B2共同任务与串行交接](docs/coordination/B.md)，只分任务，不拆源码。
+
+**每位用户开始新的开发/调试会话，先明确本次身份 A1/A2/B1/B2；未主动说明时，AI 必须先询问。** 同一会话已明确身份则不重复问；本地配置和历史日志不能代替新会话确认。记录、调试日志、提交说明与 PR 均标注角色、执行者和任务 ID；未推送的聊天或本地文件不能被另一端读取。
+
+当前分支与集成入口见[当前分支表](docs/coordination/CURRENT_BRANCHES.md)；完整目标以最新main及其记录为准。
 
 1. 拉取当前分支和 main 的最新提交。
 2. 先读根目录 [开发记录.md](开发记录.md)，了解当前状态、阻塞和下一步。
@@ -56,9 +60,9 @@ src/
     player/            # A1：统一音频时钟、公平试听
     viewer/            # A2：车辆、点位、相机、道路
   team-b/              # B 组独占
-    lab/               # B：参数化源、车型路径、动态MIMO及空间场
-    engine/            # B1：FxLMS、合成源、FIR 路径
-    analysis/          # B2：RMS、PSD、功率降噪
+    lab/               # 参数化源、车型路径、动态MIMO及空间场；B1/B2共用
+    engine/            # FxLMS、合成源、FIR 路径；B1/B2按任务串行共用
+    analysis/          # RMS、PSD、功率降噪；不按人员隔离文件
     index.ts           # B 组公共入口
   shared/              # A1 + B1 共管：冻结接口、默认配置、fixture 解码
   integration/         # A1 + B1 共管：装配、Worker 适配、入口

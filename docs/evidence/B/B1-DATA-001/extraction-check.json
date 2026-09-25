@@ -1,0 +1,20 @@
+{
+  "extraction_exact": true,
+  "input_files_unchanged": true,
+  "source_sha256": {
+    "pri.dat": "ff688faa7b1adc3eb22f7b930091a7cc4f4ac59cdf4533ec19bff9fdc6d70759",
+    "secpath.dat": "09dbc9166a3146813553f09472229156409690f890e205fe64d99994b1d06615",
+    "filter_cal_couple.m": "aae827e02c0b48fc72da913349f631c66a51effdf92402f8f3acaa2703c63c02"
+  },
+  "reference_shape": [
+    160000,
+    48
+  ],
+  "primary_shape": [
+    160000,
+    8
+  ],
+  "original_units": "V",
+  "secondary_layout": "8 speakers x 8 ears x 256 taps",
+  "matlab_executed": false
+}

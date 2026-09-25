@@ -5,13 +5,29 @@ import { createSources, sourceParameters } from '../src/team-b/lab/sources';
 import { applyPath, primaryPath, secondaryPath } from '../src/team-b/lab/paths';
 import { defaultLabConfig, MIC_POSITIONS, SPEAKER_POSITIONS, type LabConfig, type Vec3, type VehicleKind } from '../src/shared/lab-contracts';
 
-const config = defaultLabConfig();
+// Preserve the historical delayed-start checks while the UI default becomes immediate.
+const config: LabConfig = { ...defaultLabConfig(), adaptationStartsSeconds: 2 };
 const result = calculateLab(config, 'lab-baseline');
 const power = (values: Float32Array | Float64Array, start = 24000, end = 32000) => {
   let sum = 0;
   for (let i = start; i < end; i++) sum += values[i] ** 2;
   return sum / (end - start);
 };
+
+test('new lab experiments learn before two seconds without changing sources or superposition', () => {
+  const immediate = defaultLabConfig();
+  assert.equal(immediate.adaptationStartsSeconds, 0);
+  const run = calculateLab(immediate, 'immediate');
+  for (let m = 0; m < 4; m++) {
+    assert.deepEqual(run.signals.d[m], result.signals.d[m]);
+    assert.equal(run.signals.u[m][0], 0, 'zero weights keep the first output causal');
+    assert.ok(run.signals.u[m].slice(0, 1000).some(v => v !== 0), 'learning must not wait for two seconds');
+    assert.notDeepEqual(run.signals.e[m].slice(0, 1000), run.signals.d[m].slice(0, 1000));
+    assert.ok(run.metrics.reductionDbByMic[m] > 3);
+    for (let n = 0; n < 4000; n++) assert.ok(Math.abs(run.signals.e[m][n] - run.signals.d[m][n] - run.signals.a[m][n]) < 4e-8);
+  }
+  for (const value of [-1, 1, NaN, Infinity]) assert.throws(() => validateLabConfig({ ...immediate, adaptationStartsSeconds: value } as LabConfig));
+});
 
 test('lab FxLMS produces finite true superposition, baseline then learned reduction at all microphones', () => {
   for (let m = 0; m < 4; m++) {
@@ -81,13 +97,20 @@ test('one and eight references and disabled output actually change controller di
   for (const run of [one, eight]) for (const channels of Object.values(run.signals)) for (const channel of channels) assert.ok(channel.every(Number.isFinite));
 });
 
-test('high source levels and co-located references remain finite without forced improvement', () => {
-  const high = calculateLab({ ...config, taps: 128, stepSize: 0.5, speedKph: 130, roadRoughness: 3, treadRoughness: 3,
-    pressureKpa: 320, temperatureC: 50 }, 'high');
-  const colocated = calculateLab({ ...config, stepSize: 0.5,
-    references: Array.from({ length: 8 }, (_, i) => ({ id: `same-${i}`, name: `同位 ${i}`, position: [0, 0.8, 0] as Vec3 })) }, 'colocated');
+test('recording-shaped sources handle high energy at default step and reject unstable high-step runs explicitly', () => {
+  const highConfig = { ...config, taps: 128, speedKph: 130, roadRoughness: 3, treadRoughness: 3, pressureKpa: 320, temperatureC: 50 };
+  const colocatedConfig = { ...config,
+    references: Array.from({ length: 8 }, (_, i) => ({ id: `same-${i}`, name: `同位 ${i}`, position: [0, 0.8, 0] as Vec3 })) };
+  const high = calculateLab(highConfig, 'high');
+  const colocated = calculateLab(colocatedConfig, 'colocated');
   for (const run of [high, colocated]) for (const channels of Object.values(run.signals)) for (const channel of channels) assert.ok(channel.every(Number.isFinite));
-  assert.ok(colocated.metrics.reductionDbByMic.some(value => value < 0), 'unobservable spatial components can worsen; metrics must not force positive reduction');
+  // The former broad source was stable here; recorded low-frequency coloration
+  // narrows that operating envelope. Do not clamp u or change the FxLMS formula.
+  for (const cfg of [highConfig, colocatedConfig]) assert.throws(() => calculateLab({ ...cfg, stepSize: 0.5 }, 'unstable'), /数值不稳定/);
+  for (const run of [high, colocated]) for (let m = 0; m < 4; m++) {
+    const measured = 10 * Math.log10(power(run.signals.d[m]) / power(run.signals.e[m]));
+    assert.ok(Math.abs(run.metrics.reductionDbByMic[m] - measured) < 1e-10, 'report actual signed gain without forcing improvement');
+  }
 });
 
 test('field at microphone positions equals independently measured trace power in the same window', () => {
@@ -131,8 +154,8 @@ test('vehicle paths vary, seed is reproducible and speed/roughness trends are so
   assert.deepEqual(repeated.signals.e, result.signals.e);
   assert.notDeepEqual(createSources({ ...config, seed: 29 })[0], result.sources[0]);
   for (const patch of [{ speedKph: 90 }, { roadRoughness: 2 }, { treadRoughness: 2 }]) assert.ok(power(createSources({ ...config, ...patch })[0]) > power(result.sources[0]));
-  assert.notEqual(sourceParameters({ ...config, pressureKpa: 300 }).stiffnessPeakHz, sourceParameters(config).stiffnessPeakHz);
-  assert.notEqual(sourceParameters({ ...config, temperatureC: 40 }).cavityPeakHz, sourceParameters(config).cavityPeakHz);
+  assert.notEqual(sourceParameters({ ...config, pressureKpa: 300 }).spectrumScale, sourceParameters(config).spectrumScale);
+  assert.notEqual(sourceParameters({ ...config, temperatureC: 40 }).spectrumScale, sourceParameters(config).spectrumScale);
 });
 
 test('warm-up, zero-speed energy floor and bad configurations are explicit', () => {

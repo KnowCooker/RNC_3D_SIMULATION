@@ -1,0 +1,40 @@
+[
+  {
+    "name": "baseline",
+    "status": "finite",
+    "metrics": {
+      "reductionDbByMic": [
+        18.579432025729858,
+        18.59670034041028,
+        18.79641319835879,
+        18.77614276478164
+      ],
+      "aggregateReductionDb": 18.687260403734893
+    },
+    "milliseconds": 276.0155
+  },
+  {
+    "name": "high",
+    "status": "explicit-failure",
+    "error": "Error: FxLMS 数值不稳定，样本 4116；请降低步长或更改传感器位置"
+  },
+  {
+    "name": "high-default-step",
+    "status": "finite",
+    "metrics": {
+      "reductionDbByMic": [
+        16.25379892870287,
+        16.201323268634628,
+        16.041706072938013,
+        16.054400500400583
+      ],
+      "aggregateReductionDb": 16.134672927755634
+    },
+    "milliseconds": 330.51969999999994
+  },
+  {
+    "name": "colocated",
+    "status": "explicit-failure",
+    "error": "Error: FxLMS 数值不稳定，样本 9089；请降低步长或更改传感器位置"
+  }
+]

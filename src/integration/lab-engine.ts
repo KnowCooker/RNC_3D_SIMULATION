@@ -1,4 +1,4 @@
-import type { FieldFrame, LabConfig, LabLivePacket, LabResult, Vec3 } from '../shared/lab-contracts';
+import type { AcousticWeighting, FieldFrame, LabConfig, LabLivePacket, LabResult, Vec3 } from '../shared/lab-contracts';
 
 export function createLabEngine() {
   let worker: Worker | null = null, runId = '', mode: 'batch' | 'live' | null = null;
@@ -62,6 +62,6 @@ export function createLabEngine() {
     calculate: (config: LabConfig, id: string) => start<LabResult>(config, id, 'batch'),
     startLive: (config: LabConfig, id: string) => start<void>(config, id, 'live'),
     pullLive: (sampleCount = 200) => request<LabLivePacket>('chunk', { sampleCount }),
-    field: (time: number, points: Vec3[]) => request<FieldFrame>('field', { time, points }),
+    field: (time: number, points: Vec3[], weighting: AcousticWeighting = 'Z') => request<FieldFrame>('field', { time, points, weighting }),
   };
 }

@@ -1,0 +1,35 @@
+{
+  "role": "B1",
+  "executor": "Codex",
+  "task": "B1-ANALYSIS-001",
+  "node": "v24.19.0",
+  "date": "2026-09-25",
+  "durationSeconds": 112,
+  "computeMilliseconds": 1903.5784,
+  "analysisMilliseconds": 156.48959999999988,
+  "oneChannelAudioMilliseconds": 122.40480000000025,
+  "pcmSamples": 1792000,
+  "allFinite": true,
+  "limits": [
+    {
+      "refs": 1,
+      "seconds": 186
+    },
+    {
+      "refs": 4,
+      "seconds": 112
+    },
+    {
+      "refs": 8,
+      "seconds": 73
+    }
+  ],
+  "processMemory": {
+    "rss": 175194112,
+    "heapTotal": 42721280,
+    "heapUsed": 18999672,
+    "external": 45704880,
+    "arrayBuffers": 43151875
+  },
+  "notes": "Node snapshot, not browser/GPU peak; duration budget is conservative, not a RAM/device benchmark. Eight cached PCM buffers are included in budget formula."
+}

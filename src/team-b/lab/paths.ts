@@ -1,4 +1,6 @@
 import { SOURCE_POSITIONS, SPEAKER_POSITIONS, type LabConfig, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
+import { RECORDED_PROFILE } from './recorded-profile';
+import { TEACHING_PRESSURE_GAIN } from './pressure-calibration';
 
 /** Short, causal teaching impulse responses. All positions are in assembled-car metres. */
 export interface SparsePath { delays: number[]; gains: number[] }
@@ -35,11 +37,25 @@ function acousticPath(config: LabConfig, source: Vec3, point: Vec3, gain: number
   }), secondary ? [0.18, 0.32, 0.32, 0.18] : [0.72, 0.28]);
 }
 
-export function primaryPath(config: LabConfig, sourceIndex: number, point: Vec3): SparsePath {
+export function geometricPrimaryPath(config: LabConfig, sourceIndex: number, point: Vec3): SparsePath {
   const wheel = SOURCE_POSITIONS[sourceIndex], profile = VEHICLE_ACOUSTICS[config.vehicle];
   // Wheel excitation reaches the floor through the suspension/body, which then radiates into the cabin.
   const radiator: Vec3 = [wheel[0] * 0.72, 0.58, wheel[2] * 0.85];
   return acousticPath(config, radiator, point, 0.065 * profile.primary, profile.bodyDelay, false);
+}
+
+export function primaryPath(config: LabConfig, sourceIndex: number, point: Vec3): SparsePath {
+  const geometry = geometricPrimaryPath(config, sourceIndex, point);
+  // A common causal coloration fits pooled recorded noise shape, not a measured
+  // primary transfer function. Arbitrary field points reuse this same path.
+  const values = new Float64Array(Math.max(...geometry.delays) + RECORDED_PROFILE.primaryColorFir.length);
+  for (let j = 0; j < geometry.delays.length; j++) for (let k = 0; k < RECORDED_PROFILE.primaryColorFir.length; k++) {
+    values[geometry.delays[j] + k] += geometry.gains[j] * RECORDED_PROFILE.primaryColorFir[k];
+  }
+  const delays: number[] = [], gains: number[] = [];
+  const scale = TEACHING_PRESSURE_GAIN * 10 ** ((config.levelOffsetDb ?? 0) / 20);
+  values.forEach((gain, delay) => { if (Math.abs(gain) > 1e-15) { delays.push(delay); gains.push(gain * scale); } });
+  return { delays, gains };
 }
 
 export function secondaryPath(config: LabConfig, speakerIndex: number, point: Vec3): SparsePath {

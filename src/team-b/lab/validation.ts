@@ -1,9 +1,9 @@
-import type { LabConfig } from '../../shared/lab-contracts';
+import { labDurationLimit, type LabConfig } from '../../shared/lab-contracts';
 
 export function validateLabConfig(config: LabConfig): void {
   if (!config || config.schemaVersion !== 'lab-v3') throw new Error('需要 lab-v3 配置');
   if (!['ice', 'bev', 'hev', 'erev'].includes(config.vehicle)) throw new Error('车型不受支持');
-  if (config.sampleRateHz !== 2000 || config.durationSeconds !== 16 || config.adaptationStartsSeconds !== 2) throw new Error('当前时基为 2000Hz / 16s / 2s 开始学习');
+  if (config.sampleRateHz !== 2000 || ![0, 2].includes(config.adaptationStartsSeconds)) throw new Error('当前采样率为2000Hz；学习从0s开始，兼容旧配置2s');
   const range = (value: number, min: number, max: number, label: string) => {
     if (!Number.isFinite(value) || value < min || value > max) throw new Error(`${label} 必须在 ${min}～${max} 之间`);
   };
@@ -29,5 +29,6 @@ export function validateLabConfig(config: LabConfig): void {
     range(reference.position[2], -2.6, 2.6, '传感器纵向位置');
   }
   if (!Array.isArray(config.speakerEnabled) || config.speakerEnabled.length !== 4 || !config.speakerEnabled.every(v => typeof v === 'boolean')) throw new Error('需要四个扬声器开关');
+  if (!Number.isInteger(config.durationSeconds) || config.durationSeconds < 1 || config.durationSeconds > labDurationLimit(config)) throw new Error(`预计算时长须为1～${labDurationLimit(config)}秒整数（当前配置内存预算）`);
+  range(config.levelOffsetDb ?? 0, -12, 12, '教学声压修正dB');
 }
-
