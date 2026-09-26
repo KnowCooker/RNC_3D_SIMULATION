@@ -4,7 +4,17 @@
 
 依据：[B组需求](../plan/02_B组独立需求.md)、[每日任务与验收](../plan/03_每日任务与验收.md)、[固定接口](../../src/shared/contracts.ts)。以下拆分针对当前已合入 main 的 demo-v2 范围；A 组未合并草稿中的扩展不自动改变 B 组验收或契约，有跨组新需求时另行确认。
 
-## 当前发布：B1-PR-001（2026-09-25）
+## 当前接班：B2-001（2026-09-26）
+
+- 用户角色：B2；Identity-Source: user-declared；执行者：Codex。用户已明确确认“B1是停止的，B2继续”，本批串行接班。
+- 基线：原仓库 main `a300d1631bc502c76ee6dd4f0b16990b071175dd`，B1 PR #28 已于2026-09-25合并；下方“未合并/本地未上传”为历史状态。
+- 分支：`b/b2-001-source-path-audit`；任务：B2-001 合成源/路径及复现说明。状态：本地准备，远端认领尚未生效；GitHub登录尚未完成，PR未创建。
+- 2026-09-26 fetch及开放PR检查：仅A1 #27，无B组活动PR。前任成果已在main；本地工作区初始干净。
+- 范围：B组现有engine测试、`src/team-b/README.md`、`docs/evidence/B/B2-001/`、本页及根开发记录。验证demo-v2三种子确定性/40–350Hz整形、单位/时标、P/S因果完整矩阵和S_hat=S；区分lab-v3现状，不改冻结基准、共享接口或A组。
+- 验证：基线 `pnpm check` 83/83测试、类型、边界、生产构建通过；原有大chunk提示保留。新任务证据待补。
+- 下一步：发布认领草稿PR；无法认证时按协作入口的本地准备例外继续独立核对，明确未占用远端任务；完成后验证、登记并推送。
+
+## 上一发布：B1-PR-001（2026-09-25，已合并）
 
 角色B1；Identity-Source: local-config；执行者Codex。用户授权集中发布，代码提交8698b2c已推送origin/b/b1-coordination，[PR #28](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/28)已创建，目标main、非草稿、未合并。83项测试及类型/边界/构建通过；原始录音、MATLAB、个人本地规则未上传。下一步审核/CI；详细见[发布证据](../evidence/B/B1-PR-001/README.md)。下方本地批次为开发时历史，现已包含在PR中。
 
