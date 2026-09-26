@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { calculateSync, validateConfig, EngineError } from '../src/team-b/engine/core';
-import { createPaths, convolve } from '../src/team-b/engine/data';
+import { createData, createPaths, convolve, uniform } from '../src/team-b/engine/data';
 import { DEFAULT_CONFIG } from '../src/shared/defaults';
 import { decodeFixture } from '../src/shared/fixture';
 import type { RunConfig } from '../src/shared/contracts';
@@ -67,4 +68,104 @@ test('B07: rejects invalid taps, negative/NaN step, wrong fixed dimensions, null
     assert.throws(() => validateConfig({ ...DEFAULT_CONFIG, ...bad } as RunConfig), (e: unknown) => e instanceof EngineError && e.code === 'INVALID_CONFIG');
   }
   assert.throws(() => validateConfig(null as unknown as RunConfig), EngineError);
+});
+
+// Independently generated from the frozen Python oracle; regenerate only into a
+// temporary output and compare, never replace expected values to hide a failure.
+const sourceAudit = JSON.parse(readFileSync(new URL('../docs/evidence/B/B2-001/reference-audit.json', import.meta.url), 'utf8'));
+function float32LeHash(signal: Float64Array): string {
+  const bytes = Buffer.alloc(signal.length * 4);
+  signal.forEach((value, i) => bytes.writeFloatLE(value, i * 4));
+  return createHash('sha256').update(bytes).digest('hex');
+}
+
+test('B2-001: independent unsigned PRNG oracle preserves all three seeds and distinct channel streams', () => {
+  for (const seed of [11, 29, 47]) {
+    const channels = new Set<string>();
+    for (let channel = 0; channel < 4; channel++) {
+      const channelSeed = seed + 101 * channel;
+      let state = BigInt(channelSeed);
+      const expected = Float64Array.from({ length: 128 }, () => {
+        const mask = 0xffffffffn;
+        state = (state ^ (state << 13n)) & mask;
+        state = (state ^ (state >> 17n)) & mask;
+        state = (state ^ (state << 5n)) & mask;
+        return ((Number(state) + 0.5) / 2 ** 32) * 2 - 1;
+      });
+      const actual = uniform(channelSeed, expected.length);
+      assert.deepEqual(actual, expected);
+      assert.ok(actual.every(value => value > -1 && value < 1));
+      channels.add(float32LeHash(actual));
+    }
+    assert.equal(channels.size, 4); // Distinct streams, not a claim of physical wheel independence.
+  }
+});
+
+test('B2-001: three-seed shaped references and primary pressure match every Python Float32 sample', () => {
+  for (const expected of sourceAudit.cases) {
+    const data = createData(expected.seed);
+    for (const kind of ['x', 'd'] as const) for (let channel = 0; channel < 4; channel++) {
+      const actual = data[kind][channel];
+      assert.equal(actual.length, 32000);
+      assert.ok(actual.every(Number.isFinite));
+      assert.equal(float32LeHash(actual), expected[kind][channel].float32LeSha256, `${expected.seed}/${kind}/${channel}`);
+      const rms = Math.sqrt(actual.reduce((sum, value) => sum + value * value, 0) / actual.length);
+      assert.ok(Math.abs(rms - expected[kind][channel].rms) < 1e-12);
+    }
+  }
+});
+
+test('B2-001: all primary and secondary FIRs retain oracle taps, causal delays and complete cross-coupling', () => {
+  const paths = createPaths();
+  for (const [kind, length, expected] of [
+    ['primary', 24, sourceAudit.primaryNonzeroTaps],
+    ['secondary', 16, sourceAudit.secondaryNonzeroTaps],
+  ] as const) {
+    assert.equal(paths[kind].length, 4);
+    let crossPaths = 0;
+    for (let mic = 0; mic < 4; mic++) {
+      assert.equal(paths[kind][mic].length, 4);
+      for (let input = 0; input < 4; input++) {
+        const kernel = paths[kind][mic][input];
+        assert.equal(kernel.length, length);
+        const oracle = new Float64Array(length);
+        for (const [tap, value] of expected[mic][input]) oracle[tap] = value;
+        assert.deepEqual(kernel, oracle);
+        assert.ok(kernel.some(value => value !== 0));
+        if (mic !== input) crossPaths++;
+        const impulse = new Float64Array(64); impulse[7] = 1;
+        const shifted = new Float64Array(64); shifted.set(oracle, 7);
+        assert.deepEqual(convolve(impulse, kernel), shifted);
+      }
+    }
+    assert.equal(crossPaths, 12);
+  }
+});
+
+test('B2-001: original pressure includes the documented independent disturbance after causal P*x', () => {
+  const { x, d, primary } = createData(11);
+  for (let mic = 0; mic < 4; mic++) {
+    const disturbance = uniform(11 + 5001 + 101 * mic, 32000);
+    let residualPower = 0;
+    for (let n = 0; n < 32000; n++) {
+      let pressure = 0;
+      for (let k = 0; k < 4; k++) for (let tap = 0; tap <= Math.min(n, 23); tap++) {
+        pressure += primary[mic][k][tap] * x[k][n - tap];
+      }
+      const residual = d[mic][n] - pressure;
+      assert.ok(Math.abs(residual - 0.001 * Math.sqrt(3) * disturbance[n]) < 1e-15);
+      residualPower += residual ** 2;
+    }
+    assert.ok(Math.abs(Math.sqrt(residualPower / 32000) - 0.001) < 0.00002);
+  }
+});
+
+test('B2-001: exported demo-v2 identity, units and last-sample time stay explicit', () => {
+  assert.deepEqual(baseline.config, DEFAULT_CONFIG);
+  assert.equal(baseline.config.pathProfileId, 'synthetic-4x4x4-v1');
+  assert.equal(baseline.source, 'computed-browser');
+  assert.deepEqual(baseline.order, ['fl', 'fr', 'rl', 'rr']);
+  assert.deepEqual(baseline.units, { x: 'm/s2', u: 'drive', d: 'Pa', a: 'Pa', e: 'Pa' });
+  assert.equal(baseline.sampleCount / baseline.config.sampleRateHz, 16);
+  assert.equal((baseline.sampleCount - 1) / baseline.config.sampleRateHz, 15.9995);
 });

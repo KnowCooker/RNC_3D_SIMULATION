@@ -1,0 +1,45 @@
+$ tsx --test tests/engine.test.ts tests/analysis.test.ts tests/b-lab-physics.test.ts tests/b-live-stream.test.ts tests/b-recorded-profile.test.ts tests/b-lab-weighting.test.ts
+✔ Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak (7.4409ms)
+✔ analysis warming-up, window boundary, channel identity and pressure calibration (1.6712ms)
+✔ new lab experiments learn before two seconds without changing sources or superposition (230.0093ms)
+✔ lab FxLMS produces finite true superposition, baseline then learned reduction at all microphones (4.8764ms)
+✔ all 16 secondary paths have causal cross coupling and every source reaches every mic (0.7898ms)
+✔ first adaptive output matches an independent all-error normalized gradient calculation (17.4257ms)
+✔ RNC off, zero step and all disabled speakers retain original noise exactly (290.4769ms)
+✔ one and eight references and disabled output actually change controller dimensions and results (473.5169ms)
+✔ recording-shaped sources handle high energy at default step and reject unstable high-step runs explicitly (938.3126ms)
+✔ field at microphone positions equals independently measured trace power in the same window (12.1695ms)
+✔ off-microphone field is recalculated from wheel q and speaker u, not microphone interpolation (43.199ms)
+✔ vehicle paths vary, seed is reproducible and speed/roughness trends are source-driven (387.3609ms)
+✔ warm-up, zero-speed energy floor and bad configurations are explicit (214.1434ms)
+✔ q selection analyzes each actual wheel source independently of reference layout (127.0455ms)
+✔ A weighting matches reference corrections and applies power rather than amplitude to PSD (8.1531ms)
+✔ teaching calibration anchors pooled 40 km/h baseline at 60 dBA; offset changes H only (193.9817ms)
+✔ A/Z analysis and field agree at microphones, including first window and wrapped live history (864.8084ms)
+✔ duration budget rejects invalid allocations; short runs have finite metrics and long runs share streaming samples (1403.8914ms)
+✔ NFxLMS joint normalization scales inversely with filtered-reference power and regularizes silence (0.1762ms)
+✔ stateful first 16 seconds match the unchanged batch q/x/u/d/a/e bit for bit (531.2896ms)
+✔ arbitrary block sizes preserve source/filter/weight state beyond 16 seconds and repeated history wraps (1748.319ms)
+✔ RNC off, zero step, disabled speakers and eight references retain the batch semantics across blocks (1380.7557ms)
+✔ wrapped snapshots use one absolute clock and yield the same field window at mic and off-mic points (557.2623ms)
+✔ resident storage stays bounded through two minutes and invalid requests do not advance the stream (573.5305ms)
+✔ numerical divergence is explicit and a partially advanced failed sample cannot be resumed (19.5551ms)
+✔ recording-derived data keeps all references and uncalibrated provenance; spectra distinguish vibration and cabin noise (465.949ms)
+✔ spectral stretch remains causal, normalized and exactly shared by batch/stream at temperature-pressure limits (622.6013ms)
+✔ B01/B03: all 640,000 samples match immutable Python Float32 golden and e=d+a (19.0728ms)
+✔ B02/B04/B05: five configurations match Python metrics; repeat is deterministic (550.8257ms)
+✔ B06: every output reaches every mic; removing one cross-path removes only that response (0.2815ms)
+✔ B07: rejects invalid taps, negative/NaN step, wrong fixed dimensions, null config (0.3769ms)
+✔ B2-001: independent unsigned PRNG oracle preserves all three seeds and distinct channel streams (1.0083ms)
+✔ B2-001: three-seed shaped references and primary pressure match every Python Float32 sample (67.1116ms)
+✔ B2-001: all primary and secondary FIRs retain oracle taps, causal delays and complete cross-coupling (0.4799ms)
+✔ B2-001: original pressure includes the documented independent disturbance after causal P*x (35.2975ms)
+✔ B2-001: exported demo-v2 identity, units and last-sample time stay explicit (0.2325ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5089.9498
