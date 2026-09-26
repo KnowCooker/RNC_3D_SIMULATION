@@ -50,3 +50,5 @@ python docs/evidence/B/B2-001/reference-audit.py | Set-Content -Encoding utf8 te
 最终`pnpm test:b` **36/36通过**，见[test-b.txt](test-b.txt)；`pnpm check` **88/88测试、类型、边界、生产构建通过**，见[check.txt](check.txt)。原有593.26kB viewer chunk提示保留。全部原始fixture在本批验证前后SHA-256不变，见[fixture-integrity.json](fixture-integrity.json)；`git diff --check`通过。三种子参考的带内功率比例范围为0.9803536711～0.9824249243。
 
 无运行源码变化，因此没有重做浏览器截图、声学设备/音画延时、目标核显、第二机离线或最终版长稳；这些保持待相应角色/设备验收。B2下一项为B2-002，不在本批自动认领；B1/B2继续串行交接。GitHub设备登录待用户完成，当前本地完成、尚未推送/创建PR；后续远端状态在B.md及根日志追加，不改写此次验证的源码基线。
+
+交付提交为`5d49370`，Git钩子边界/进度检查通过。实际推送因缺少GitHub凭据失败（`could not read Username`）；仅本地，GitHub尚未同步，PR未创建。登录完成后先fetch并复查B组开放任务，再发布当前分支及本证据。
