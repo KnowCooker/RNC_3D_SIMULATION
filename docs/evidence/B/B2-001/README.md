@@ -52,3 +52,5 @@ python docs/evidence/B/B2-001/reference-audit.py | Set-Content -Encoding utf8 te
 无运行源码变化，因此没有重做浏览器截图、声学设备/音画延时、目标核显、第二机离线或最终版长稳；这些保持待相应角色/设备验收。B2下一项为B2-002，不在本批自动认领；B1/B2继续串行交接。后续远端状态在B.md及根日志追加，不改写此次验证的源码基线。
 
 交付提交为`5d49370`，Git钩子边界/进度检查通过。首次推送因缺少GitHub凭据失败（`could not read Username`）；用户完成登录后，原仓库直接写入仍返回403，因此按协作规则创建`hgyong/RNC_3D_SIMULATION` fork并成功推送。已发布[原仓库PR #29](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/29)，目标main，尚未合并；发布前fetch确认main仍`a300d163`，未出现重复B组任务。最新CI状态以PR最新提交为准，不能用本机日志冒充云端结果。
+
+PR已转为可审查。2026-09-26核查`e5cb89d`的[云端运行](https://github.com/KnowCooker/RNC_3D_SIMULATION/actions/runs/36219109385)为`action_required`，页面显示等待维护者批准；本地通过不等于云端通过。此后的交接文档提交仍需维护者核对最新检查再合并。
