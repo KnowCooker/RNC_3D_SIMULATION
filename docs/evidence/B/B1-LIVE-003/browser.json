@@ -1,0 +1,65 @@
+{
+  "initial003": {
+    "durationHidden": true,
+    "mode": "live",
+    "pressureDisabled": true,
+    "seekHidden": true,
+    "source": "recorded-noise",
+    "status": "实时仿真已就绪，点击“启动 / 重启实时实验”开始计算与试听。",
+    "time": "累计 00:00.00"
+  },
+  "sourceView003": {
+    "explanation": "q · 实录噪声源 · 前左 FL · 相对幅值四路实录耳旁初级噪声，经共同幅度归一化后放置于四个轮子处作为等效声源；原始单位V，未标定为Pa。它们不是实录振动，所放位置是教学映射。信号同步平滑循环，控制权重持续保留。",
+    "field": "等待当前实验声场",
+    "run": "纯电 SUV · 实时 4×4×4 · 2208b791",
+    "status": "实时运行 · 54.3 s · 缓冲 1.14 s · 共同安全增益 0.196 · 补缓冲 0 次",
+    "time": "累计 00:54.26",
+    "title": "时域 · Q1 / 相对幅值（实录噪声源）"
+  },
+  "liveLoop003": {
+    "audition": "实时试听：残差 e · 正在切换，随新样本生效",
+    "field": "空间窗口截至 139.88 s",
+    "run": "纯电 SUV · 实时 4×4×4 · 2208b791",
+    "status": "实时运行 · 140.2 s · 缓冲 1.39 s · 共同安全增益 0.196 · 补缓冲 0 次",
+    "time": "累计 02:20.21"
+  },
+  "off003": {
+    "audition": "实时试听：残差 e · 权重冻结 / 输出关闭",
+    "field": "空间窗口截至 184.53 s",
+    "metrics": "FL0.0 dB64.5 → 64.5 dBAFR0.0 dB62.7 → 62.7 dBARL0.0 dB65.3 → 65.3 dBARR0.0 dB65.6 → 65.6 dBA",
+    "status": "实时运行 · 184.7 s · 缓冲 1.29 s · 共同安全增益 0.196 · 补缓冲 0 次",
+    "time": "累计 03:04.71"
+  },
+  "longLive003": {
+    "audition": "实时试听：残差 e · 自适应控制",
+    "field": "空间窗口截至 268.30 s",
+    "metrics": "FL7.6 dB62.2 → 54.6 dBAFR4.6 dB61.3 → 56.7 dBARL4.8 dB64.5 → 59.7 dBARR4.8 dB65.0 → 60.2 dBA",
+    "run": "纯电 SUV · 实时 4×4×4 · 2208b791",
+    "status": "实时已暂停 · 268.4 s · 缓冲 1.39 s · 共同安全增益 0.196 · 补缓冲 0 次",
+    "time": "累计 04:28.41"
+  },
+  "synthetic003": {
+    "pressureDisabled": false,
+    "source": "shaped-noise",
+    "status": "实验就绪 · 473 ms · 末4秒线性总改善 19.1 dB（教学模型）；四座位d/e共用试听衰减 0.249"
+  },
+  "replay003": {
+    "duration": "90",
+    "mode": "replay",
+    "source": "recorded-noise",
+    "status": "实验就绪 · 1614 ms · 末4秒线性总改善 18.3 dB（教学模型）；四座位d/e共用试听衰减 0.121",
+    "time": "00:00.00 / 01:30.00"
+  },
+  "replayEnd003": {
+    "convergence": "截至 90.00 s · 0.5秒窗口 · 随播放显示，无未来数据",
+    "metrics": "FL7.1 dB62.9 → 55.9 dBAFR4.7 dB61.7 → 57.0 dBARL4.5 dB64.2 → 59.7 dBARR3.7 dB64.6 → 61.0 dBA",
+    "time": "01:30.00 / 01:30.00"
+  },
+  "final003": {
+    "buttons": [],
+    "source": "recorded-noise",
+    "status": "实时已暂停 · 200.4 s · 缓冲 1.22 s · 共同安全增益 0.196 · 补缓冲 0 次",
+    "time": "累计 03:20.38"
+  },
+  "logs003": []
+}

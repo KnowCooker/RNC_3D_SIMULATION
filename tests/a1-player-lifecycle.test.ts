@@ -231,3 +231,24 @@ test('A1: a cold comparison prepared across the end never restarts the clip', as
   assert.equal(player.playing, false);
   assert.equal(context.sources.length, 1);
 });
+
+
+test('variable duration playback seeks past 16s, switches modes and stops exactly at each loaded clip end', async t => {
+  const { player, context } = setup(t);
+  for (const duration of [40,1]) {
+    const channels = ORDER.map(()=>new Float32Array(duration*2000).fill(.01)) as unknown as typeof fixture.signals.d;
+    player.load({signals:{d:channels,e:channels}});
+    const position = duration-0.5;
+    player.seek(position); await player.play();
+    assert.equal(context.sources.at(-1)!.startOffset,position);
+    assert.equal(context.sources.at(-1)!.buffer!.duration,duration);
+    assert.equal(player.playing,true);
+    player.setComparison('rr',duration===40?'d':'e');
+    assert.equal(player.currentTime,position);
+    context.currentTime+=0.5;
+    assert.equal(player.playing,false); assert.equal(player.currentTime,duration);
+    context.sources.at(-1)!.finish(); assert.equal(player.currentTime,duration);
+    player.seek(duration+10); assert.equal(player.currentTime,duration);
+    await player.play(); assert.equal(player.currentTime,0); player.pause();
+  }
+});

@@ -1,0 +1,74 @@
+{
+  "source": "..\\\u5b9e\u6d4b\u6570\u636e\u5206\u6790\\recordings-original.npz",
+  "sourceSha256": "57b96012ed4d8bde89b6a5a3873ced39197cd3e2e5c984904b78b7d9ca681e96",
+  "originalChannelsOneBased": [
+    49,
+    53,
+    51,
+    55
+  ],
+  "originalKind": "primary noise / left ear, not vibration",
+  "virtualPlacements": [
+    "FL wheel",
+    "FR wheel",
+    "RL wheel",
+    "RR wheel"
+  ],
+  "physicalMappingMeasured": false,
+  "originalUnit": "V",
+  "calibrated": false,
+  "originalSampleRateHz": 4000,
+  "sampleRateHz": 2000,
+  "samplesPerChannel": 80000,
+  "durationSeconds": 40,
+  "antiAlias": {
+    "taps": 257,
+    "cutoffHz": 900,
+    "window": "Kaiser beta=8.6",
+    "stopbandAbove1000HzMaxDb": -94.88582790936641,
+    "passbandThrough800HzMinDb": -0.00012374428520910022
+  },
+  "normalization": "one common RMS across four channels; relative gains and timing retained",
+  "commonRmsVolts": 0.011548892004118788,
+  "rmsByChannelVolts": [
+    0.016088927850188724,
+    0.008246428479197874,
+    0.01275275121599406,
+    0.006634589699676403
+  ],
+  "normalizedCrossCorrelation": [
+    [
+      1.0,
+      0.5098103940756308,
+      0.43095310453843566,
+      0.11031463429748796
+    ],
+    [
+      0.5098103940756308,
+      0.9999999999999999,
+      0.17205615824967874,
+      0.1596071836417274
+    ],
+    [
+      0.4309531045384357,
+      0.17205615824967874,
+      1.0,
+      0.4698388635490876
+    ],
+    [
+      0.11031463429748795,
+      0.1596071836417274,
+      0.46983886354908766,
+      1.0
+    ]
+  ],
+  "asset": "src\\team-b\\lab\\data\\recorded-primary.f32",
+  "assetBytes": 1280016,
+  "assetSha256": "c3bcc4ffcea96268032403eb01a0743f822701d6958bebc979752f93283d421a",
+  "loop": {
+    "crossfadeSamples": 400,
+    "periodSamples": 79600,
+    "periodSeconds": 39.8,
+    "method": "all four channels share the same raised-cosine overlap weights"
+  }
+}

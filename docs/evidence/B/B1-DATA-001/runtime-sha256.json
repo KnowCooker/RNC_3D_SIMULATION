@@ -1,0 +1,38 @@
+[
+  {
+    "path": "src/team-b/lab/sources.ts",
+    "sha256": "4d4d43914521e9d553e1b422025591aa5e8301d053c7e0f512c8aa2ae800ab1c"
+  },
+  {
+    "path": "src/team-b/lab/paths.ts",
+    "sha256": "68ee85bedc89c416a488c2804105c0be3fe0e0d61fd21b47a07d0a867754e9d7"
+  },
+  {
+    "path": "src/team-b/lab/stream.ts",
+    "sha256": "09b86db11dcb192523c4767660e8260e518e9c003f9207aa609a01294c2ad9f2"
+  },
+  {
+    "path": "src/team-b/lab/recorded-profile.ts",
+    "sha256": "90c61dc7b909ed58133ce9dd1a40083bf3e8ae02ab6939a6dd867f8dfb11e9ba"
+  },
+  {
+    "path": "src/team-b/lab/index.ts",
+    "sha256": "cdb271d443ecaeeb9821cc794567f7737acb8f74f15441d441ead9a37ce9c136"
+  },
+  {
+    "path": "src/team-a/lab/index.ts",
+    "sha256": "1b1111834b7e22d403b4f5f046d6fef73c75ad68ecab1c3efea72a6c7487a024"
+  },
+  {
+    "path": "tests/b-lab-physics.test.ts",
+    "sha256": "485bddd4b451ac945b366f4be8afaad0b5ec140d37f7dfc33c3cc992deae97ca"
+  },
+  {
+    "path": "tests/b-recorded-profile.test.ts",
+    "sha256": "73bafd841334b4abf4d60fae96427ad675a48ebddd51d149e15a637501ac9186"
+  },
+  {
+    "path": "package.json",
+    "sha256": "0ced2aedbf48b11b436e7de904f948ad696d2708ceeff00d17fd44e6e2334161"
+  }
+]

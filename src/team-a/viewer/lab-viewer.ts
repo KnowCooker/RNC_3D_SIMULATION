@@ -547,6 +547,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       return;
     }
     fieldNote.hidden = false;
+    const unit = frame.weighting === 'A' ? 'dBA' : 'dB';
+    fieldHudScale.innerHTML = `<span>30 ${unit}</span><i></i><span>80 ${unit}</span>`;
     const values = fieldMode === 'primary' ? frame.primarySpl : frame.residualSpl;
     let low = Infinity, high = -Infinity, hot = 0;
     values.forEach((value, index) => {
@@ -556,12 +558,12 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     fieldHud.dataset.sampleCount = String(values.length);
     fieldHud.dataset.mode = fieldMode;
     fieldHudTitle.textContent = `${fieldMode === 'primary' ? '原声 d' : '残余声 e'} · 车内声场`;
-    fieldHudRange.textContent = `${frame.time.toFixed(2)} s / 采样范围 ${low.toFixed(1)}–${high.toFixed(1)} dB SPL`;
-    fieldHudHotspot.textContent = `本帧最高采样点 ${high.toFixed(1)} dB · (${fieldPoints[hot].map(v => v.toFixed(2)).join(', ')}) m`;
+    fieldHudRange.textContent = `${frame.time.toFixed(2)} s / 采样范围 ${low.toFixed(1)}–${high.toFixed(1)} ${frame.weighting === 'A' ? 'dBA' : 'dB SPL'}`;
+    fieldHudHotspot.textContent = `本帧最高采样点 ${high.toFixed(1)} ${unit} · (${fieldPoints[hot].map(v => v.toFixed(2)).join(', ')}) m`;
     if (probeIndex !== null && probeIndex < values.length) {
       const point = fieldPoints[probeIndex];
       probeMarker.position.set(...point); probeMarker.visible = true;
-      fieldHudProbe.textContent = `探针 ${values[probeIndex].toFixed(1)} dB · (${point.map(v => v.toFixed(2)).join(', ')}) m`;
+      fieldHudProbe.textContent = `探针 ${values[probeIndex].toFixed(1)} ${unit} · (${point.map(v => v.toFixed(2)).join(', ')}) m`;
     } else {
       probeMarker.visible = false;
       fieldHudProbe.textContent = '点击热力切片读取最近的真实采样点';
@@ -587,13 +589,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     }
     if (!fieldNote.hidden) {
       if (fieldSlice === 'volume') {
-        fieldNoteDetail.textContent = '280个真实计算采样点 + 三正交热力切片；面内颜色为相邻采样点插值，固定30–80 dB SPL色标';
+        fieldNoteDetail.textContent = '280个真实计算采样点 + 三正交热力切片；面内颜色为相邻采样点插值，固定30–80色标（单位见声场范围）';
         fieldNoteCompact.textContent = '280点 · 三正交热力切片 · 面内插值';
       } else {
         const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
         const coordinate = fieldPoints[sample][{ x: 0, y: 1, z: 2 }[axis]];
         const provenance = movingFieldSlice() ? '当前车身剖面真实采样切片' : '固定采样切片 · 车身剖面另行移动';
-        fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m ${provenance} · 三角插值/透视叠层 · 30–80 dB SPL`;
+        fieldNoteDetail.textContent = `${fieldMode === 'primary' ? '原噪声' : '残余声'} ${axis.toUpperCase()}=${coordinate.toFixed(2)} m ${provenance} · 三角插值/透视叠层 · 30–80（单位见声场范围）`;
         fieldNoteCompact.textContent = `${fieldMode === 'primary' ? '原声' : '残余'} ${axis.toUpperCase()}=${coordinate.toFixed(2)}m ${movingFieldSlice() ? '当前剖面真实采样' : '固定场片；车身剖面另移'}`;
       }
     }

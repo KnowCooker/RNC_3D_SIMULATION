@@ -1,27 +1,29 @@
 import type { Four } from '../../shared/contracts';
-import { MIC_POSITIONS, type LabChunk, type LabConfig, type LabLiveSnapshot, type LabResult } from '../../shared/lab-contracts';
+import { LAB_LIVE_LIMIT_SECONDS, MIC_POSITIONS, type LabChunk, type LabConfig, type LabLiveSnapshot, type LabResult, type LabRncChange } from '../../shared/lab-contracts';
 import { primaryPath, referencePath, secondaryPath, type SparsePath } from './paths';
-import { sourceParameters } from './sources';
+import { createSourceShape, sourceParameters } from './sources';
 import { validateLabConfig } from './validation';
+import { nfxlmsGain } from './nfxlms';
+import { createRecordedNoiseReader, type RecordedNoise } from './recorded-noise';
 
 const four = <T>(values: T[]) => values as unknown as Four<T>;
 const blank = (channels: number, count: number) => Array.from({ length: channels }, () => new Float32Array(count));
-const SHORT_CAPACITY = 256;
+const SHORT_CAPACITY = 512;
 const SHORT_MASK = SHORT_CAPACITY - 1;
 /** Conservative prefix for points inside the assembled SUV; remote points may need longer paths. */
-export const LAB_STREAM_CABIN_PREROLL_SAMPLES = 64;
+export const LAB_STREAM_CABIN_PREROLL_SAMPLES = 256;
 
 /**
  * Stateful low-frequency simulator. process boundaries never reset sources, delays, or adaptation.
  * snapshot returns at most maxSamples in chronological order; its first samples are convolution
- * pre-roll when startSample > 0. Request >= 1064 samples for a latest 0.5 s cabin field window.
+ * pre-roll when startSample > 0. Request >= 1256 samples for a latest 0.5 s A-weighted field window.
  */
-export function createLabStream(input: LabConfig, runId: string, historySamples = 40000) {
-  validateLabConfig(input);
+export function createLabStream(input: LabConfig, runId: string, historySamples = 40000, recording?: RecordedNoise) {
+  validateLabConfig(input, 'live');
   if (!Number.isSafeInteger(historySamples) || historySamples < 2048 || historySamples > 2_000_000) throw new Error('流式历史容量须为2048～2000000个样本');
   const config = structuredClone(input), taps = config.taps, nReferences = config.references.length;
   const active = config.speakerEnabled.flatMap((enabled, i) => enabled ? [i] : []);
-  const learning = config.rncEnabled && config.stepSize > 0 && active.length > 0;
+  const canAdapt = config.stepSize > 0 && active.length > 0;
   const primary = MIC_POSITIONS.map(point => [0, 1, 2, 3].map(i => primaryPath(config, i, point)));
   const secondary = MIC_POSITIONS.map(point => [0, 1, 2, 3].map(i => secondaryPath(config, i, point)));
   const references = config.references.map(reference => [0, 1, 2, 3].map(i => referencePath(config, i, reference.position)));
@@ -36,23 +38,19 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
     const values = new Float64Array(taps); arrays.push(values); return values;
   }));
   const filtered = Array.from({ length: 4 }, () => Array.from({ length: 4 }, (_, output) =>
-    learning && config.speakerEnabled[output] ? Array.from({ length: nReferences }, doubles) : []));
+    canAdapt && config.speakerEnabled[output] ? Array.from({ length: nReferences }, doubles) : []));
   const powers = new Float64Array(4), states = Uint32Array.from({ length: 4 }, (_, i) => config.seed + i * 101);
   arrays.push(powers, states);
   const source = sourceParameters(config);
-  const sinc = (value: number) => value === 0 ? 1 : Math.sin(Math.PI * value) / (Math.PI * value);
-  const shape = Float64Array.from({ length: 97 }, (_, i) => {
-    const t = i - 48;
-    return (0.36 * sinc(0.36 * t) - 0.035 * sinc(0.035 * t)) * (0.54 - 0.46 * Math.cos(2 * Math.PI * i / 96));
-  });
-  const norm = Math.sqrt(shape.reduce((sum, value) => sum + value * value, 0) / 3);
-  for (let i = 0; i < shape.length; i++) shape[i] /= norm;
+  const recorded = config.sourceMode === 'recorded-noise' ? createRecordedNoiseReader(recording) : null;
+  const shape = recorded ? new Float64Array() : createSourceShape(config);
+  if (shape.length > SHORT_CAPACITY) throw new Error('源整形滤波器超出流式历史容量');
   arrays.push(shape);
   const historySources = four(blank(4, historySamples));
   const history: LabResult['signals'] = { x: blank(nReferences, historySamples), u: four(blank(4, historySamples)),
     d: four(blank(4, historySamples)), a: four(blank(4, historySamples)), e: four(blank(4, historySamples)) };
   arrays.push(...historySources, ...Object.values(history).flat());
-  const storageBytes = arrays.reduce((sum, values) => sum + values.byteLength, 0);
+  const storageBytes = arrays.reduce((sum, values) => sum + values.byteLength, recorded?.storageBytes ?? 0);
   let count = 0, computeMilliseconds = 0, failure: Error | null = null;
   const put = (values: Float64Array, index: number, value: number) => { values[index] = value; values[index + SHORT_CAPACITY] = value; };
   function pathSample(values: Float64Array, path: SparsePath, end: number) {
@@ -75,14 +73,14 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
       const absolute = count, index = absolute & SHORT_MASK, end = index + SHORT_CAPACITY;
       const historyIndex = absolute % historySamples;
       for (let i = 0; i < 4; i++) {
-        let state = states[i]; state ^= state << 13; state ^= state >>> 17; state ^= state << 5; states[i] = state >>> 0;
-        put(raw[i], index, ((states[i] + 0.5) / 4294967296) * 2 - 1);
         let broad = 0;
-        for (let j = 0; j < shape.length; j++) broad += shape[j] * raw[i][end - j];
-        const phase = 0.67 * i;
-        const value = Math.fround(source.amplitude * (broad * 0.88
-          + 0.24 * Math.sin(2 * Math.PI * source.stiffnessPeakHz * absolute / config.sampleRateHz + phase)
-          + 0.18 * Math.sin(2 * Math.PI * source.cavityPeakHz * absolute / config.sampleRateHz + 2 * phase)));
+        if (recorded) broad = recorded.sample(i, absolute);
+        else {
+          let state = states[i]; state ^= state << 13; state ^= state >>> 17; state ^= state << 5; states[i] = state >>> 0;
+          put(raw[i], index, ((states[i] + 0.5) / 4294967296) * 2 - 1);
+          for (let j = 0; j < shape.length; j++) broad += shape[j] * raw[i][end - j];
+        }
+        const value = Math.fround(source.amplitude * broad);
         put(q[i], index, value); sources[i][n] = value; historySources[i][historyIndex] = value;
       }
       for (let k = 0; k < nReferences; k++) {
@@ -92,10 +90,10 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
       for (let m = 0; m < 4; m++) {
         const value = mixedPath(primary[m], end); signals.d[m][n] = value; history.d[m][historyIndex] = value;
       }
-      if (learning) {
+      if (canAdapt) {
         for (const output of active) {
           let drive = 0;
-          for (let k = 0; k < nReferences; k++) {
+          if (config.rncEnabled) for (let k = 0; k < nReferences; k++) {
             const w = weights[output][k], inputValues = x[k];
             for (let j = 0; j < taps; j++) drive += w[j] * inputValues[end - j];
           }
@@ -117,8 +115,9 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
           }
           powers[output] = Math.max(0, powers[output] + change);
         }
-        if (absolute >= config.adaptationStartsSeconds * config.sampleRateHz) {
-          const gain = config.stepSize / (1e-6 + powers.reduce((sum, value) => sum + value, 0));
+        // Keep filtered-x and normalization histories current while W is frozen.
+        if (config.rncEnabled && absolute >= config.adaptationStartsSeconds * config.sampleRateHz) {
+          const gain = nfxlmsGain(config.stepSize, powers);
           const e0 = signals.e[0][n], e1 = signals.e[1][n], e2 = signals.e[2][n], e3 = signals.e[3][n];
           for (const output of active) for (let k = 0; k < nReferences; k++) {
             const w = weights[output][k], f0 = filtered[0][output][k], f1 = filtered[1][output][k], f2 = filtered[2][output][k], f3 = filtered[3][output][k];
@@ -140,6 +139,7 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
     if (failure) throw failure;
     if (!Number.isSafeInteger(sampleCount) || sampleCount < 1 || sampleCount > 1_000_000) throw new Error('单次流式块须为1～1000000个样本');
     if (!Number.isSafeInteger(count + sampleCount)) throw new Error('样本时钟超出安全整数范围，请开始新实验');
+    if (count + sampleCount > LAB_LIVE_LIMIT_SECONDS * config.sampleRateHz) throw new Error('实时实验已达到内部运行上限，请开始新实验');
     try { return processBlock(sampleCount); }
     catch (error) {
       // The failed sample may have advanced FIR/PRNG state; a fresh experiment is required.
@@ -171,5 +171,15 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
       metrics: { reductionDbByMic: four(dp.map((value, i) => reduction(value, ep[i]))), aggregateReductionDb: reduction(dp.reduce((sum, value) => sum + value, 0), ep.reduce((sum, value) => sum + value, 0)) } };
     return { startSample, endSample: count, result };
   }
-  return { process, snapshot, get sampleCount() { return count; }, get storageBytes() { return storageBytes; }, get historyCapacity() { return historySamples; } };
+  function setRncEnabled(enabled: boolean): LabRncChange {
+    if (failure) throw failure;
+    if (typeof enabled !== 'boolean') throw new Error('实时RNC开关必须为布尔值');
+    if (count >= LAB_LIVE_LIMIT_SECONDS * config.sampleRateHz) throw new Error('实时实验已结束，请重新开始');
+    config.rncEnabled = enabled;
+    return { enabled, effectiveSample: count };
+  }
+  return { process, snapshot, setRncEnabled,
+    /** Diagnostic copy: callers cannot mutate the running controller. */
+    controllerWeights: () => weights.map(output => output.map(w => w.slice())),
+    get sampleCount() { return count; }, get storageBytes() { return storageBytes; }, get historyCapacity() { return historySamples; } };
 }

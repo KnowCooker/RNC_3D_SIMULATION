@@ -4,6 +4,7 @@ type Signal = 'q' | 'x' | 'u' | 'd' | 'a' | 'e';
 
 export interface SignalFlow {
   setChannels(referenceNames: string[], enabledSpeakers: boolean[]): void;
+  setSourceMode(recordedNoise: boolean): void;
   setSelected(signal: string, channel: number): void;
   render(time: number, playing: boolean, rncEnabled: boolean): void;
   dispose(): void;
@@ -29,7 +30,7 @@ export function createSignalFlow(host: HTMLElement, onSelect: (signal: Signal, c
   root.className = 'rnc-signal-flow';
   root.setAttribute('aria-labelledby', `${id}-heading`);
   root.innerHTML = `
-    <div class="sf-heading"><h3 id="${id}-heading">RNC 信号流 · 多通道 FxLMS</h3><span class="sf-state" role="status"></span></div>
+    <div class="sf-heading"><h3 id="${id}-heading">RNC 信号流 · 多通道 NFxLMS</h3><span class="sf-state" role="status"></span></div>
     <p class="sf-lead">上方是声的叠加，下方是控制与学习。点击框图或通道，查看对应波形和频谱。</p>
     <div class="sf-diagram">
       <svg viewBox="0 0 1000 445" role="group" aria-labelledby="${id}-diagram-title ${id}-diagram-desc">
@@ -65,7 +66,7 @@ export function createSignalFlow(host: HTMLElement, onSelect: (signal: Signal, c
         <text class="sf-annotation" x="837" y="165">声压求和</text>
         <g class="sf-block sf-learning-block" transform="translate(235 356)"><rect width="170" height="68"/><text x="85" y="27">次级路径估计 Ŝ</text><text class="sf-sub" x="85" y="50">参考经 Ŝ 滤波</text></g>
         <text class="sf-annotation" x="459" y="376">Filtered-x</text>
-        <g class="sf-block sf-learning-block" transform="translate(595 356)"><rect width="170" height="68"/><text x="85" y="27">FxLMS 权重更新</text><text class="sf-sub" x="85" y="50">所有误差点共同参与</text></g>
+        <g class="sf-block sf-learning-block" transform="translate(595 356)"><rect width="170" height="68"/><text x="85" y="27">NFxLMS 权重更新</text><text class="sf-sub" x="85" y="50">所有误差点共同参与</text></g>
         <text class="sf-annotation" x="880" y="375">误差反馈</text>
         <text class="sf-annotation" x="368" y="307">更新 W；μ = 0 时权重不变</text>
       </svg>
@@ -95,6 +96,7 @@ export function createSignalFlow(host: HTMLElement, onSelect: (signal: Signal, c
   let currentRncEnabled = false;
   let currentTime = 0;
   let currentPlaying = false;
+  let recordedNoise = false;
   const channels = root.querySelector<HTMLElement>('.sf-channels')!;
   const state = root.querySelector<HTMLElement>('.sf-state')!;
   const explanationTitle = root.querySelector<HTMLElement>('.sf-explanation strong')!;
@@ -108,7 +110,11 @@ export function createSignalFlow(host: HTMLElement, onSelect: (signal: Signal, c
         (node.dataset.sfChannel === undefined || Number(node.dataset.sfChannel) === selected.channel);
       node.setAttribute('aria-pressed', String(active));
     }
-    const info = DESCRIPTIONS[selected.signal];
+    const info = recordedNoise && selected.signal === 'q'
+      ? { title: '实录噪声源', unit: '相对幅值', text: '四路实录耳旁初级噪声，经共同幅度归一化后放置于四个轮子处作为等效声源；原始单位V，未标定为Pa。它们不是实录振动，所放位置是教学映射。信号同步平滑循环，控制权重持续保留。' }
+      : recordedNoise && selected.signal === 'x'
+        ? { title: '合成振动参考', unit: 'm/s²（教学等效）', text: '由四路等效噪声源经参考路径生成的合成参考，可随传感器位置改变。没有读取实录振动通道，也不代表实车参考与噪声的相干性。' }
+        : DESCRIPTIONS[selected.signal];
     const channelName = selected.signal === 'x' ? referenceNames[selected.channel] : CORNERS[selected.channel];
     explanationTitle.textContent = `${selected.signal} · ${info.title} · ${channelName} · ${info.unit}`;
     const disabled = selected.signal === 'u' && !enabledSpeakers[selected.channel];
@@ -182,6 +188,12 @@ export function createSignalFlow(host: HTMLElement, onSelect: (signal: Signal, c
   buildChannels();
 
   const api: SignalFlow = {
+    setSourceMode(value) {
+      if (disposed) return;
+      recordedNoise = value;
+      root.querySelector('[data-sf-signal="q"] .sf-sub')!.textContent = value ? '4 路 · 相对幅值' : '4 路 · m/s²';
+      updateSelection();
+    },
     setChannels(names, speakers) {
       if (disposed) return;
       if (names.length < 1 || names.length > 8 || names.some(name => !name.trim())) {
@@ -216,10 +228,10 @@ export function createSignalFlow(host: HTMLElement, onSelect: (signal: Signal, c
       }
       root.dataset.controlActive = String(active);
       root.dataset.playing = String(playing);
-      const nextState = !rncEnabled ? '控制未生效 · u = a = 0，e = d'
+      const nextState = !rncEnabled ? '控制关闭 / 未生效 · 权重不更新，u = 0；路径余响消退后 e = d'
         : !active ? '全部扬声器禁用 · u = a = 0，e = d'
           : `RNC 启用 · ${enabledSpeakers.filter(Boolean).length}/4 扬声器`;
-      const text = `${playing ? '回放中' : '已暂停'} ｜ ${nextState}`;
+      const text = `${playing ? '运行中' : '已暂停'} ｜ ${nextState}`;
       if (lastState !== text) { state.textContent = text; lastState = text; }
     },
     dispose() {
