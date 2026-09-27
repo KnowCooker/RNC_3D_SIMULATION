@@ -2,7 +2,7 @@
 
 日期：2026-09-27。Role: A2；Identity-Source: user-declared；执行者：Codex 代 A2 执行。基线 `8724b098838f158359e4167a05399512e7cbba26`，分支 `a/a2-full-017-asset-inspection`，认领提交 `626c021`。实现提交由该分支后继与 A2 交接定位。
 
-状态：本地实现与工程检查完成；浏览器视觉验收、目标设备与远端发布待完成。GitHub 推送返回 Invalid username or token，未建立草稿 PR，远端认领未生效。仅本地，GitHub 尚未同步。
+状态：代码 `fd324cb` 已推送 origin，并发布原仓库 [草稿 PR #30](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/30)，远端认领生效；尚未合并。浏览器视觉验收与目标设备待完成，云端检查不等同于本地检查。2026-09-27 同步使用系统现有代理成功，无全局配置改动；下方网络/凭据失败为先前历史。
 
 ## 2026-09-27 选择框续修
 
