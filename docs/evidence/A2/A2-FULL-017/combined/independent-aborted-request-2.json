@@ -1,9 +1,9 @@
 {
   "source": "10ae34ba69ce560b0fcf4e5ede75bf3e4cfdc827",
-  "sourceChanges": "docs/coordination/A2.md                            |   4 +++\n docs/evidence/A2/A2-FULL-017/browser-check.mjs     |   7 ++--\n .../A2/A2-FULL-017/browser/all-detached.png        | Bin 404853 -> 404651 bytes\n docs/evidence/A2/A2-FULL-017/browser/assembled.png | Bin 333897 -> 333896 bytes\n docs/evidence/A2/A2-FULL-017/browser/bev-asset.png | Bin 236660 -> 236749 bytes\n .../evidence/A2/A2-FULL-017/browser/erev-asset.png | Bin 257231 -> 257223 bytes\n docs/evidence/A2/A2-FULL-017/browser/hev-asset.png | Bin 257240 -> 257203 bytes\n docs/evidence/A2/A2-FULL-017/browser/narrow.png    | Bin 99151 -> 100147 bytes\n .../A2/A2-FULL-017/browser/pointer-selection.png   | Bin 325036 -> 325274 bytes\n docs/evidence/A2/A2-FULL-017/browser/restored.png  | Bin 326216 -> 325926 bytes\n docs/evidence/A2/A2-FULL-017/browser/result.json   |  38 ++++++++++++---------\n .../A2/A2-FULL-017/browser/seat-detached.png       | Bin 331112 -> 331146 bytes\n docs/evidence/A2/A2-FULL-017/browser/section-x.png | Bin 275214 -> 275213 bytes\n .../A2/A2-FULL-017/browser/section-y-road.png      | Bin 225745 -> 225744 bytes\n docs/evidence/A2/A2-FULL-017/browser/section-y.png | Bin 277962 -> 277972 bytes\n .../A2/A2-FULL-017/browser/transparent.png         | Bin 345316 -> 345330 bytes\n src/team-a/viewer/viewer.css                       |   8 ++++-\n ...274\\200\\345\\217\\221\\350\\256\\260\\345\\275\\225.md\" |   4 +++\n 18 files changed, 42 insertions(+), 19 deletions(-)",
+  "sourceChanges": "docs/coordination/A2.md                            |   2 ++\n .../A2/A2-FULL-017/browser/all-detached.png        | Bin 404853 -> 404464 bytes\n docs/evidence/A2/A2-FULL-017/browser/assembled.png | Bin 333897 -> 333889 bytes\n docs/evidence/A2/A2-FULL-017/browser/bev-asset.png | Bin 236660 -> 236509 bytes\n .../evidence/A2/A2-FULL-017/browser/erev-asset.png | Bin 257231 -> 257217 bytes\n docs/evidence/A2/A2-FULL-017/browser/hev-asset.png | Bin 257240 -> 257220 bytes\n docs/evidence/A2/A2-FULL-017/browser/narrow.png    | Bin 99151 -> 104005 bytes\n .../A2/A2-FULL-017/browser/pointer-selection.png   | Bin 325036 -> 325388 bytes\n docs/evidence/A2/A2-FULL-017/browser/restored.png  | Bin 326216 -> 326177 bytes\n docs/evidence/A2/A2-FULL-017/browser/result.json   |  22 ++++++++++-----------\n .../A2/A2-FULL-017/browser/seat-detached.png       | Bin 331112 -> 330947 bytes\n docs/evidence/A2/A2-FULL-017/browser/section-x.png | Bin 275214 -> 275212 bytes\n .../A2/A2-FULL-017/browser/section-y-road.png      | Bin 225745 -> 225747 bytes\n docs/evidence/A2/A2-FULL-017/browser/section-y.png | Bin 277962 -> 277965 bytes\n .../A2/A2-FULL-017/browser/transparent.png         | Bin 345316 -> 345384 bytes\n src/team-a/viewer/viewer.css                       |   8 +++++++-\n ...274\\200\\345\\217\\221\\350\\256\\260\\345\\275\\225.md\" |   2 ++\n 17 files changed, 22 insertions(+), 12 deletions(-)",
   "browser": "153.0.8010.54",
   "baseURL": "http://127.0.0.1:5184/",
-  "date": "2026-09-27T13:57:29.384Z",
+  "date": "2026-09-27T13:54:34.686Z",
   "headless": true,
   "checks": [
     "30 asset groups plus unselected option",
@@ -36,12 +36,17 @@
     "hev teaching view restores floor presentation",
     "erev teaching Y section supports underfloor inspection",
     "erev teaching view restores floor presentation",
-    "no browser exceptions",
-    "no failed resource requests",
-    "no external runtime requests"
+    "no browser exceptions"
   ],
   "errors": [],
-  "failedRequests": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    }
+  ],
   "externalRequests": [],
   "assets": [
     {
@@ -59,48 +64,6 @@
       "phase": "hev"
     }
   ],
-  "assetRequests": [
-    {
-      "event": "request",
-      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
-      "type": "fetch",
-      "time": 1790517450612
-    },
-    {
-      "event": "requestfinished",
-      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
-      "type": "fetch",
-      "time": 1790517450662
-    },
-    {
-      "event": "request",
-      "url": "http://127.0.0.1:5184/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
-      "type": "fetch",
-      "phase": "bev",
-      "time": 1790517459276
-    },
-    {
-      "event": "requestfinished",
-      "url": "http://127.0.0.1:5184/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
-      "type": "fetch",
-      "phase": "bev",
-      "time": 1790517459360
-    },
-    {
-      "event": "request",
-      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
-      "type": "fetch",
-      "phase": "hev",
-      "time": 1790517460010
-    },
-    {
-      "event": "requestfinished",
-      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
-      "type": "fetch",
-      "phase": "hev",
-      "time": 1790517460072
-    }
-  ],
   "graphics": {
     "width": 1268,
     "height": 618,
@@ -110,7 +73,8 @@
   "narrowStatus": "已拆 1 / 30 个原资产几何总成",
   "narrowSelection": "hood",
   "phase": "erev",
-  "passed": true,
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: no failed resource requests\n    at check (file:///C:/Users/Jiang/Desktop/RNC_3D/RNC_3D_SIMULATION/docs/evidence/A2/A2-FULL-017/browser-check.mjs:25:41)\n    at file:///C:/Users/Jiang/Desktop/RNC_3D/RNC_3D_SIMULATION/docs/evidence/A2/A2-FULL-017/browser-check.mjs:126:3",
   "buildSha256": {
     "index.html": "405211948976bdc4bf433a597e7fd64b32554ba47afb57ea727a2a1ae427293f",
     "assets/contracts-nWp9BSjY.js": "826899d2bbdc9958bfa5fcaa2b1df627ac1cc8dfa54f1de5caeadfc7db967f64",

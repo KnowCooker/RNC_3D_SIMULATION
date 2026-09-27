@@ -17,9 +17,12 @@ page.setDefaultTimeout(15000);
 const result = { source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceChanges: execFileSync('git', ['diff', '--stat'], { encoding: 'utf8' }).trim(),
   browser: browser.version(), baseURL, date: new Date().toISOString(), headless: true,
-  checks: [], errors: [], failedRequests: [], externalRequests: [], assets: [] };
+  checks: [], errors: [], failedRequests: [], externalRequests: [], assets: [], assetRequests: [] };
 page.on('pageerror', e => result.errors.push(e.message));
-page.on('requestfailed', r => result.failedRequests.push({ url: r.url(), failure: r.failure() }));
+page.on('requestfailed', r => result.failedRequests.push({ url: r.url(), failure: r.failure(), type: r.resourceType(), phase: result.phase, time: Date.now() }));
+for (const event of ['request', 'requestfinished', 'requestfailed']) page.on(event, r => {
+  if (r.url().endsWith('.glb')) result.assetRequests.push({ event, url: r.url(), type: r.resourceType(), phase: result.phase, time: Date.now() });
+});
 page.on('request', r => { if (/^https?:/.test(r.url()) && new URL(r.url()).origin !== new URL(baseURL).origin) result.externalRequests.push(r.url()); });
 page.on('response', r => { if (r.url().endsWith('.glb')) result.assets.push({ url: r.url(), status: r.status(), phase: result.phase }); });
 const check = (name, value) => { assert.ok(value, name); result.checks.push(name); };

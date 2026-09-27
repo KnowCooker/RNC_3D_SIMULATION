@@ -367,7 +367,13 @@
   .lab-road-surface button { min-width: 0; padding: 4px 2px; font-size: 9px; }
   .lab-road-surface small { font-size: 8px; }
   .lab-assembly-panel { left: 8px; top: 122px; width: min(210px, calc(100% - 16px)); }
-  .lab-showroom-panel { width: min(190px, calc(100% - 24px)); padding: 9px; }
+  .lab-showroom-panel { width: min(190px, calc(100% - 24px)); padding: 9px; display: flex; flex-direction: column; }
+  .lab-showroom-panel[hidden] { display: none; }
+  .lab-showroom-panel > * { flex-shrink: 0; }
+  .lab-showroom-panel > strong { order: -2; font-size: 12px; }
+  .lab-showroom-panel > .lab-asset-inspection { order: -1; }
+  .lab-showroom-panel:has(.lab-asset-inspection[open]:not([hidden])) { max-height: calc(100% - 72px); }
+  #lab-viewer:has(.lab-asset-inspection[open]:not([hidden])) .lab-showroom-assembly { display: none; }
   .lab-field-hud { right: 8px; bottom: 45px; width: min(176px, calc(100% - 16px)); padding: 8px; font-size: 9px; }
   .lab-field-hud strong { font-size: 11px; }
   .lab-field-scale { gap: 4px; }
