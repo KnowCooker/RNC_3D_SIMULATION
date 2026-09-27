@@ -374,3 +374,6 @@
   .lab-field-focus { left: 8px; top: 12px; max-width: 112px; padding: 5px 6px; font-size: 9px; }
   .lab-field-interpolation-note { left: 8px; bottom: 8px; max-width: calc(100% - 16px); }
 }
+
+.lab-underfloor-note { position: absolute; left: 50%; bottom: 38px; transform: translateX(-50%); z-index: 5; padding: 5px 9px; border-radius: 6px; background: #17303fe8; color: #ffe1a1; font: 11px system-ui, sans-serif; white-space: nowrap; pointer-events: none; }
+.lab-underfloor-note[hidden] { display: none; }

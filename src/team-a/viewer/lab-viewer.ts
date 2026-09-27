@@ -55,6 +55,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     line.position.set(x, -0.025, i * 3 - 48); stripes.add(line);
   }
   const stage = createSceneStage(scene);
+  const underfloorNote = document.createElement('div'); underfloorNote.className = 'lab-underfloor-note';
+  underfloorNote.textContent = '底部检视 · 场景地板暂隐'; underfloorNote.hidden = true; host.append(underfloorNote);
   const stageBar = document.createElement('div'); stageBar.className = 'lab-stage-switch';
   stageBar.setAttribute('role', 'group'); stageBar.setAttribute('aria-label', '三维场景');
   for (const [label, mode] of [['道路', 'road'], ['车间', 'workshop']] as [string, StageMode][]) {
@@ -367,9 +369,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       showroomToggle.setAttribute('aria-label', '返回四类动力教学模型和声学实验');
       focusStageCamera();
     } catch (error) {
+      if (disposed || request !== showroomRequest) return;
       showroomToggle.textContent = '外观加载失败 · 重试';
       showroomToggle.title = error instanceof Error ? error.message : String(error);
-    } finally { if (!disposed) showroomToggle.disabled = false; }
+    } finally { if (!disposed && request === showroomRequest) showroomToggle.disabled = false; }
   };
   function showGuide(part: VehiclePart) {
     if (!config || editMode) return;
@@ -814,7 +817,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping();
         setShowroomSection(axis as AssetSectionAxis, value); return;
       }
-      leaveShowroom(); const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis);
+      leaveShowroom(); const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField();
+      if (changed) { if (axis === 'none') focusStageCamera(); else focusSection(axis); }
     },
     setEditMode(value: boolean) { if (value) leaveShowroom(); editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
     setWaves(value: boolean) { if (value) leaveShowroom(); waveVisible = value; applyClipping(); },
@@ -893,7 +897,11 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       });
       if (showroomActive) showroomModel?.inspection.update();
       else sections?.update(clipAxis === 'none' ? null : clipPlane);
-      controls.update(); renderer.render(scene, camera);
+      controls.update();
+      const underfloor = camera.position.y < 0.1;
+      stage.setUnderfloorView(underfloor); underfloorNote.hidden = !underfloor;
+      stripes.visible = stage.mode === 'road' && !underfloor; contactShade.visible = !underfloor;
+      renderer.render(scene, camera);
       const width = host.clientWidth, height = host.clientHeight;
       const visible = markerRows.map(row => {
         const p = row.mesh.position.clone().project(camera);
@@ -909,6 +917,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); fieldHud.remove(); fieldFocusButton.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); roadSurfaceBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); fieldHud.remove(); fieldFocusButton.remove(); pathFocusNote.remove(); showroomToggle.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); underfloorNote.remove(); roadSurfaceBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }

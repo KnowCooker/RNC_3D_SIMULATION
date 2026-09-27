@@ -7,6 +7,8 @@ export type RoadSurface = 'smooth' | 'coarse' | 'gravel';
 export function createSceneStage(scene: THREE.Scene) {
   const road = new THREE.Group(); road.name = 'rnc-road-stage'; scene.add(road);
   const workshop = new THREE.Group(); workshop.name = 'rnc-workshop-stage'; scene.add(workshop);
+  const roadFloor = new THREE.Group(); roadFloor.name = 'road-floor'; road.add(roadFloor);
+  const workshopFloor = new THREE.Group(); workshopFloor.name = 'workshop-floor'; workshop.add(workshopFloor);
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), textures = new Set<THREE.Texture>();
   const mat = (color: string, roughness = 0.83, metalness = 0.06, emissive?: string) => {
     const value = new THREE.MeshStandardMaterial({ color, roughness, metalness, emissive: emissive ?? '#000000' });
@@ -26,11 +28,11 @@ export function createSceneStage(scene: THREE.Scene) {
   }
 
   // A road around the fixed vehicle; existing moving lane dashes supply the travel cue.
-  const roadDeck = box(road, [11, 0.1, 160], [0, -0.085, 0], roadMaterial);
+  const roadDeck = box(roadFloor, [11, 0.1, 160], [0, -0.085, 0], roadMaterial);
   roadDeck.name = 'road-surface';
   const edgeLines = [
-    box(road, [0.07, 0.015, 160], [-5.15, -0.025, 0], mat('#dbe7e9')),
-    box(road, [0.07, 0.015, 160], [5.15, -0.025, 0], mat('#dbe7e9')),
+    box(roadFloor, [0.07, 0.015, 160], [-5.15, -0.025, 0], mat('#dbe7e9')),
+    box(roadFloor, [0.07, 0.015, 160], [5.15, -0.025, 0], mat('#dbe7e9')),
   ];
   const surfaceTextures = new Map<RoadSurface, THREE.CanvasTexture>();
   const surfaceColors: Record<RoadSurface, string> = { smooth: '#45515a', coarse: '#333d45', gravel: '#958875' };
@@ -133,11 +135,11 @@ export function createSceneStage(scene: THREE.Scene) {
   duneGrass.instanceMatrix.needsUpdate = true; road.add(duneGrass);
 
   // The workshop is actual scene geometry, not a flat backdrop or screenshot.
-  box(workshop, [18, 0.10, 18], [0, -0.095, 0], concrete);
+  box(workshopFloor, [18, 0.10, 18], [0, -0.095, 0], concrete);
   const tile = mat('#63747e', 0.9), tileCount = 9;
   for (let i = -tileCount; i <= tileCount; i++) {
-    box(workshop, [0.012, 0.004, 18], [i, -0.04, 0], tile);
-    box(workshop, [18, 0.004, 0.012], [0, -0.04, i], tile);
+    box(workshopFloor, [0.012, 0.004, 18], [i, -0.04, 0], tile);
+    box(workshopFloor, [18, 0.004, 0.012], [0, -0.04, i], tile);
   }
   box(workshop, [18, 5.7, 0.16], [0, 2.82, -7.25], wall);
   for (const x of [-6, -3, 0, 3, 6]) box(workshop, [0.14, 5.7, 0.18], [x, 2.82, -7.13], mat('#71828c', 0.5, 0.4));
@@ -153,15 +155,15 @@ export function createSceneStage(scene: THREE.Scene) {
     const signMaterial = new THREE.MeshBasicMaterial({ map: signTexture }); materials.add(signMaterial);
     add(workshop, new THREE.PlaneGeometry(5.2, 0.72), signMaterial, [-1.8, 2.42, -6.94]);
   }
-  for (const x of [-0.95, 0.95]) box(workshop, [0.31, 0.07, 5.8], [x, 0.045, 0], iron);
+  for (const x of [-0.95, 0.95]) box(workshopFloor, [0.31, 0.07, 5.8], [x, 0.045, 0], iron);
   for (const x of [-2.65, 2.65]) {
     box(workshop, [0.42, 2.1, 0.42], [x, 1.05, -1.55], yellow);
     box(workshop, [0.60, 0.10, 0.60], [x, 0.03, -1.55], black);
     box(workshop, [1.65, 0.08, 0.18], [x * 0.64, 0.49, -1.55], yellow);
   }
   const bayOutline = mat('#e8c263', 0.6);
-  for (const x of [-3.2, 3.2]) box(workshop, [0.035, 0.008, 7.3], [x, -0.028, 0], bayOutline);
-  for (const z of [-3.65, 3.65]) box(workshop, [6.4, 0.008, 0.035], [0, -0.028, z], bayOutline);
+  for (const x of [-3.2, 3.2]) box(workshopFloor, [0.035, 0.008, 7.3], [x, -0.028, 0], bayOutline);
+  for (const z of [-3.65, 3.65]) box(workshopFloor, [6.4, 0.008, 0.035], [0, -0.028, z], bayOutline);
   for (const y of [0.68, 1.4, 2.12]) {
     box(workshop, [3.0, 0.1, 0.72], [5.75, y, -5.45], iron);
     for (const x of [4.8, 5.75, 6.7]) box(workshop, [0.56, 0.46, 0.54], [x, y + 0.28, -5.45], x === 5.75 ? yellow : black);
@@ -179,6 +181,8 @@ export function createSceneStage(scene: THREE.Scene) {
     get mode() { return mode; },
     get roadSurface() { return roadSurface; },
     setMode,
+    // Camera presentation only: preserve stage and car transforms.
+    setUnderfloorView(value: boolean) { roadFloor.visible = workshopFloor.visible = !value; },
     setRoadSurface,
     update(time: number, speedKph: number) {
       posts.position.z = -(time * speedKph / 3.6) % 4;

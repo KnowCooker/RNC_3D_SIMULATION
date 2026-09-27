@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-27T09:35:16.975Z",
+  "browser": "153.0.8010.54",
+  "checks": [
+    "stale failure cannot enable or replace current loading state",
+    "newer BEV asset wins over stale ICE",
+    "automatic disassembly pauses",
+    "automatic reverse restoration reaches zero",
+    "hardware rebuild keeps same asset active",
+    "hardware rebuild keeps unmatched markers hidden",
+    "no uncaught errors during lifecycle scenarios"
+  ],
+  "errors": [],
+  "intentionalHttpFailures": [
+    {
+      "asset": "stale ICE request",
+      "status": 503
+    }
+  ],
+  "afterStaleFailure": {
+    "disabled": true,
+    "text": "加载外观…"
+  },
+  "passed": true
+}
