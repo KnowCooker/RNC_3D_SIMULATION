@@ -3,6 +3,7 @@ import { defaultLabConfig, labDurationLimit, LAB_LIVE_LIMIT_SECONDS, LAB_WAVEFOR
 import { Player, prepareLabPlayback } from '../player';
 import { LivePlayer } from '../player/live-player';
 import { createLabViewer } from '../viewer/lab-viewer';
+import { captureCase, compareCases, type CaseSnapshot } from './case-compare';
 import { createSignalFlow } from './signal-flow';
 import { drawSignalComparison, plot, splFrame, splRange, visibleSplFrames, ORIGINAL_COLOR, RESULT_COLOR, type SplFrame } from './plots';
 import './style.css';
@@ -50,6 +51,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <fieldset><legend>车门扬声器</legend><div id="lab-speakers">${ORDER.map((name, i) => `<label class="lab-check"><input type="checkbox" data-speaker="${i}" checked>${name.toUpperCase()}</label>`).join('')}</div></fieldset>
       <button id="lab-calculate" class="lab-primary">启动 / 重启实时实验</button><button id="lab-cancel" disabled>结束实时实验</button><p id="lab-status" role="status">实时仿真已就绪，点击“启动 / 重启实时实验”开始计算与试听。</p>
     </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">LIVE 3D / INTERACTIVE BAY</span><h2>03 / 结构与空间声场</h2></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
+      <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；结果来自教学模型。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div></section>
       <div id="lab-viewer"><span class="lab-view-help">左键旋转 · 滚轮缩放 · 右击硬件查看信号</span></div>
       <div class="lab-view-tools"><label>车身<select id="lab-body"><option value="transparent">透明</option><option value="solid">实体</option><option value="hidden">隐藏</option></select></label><button id="lab-explode" aria-pressed="false">分解动画</button><button id="lab-reset">复位</button><label>剖面<select id="lab-section"><option value="none">关闭</option><option value="x">纵剖 X</option><option value="y">水平 Y</option><option value="z">横剖 Z</option></select></label><label>剖面位置 / m<input id="lab-section-position" type="range" min="-2.5" max="2.5" step="0.05" value="0"></label></div>
       <div class="lab-view-tools"><label>声压场<select id="lab-field"><option value="off">关闭</option><option value="residual">残余 e / SPL</option><option value="primary">原始 d / SPL</option></select></label><label>场显示<select id="lab-field-slice"><option value="volume">三维采样体</option><option value="x">中央纵切片</option><option value="y">头部水平切片</option><option value="z">前排横切片</option></select></label><label>传播路径<select id="lab-paths"><option value="none">关闭</option><option value="primary">初级路径</option><option value="secondary">次级路径</option><option value="both">全部</option></select></label><label class="lab-check"><input id="lab-waves" type="checkbox">扬声器波前</label></div>
@@ -67,6 +69,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   const player = new Player(); player.setVolume(0.15);
   const livePlayer = new LivePlayer(); livePlayer.setVolume(0.15);
   let config: LabConfig = { ...defaultLabConfig(), sourceMode: 'recorded-noise', durationSeconds: defaultReplayDuration }, result: LabResult | null = null, selected: LabSelection = { signal: 'e', channel: 0 };
+  let caseBaseline: CaseSnapshot | null = null;
   // Match the viewer's initial smooth asphalt rather than starting with two road states.
   config.roadRoughness = 0.6;
   let generation = 0, busy = false, exploded = false, muted = false, nextReference = 5, disposed = false;
@@ -78,6 +81,51 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   let curves: Record<AcousticWeighting, SplFrame[]> = { A: [], Z: [] };
   let spectrumWeighting: AcousticWeighting = 'A', levelWeighting: AcousticWeighting = 'A';
   let frequencyRange: [number, number] = [20, 500];
+  const caseLevel = (value: number | null) => value === null ? '—' : value.toFixed(1);
+  const caseDelta = (value: number | null) => value === null ? '—' : `${Math.abs(value) < 0.05 ? '' : value > 0 ? '+' : ''}${(Math.abs(value) < 0.05 ? 0 : value).toFixed(1)}`;
+  function renderCase() {
+    const state = $('case-state'), output = $('case-results');
+    const save = $<HTMLButtonElement>('case-save'), clear = $<HTMLButtonElement>('case-clear');
+    save.disabled = realtime || busy || !result;
+    clear.disabled = !caseBaseline;
+    output.replaceChildren(); output.hidden = true;
+    if (!caseBaseline) {
+      state.textContent = realtime ? '先切换到“计算后回放”，运行一次实验并保存基线 A。' : result ? '当前实验已就绪；保存为基线 A，再修改一个条件并重新计算。' : '运行一次预计算实验后，可保存基线 A。';
+      return;
+    }
+    if (!result || result.runId === caseBaseline.runId || realtime) {
+      state.textContent = realtime ? '基线 A 已保留在本页内存中；切回预计算模式运行候选 B。' : `基线 A 已保存（${caseBaseline.runId.slice(0, 8)}）；修改配置后重新计算候选 B。`;
+      return;
+    }
+    let candidate: CaseSnapshot;
+    try {
+      candidate = captureCase(result, ports.analyze(result, result.sampleCount / result.config.sampleRateHz, { signal: 'e', channel: 0 }, { levelWeighting: 'A', levelsOnly: true }));
+    } catch {
+      state.textContent = '候选 B 的末尾窗口没有有效声压数据，无法对比；基线 A 仍保留。';
+      return;
+    }
+    const comparison = compareCases(caseBaseline, candidate);
+    if (!comparison.comparable) {
+      state.textContent = `两次实验的${comparison.conditions.join('、')}不同，不能直接计算方案差值。请恢复相同条件后重跑；基线 A 仍保留。`;
+      return;
+    }
+    const change = comparison.changes.length === 1 ? `仅改变：${comparison.changes[0]}。` : comparison.changes.length > 1 ? `改变了 ${comparison.changes.length} 项：${comparison.changes.join('、')}；不能把结果归因于其中一项。` : '配置未改变；这是同配置的重复运行。';
+    state.textContent = `${change} A ${caseBaseline.runId.slice(0, 8)} → B ${candidate.runId.slice(0, 8)}；后排残余变化 RL ${caseDelta(comparison.residualDeltaDb[2])}、RR ${caseDelta(comparison.residualDeltaDb[3])} dB。`;
+    const table = document.createElement('table');
+    const header = document.createElement('tr');
+    for (const label of ['座位', 'A 原声→残余 / 改善', 'B 原声→残余 / 改善', 'B−A 原声', 'B−A 残余', 'B−A 改善']) { const cell = document.createElement('th'); cell.textContent = label; header.append(cell); }
+    table.append(header);
+    for (let i = 0; i < 4; i++) {
+      const row = document.createElement('tr');
+      for (const value of [seatNames[i], `${caseLevel(caseBaseline.primarySpl[i])}→${caseLevel(caseBaseline.residualSpl[i])} / ${caseLevel(caseBaseline.reductionDb[i])}`, `${caseLevel(candidate.primarySpl[i])}→${caseLevel(candidate.residualSpl[i])} / ${caseLevel(candidate.reductionDb[i])}`, caseDelta(comparison.primaryDeltaDb[i]), caseDelta(comparison.residualDeltaDb[i]), caseDelta(comparison.reductionDeltaDb[i])]) {
+        const cell = document.createElement('td'); cell.textContent = value; row.append(cell);
+      }
+      table.append(row);
+    }
+    const sourceNote = caseBaseline.config.sourceMode === 'recorded-noise' ? '实录仅为四轮等效声源' : '随机声源按实录谱形整形';
+    const note = document.createElement('p'); note.textContent = `原声/残余：dBA；改善/差值：dB。B−A 残余正值表示候选更吵，B−A 改善正值表示候选控制效果更好。A、B 均为末尾 ${caseBaseline.windowEndSeconds.toFixed(1)} s 的 0.5 秒窗，A 计权、0–1 kHz；${sourceNote}，声压为教学尺度。基线仅保存在当前页面，刷新后清除。`;
+    output.append(table, note); output.hidden = false;
+  }
   const levelUnit = () => levelWeighting === 'A' ? 'dBA' : 'dB';
   let visualRoad: { name: string; roughness: number } | null = { name: '平整沥青', roughness: 0.6 };
   const roadNames = { smooth: '平整沥青', coarse: '粗糙沥青', gravel: '碎石路' } as const;
@@ -108,7 +156,10 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     if (!collapsed && matchMedia('(max-width: 680px)').matches) controlsClose.focus();
   };
   controlsClose.onclick = () => { setControlsCollapsed(true); controlsToggle.focus(); };
-  if (matchMedia('(max-width: 680px)').matches) setControlsCollapsed(true);
+  const narrowViewport = matchMedia('(max-width: 680px)');
+  const onNarrowViewport = (event: MediaQueryListEvent) => { if (event.matches) setControlsCollapsed(true); };
+  narrowViewport.addEventListener('change', onNarrowViewport);
+  if (narrowViewport.matches) setControlsCollapsed(true);
   function updateRoadNote() {
     const actual = config.roadRoughness.toFixed(1);
     const applied = result?.config.roadRoughness === config.roadRoughness;
@@ -190,6 +241,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     player.pause(); player.seek(0); clearField(); clearPlots();
     $('metrics').replaceChildren(); $('run').textContent = '尚无当前实验结果';
     $('signal-title').textContent = '波形：等待当前实验'; $('spectrum-title').textContent = 'PSD：等待当前实验';
+    renderCase();
   }
   function dirty() {
     ++generation; ports.cancel(); busy = false; clearExperiment();
@@ -197,6 +249,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     for (const name of ['play', 'replay', 'seek']) ($<HTMLButtonElement>(name)).disabled = true;
     $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = true;
     refreshConfig(); clearPlots();
+    renderCase();
   }
   function addReference(position: Vec3, mountPart?: string) {
     if (config.references.length >= 8) { $('status').textContent = '当前计算上限为8个参考传感器，可先移除已有传感器。'; return; }
@@ -267,7 +320,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       for (const name of ['play', 'replay', 'seek']) $<HTMLButtonElement>(name).disabled = false;
       lastFieldAt = -1; fieldPending = false; draw();
     } catch (error) { if (token === generation) $('status').textContent = `计算未完成：${error instanceof Error ? error.message : String(error)}`; }
-    finally { if (token === generation) { busy = false; $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = true; } }
+    finally { if (token === generation) { busy = false; $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = true; renderCase(); } }
   }
   async function startLive() {
     const token = ++generation; ports.cancel(); busy = true; clearExperiment();
@@ -328,6 +381,14 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   $<HTMLInputElement>('edit').onchange = () => { viewer.setEditMode($<HTMLInputElement>('edit').checked); refreshConfig(); };
   root.querySelectorAll<HTMLInputElement>('[data-speaker]').forEach(input => { input.onchange = () => { const enabled = [...config.speakerEnabled]; enabled[Number(input.dataset.speaker)] = input.checked; config.speakerEnabled = enabled as unknown as LabConfig['speakerEnabled']; dirty(); }; });
   $('calculate').onclick = () => void calculate(); $('cancel').onclick = () => { dirty(); $('status').textContent = realtime ? '实时实验已结束。再次启动将重新学习。' : '计算已取消。'; };
+  $('case-save').onclick = () => {
+    if (realtime || busy || !result) return;
+    try {
+      caseBaseline = captureCase(result, ports.analyze(result, result.sampleCount / result.config.sampleRateHz, { signal: 'e', channel: 0 }, { levelWeighting: 'A', levelsOnly: true }));
+      renderCase();
+    } catch (error) { $('case-state').textContent = error instanceof Error ? error.message : String(error); }
+  };
+  $('case-clear').onclick = () => { caseBaseline = null; renderCase(); };
   $('body').onchange = () => viewer.setBody($<HTMLSelectElement>('body').value);
   $('explode').onclick = () => { exploded = !exploded; viewer.setExploded(exploded); $('explode').setAttribute('aria-pressed', String(exploded)); };
   $('reset').onclick = () => { viewer.reset(); exploded = false; $('explode').setAttribute('aria-pressed', 'false'); };
@@ -449,6 +510,6 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   };
   document.addEventListener('visibilitychange', visibility);
   // Audio startup requires the user's gesture. Loading the page only prepares live controls.
-  refreshConfig(); clearPlots(); requestAnimationFrame(tick);
-  return () => { disposed = true; ++generation; ++fieldEpoch; liveSession = false; livePullPending = false; document.removeEventListener('visibilitychange', visibility); player.pause(); livePlayer.dispose(); ports.cancel(); viewer.dispose(); flow.dispose(); root.replaceChildren(); };
+  refreshConfig(); clearPlots(); renderCase(); requestAnimationFrame(tick);
+  return () => { disposed = true; ++generation; ++fieldEpoch; liveSession = false; livePullPending = false; document.removeEventListener('visibilitychange', visibility); narrowViewport.removeEventListener('change', onNarrowViewport); player.pause(); livePlayer.dispose(); ports.cancel(); viewer.dispose(); flow.dispose(); root.replaceChildren(); };
 }

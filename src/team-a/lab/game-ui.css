@@ -124,6 +124,28 @@
   background-image: linear-gradient(#6aa2aa0d 1px, transparent 1px), linear-gradient(90deg, #6aa2aa0d 1px, transparent 1px);
   background-size: 34px 34px;
 }
+.lab-case {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 18px;
+  margin: 8px 0 18px;
+  padding: 13px 16px;
+  background: linear-gradient(110deg, #17313c, #10232f 70%);
+  border: 1px solid #46707a;
+  border-left: 3px solid var(--gold);
+}
+.lab-case h3 { margin: 3px 0 4px; color: #f3f7f2; font-size: 15px; line-height: 1.4; }
+.lab-case p { margin: 0; color: #b4cbd0; font-size: 11px; line-height: 1.55; }
+.lab-case-actions { display: flex; align-items: center; gap: 7px; }
+.lab-case-actions button { padding: 7px 9px; font-size: 11px; white-space: nowrap; }
+#lab-case-save:not(:disabled) { color: #ffe0a9; border-color: #b68a54; }
+.lab-case-state { grid-column: 1 / -1; color: #e3d3b5 !important; }
+.lab-case-results { grid-column: 1 / -1; overflow-x: auto; }
+.lab-case-results table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
+.lab-case-results th, .lab-case-results td { padding: 7px 9px; border-top: 1px solid #365561; text-align: left; }
+.lab-case-results th { color: var(--gold); font-weight: 600; }
+.lab-case-results td:last-child { color: var(--cyan); font-weight: 700; }
+.lab-case-results p { margin-top: 8px; }
 .lab-view-heading {
   min-height: 58px;
   justify-content: flex-start;
@@ -203,6 +225,8 @@
   .lab-controls { padding: 18px 12px 80px; }
   #lab-viewer { height: clamp(420px, 60vh, 720px); }
   .lab-view-heading #lab-run { display: none; }
+  .lab-case { grid-template-columns: minmax(0,1fr); }
+  .lab-case-actions { flex-wrap: wrap; }
 }
 @media (max-width: 680px) {
   .lab-header { min-height: 76px; padding: 12px 14px; gap: 10px; flex-wrap: wrap; }
@@ -229,6 +253,7 @@
   .lab-view-heading { flex-wrap: nowrap; }
   .lab-view-heading h2 { font-size: 14px; }
   #lab-controls-toggle { padding: 7px; }
+  .lab-case-results::before { content: '← 左右滑动查看全部对比项 →'; display: block; padding: 3px 0 7px; color: var(--cyan); font-size: 10px; }
   #lab-viewer { height: min(72vh, 520px); min-height: 370px; }
   .lab-view-tools { overflow-x: auto; flex-wrap: nowrap; gap: 8px; }
   .lab-view-tools label { white-space: nowrap; flex: 0 0 auto; }
