@@ -6,6 +6,8 @@
 
 ## 当前发布：B1-PUSH-002（2026-09-27）
 
+- 2026-09-27：用户授权后已创建[PR #31](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/31)，`b/b1-coordination` → `main`，open、非草稿、未合并，创建时head `4998067`。PR已列出100/100及44/44验证、浏览器证据、教学模型限制和与A1 #27的集成重叠。Role: B1；Identity-Source: local-config；执行者Codex。本批实现已结束；下一步审查最新CI和共管接口，等待后续集成指令，不自动合并。下方“未创建PR/不创建PR”为此前发布阶段的历史状态。
+
 - 发布结果：代码提交`341b01f0ac4967ef9c74e6ac103b293c1f62ab46`已成功推送[原仓库b/b1-coordination](https://github.com/KnowCooker/RNC_3D_SIMULATION/tree/b/b1-coordination)，`git ls-remote`确认远端SHA一致。100/100及类型/边界/构建、提交钩子通过；云端CI本轮未核验。下列“下一步提交”为发布准备时的历史记录；当前下一步按用户后续指令评审/集成，不自动创建PR或合并main。
 
 - 用户授权推送当前版本；Role: B1；Identity-Source: local-config；执行者Codex。复用`b/b1-coordination`，集中提交B1-LIVE-001/002/003及对应文档、运行噪声资产和验证证据。
