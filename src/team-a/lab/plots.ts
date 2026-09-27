@@ -1,4 +1,4 @@
-import type { LabAnalysis } from '../../shared/lab-contracts';
+import { LAB_WAVEFORM_SECONDS, type LabAnalysis } from '../../shared/lab-contracts';
 
 export const ORIGINAL_COLOR = '#a7b5c8';
 export const RESULT_COLOR = '#73e4bc';
@@ -9,7 +9,7 @@ export function splFrame(time: number, analysis: LabAnalysis): SplFrame {
 }
 /** The plot follows the audio clock even for precomputed experiments and seeks. */
 export function visibleSplFrames(frames: SplFrame[], time: number, start: number): SplFrame[] {
-  return frames.filter(frame => frame.time >= Math.max(start, time - 120) && frame.time <= time + 1e-9);
+  return frames.filter(frame => frame.time >= start && frame.time <= time + 1e-9);
 }
 export function splRange(frames: SplFrame[]): [number, number] {
   let min = 30, max = 90;
@@ -82,9 +82,9 @@ export function drawSignalComparison(canvas: HTMLCanvasElement, analysis: LabAna
   const rightPeak = peak(raw);
   const series: PlotSeries[] = [{ x: coordinates(original,raw.length), values: raw, color: ORIGINAL_COLOR, secondary: mixedUnits }];
   if (!originalOnly) series.push({ x: coordinates(analysis,selected.length), values:selected, color:RESULT_COLOR });
-  const end = offset+analysis.time, start = Math.max(offset,end-0.2);
+  const end = offset+analysis.time, start = Math.max(0,end-LAB_WAVEFORM_SECONDS);
   plot(canvas,series,{
-    x:spectrum ? frequencyRange ?? [0,sampleRate/2] : [start,Math.max(start+1/sampleRate,end)],
+    x:spectrum ? frequencyRange ?? [0,sampleRate/2] : [start,Math.max(LAB_WAVEFORM_SECONDS,end)],
     y:spectrum ? [-140,20] : [-maximum,maximum], xLabel:spectrum ? '频率 / Hz' : '实验时间 / s',
     yLabel:spectrum ? `PSD ${analysis.spectrumWeighting === 'A' ? '(A)' : '(Z)'} / dB` : analysis.unit.startsWith('m/s') ? 'm/s²' : analysis.unit,
     right:mixedUnits ? { range:spectrum ? [-140,20] : [-rightPeak,rightPeak], label:spectrum ? '原声 PSD / dB' : '原声 / Pa' } : undefined,

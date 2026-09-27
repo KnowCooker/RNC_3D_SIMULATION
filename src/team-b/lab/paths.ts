@@ -1,4 +1,4 @@
-import { SOURCE_POSITIONS, SPEAKER_POSITIONS, type LabConfig, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
+import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type LabConfig, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
 import { RECORDED_PROFILE } from './recorded-profile';
 import { TEACHING_PRESSURE_GAIN } from './pressure-calibration';
 
@@ -45,6 +45,35 @@ export function geometricPrimaryPath(config: LabConfig, sourceIndex: number, poi
 }
 
 export function primaryPath(config: LabConfig, sourceIndex: number, point: Vec3): SparsePath {
+  if (config.sourceMode === 'recorded-noise') {
+    // A local dominant equivalent path preserves each recorded seat's spectrum,
+    // while a 5% coupling floor retains every source at every spatial point.
+    // This fitted teaching spatial envelope is not measured radiation directivity.
+    const wheel = SOURCE_POSITIONS[sourceIndex], anchor = MIC_POSITIONS[sourceIndex];
+    const profile = VEHICLE_ACOUSTICS[config.vehicle];
+    const radiator: Vec3 = [wheel[0] * .72, .58, wheel[2] * .85];
+    const positions: Vec3[] = [radiator, [radiator[0], 1.1-radiator[1], radiator[2]], [radiator[0], 2*profile.roof-radiator[1], radiator[2]]];
+    const locality = .05 + .95 * Math.exp(-(((point[0]-anchor[0])/.4)**2 + ((point[2]-anchor[2])/.6)**2));
+    const scale = RECORDED_NOISE_PRESSURE_GAIN * 10 ** ((config.levelOffsetDb ?? 0) / 20);
+    const bins = new Map<number, number>();
+    for (let reflection = 0; reflection < positions.length; reflection++) {
+      const r = distance(positions[reflection], point);
+      const delay = profile.bodyDelay + r/soundSpeed(config.temperatureC)*config.sampleRateHz;
+      const integer = Math.floor(delay), fraction = delay-integer;
+      // A 17-tap windowed-sinc fractional delay adds 8 causal samples of latency,
+      // avoiding the strong high-frequency rolloff of a two-tap interpolation.
+      const taps = Array.from({ length: 17 }, (_, k) => {
+        const at = k-8-fraction;
+        return (Math.abs(at)<1e-12 ? 1 : Math.sin(Math.PI*at)/(Math.PI*at)) * (.42-.5*Math.cos(2*Math.PI*k/16)+.08*Math.cos(4*Math.PI*k/16));
+      });
+      const norm = taps.reduce((sum, value) => sum+value, 0);
+      const reflectionGain = reflection === 0 ? 1 : profile.reflection * (reflection === 1 ? 1 : .6);
+      const gain = .065 * profile.primary * locality * reflectionGain / (.4+r) * scale;
+      taps.forEach((value, k) => bins.set(integer+k, (bins.get(integer+k) ?? 0) + gain*value/norm));
+    }
+    const entries = [...bins].filter(([,gain])=>Math.abs(gain)>1e-15).sort(([a],[b])=>a-b);
+    return { delays: entries.map(([delay])=>delay), gains: entries.map(([,gain])=>gain) };
+  }
   const geometry = geometricPrimaryPath(config, sourceIndex, point);
   // A common causal coloration fits pooled recorded noise shape, not a measured
   // primary transfer function. Arbitrary field points reuse this same path.
@@ -57,6 +86,9 @@ export function primaryPath(config: LabConfig, sourceIndex: number, point: Vec3)
   values.forEach((gain, delay) => { if (Math.abs(gain) > 1e-15) { delays.push(delay); gains.push(gain * scale); } });
   return { delays, gains };
 }
+
+/** Teaching Pa gain for the normalized recorded-noise sources; not a V/Pa calibration. */
+export const RECORDED_NOISE_PRESSURE_GAIN = 4.3619057736237865;
 
 export function secondaryPath(config: LabConfig, speakerIndex: number, point: Vec3): SparsePath {
   return acousticPath(config, SPEAKER_POSITIONS[speakerIndex], point, 0.28, 1, true);

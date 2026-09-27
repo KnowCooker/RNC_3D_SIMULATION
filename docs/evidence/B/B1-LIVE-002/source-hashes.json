@@ -1,0 +1,66 @@
+[
+  {
+    "path": "src/integration/lab-engine.ts",
+    "sha256": "3d91d70c41cc32d18e86c500da1d3a87b99c5fcfe03d644e1ac3ef44d8262ea8"
+  },
+  {
+    "path": "src/integration/lab.worker.ts",
+    "sha256": "b3fcbd6c883e8c80320b41efa8dde1f72e4921732f67c1fb262d1f966852c952"
+  },
+  {
+    "path": "src/shared/lab-contracts.ts",
+    "sha256": "ff6ee65953a70041f9d6c8f3e88957228de23ba7842cf1b1c5b3fc8f7a8f1d44"
+  },
+  {
+    "path": "src/team-a/lab/index.ts",
+    "sha256": "2844d2c3d3d57e7eda1b9562740a194f783f0b010b257e71754883e8b6e8d258"
+  },
+  {
+    "path": "src/team-a/lab/plots.ts",
+    "sha256": "a3f9779a829b0eb9d466c1f8ca0d768a4d3df726590da6bf219627c0db2ec668"
+  },
+  {
+    "path": "src/team-a/lab/signal-flow.ts",
+    "sha256": "990586199f1f2d2c744e5af7a089e68f38b2080706ac4e4befea925c008d4ee1"
+  },
+  {
+    "path": "src/team-a/lab/style.css",
+    "sha256": "4a1b30ccd9c125f0fe16b0e06f8a5dc907c1fae4a98e49936b34211dff1a0e20"
+  },
+  {
+    "path": "src/team-a/player/live-player.ts",
+    "sha256": "67cd657e921d363ca4d0ce0ab4c60fa37f27ce0d65d9df1bbbef20a499a482d6"
+  },
+  {
+    "path": "src/team-b/lab/index.ts",
+    "sha256": "bf61bcabdc452175917a74e19501eb83e2d3ee62003767abbf3545d3db57a02f"
+  },
+  {
+    "path": "src/team-b/lab/stream.ts",
+    "sha256": "752bd7774cb32d3c129326381fcd50c02b44368e5a2914a0afca370334b3f123"
+  },
+  {
+    "path": "src/team-b/lab/validation.ts",
+    "sha256": "db586433e7267d201d9bf2bebab1a4a0ec8f3c40d9717ede65552044aa1a1c90"
+  },
+  {
+    "path": "tests/a1-lab-engine.test.ts",
+    "sha256": "ba91aa64938f364b7d948911a32d9e2a4ca88caac0d9afb1486d479163faf0c4"
+  },
+  {
+    "path": "tests/a1-lab-plots.test.ts",
+    "sha256": "99c3d9a0e2a0e349ba8456cdb99d9b1453a5682e92f810d3875f6812d0bc0e43"
+  },
+  {
+    "path": "tests/a1-live-player.test.ts",
+    "sha256": "598ba1fa679fd4a8cda8afec75de7b8797df8372cd5b99c1b9e4d9f9f52b06b2"
+  },
+  {
+    "path": "tests/b-lab-physics.test.ts",
+    "sha256": "518786236204766fb4c17adc8407f480a4fe056c76f7cb1140bb3d8b7dbf3d69"
+  },
+  {
+    "path": "tests/b-live-stream.test.ts",
+    "sha256": "547893761e105967151e081603355dcb71a9acd0e66bcae818ba838edb1216e3"
+  }
+]

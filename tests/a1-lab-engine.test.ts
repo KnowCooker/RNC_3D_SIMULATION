@@ -26,10 +26,10 @@ test('live Worker cancellation rejects pending work and late old errors cannot k
   const engine = setup(t), config = defaultLabConfig();
   const first = engine.startLive(config, 'first'), old = FakeWorker.instances.at(-1)!;
   old.receive({ type: 'ready', runId: 'first' }); await first;
-  const chunk = engine.pullLive(400), field = engine.field(1, [[0, 1, 0]]);
-  const chunkError = assert.rejects(chunk, /实验已更换/), fieldError = assert.rejects(field, /实验已更换/);
+  const chunk = engine.pullLive(400), field = engine.field(1, [[0, 1, 0]]), control = engine.setLiveRnc(false);
+  const chunkError = assert.rejects(chunk, /实验已更换/), fieldError = assert.rejects(field, /实验已更换/), controlError = assert.rejects(control, /实验已更换/);
   const second = engine.startLive(config, 'second'), current = FakeWorker.instances.at(-1)!;
-  await Promise.all([chunkError, fieldError]); assert.equal(old.terminated, true);
+  await Promise.all([chunkError, fieldError, controlError]); assert.equal(old.terminated, true);
   old.onerror?.({ message: 'retired worker error' }); old.receive({ type: 'error', message: 'obsolete', runId: 'first' });
   current.receive({ type: 'ready', runId: 'second' }); await second;
   assert.equal(current.terminated, false);
@@ -58,7 +58,24 @@ test('start cancellation and foreign run identities fail explicitly; batch mode 
   const batch = engine.calculate(defaultLabConfig(), 'batch'), worker = FakeWorker.instances.at(-1)!;
   worker.receive({ type: 'result', runId: 'batch', result: { runId: 'batch' } }); await batch;
   await assert.rejects(engine.pullLive(), /不是实时/);
+  await assert.rejects(engine.setLiveRnc(false), /不是实时/);
   const field = engine.field(1, [[0, 1, 0]]), fieldError = assert.rejects(field, /其他实验/);
   worker.receive({ type: 'field', runId: 'foreign', id: worker.messages.at(-1).id, frame: {} }); await fieldError;
   assert.equal(worker.terminated, true);
+});
+
+test('live RNC control returns the exact sample boundary and a rejected switch preserves the running worker', async t => {
+  const engine = setup(t), started = engine.startLive(defaultLabConfig(), 'switch'), worker = FakeWorker.instances.at(-1)!;
+  worker.receive({ type: 'ready', runId: 'switch' }); await started;
+  const change = engine.setLiveRnc(false), message = worker.messages.at(-1);
+  assert.equal(message.type, 'rnc'); assert.equal(message.enabled, false);
+  worker.receive({ type: 'rnc', id: message.id, runId: 'switch', change: { enabled: false, effectiveSample: 12345 } });
+  assert.deepEqual(await change, { enabled: false, effectiveSample: 12345 });
+  const rejected = engine.setLiveRnc(true), id = worker.messages.at(-1).id;
+  const failure = assert.rejects(rejected, /已结束/);
+  worker.receive({ type: 'error', id, runId: 'switch', message: '实时实验已结束' }); await failure;
+  assert.equal(worker.terminated, false);
+  const next = engine.pullLive(200), packet = { marker: 'still running' };
+  worker.receive({ type: 'chunk', id: worker.messages.at(-1).id, runId: 'switch', packet });
+  assert.equal(await next, packet); engine.cancel();
 });

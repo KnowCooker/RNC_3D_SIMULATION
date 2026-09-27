@@ -1,0 +1,90 @@
+[
+  {
+    "path": "package.json",
+    "sha256": "0138e8f408bdce501facadf9ffa4ddeef30b8bd0ed49a803f9221c5190dea729"
+  },
+  {
+    "path": "src/integration/lab-engine.ts",
+    "sha256": "3d91d70c41cc32d18e86c500da1d3a87b99c5fcfe03d644e1ac3ef44d8262ea8"
+  },
+  {
+    "path": "src/integration/lab.worker.ts",
+    "sha256": "fa4f123c37db8268aff2e96863d4e114dbcefa13247dd825df70bc5c65d3f5fa"
+  },
+  {
+    "path": "src/shared/lab-contracts.ts",
+    "sha256": "43c7b0643ee35d8fc8cad2fc5338f5e9668bae9a8028c18e2b8a5bee10b8ae10"
+  },
+  {
+    "path": "src/team-a/lab/index.ts",
+    "sha256": "a601a1804c0e6136e100ef134bb5110b0410d50c4593daa709f762ab3e6ef3b1"
+  },
+  {
+    "path": "src/team-a/lab/plots.ts",
+    "sha256": "a3f9779a829b0eb9d466c1f8ca0d768a4d3df726590da6bf219627c0db2ec668"
+  },
+  {
+    "path": "src/team-a/lab/signal-flow.ts",
+    "sha256": "b6aac64afe7257e8e91ed3388aefb01ecd4f00abd73f157a0171f7f8f6e32777"
+  },
+  {
+    "path": "src/team-a/lab/style.css",
+    "sha256": "4a1b30ccd9c125f0fe16b0e06f8a5dc907c1fae4a98e49936b34211dff1a0e20"
+  },
+  {
+    "path": "src/team-a/player/live-player.ts",
+    "sha256": "67cd657e921d363ca4d0ce0ab4c60fa37f27ce0d65d9df1bbbef20a499a482d6"
+  },
+  {
+    "path": "src/team-b/lab/data/recorded-primary.f32",
+    "sha256": "c3bcc4ffcea96268032403eb01a0743f822701d6958bebc979752f93283d421a"
+  },
+  {
+    "path": "src/team-b/lab/index.ts",
+    "sha256": "8a98bedb5b7ee38bb005da95bb10a7876e8c303630d92e02ff944944e655b11d"
+  },
+  {
+    "path": "src/team-b/lab/paths.ts",
+    "sha256": "6d8dc6b8897370362be744d1ef278154947373ab96c2b736a57764685bd620d7"
+  },
+  {
+    "path": "src/team-b/lab/recorded-noise.ts",
+    "sha256": "d19643aad467c2b5a0607093c51c1e51fd9ad484ef0522edd9bfbbf91b7d8e9c"
+  },
+  {
+    "path": "src/team-b/lab/sources.ts",
+    "sha256": "3e3955ac2665fcaf02eadc5add15c9fa67a3afe02ea4f6a6c0324e15e46b442f"
+  },
+  {
+    "path": "src/team-b/lab/stream.ts",
+    "sha256": "061ea9f5cf991355df55612519e0966bbe96fdc7bbcedd7dc7b7ac660ad7f097"
+  },
+  {
+    "path": "src/team-b/lab/validation.ts",
+    "sha256": "67ebe8c9040952b200d4dc0264e23c29a862570f129906a9d3f7d37f02264730"
+  },
+  {
+    "path": "tests/a1-lab-engine.test.ts",
+    "sha256": "ba91aa64938f364b7d948911a32d9e2a4ca88caac0d9afb1486d479163faf0c4"
+  },
+  {
+    "path": "tests/a1-lab-plots.test.ts",
+    "sha256": "99c3d9a0e2a0e349ba8456cdb99d9b1453a5682e92f810d3875f6812d0bc0e43"
+  },
+  {
+    "path": "tests/a1-live-player.test.ts",
+    "sha256": "598ba1fa679fd4a8cda8afec75de7b8797df8372cd5b99c1b9e4d9f9f52b06b2"
+  },
+  {
+    "path": "tests/b-lab-physics.test.ts",
+    "sha256": "518786236204766fb4c17adc8407f480a4fe056c76f7cb1140bb3d8b7dbf3d69"
+  },
+  {
+    "path": "tests/b-live-stream.test.ts",
+    "sha256": "547893761e105967151e081603355dcb71a9acd0e66bcae818ba838edb1216e3"
+  },
+  {
+    "path": "tests/b-recorded-noise.test.ts",
+    "sha256": "247f2eacbc1ce566294cc948d6ef1d402a374d275e8a6375dc231579dad0b4c3"
+  }
+]

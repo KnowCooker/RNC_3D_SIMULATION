@@ -103,6 +103,22 @@ test('common lookahead safety envelope preserves all eight d/e ratios, bounds pe
   assert.ok(stream.safetyGain < 0.0001);
 });
 
+test('finishing releases exactly the real lookahead tail, including a run shorter than that tail', () => {
+  for (const length of [1, 7, 48, 401]) {
+    const stream = new StreamingAudioResampler(), input = chunk(0, length, 0.001);
+    const channels = [...input.signals.d, ...input.signals.e];
+    const body = stream.push(channels), tail = stream.finish();
+    assert.ok(tail); assert.equal(stream.finish(), null);
+    assert.throws(() => stream.push(channels), /已结束/);
+    for (let c = 0; c < 8; c++) {
+      const actual: Float32Array = Float32Array.from([...(body?.channels[c] ?? []), ...tail.channels[c]]);
+      const expected = resampleForAudio(channels[c]);
+      assert.equal(actual.length, length * 8);
+      for (let n = 0; n < actual.length; n++) assert.ok(Math.abs(actual[n] - expected[n]) < 3e-8);
+    }
+  }
+});
+
 test('live queue validates complete finite contiguous chunks without changing accepted state on rejection', t => {
   const { player } = setup(t);
   player.enqueue(chunk(0));
@@ -179,15 +195,36 @@ test('async resume cannot revive pause/reset/dispose or clear a newer request, a
   await assert.rejects(player.start(), /已释放/);
 });
 
-test('continuous enqueue reclaims ended audio and keeps the schedule bounded through 100 simulated seconds', async t => {
+test('continuous enqueue stays bounded for ten minutes and finishes exactly without a false underrun or restart', async t => {
   const { player, context } = setup(t);
   player.enqueue(chunk(0, 1000)); await player.start(); context.advance(0.01);
-  for (let n = 0; n < 1000; n++) {
+  for (let n = 0; n < 5995; n++) {
     context.advance(0.1); player.enqueue(chunk(1000 + n * 200, 200));
     assert.ok(player.queuedSeconds < 0.501);
     assert.ok(context.sources.filter(source => !source.disconnected).length <= 7);
     assert.equal(player.underruns, 0);
   }
-  assert.ok(Math.abs(player.currentTime - 100) < 1e-8);
+  assert.ok(Math.abs(player.currentTime - 599.5) < 1e-8);
+  assert.equal(player.bufferedUntil, 600);
+  player.finish(); player.finish();
+  assert.equal(player.playableUntil, 600, '24ms interpolation tail must be drained, not dropped');
+  assert.throws(() => player.enqueue(chunk(1200000)), /已结束/);
+  context.advance(0.6);
+  assert.equal(player.currentTime, 600); assert.equal(player.ended, true);
+  assert.equal(player.status, 'ended'); assert.equal(player.playing, false); assert.equal(player.underruns, 0);
+  await player.start(); context.advance(1);
+  assert.equal(player.currentTime, 600); assert.equal(player.playing, false);
+  player.reset(); player.enqueue(chunk(0)); await player.start();
+  assert.equal(player.ended, false); assert.equal(player.currentTime, 0);
   player.dispose(); assert.ok(context.sources.every(source => source.disconnected));
+});
+
+test('pause and resume while draining keeps the final samples and exact endpoint', async t => {
+  const { player, context } = setup(t);
+  player.enqueue(chunk(0, 2000)); player.finish(); await player.start();
+  context.advance(0.41); player.pause();
+  const paused = player.currentTime; context.advance(60);
+  assert.equal(player.currentTime, paused); assert.equal(player.ended, false);
+  await player.start(); context.advance(1);
+  assert.equal(player.currentTime, 1); assert.equal(player.status, 'ended'); assert.equal(player.underruns, 0);
 });

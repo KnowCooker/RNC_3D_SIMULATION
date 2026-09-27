@@ -2,12 +2,14 @@ import { validateLabConfig } from './validation';
 export { validateLabConfig } from './validation';
 export { createLabStream, LAB_STREAM_CABIN_PREROLL_SAMPLES } from './stream';
 import type { Four } from '../../shared/contracts';
-import { MIC_POSITIONS, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabResult, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
+import { LAB_WAVEFORM_SECONDS, MIC_POSITIONS, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabResult, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { meanPower, welchPsd } from '../analysis';
 import { applyPath, primaryPath, referencePath, secondaryPath, samplePath, type SparsePath } from './paths';
 import { createSources } from './sources';
 import { A_WEIGHTING_HISTORY, weightedPower, weightedSpectrum } from './weighting';
 import { nfxlmsGain } from './nfxlms';
+import type { RecordedNoise } from './recorded-noise';
+export { decodeRecordedNoise, type RecordedNoise } from './recorded-noise';
 
 export const LAB_WINDOW_SAMPLES = 1000;
 const POWER_FLOOR = 1e-20;
@@ -16,10 +18,10 @@ const spl = (power: number) => 10 * Math.log10(Math.max(POWER_FLOOR, power) / (2
 const reduction = (d: number, e: number) => d <= POWER_FLOOR ? 0 : 10 * Math.log10(d / Math.max(POWER_FLOOR, e));
 
 /** Actual multichannel normalized FxLMS; filters W[output][reference][tap], e=d+S*u. */
-export function calculateLab(config: LabConfig, runId: string): LabResult {
+export function calculateLab(config: LabConfig, runId: string, recording?: RecordedNoise): LabResult {
   validateLabConfig(config);
   const started = performance.now(), count = config.durationSeconds * config.sampleRateHz, taps = config.taps, pad = taps - 1;
-  const sources = createSources(config);
+  const sources = createSources(config, recording);
   const x = config.references.map(reference => {
     const values = new Float64Array(count);
     for (let i = 0; i < 4; i++) applyPath(sources[i], referencePath(config, i, reference.position), values);
@@ -112,8 +114,8 @@ export function analyzeLab(result: LabResult, time: number, selection: LabSelect
     primarySpl: four(dp.map(power => power === null || power <= POWER_FLOOR ? null : spl(power))),
     residualSpl: four(ep.map(power => power === null || power <= POWER_FLOOR ? null : spl(power))),
     reductionDb: four(dp.map((power, i) => power === null || power <= POWER_FLOOR || ep[i] === null ? null : reduction(power, ep[i]!))),
-    waveform: options.levelsOnly ? new Float32Array() : signal.slice(Math.max(0, end - 400), end), spectrum: options.levelsOnly ? null : weightedSpectrum(welchPsd(signal, end, result.config.sampleRateHz), result.config.sampleRateHz, spectrumWeighting),
-    unit: selection.signal === 'q' ? 'm/s²（等效轮端激励）' : selection.signal === 'x' ? 'm/s²' : selection.signal === 'u' ? 'drive' : 'Pa' };
+    waveform: options.levelsOnly ? new Float32Array() : signal.slice(Math.max(0, end - LAB_WAVEFORM_SECONDS * result.config.sampleRateHz), end), spectrum: options.levelsOnly ? null : weightedSpectrum(welchPsd(signal, end, result.config.sampleRateHz), result.config.sampleRateHz, spectrumWeighting),
+    unit: selection.signal === 'q' ? result.config.sourceMode === 'recorded-noise' ? '相对幅值' : 'm/s²（等效轮端激励）' : selection.signal === 'x' ? 'm/s²' : selection.signal === 'u' ? 'drive' : 'Pa' };
 }
 
 function accumulateWindow(input: Float32Array, path: SparsePath, start: number, target: Float64Array) {
