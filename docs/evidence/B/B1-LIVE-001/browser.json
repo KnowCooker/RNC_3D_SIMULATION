@@ -1,0 +1,35 @@
+{
+  "baseline": "8724b09 + local B1-LIVE-001",
+  "role": "B1",
+  "identitySource": "local-config",
+  "executor": "Codex",
+  "replay90": {
+    "speedKph": 10,
+    "computeMilliseconds": 3957,
+    "seekMax": 90
+  },
+  "liveBeforePause": {
+    "history": "截至 21.07 s · 0.5秒窗口 · 本次实验全程总声压级",
+    "run": "纯电 SUV · 实时 4×4×4 · 3ec81e93",
+    "spectrum": "频域 · E FL · PSD · A计权 · Hann 1024",
+    "status": "实时运行 · 21.1 s · 缓冲 1.31 s · 共同安全增益 1.000 · 补缓冲 0 次",
+    "time": "21.09 s · 实时"
+  },
+  "resumedState": {
+    "field": "空间窗口截至 67.59 s",
+    "history": "截至 67.73 s · 0.5秒窗口 · 本次实验全程总声压级",
+    "run": "纯电 SUV · 实时 4×4×4 · 3ec81e93",
+    "spectrum": "频域 · E RR · PSD · A计权 · Hann 1024",
+    "status": "实时运行 · 67.8 s · 缓冲 1.38 s · 共同安全增益 1.000 · 补缓冲 0 次",
+    "time": "67.82 s · 实时"
+  },
+  "pausedFinal": {
+    "durationHidden": true,
+    "field": "空间窗口截至 67.86 s",
+    "history": "截至 67.86 s · 0.5秒窗口 · 本次实验全程总声压级",
+    "run": "纯电 SUV · 实时 4×4×4 · 3ec81e93",
+    "status": "实时已暂停 · 67.9 s · 缓冲 1.34 s · 共同安全增益 1.000 · 补缓冲 0 次",
+    "time": "67.86 s · 实时"
+  },
+  "browserErrors": []
+}

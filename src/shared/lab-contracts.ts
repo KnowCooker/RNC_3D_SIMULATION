@@ -3,13 +3,22 @@ import type { Four, SignalKind } from './contracts';
 
 export type VehicleKind = 'ice' | 'bev' | 'hev' | 'erev';
 export type AcousticWeighting = 'A' | 'Z';
+/** Internal ceiling on generated simulation time; pauses do not consume it. No UI setting. */
+export const LAB_LIVE_LIMIT_SECONDS = 600;
+export const LAB_WAVEFORM_SECONDS = 5;
+/** Five seconds at the audio clock plus producer prefetch and causal pre-roll. */
+export const LAB_LIVE_HISTORY_SAMPLES = 16384;
+export interface LabRncChange { enabled: boolean; effectiveSample: number }
 export interface LabAnalysisOptions { spectrumWeighting?: AcousticWeighting; levelWeighting?: AcousticWeighting; /** Skip FFTs when collecting convergence history. */ levelsOnly?: boolean }
 export type Vec3 = readonly [number, number, number];
 export interface ReferenceSensor { id: string; name: string; position: Vec3; /** Visual attachment only; position remains an unexpanded physical coordinate. */ mountPart?: string }
 export interface LabConfig {
   schemaVersion: 'lab-v3';
+  /** Omitted in saved runs: retain the original shaped-random source. */
+  sourceMode?: 'recorded-noise' | 'shaped-noise';
   vehicle: VehicleKind;
   sampleRateHz: 2000;
+  /** Precomputed replay length only. Continuous simulation ignores this field. */
   durationSeconds: number;
   /** Relative to the declared teaching pressure calibration; not a DSP V/Pa sensitivity. */
   levelOffsetDb?: number;
@@ -36,7 +45,7 @@ export interface LabResult {
   signals: { x: Float32Array[]; u: Four<Float32Array>; d: Four<Float32Array>; a: Four<Float32Array>; e: Four<Float32Array> };
   metrics: { reductionDbByMic: Four<number>; aggregateReductionDb: number };
 }
-/** Sequential new samples from a persistent processor; never a repeated prerecorded segment. */
+/** Sequential processed samples. Recorded-source loops never reset the controller or clock. */
 export interface LabChunk {
   runId: string;
   startSample: number;

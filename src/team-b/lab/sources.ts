@@ -2,8 +2,9 @@ import type { Four } from '../../shared/contracts';
 import type { LabConfig } from '../../shared/lab-contracts';
 import { convolve, uniform } from '../engine/data';
 import { RECORDED_PROFILE } from './recorded-profile';
+import { createRecordedNoiseReader, type RecordedNoise } from './recorded-noise';
 
-/** q has equivalent wheel-excitation acceleration units, not calibrated airborne source power. */
+/** Teaching source scale: recorded q is relative noise amplitude; shaped q is equivalent acceleration. */
 export function sourceParameters(config: LabConfig) {
   const speed = config.speedKph / RECORDED_PROFILE.baselineSpeedKph;
   const amplitude = speed ** 1.25 * Math.sqrt(config.roadRoughness) * (0.65 + 0.35 * config.treadRoughness);
@@ -27,8 +28,13 @@ export function createSourceShape(config: LabConfig): Float64Array {
   return shape;
 }
 
-export function createSources(config: LabConfig): Four<Float32Array> {
+export function createSources(config: LabConfig, recording?: RecordedNoise): Four<Float32Array> {
   const count = config.sampleRateHz * config.durationSeconds, { amplitude } = sourceParameters(config);
+  if (config.sourceMode === 'recorded-noise') {
+    const reader = createRecordedNoiseReader(recording);
+    return Array.from({ length: 4 }, (_, channel) => Float32Array.from({ length: count },
+      (_, n) => amplitude * reader.sample(channel, n))) as unknown as Four<Float32Array>;
+  }
   const shape = createSourceShape(config);
   return Array.from({ length: 4 }, (_, source) => {
     const broad = convolve(uniform(config.seed + source * 101, count), shape);

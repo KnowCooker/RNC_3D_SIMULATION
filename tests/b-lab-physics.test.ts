@@ -178,7 +178,7 @@ test('q selection analyzes each actual wheel source independently of reference l
   const changed = calculateLab({ ...config, references: [{ id: 'centre', name: 'Centre only', position: [0, 0.8, 0] }] }, 'changed-layout');
   for (let source = 0; source < 4; source++) {
     const analysis = analyzeLab(changed, 6, { signal: 'q', channel: source });
-    assert.deepEqual(analysis.waveform, changed.sources[source].slice(11600, 12000));
+    assert.deepEqual(analysis.waveform, changed.sources[source].slice(2000, 12000));
     assert.deepEqual(analysis.spectrum, analyzeLab(result, 6, { signal: 'q', channel: source }).spectrum);
     assert.equal(analysis.unit, 'm/s²（等效轮端激励）');
     assert.ok(analysis.spectrum && analysis.spectrum.some(value => value > 0));

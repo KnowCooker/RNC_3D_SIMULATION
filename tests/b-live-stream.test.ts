@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { calculateLab, createLabStream, analyzeLab, sampleField, LAB_STREAM_CABIN_PREROLL_SAMPLES } from '../src/team-b/lab';
-import { defaultLabConfig, MIC_POSITIONS, type LabChunk, type LabConfig, type LabResult, type Vec3 } from '../src/shared/lab-contracts';
+import { defaultLabConfig, LAB_LIVE_LIMIT_SECONDS, LAB_LIVE_HISTORY_SAMPLES, MIC_POSITIONS, type LabChunk, type LabConfig, type LabResult, type Vec3 } from '../src/shared/lab-contracts';
 
 const defaultConfig = defaultLabConfig();
 function compareChunk(actual: LabChunk, expected: { sources: LabResult['sources']; signals: LabResult['signals'] }, start: number) {
@@ -86,7 +86,7 @@ test('wrapped snapshots use one absolute clock and yield the same field window a
     assert.ok(Math.abs(frame.residualSpl[m] - analysis.residualSpl[m]!) < 1e-4);
     assert.ok(Math.abs(frame.primarySpl[m] - analysis.primarySpl[m]!) < 1e-4);
   }
-  assert.deepEqual(analysis.waveform, whole.sources[3].slice(63600, 64000));
+  assert.deepEqual(analysis.waveform, whole.sources[3].slice(64000 - 4096, 64000));
 });
 
 test('resident storage stays bounded through two minutes and invalid requests do not advance the stream', () => {
@@ -107,6 +107,64 @@ test('resident storage stays bounded through two minutes and invalid requests do
   assert.throws(() => createLabStream(defaultConfig, 'bad-history', 512));
 });
 
+test('live RNC OFF freezes learned weights and zeros drive; ON resumes from those weights without restarting sources', () => {
+  const stream = createLabStream(defaultConfig, 'rnc-toggle', LAB_LIVE_HISTORY_SAMPLES), bytes = stream.storageBytes;
+  stream.process(8000);
+  const frozen = stream.controllerWeights();
+  assert.ok(frozen.some(output => output.some(w => w.some(value => Math.abs(value) > 1e-6))));
+  const copy = stream.controllerWeights(); copy[0][0].fill(999);
+  assert.deepEqual(stream.controllerWeights(), frozen, 'diagnostics cannot alter running weights');
+  assert.deepEqual(stream.setRncEnabled(false), { enabled: false, effectiveSample: 8000 });
+  const off = stream.process(6000);
+  assert.deepEqual(stream.controllerWeights(), frozen);
+  assert.ok(off.signals.u.every(signal => signal.every(value => value === 0)));
+  assert.ok(off.signals.a.some(signal => signal.slice(0, 512).some(value => value !== 0)), 'existing secondary-path sound must decay causally');
+  for (let m = 0; m < 4; m++) {
+    assert.ok(off.signals.a[m].slice(512).every(value => value === 0));
+    assert.deepEqual(off.signals.e[m].slice(512), off.signals.d[m].slice(512));
+  }
+  assert.throws(() => stream.setRncEnabled('false' as unknown as boolean), /布尔值/);
+  assert.equal(stream.sampleCount, 14000); assert.equal(stream.snapshot().result.config.rncEnabled, false);
+  assert.deepEqual(stream.setRncEnabled(true), { enabled: true, effectiveSample: 14000 });
+  const resumed = stream.process(1);
+  for (let output = 0; output < 4; output++) {
+    let drive = 0;
+    for (let k = 0; k < defaultConfig.references.length; k++) for (let j = 0; j < defaultConfig.taps; j++) {
+      drive += frozen[output][k][j] * (j === 0 ? resumed.signals.x[k][0] : off.signals.x[k][off.sampleCount - j]);
+    }
+    assert.equal(resumed.signals.u[output][0], Math.fround(drive), 'first resumed drive must use frozen W and current x');
+  }
+  assert.notDeepEqual(stream.controllerWeights(), frozen, 'learning resumes on the first enabled sample');
+  const reference = createLabStream(defaultConfig, 'uninterrupted-source').process(14001);
+  for (const key of ['sources'] as const) for (let i = 0; i < 4; i++) {
+    assert.deepEqual(off[key][i], reference[key][i].slice(8000, 14000));
+    assert.equal(resumed[key][i][0], reference[key][i][14000]);
+  }
+  for (let i = 0; i < 4; i++) assert.deepEqual(off.signals.d[i], reference.signals.d[i].slice(8000, 14000));
+  assert.equal(stream.storageBytes, bytes);
+});
+
+test('an initially disabled live controller can start adapting later', () => {
+  const stream = createLabStream({ ...defaultConfig, rncEnabled: false }, 'initial-off');
+  const off = stream.process(6000);
+  assert.ok(off.signals.u.every(signal => signal.every(value => value === 0)));
+  assert.ok(stream.controllerWeights().every(output => output.every(w => w.every(value => value === 0))));
+  stream.setRncEnabled(true);
+  const on = stream.process(4000);
+  assert.ok(on.signals.u.some(signal => signal.some(value => Math.abs(value) > 0.001)));
+  assert.ok(on.signals.e.every(signal => signal.every(Number.isFinite)));
+});
+
+test('wrapped live history retains five seconds at the audible clock despite producer prefetch', () => {
+  const stream = createLabStream(defaultConfig, 'five-second-window', LAB_LIVE_HISTORY_SAMPLES);
+  const whole = stream.process(80000), snapshot = stream.snapshot(LAB_LIVE_HISTORY_SAMPLES);
+  const audibleEnd = 77200, localTime = (audibleEnd - snapshot.startSample) / defaultConfig.sampleRateHz;
+  const analysis = analyzeLab(snapshot.result, localTime, { signal: 'e', channel: 2 });
+  assert.equal(analysis.waveform.length, 10000);
+  assert.deepEqual(analysis.waveform, whole.signals.e[2].slice(audibleEnd - 10000, audibleEnd));
+  assert.equal(analysis.spectrum?.length, 513, 'FFT remains a short current window');
+});
+
 test('numerical divergence is explicit and a partially advanced failed sample cannot be resumed', () => {
   const stream = createLabStream({ ...defaultConfig, stepSize: 0.5, speakerEnabled: [true, false, false, false] }, 'divergent');
   assert.throws(() => stream.process(16000), /数值不稳定/);
@@ -114,4 +172,34 @@ test('numerical divergence is explicit and a partially advanced failed sample ca
   assert.throws(() => stream.process(1000), /数值不稳定/);
   assert.throws(() => stream.snapshot(), /数值不稳定/);
   assert.equal(stream.sampleCount, count);
+});
+
+test('live generation ignores replay duration, preserves bounded adaptation for ten minutes and refuses overflow atomically', () => {
+  const config = { ...defaultConfig, durationSeconds: 90,
+    references: [...defaultConfig.references, ...defaultConfig.references.map(ref => ({ ...ref, id: `${ref.id}-extra` }))] };
+  assert.throws(() => calculateLab(config, 'over-replay-budget'), /预计算时长/);
+  const longReplaySetting = createLabStream(config, 'live-over-replay-budget', 8192);
+  const shortReplaySetting = createLabStream({ ...config, durationSeconds: 10 }, 'live-short-setting', 8192);
+  assert.deepEqual(longReplaySetting.process(4000).signals, shortReplaySetting.process(4000).signals);
+  const stream = createLabStream(defaultConfig, 'ten-minutes', 8192), bytes = stream.storageBytes;
+  const limit = LAB_LIVE_LIMIT_SECONDS * defaultConfig.sampleRateHz;
+  let first: Float32Array | undefined;
+  while (stream.sampleCount < limit - 1) {
+    const chunk = stream.process(Math.min(2000, limit - 1 - stream.sampleCount));
+    first ??= chunk.sources[0].slice();
+    assert.equal(stream.storageBytes, bytes);
+    assert.ok(chunk.signals.e.every(signal => signal.every(Number.isFinite)));
+  }
+  assert.throws(() => stream.process(2), /运行上限/);
+  assert.equal(stream.sampleCount, limit - 1, 'rejected block must not partially update state');
+  assert.equal(stream.process(1).sampleCount, 1);
+  assert.throws(() => stream.process(1), /运行上限/);
+  assert.throws(() => stream.setRncEnabled(false), /已结束/);
+  const end = stream.snapshot(8192);
+  assert.equal(end.endSample, limit); assert.equal(end.result.sampleCount, 8192);
+  assert.notDeepEqual(end.result.sources[0].slice(-2000), first);
+  assert.ok(end.result.signals.u.some(signal => signal.some(value => Math.abs(value) > 0.001)), 'controller continues beyond the replay interval');
+  const analysis = analyzeLab(end.result, end.result.sampleCount / 2000, { signal: 'e', channel: 0 }, { spectrumWeighting: 'A', levelWeighting: 'A' });
+  assert.ok(analysis.spectrum?.every(Number.isFinite)); assert.ok(analysis.valid);
+  assert.equal(stream.storageBytes, bytes);
 });
