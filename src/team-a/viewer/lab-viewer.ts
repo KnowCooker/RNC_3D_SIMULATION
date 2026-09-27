@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createVehicleModel, type VehiclePart } from './vehicle-model';
 import type { ShowroomModel } from './showroom-model';
+import type { AssetBodyMode, AssetSectionAxis } from './asset-inspection';
 import { createSectionDisplay } from './section-display';
 import { createSceneStage, type RoadSurface, type StageMode } from './scene-stage';
 import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
@@ -65,7 +66,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         assemblyPanel.open = host.clientWidth >= 600;
         showroomAssemblyPanel.open = host.clientWidth >= 600;
       }
-      applyStage(); if (clipAxis === 'none') focusStageCamera(); else focusSection(clipAxis);
+      applyStage(); const axis = showroomActive ? showroomClipAxis : clipAxis;
+      if (axis === 'none') focusStageCamera(); else focusSection(axis);
     };
     stageBar.append(button);
   }
@@ -187,6 +189,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   function focusCockpit() { focusCamera([0.05, 1.85, -0.25], [0.1, 1.25, 1.15]); }
   let showroomModel: ShowroomModel | null = null;
   let showroomActive = false, showroomRequest = 0, disposed = false;
+  let showroomClipAxis: AssetSectionAxis = 'none';
+  let showroomSelected: string | null = null;
   const showroomToggle = document.createElement('button');
   showroomToggle.type = 'button'; showroomToggle.className = 'lab-showroom-toggle';
   showroomToggle.textContent = '写实外观'; showroomToggle.setAttribute('aria-label', '打开写实 SUV 外观范例');
@@ -196,6 +200,43 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const showroomTitle = showroomPanel.querySelector('strong')!;
   const showroomDescription = showroomPanel.querySelector('p')!;
   const showroomCredit = showroomPanel.querySelector('a')!;
+  const inspectionPanel = document.createElement('details'); inspectionPanel.className = 'lab-asset-inspection';
+  inspectionPanel.innerHTML = '<summary>同车结构检视</summary><label>外壳<select aria-label="写实车外壳"><option value="solid">实体</option><option value="transparent">透明</option><option value="hidden">隐藏外壳</option></select></label><label>剖面<select aria-label="写实车剖面"><option value="none">关闭</option><option value="x">纵向 X</option><option value="y">水平 Y</option><option value="z">横向 Z</option></select></label><input type="range" aria-label="写实车剖面位置" step="0.01" value="0"><output></output><small>保留侧为坐标 ≥ 剖面位置。资产仅显示真实截线；未核验实体内部，不填充封口。</small><label>几何总成<select aria-label="选择写实车部件"></select></label><button type="button" class="lab-asset-part-action" disabled>先选择部件</button><button type="button" class="lab-asset-reset">恢复同车视图与回装</button>';
+  showroomPanel.append(inspectionPanel);
+  const inspectionBody = inspectionPanel.querySelector<HTMLSelectElement>('[aria-label="写实车外壳"]')!;
+  const inspectionAxis = inspectionPanel.querySelector<HTMLSelectElement>('[aria-label="写实车剖面"]')!;
+  const inspectionPosition = inspectionPanel.querySelector<HTMLInputElement>('input')!;
+  const inspectionOutput = inspectionPanel.querySelector('output')!;
+  const inspectionPart = inspectionPanel.querySelector<HTMLSelectElement>('[aria-label="选择写实车部件"]')!;
+  const inspectionPartAction = inspectionPanel.querySelector<HTMLButtonElement>('.lab-asset-part-action')!;
+  function selectShowroomPart(id: string | null) {
+    showroomSelected = id; inspectionPart.value = id ?? ''; showroomModel?.selectPart(id);
+    inspectionPartAction.disabled = !id;
+    inspectionPartAction.textContent = !id ? '先选择部件' : showroomDetached.has(id) ? '回装所选部件' : '拆出所选部件';
+  }
+  function setShowroomBody(value: AssetBodyMode) {
+    inspectionBody.value = value; showroomModel?.inspection.setBody(value);
+  }
+  function setShowroomSection(axis: AssetSectionAxis, value: number) {
+    const changed = axis !== showroomClipAxis;
+    showroomClipAxis = axis; inspectionAxis.value = axis;
+    const range = axis === 'x' ? [-1.2, 1.2] : axis === 'y' ? [0, 1.8] : [-2.5, 2.5];
+    inspectionPosition.min = String(Math.min(range[0], value)); inspectionPosition.max = String(Math.max(range[1], value));
+    inspectionPosition.value = String(value); inspectionPosition.disabled = axis === 'none';
+    inspectionOutput.textContent = axis === 'none' ? '剖面关闭' : `${axis.toUpperCase()} = ${value.toFixed(2)} m`;
+    showroomModel?.inspection.setSection(axis, value);
+    if (changed) { if (axis === 'none') focusStageCamera(); else focusSection(axis); }
+  }
+  inspectionBody.onchange = () => setShowroomBody(inspectionBody.value as AssetBodyMode);
+  inspectionAxis.onchange = () => setShowroomSection(inspectionAxis.value as AssetSectionAxis, inspectionAxis.value === 'y' ? 0.85 : 0);
+  inspectionPosition.oninput = () => setShowroomSection(showroomClipAxis, Number(inspectionPosition.value));
+  inspectionPart.onchange = () => selectShowroomPart(inspectionPart.value || null);
+  inspectionPartAction.onclick = () => {
+    if (!showroomSelected) return;
+    if (showroomDetached.has(showroomSelected)) showroomDetached.delete(showroomSelected); else showroomDetached.add(showroomSelected);
+    showroomAuto = null; refreshShowroomAssembly();
+  };
+  inspectionPanel.querySelector<HTMLButtonElement>('.lab-asset-reset')!.onclick = () => reset();
   const showroomAssemblyPanel = document.createElement('details');
   showroomAssemblyPanel.className = 'lab-assembly-panel lab-showroom-assembly'; showroomAssemblyPanel.hidden = true;
   const showroomAssemblySummary = document.createElement('summary'); showroomAssemblySummary.textContent = '写实车外观分件';
@@ -218,6 +259,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     showroomAutoDetach.textContent = showroomAuto === 'detach' ? '暂停自动拆解' : '自动拆解';
     showroomAutoAttach.textContent = showroomAuto === 'attach' ? '暂停自动回装' : '自动回装';
     showroomAssemblyList.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(showroomDetached.has((button as HTMLButtonElement).dataset.part ?? ''))));
+    selectShowroomPart(showroomSelected);
   }
   function stepShowroomAssembly(direction: 'detach' | 'attach') {
     const parts = showroomModel?.parts ?? [];
@@ -255,6 +297,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       return;
     }
     showroomActive = false;
+    if (showroomModel) showroomModel.inspection.overlay.visible = false;
     showroomAuto = null;
     showroomAssemblyPanel.hidden = true;
     showroomPanel.hidden = true; showroomToggle.textContent = '写实外观';
@@ -283,31 +326,37 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       if (!showroomModel) {
         const loaded = await (await import('./showroom-model')).loadShowroomModel(vehicle);
         if (disposed || request !== showroomRequest) { loaded.dispose(); return; }
-        showroomModel = loaded; showroomModel.group.visible = false; scene.add(showroomModel.group);
+        showroomModel = loaded; showroomModel.group.visible = false; scene.add(showroomModel.group, showroomModel.inspection.overlay);
+        showroomModel.inspection.overlay.visible = false;
         showroomModel.setPaint('#d8dde0');
         showroomColors.querySelectorAll('button').forEach((button, index) => button.setAttribute('aria-pressed', String(index === 1)));
       }
       if (request !== showroomRequest || disposed) return;
-      showroomDetached.clear(); showroomProgress.clear(); showroomAuto = null;
+      showroomDetached.clear(); showroomProgress.clear(); showroomAuto = null; showroomSelected = null;
+      inspectionPanel.hidden = vehicle !== 'ice' || showroomModel.parts.length === 0;
+      inspectionPart.replaceChildren(new Option('点选车模或选择部件', ''));
       showroomAssemblyList.replaceChildren();
       for (const part of showroomModel.parts) {
         showroomModel.setPartProgress(part.id, 0);
         const button = document.createElement('button'); button.type = 'button'; button.dataset.part = part.id;
         button.textContent = part.name; button.setAttribute('aria-label', `拆装 ${part.name}`);
-        button.onclick = () => { if (showroomDetached.has(part.id)) showroomDetached.delete(part.id); else showroomDetached.add(part.id); showroomAuto = null; refreshShowroomAssembly(); };
+        button.onclick = () => { showroomSelected = part.id; if (showroomDetached.has(part.id)) showroomDetached.delete(part.id); else showroomDetached.add(part.id); showroomAuto = null; refreshShowroomAssembly(); };
         showroomAssemblyList.append(button);
+        inspectionPart.add(new Option(part.name, part.id));
       }
       refreshShowroomAssembly();
       showroomTitle.textContent = `${showroomModel.title} · 同车外观验证`;
       showroomDescription.textContent = vehicle === 'hev' || vehicle === 'erev'
         ? '当前尚无经过授权和质量核验的同动力车型外观；此车仅作 SUV 外观参考。动力结构、声学点位和剖面请返回教学模型查看。'
         : vehicle === 'ice'
-          ? '同一写实资产在道路与车间复用；车间只拆原资产可辨的外观总成。座舱细件、动力结构和声学坐标尚未完成配准。'
+          ? '道路、车间与结构检视复用同一资产；可点选、拆装、透明和剖切已辨认的几何总成。完整动力结构和声学坐标尚未完成配准。'
           : '同一写实外观可在道路与车间查看；此资产尚无核实的独立拆件，不代表教学结构或声学安装坐标。';
       showroomCredit.href = showroomModel.source;
       showroomCredit.textContent = `模型：${showroomModel.credit} · CC BY 4.0`;
       showroomActive = true;
       showroomModel.group.visible = true;
+      showroomModel.inspection.overlay.visible = true;
+      setShowroomBody('solid'); setShowroomSection('none', 0);
       if (model) model.group.visible = false;
       if (sections) sections.group.visible = false;
       applyStage();
@@ -465,6 +514,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     if (model) { scene.remove(model.group); model.dispose(); }
     model = createVehicleModel(next.vehicle); scene.add(model.group);
     sections = createSectionDisplay(model.group); scene.add(sections.group);
+    model.group.visible = sections.group.visible = !showroomActive;
     partByName.clear(); model.parts.forEach(part => partByName.set(part.object.name, part));
     detached.clear(); partProgress.clear(); autoAssembly = null;
     const priority: Record<string, number> = { shell: 0, wheel: 1, cabin: 2, powertrain: 3, energy: 4, suspension: 5, chassis: 6 };
@@ -656,8 +706,17 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     return raycaster.intersectObjects(markers.children).find(hit => visibleInHierarchy(hit.object) && unclipped(hit.point));
   }
   renderer.domElement.onpointerup = event => {
-    if (showroomActive) return;
     if (event.button !== 0 || Math.hypot(event.clientX - down[0], event.clientY - down[1]) > 5) return;
+    if (showroomActive) {
+      if (config?.vehicle !== 'ice' || !showroomModel?.parts.length) return;
+      const rect = renderer.domElement.getBoundingClientRect();
+      pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1);
+      raycaster.setFromCamera(pointer, camera);
+      const hit = showroomModel.inspection.pick(raycaster);
+      selectShowroomPart(hit ? showroomModel.partForObject(hit.object) : null);
+      if (showroomSelected) inspectionPanel.open = true;
+      return;
+    }
     const marker = hitAt(event);
     if (marker) { callbacks.select(marker.object.userData.selection); return; }
     if (field.visible && frame && !editMode) {
@@ -709,7 +768,11 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const resize = new ResizeObserver(resizeViewer); resize.observe(host);
   window.addEventListener('resize', resizeViewer);
   function reset() {
-    if (showroomActive) { focusStageCamera(); showroomDetached.clear(); showroomAuto = null; refreshShowroomAssembly(); return; }
+    if (showroomActive) {
+      showroomDetached.clear(); showroomAuto = null; showroomSelected = null;
+      setShowroomBody('solid'); setShowroomSection('none', 0);
+      focusStageCamera(); refreshShowroomAssembly(); return;
+    }
     focusStageCamera(); exploded = false; detached.clear(); autoAssembly = null; refreshAssembly();
   }
   function focusSection(axis: string) {
@@ -727,15 +790,32 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   return {
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
     getMountIssues() { return mountIssues.map(issue => ({ ...issue })); },
-    setExploded(value: boolean) { leaveShowroom(); exploded = value; },
+    setExploded(value: boolean) {
+      if (showroomActive && config?.vehicle === 'ice' && showroomModel?.parts.length) {
+        exploded = value;
+        showroomDetached.clear(); if (value) showroomModel.parts.forEach(part => showroomDetached.add(part.id));
+        showroomAuto = null; refreshShowroomAssembly(); return;
+      }
+      leaveShowroom(); exploded = value;
+    },
     setBody(value: string) {
+      if (showroomActive && config?.vehicle === 'ice' && showroomModel?.parts.length && ['solid', 'transparent', 'hidden'].includes(value)) {
+        body = value; applyBody();
+        setShowroomBody(value as AssetBodyMode); return;
+      }
       leaveShowroom();
       const leavingCabin = body === 'hidden' && value !== 'hidden' && camera.position.distanceTo(controls.target) < 3;
       body = value; controls.minDistance = value === 'hidden' ? 0.6 : 3; applyBody();
       if (leavingCabin) focusStageCamera();
       else if (value === 'hidden' && guideSelect.value === 'cockpit') focusCockpit();
     },
-    setSection(axis: string, value: number) { leaveShowroom(); const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis); },
+    setSection(axis: string, value: number) {
+      if (showroomActive && config?.vehicle === 'ice' && showroomModel?.parts.length) {
+        clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping();
+        setShowroomSection(axis as AssetSectionAxis, value); return;
+      }
+      leaveShowroom(); const changed = clipAxis !== axis; clipAxis = axis; clipValue = value; syncFieldSampling(); applyClipping(); paintField(); if (changed) focusSection(axis);
+    },
     setEditMode(value: boolean) { if (value) leaveShowroom(); editMode = value; host.classList.toggle('editing', value); guideSelect.disabled = value; if (value) clearGuide(); },
     setWaves(value: boolean) { if (value) leaveShowroom(); waveVisible = value; applyClipping(); },
     setPaths(value: string) { if (value !== 'none') leaveShowroom(); pathMode = value; pathFocusKey = ''; applyClipping(); },
@@ -811,7 +891,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         positions.setXYZ(0, row.from.x, row.from.y, row.from.z); positions.setXYZ(1, row.to.x, row.to.y, row.to.z); positions.needsUpdate = true;
         row.dot.position.copy(row.from).lerp(row.to, (time * 0.7 + i * 0.08) % 1);
       });
-      sections?.update(clipAxis === 'none' ? null : clipPlane);
+      if (showroomActive) showroomModel?.inspection.update();
+      else sections?.update(clipAxis === 'none' ? null : clipPlane);
       controls.update(); renderer.render(scene, camera);
       const width = host.clientWidth, height = host.clientHeight;
       const visible = markerRows.map(row => {

@@ -240,6 +240,19 @@
 }
 .lab-showroom-colors button[aria-pressed=true] { border-color: white; box-shadow: 0 0 0 2px #142b37; }
 .lab-showroom-panel a { color: #b9e1f5; }
+.lab-showroom-panel { max-height: calc(100% - 72px); overflow: auto; }
+.lab-asset-inspection { margin-top: 10px; border-top: 1px solid #698e9c; padding-top: 8px; }
+.lab-asset-inspection[hidden] { display: none; }
+.lab-asset-inspection summary { cursor: pointer; color: #ffe1a1; }
+.lab-asset-inspection label { display: grid; gap: 3px; margin-top: 8px; }
+.lab-asset-inspection select,
+.lab-asset-inspection button { width: 100%; min-width: 0; box-sizing: border-box; padding: 6px; border: 1px solid #6d96a8; border-radius: 5px; color: #edf7fc; background: #1b3d51; font: inherit; }
+.lab-asset-inspection input { width: 100%; margin: 8px 0 0; }
+.lab-asset-inspection output,
+.lab-asset-inspection small { display: block; margin: 4px 0; }
+.lab-asset-inspection button { margin-top: 7px; cursor: pointer; }
+.lab-asset-inspection button:disabled { opacity: .5; cursor: default; }
+.lab-asset-inspection :focus-visible { outline: 2px solid white; outline-offset: 2px; }
 @media (max-width: 600px) {
   .lab-stage-switch { top: 82px; left: 8px; transform: none; }
   .lab-stage-switch button { padding: 4px 7px; font-size: 10px; }
