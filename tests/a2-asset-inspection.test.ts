@@ -67,6 +67,35 @@ test('asset picking skips hidden ancestors and discarded section surfaces, and s
   assert.throws(() => f.inspection.setSection('x', NaN)); f.dispose();
 });
 
+test('selection excludes hidden descendants and follows ancestor transforms without a section', () => {
+  const f = fixture(), hidden = new THREE.Mesh(f.geometry, f.material);
+  hidden.position.x = 100; hidden.visible = false; f.part.add(hidden);
+  f.inspection.select(f.part);
+  const bounds = f.inspection.overlay.getObjectByName('asset-selected-part') as THREE.Box3Helper;
+  assert.deepEqual(bounds.box.min.toArray(), [-1, -1, -1]);
+  assert.deepEqual(bounds.box.max.toArray(), [1, 1, 1]);
+  f.root.position.set(2, 3, 4); f.inspection.update();
+  assert.deepEqual(bounds.box.min.toArray(), [1, 2, 3]);
+  assert.deepEqual(bounds.box.max.toArray(), [3, 4, 5]);
+  f.dispose();
+});
+
+test('selection is restricted to retained section bounds and disappears when fully clipped', () => {
+  const f = fixture(); f.inspection.select(f.part);
+  const bounds = f.inspection.overlay.getObjectByName('asset-selected-part') as THREE.Box3Helper;
+  for (const axis of ['x', 'y', 'z'] as const) {
+    f.inspection.setSection(axis, 0.25);
+    assert.equal(bounds.visible, true); assert.equal(bounds.box.min[axis], 0.25);
+    assert.equal(bounds.box.max[axis], 1);
+    f.inspection.setSection(axis, 1.1);
+    assert.equal(bounds.visible, false); assert.equal(bounds.box.isEmpty(), true);
+  }
+  f.inspection.setSection('none', 0);
+  assert.equal(bounds.visible, true);
+  assert.deepEqual(bounds.box.min.toArray(), [-1, -1, -1]);
+  f.dispose();
+});
+
 /** Decode the bundled GLB's real geometry/transforms. Only image texture references
  * are omitted because Node has no image decoder; this is not a rendered texture QA. */
 async function realIceGeometry() {

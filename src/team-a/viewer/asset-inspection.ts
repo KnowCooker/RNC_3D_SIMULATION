@@ -34,6 +34,7 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
   const selectedBounds = new THREE.Box3Helper(new THREE.Box3(), new THREE.Color('#ffd27b'));
   selectedBounds.name = 'asset-selected-part'; selectedBounds.visible = false; overlay.add(selectedBounds);
   const plane = new THREE.Plane();
+  const meshBounds = new THREE.Box3();
   let sectionAxis: AssetSectionAxis = 'none', selected: THREE.Object3D | null = null, disposed = false;
 
   function setBody(mode: AssetBodyMode) {
@@ -73,15 +74,21 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
     });
   }
   function update() {
+    root.updateWorldMatrix(true, true);
     sections.update(sectionAxis === 'none' ? null : plane);
-    let selectedVisible = false;
+    selectedBounds.box.makeEmpty();
     selected?.traverse(object => {
       if (!(object instanceof THREE.Mesh) || !visible(object)) return;
       const list = Array.isArray(object.material) ? object.material : [object.material];
-      if (list.some(material => material.visible && material.opacity > 0)) selectedVisible = true;
+      if (!list.some(material => material.visible && material.opacity > 0)) return;
+      if (!object.geometry.boundingBox) object.geometry.computeBoundingBox();
+      meshBounds.copy(object.geometry.boundingBox!).applyMatrix4(object.matrixWorld);
+      // Selection is a conservative world-space box, limited to visible meshes
+      // and the retained half-space; it is not a fabricated section surface.
+      if (sectionAxis !== 'none') meshBounds.min[sectionAxis] = Math.max(meshBounds.min[sectionAxis], -plane.constant);
+      if (!meshBounds.isEmpty()) selectedBounds.box.union(meshBounds);
     });
-    selectedBounds.visible = selectedVisible;
-    if (selectedBounds.visible && selected) selectedBounds.box.setFromObject(selected);
+    selectedBounds.visible = !selectedBounds.box.isEmpty();
   }
   return {
     overlay, setBody, setSection, pick, update,
