@@ -1,0 +1,78 @@
+{
+  "config": {
+    "schemaVersion": "lab-v3",
+    "vehicle": "bev",
+    "sampleRateHz": 2000,
+    "durationSeconds": 40,
+    "adaptationStartsSeconds": 0,
+    "seed": 11,
+    "taps": 64,
+    "stepSize": 0.08,
+    "rncEnabled": false,
+    "speedKph": 40,
+    "roadRoughness": 1,
+    "treadRoughness": 1,
+    "pressureKpa": 240,
+    "temperatureC": 20,
+    "references": [
+      {
+        "id": "ref-1",
+        "name": "REF FL",
+        "position": [
+          0.85,
+          0.67,
+          1.45
+        ]
+      },
+      {
+        "id": "ref-2",
+        "name": "REF FR",
+        "position": [
+          -0.85,
+          0.67,
+          1.45
+        ]
+      },
+      {
+        "id": "ref-3",
+        "name": "REF RL",
+        "position": [
+          0.85,
+          0.67,
+          -1.45
+        ]
+      },
+      {
+        "id": "ref-4",
+        "name": "REF RR",
+        "position": [
+          -0.85,
+          0.67,
+          -1.45
+        ]
+      }
+    ],
+    "speakerEnabled": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "sourceMode": "recorded-noise"
+  },
+  "channel": "FR / front passenger",
+  "intervalSeconds": [
+    1,
+    39
+  ],
+  "fftSize": 1024,
+  "window": "symmetric Hann",
+  "binHz": 1.953125,
+  "frames": 145,
+  "averaging": "linear A-weighted PSD; same Welch estimator as UI",
+  "peakHz": 226.5625,
+  "peakDbAperHz": 48.00000001787109,
+  "targetDbAperHz": 48,
+  "correctionDb": -1.7871087720777723e-8,
+  "requiredAmplitudeRatio": 0.999999997942515
+}

@@ -72,7 +72,7 @@ function config(value: unknown): LabConfig {
     adaptationStartsSeconds: adaptation,
     seed: integer(c.seed, '随机种子', -2147483648, 2147483647),
     taps: integer(c.taps, '系数数', 16, 128),
-    stepSize: number(c.stepSize, '步长', 0, 0.5),
+    stepSize: number(c.stepSize, '步长', 0, Number.MAX_VALUE),
     rncEnabled: boolean(c.rncEnabled, 'RNC状态'),
     speedKph: number(c.speedKph, '车速', 0, 300),
     roadRoughness: number(c.roadRoughness, '路面粗糙度', 0, 5),

@@ -4,9 +4,10 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { calculateLab, createLabStream, sampleField, analyzeLab, decodeRecordedNoise } from '../src/team-b/lab';
 import { createRecordedNoiseReader, RECORDED_NOISE_CHANNELS, RECORDED_NOISE_PERIOD } from '../src/team-b/lab/recorded-noise';
-import { createSources } from '../src/team-b/lab/sources';
+import { createSources, RECORDED_SOURCE_AMPLITUDE_GAIN } from '../src/team-b/lab/sources';
+import { welchPsd } from '../src/team-b/analysis';
 import { primaryPath } from '../src/team-b/lab/paths';
-import { weightedPower } from '../src/team-b/lab/weighting';
+import { weightedPower, weightedSpectrum } from '../src/team-b/lab/weighting';
 import { defaultLabConfig, LAB_LIVE_HISTORY_SAMPLES, MIC_POSITIONS, type LabConfig } from '../src/shared/lab-contracts';
 
 const raw = readFileSync(new URL('../src/team-b/lab/data/recorded-primary.f32', import.meta.url));
@@ -43,7 +44,7 @@ test('recorded source samples retain shared timing and gain, crossfade synchrono
   const changed = decodeRecordedNoise(bytes()), owned = createRecordedNoiseReader(changed), before=owned.sample(0,0);
   changed.channels[0].fill(999); assert.equal(owned.sample(0,0),before);
   const faster = createSources({ ...config, durationSeconds: 1, speedKph: 80 },recording);
-  assert.equal(faster[0][1000],Math.fround(recording.channels[0][1400]*2**1.25));
+  assert.equal(faster[0][1000],Math.fround(recording.channels[0][1400]*(2**1.25*RECORDED_SOURCE_AMPLITUDE_GAIN)));
 });
 
 test('recorded batch and irregular live blocks agree exactly through two source loops; storage and adaptation remain continuous', () => {
@@ -69,7 +70,7 @@ test('recorded batch and irregular live blocks agree exactly through two source 
   assert.equal(stream.storageBytes,storage);
 });
 
-test('recorded primary paths stay causal and fully coupled, preserve the 60dBA teaching anchor, and match microphone fields', () => {
+test('recorded primary paths stay causal and fully coupled, match the passenger 48dBA/Hz peak anchor, and match microphone fields', () => {
   const result=calculateLab({ ...config,durationSeconds:40,rncEnabled:false },'recorded-field',recording);
   for(const point of MIC_POSITIONS) for(let q=0;q<4;q++) {
     const path=primaryPath(config,q,point);
@@ -77,7 +78,14 @@ test('recorded primary paths stay causal and fully coupled, preserve the 60dBA t
     assert.ok(path.delays.every(delay=>Number.isInteger(delay)&&delay>0&&delay<256));
   }
   const power=result.signals.d.map(values=>weightedPower(values,2000,78000,'A')).reduce((sum,p)=>sum+p,0)/4;
-  assert.ok(Math.abs(10*Math.log10(power/(20e-6)**2)-60)<1e-5);
+  assert.ok(Math.abs(10*Math.log10(power/(20e-6)**2)-(60+20*Math.log10(RECORDED_SOURCE_AMPLITUDE_GAIN)))<1e-5);
+  const fr = result.signals.d[1].slice(2000,78000), mean = new Float64Array(513);
+  let frames = 0;
+  for (let end=2048; end<=fr.length; end+=512) {
+    weightedSpectrum(welchPsd(fr,end),2000,'A')!.forEach((p,i)=>mean[i]+=p); frames++;
+  }
+  const band = Array.from(mean.slice(103,154),p=>10*Math.log10(p/frames/(20e-6)**2));
+  assert.ok(Math.abs(Math.max(...band)-48)<0.001);
   for(const weighting of ['A','Z'] as const) {
     const field=sampleField(result,39,[...MIC_POSITIONS],weighting), analysis=analyzeLab(result,39,{signal:'e',channel:0},{levelWeighting:weighting});
     for(let m=0;m<4;m++) assert.ok(Math.abs(field.primarySpl[m]-analysis.primarySpl[m]!)<1e-4);

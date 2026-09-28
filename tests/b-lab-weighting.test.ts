@@ -67,6 +67,21 @@ test('duration budget rejects invalid allocations; short runs have finite metric
   assert.notDeepEqual(batch.sources[0].slice(0,4000),batch.sources[0].slice(80000,84000));
 });
 
+test('pressure density levels use 20uPa while other signals keep unit reference; manual waveform bounds never reveal future samples', () => {
+  const result = calculateLab({...defaultLabConfig(),durationSeconds:10},'display-units');
+  for (const signal of ['d','e','a','x','u','q'] as const) {
+    const a = analyzeLab(result,8,{signal,channel:0},{spectrumWeighting:'A',waveformStartSeconds:2});
+    const reference = ['d','e','a'].includes(signal) ? (20e-6)**2 : 1;
+    assert.equal(a.waveform.length,12000);
+    const input = signal === 'q' ? result.sources[0] : result.signals[signal][0];
+    assert.deepEqual(a.waveform,input.slice(4000,16000));
+    for (const bin of [1,100,128,250,512]) assert.ok(Math.abs(a.spectrumDb![bin]-10*Math.log10(Math.max(a.spectrum![bin],1e-24)/reference))<1e-4);
+    if (!['d','e','a'].includes(signal)) assert.equal(a.spectrumWeighting,'Z');
+  }
+  assert.equal(analyzeLab(result,3,{signal:'d',channel:0},{waveformStartSeconds:8}).waveform.length,0);
+  assert.equal(analyzeLab(result,8,{signal:'d',channel:0},{levelsOnly:true}).spectrumDb,null);
+});
+
 test('NFxLMS joint normalization scales inversely with filtered-reference power and regularizes silence', () => {
   const powers=new Float64Array([1,2,3,4]);
   assert.equal(nfxlmsGain(.08,powers),.08/(10+1e-6));

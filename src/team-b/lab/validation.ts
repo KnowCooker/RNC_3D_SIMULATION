@@ -12,7 +12,7 @@ export function validateLabConfig(config: LabConfig, mode: 'batch' | 'live' = 'b
   if (!Number.isInteger(config.seed)) throw new Error('种子必须为整数');
   range(config.taps, 16, 128, '阶数');
   if (!Number.isInteger(config.taps)) throw new Error('阶数必须为整数');
-  range(config.stepSize, 0, 0.5, '归一化步长');
+  if (!Number.isFinite(config.stepSize) || config.stepSize < 0) throw new Error('归一化步长必须为不小于0的有限数值');
   range(config.speedKph, 0, 130, '车速');
   range(config.roadRoughness, 0.1, 3, '路面粗糙度');
   range(config.treadRoughness, 0.1, 3, '胎面粗糙度');

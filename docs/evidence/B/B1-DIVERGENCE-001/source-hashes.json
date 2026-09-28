@@ -1,0 +1,18 @@
+{
+  "src/shared/lab-contracts.ts": "2dfab26088eb0911bb4939050472dcae92f3afb3913c568d0cbe42eb3baf35f8",
+  "src/team-a/lab/index.ts": "2b508e90afd0d929dbff6d4eb38e886beefaf6afc611aef4fe212fabd451b469",
+  "src/team-a/lab/game-ui.css": "8496bcd86855cb4c7d5af0428b668e03a973178b15327cfa4d06cc987ea38aa9",
+  "src/team-a/lab/plots.ts": "12c20c80f616d70b4886e7844db3fce1226fa0f274132d21be6e19d9b3003a0e",
+  "src/team-a/lab/case-compare.ts": "625fa3e60db49e3a63e33a3c5b30f9a7633d084a6ad2e227892c01c2aca32e5f",
+  "src/team-a/lab/case-evidence.ts": "07a3bc7230dd7268f87582bf2ae4bdfb42fd898e5f5a975c78e9667863be2dc9",
+  "src/team-a/player/live-player.ts": "23a694c9923d2587ac5a823944a04345089ed09cdf720a21c260b655a5fcfe4e",
+  "src/team-b/lab/validation.ts": "bcfa2f069c1aa70dcc90910a3be02fb836e1201cd2316fcfe24f38f2973f2555",
+  "src/team-b/lab/divergence.ts": "4ec36d0f8f5bfad806c7ac9c7bd910b61e369676a60fe1e6da59008bff4a8330",
+  "src/team-b/lab/stream.ts": "67d1e16ab6ae467b3cc71aa01e4e71abab84fd4aaf7f8b1b97168a679a325a44",
+  "src/team-b/lab/index.ts": "a5f9fd88041a87b27ef78378a678bcda6391e7c6ae99a22d7b76ca7ed56844b4",
+  "src/team-b/lab/weighting.ts": "f44f70169303ddaf5287f07d2fcc860f1de1abf82ec2b1a9bd26a446e17ebeba",
+  "tests/b-divergence.test.ts": "5941c7582000d364bbfa5901cebbd0e9a20d1aa4425cdc2018a762da030ff44b",
+  "tests/b-live-stream.test.ts": "a18f9ea027478b09c9ca16adcbc36ae21707aac741319b992b8fb2a7b07eced9",
+  "tests/b-lab-physics.test.ts": "8dcf4bf94c296ed0662dac151e66358656b530809e602f706e2f94ac12369819",
+  "tests/a1-live-player.test.ts": "a40dac109f7ebee02d6c3fd09cae4e4153762e656fab5f018585a12000e367d4"
+}

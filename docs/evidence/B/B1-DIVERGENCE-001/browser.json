@@ -1,0 +1,72 @@
+{
+  "divergedLiveCheck": {
+    "disabled": true,
+    "metrics": "FL准备中— → — dBAFR准备中— → — dBARL准备中— → — dBARR准备中— → — dBA",
+    "play": "已发散 · 已暂停",
+    "rncDisabled": true,
+    "status": "已经发散：样本 993 出现数值溢出或非有限值，已自动暂停，无法继续此实验；请调整步长后重新开始。",
+    "step": "3",
+    "time": "累计 00:00.49"
+  },
+  "divergedSpectrumCheck": {
+    "disabled": true,
+    "metrics": "FL-732.4 dB71.3 → 803.8 dBAFR-734.8 dB68.9 → 803.8 dBARL-730.1 dB72.0 → 802.2 dBARR-729.7 dB72.5 → 802.2 dBA",
+    "status": "已经发散：样本 1278 出现数值溢出或非有限值，已自动暂停，无法继续此实验；请调整步长后重新开始。",
+    "step": "2",
+    "time": "累计 00:00.63"
+  },
+  "divergedBatchCheck": {
+    "disabled": true,
+    "metrics": "FL-732.4 dB71.3 → 803.8 dBAFR-734.8 dB68.9 → 803.8 dBARL-730.1 dB72.0 → 802.2 dBARR-729.7 dB72.5 → 802.2 dBA",
+    "seekDisabled": true,
+    "status": "已经发散：样本 1278 出现数值溢出或非有限值，已自动暂停，无法继续此实验；请调整步长后重新开始。",
+    "time": "00:00.63 / 00:10.00"
+  },
+  "zeroStepCheck": {
+    "metrics": "FL0.0 dB69.1 → 69.1 dBAFR0.0 dB67.1 → 67.1 dBARL0.0 dB70.7 → 70.7 dBARR0.0 dB70.7 → 70.7 dBA",
+    "status": "实时运行 · 39.6 s · 缓冲 1.35 s · 共同安全增益 0.093 · 补缓冲 0 次",
+    "step": "0"
+  },
+  "finalDivergenceCheck": {
+    "audition": "发散已暂停 · 试听已停止",
+    "cards": [
+      {
+        "height": 82,
+        "top": 365.3999938964844,
+        "width": 114.8000030517578
+      },
+      {
+        "height": 82,
+        "top": 365.3999938964844,
+        "width": 114.8000030517578
+      },
+      {
+        "height": 82,
+        "top": 365.3999938964844,
+        "width": 114.8000030517578
+      },
+      {
+        "height": 82,
+        "top": 365.3999938964844,
+        "width": 114.8000030517578
+      }
+    ],
+    "metrics": "FL-732.4 dB71.3 → 803.8 dBAFR-734.8 dB68.9 → 803.8 dBARL-730.1 dB72.0 → 802.2 dBARR-729.7 dB72.5 → 802.2 dBA",
+    "order": [
+      "lab-view-heading",
+      "lab-viewer",
+      "lab-view-tools",
+      "lab-view-tools",
+      "lab-field-note",
+      "lab-player",
+      "lab-metrics",
+      "lab-plots",
+      "lab-help"
+    ],
+    "playDisabled": true,
+    "rncDisabled": true,
+    "status": "已经发散：样本 1278 出现数值溢出或非有限值，已自动暂停，无法继续此实验；请调整步长后重新开始。",
+    "time": "累计 00:00.63"
+  },
+  "errors": []
+}
