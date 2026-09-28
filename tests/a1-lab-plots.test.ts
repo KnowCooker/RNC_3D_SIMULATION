@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { drawSignalComparison, plot, splFrame, visibleSplFrames, ORIGINAL_COLOR, RESULT_COLOR } from '../src/team-a/lab/plots';
 import type { LabAnalysis } from '../src/shared/lab-contracts';
+import { plotDefaults, validAxisRange } from '../src/team-a/lab/plot-settings';
 
 function recorder() {
   type Point = { move: boolean; x: number; y: number };
@@ -9,16 +10,25 @@ function recorder() {
   const lines: {color:string; points:Point[]}[] = [], labels: string[] = [], dots: number[][] = [];
   const ctx = {
     strokeStyle:'', fillStyle:'', font:'', textAlign:'', lineWidth:1,
-    scale() {}, beginPath() { path=[]; },
+    scale() {}, save() {}, restore() {}, rect() {}, clip() {}, beginPath() { path=[]; },
     moveTo(x:number,y:number) { path.push({move:true,x,y}); }, lineTo(x:number,y:number) { path.push({move:false,x,y}); },
     stroke() { lines.push({color:this.strokeStyle,points:[...path]}); },
     fillText(text:string) { labels.push(text); }, fillRect(...args:number[]) { dots.push(args); },
   };
   return { canvas:{clientWidth:480,clientHeight:220,getContext:()=>ctx} as unknown as HTMLCanvasElement, lines, labels, dots };
 }
+test('log frequency coordinates give equal spacing to equal ratios and omit DC', () => {
+  const r=recorder();
+  plot(r.canvas,[{x:[0,10,100,1000],values:[0,1,2,3],color:RESULT_COLOR}],
+    {x:[10,1000],y:[0,4],xScale:'log',xLabel:'Hz',yLabel:'dB'});
+  const points=r.lines.find(l=>l.color===RESULT_COLOR)!.points;
+  assert.equal(points.length,3);
+  assert.ok(Math.abs((points[1].x-points[0].x)-(points[2].x-points[1].x))<1e-9);
+  assert.ok(r.labels.includes('100'));
+});
 const frame = (patch: Partial<LabAnalysis> = {}): LabAnalysis => ({time:1, valid:true,
   primarySpl:[62,63,64,65], residualSpl:[52,51,50,49], reductionDb:[10,12,14,16],
-  waveform:Float32Array.of(1,-1,0.5,-0.5), spectrum:Float32Array.of(1,0.1,0.01), unit:'Pa', ...patch });
+  waveform:Float32Array.of(1,-1,0.5,-0.5), spectrum:Float32Array.of(1,0.1,0.01), spectrumDb:Float32Array.of(94,84,74), unit:'Pa', ...patch });
 
 test('seat curves preserve full-run SPL history and missing values while excluding future frames', () => {
   const values = [splFrame(0.5,frame()),splFrame(1,frame({residualSpl:[null,50,49,48]})),splFrame(2,frame())];
@@ -70,4 +80,21 @@ test('first valid point is visible and null SPL gaps never create fake zero leve
 test('acceleration and speaker drive never masquerade as pressure on a common axis', () => {
   const r=recorder(); drawSignalComparison(r.canvas,frame({unit:'m/s²'}),frame(),2000,0,false,false);
   assert.ok(r.labels.includes('原声 / Pa')); assert.ok(r.labels.includes('m/s²'));
+});
+
+test('manual plot bounds and hidden primary traces apply independently without changing samples', () => {
+  const a=frame({unit:'m/s²',spectrumDb:Float32Array.of(14,4,-6)}), d=frame();
+  const settings={...plotDefaults('spectrum'),x:[0,10] as [number,number],y:[-10,20] as [number,number],showOriginal:false};
+  const r=recorder(); drawSignalComparison(r.canvas,a,d,2000,0,true,false,undefined,settings);
+  assert.equal(r.lines.filter(l=>l.color===ORIGINAL_COLOR).length,0);
+  assert.ok(r.labels.includes('-10') && r.labels.includes('20'));
+  assert.ok(!r.labels.some(label=>label.startsWith('原声')));
+  const points=r.lines.find(l=>l.color===RESULT_COLOR)!.points;
+  assert.ok(Math.abs(points[0].y-(26+(20-14)/30*146))<1e-9,'B-supplied density level is rendered directly');
+  assert.deepEqual(a.spectrumDb,Float32Array.of(14,4,-6));
+  assert.equal(plotDefaults('wave').showOriginal,true);
+  assert.equal(plotDefaults('convergence').weighting,'A');
+  for (const [min,max] of [[2,2],[3,2],[NaN,3],[0,Infinity]]) assert.equal(validAxisRange(min,max),false);
+  assert.equal(validAxisRange(-1,100,[0,1000]),false);
+  assert.equal(validAxisRange(200,300,[0,1000]),true);
 });

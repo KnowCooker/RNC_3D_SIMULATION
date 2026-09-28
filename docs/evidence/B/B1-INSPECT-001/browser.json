@@ -1,0 +1,85 @@
+{
+  "inspectFirst": {
+    "channels": [
+      "q · 轮端源激励前左 FL前右 FR后左 RL后右 RR"
+    ],
+    "clock": "实验时间 14.06 s",
+    "details": "q · 实录噪声源 · 前左 FL · 相对幅值四路实录耳旁初级噪声，经共同幅度归一化后放置于四个轮子处作为等效声源；原始单位V，未标定为Pa。它们不是实录振动，所放位置是教学映射。信号同步平滑循环，控制权重持续保留。",
+    "main": "时域 · E FL",
+    "status": "实时运行 · 14.1 s · 缓冲 1.35 s · 共同安全增益 0.093 · 补缓冲 0 次",
+    "time": "累计 00:14.05"
+  },
+  "inspectLater": {
+    "clock": "实验时间 66.96 s",
+    "main": "时域 · E FL",
+    "status": "实时运行 · 67.0 s · 缓冲 1.37 s · 共同安全增益 0.093 · 补缓冲 0 次"
+  },
+  "logMenuCheck": {
+    "error": true,
+    "help": "原始采样率4 kHz，运行素材抗混叠降至2 kHz，频谱上限1 kHz。对数轴不含0 Hz。声压 PSD 参考 (20 μPa)²/Hz；A计权标为 dBA/Hz。Hann 1024；非声压信号保持Z计权。",
+    "scale": "log"
+  },
+  "wideInspectCheck": {
+    "flowVisible": "block",
+    "mainCards": [
+      {
+        "height": 333.6000061035156,
+        "top": 763.2625122070312,
+        "width": 349.8125
+      },
+      {
+        "height": 333.6000061035156,
+        "top": 763.2625122070312,
+        "width": 349.8125
+      },
+      {
+        "height": 333.6000061035156,
+        "top": 763.2625122070312,
+        "width": 349.82501220703125
+      }
+    ],
+    "overflow": false,
+    "playerPosition": "relative",
+    "width": 1440
+  },
+  "narrowInspectCheck": {
+    "cards": [
+      {
+        "height": 333.6000061035156,
+        "width": 351.20001220703125
+      },
+      {
+        "height": 333.6000061035156,
+        "width": 351.20001220703125
+      },
+      {
+        "height": 333.6000061035156,
+        "width": 351.20001220703125
+      }
+    ],
+    "diagramScroll": true,
+    "overflow": false,
+    "width": 390
+  },
+  "finalInspectorInit": {
+    "clock": "实验时间 0.00 s · 非声压信号，Z计权",
+    "flowLast": "lab-signals",
+    "main": "时域 · E FL",
+    "weightHidden": true
+  },
+  "finalSignalCheck": {
+    "clock": "实验时间 52.01 s",
+    "main": "时域 · E FL",
+    "status": "实时运行 · 52.1 s · 缓冲 1.33 s · 共同安全增益 0.093 · 补缓冲 0 次",
+    "weight": "Z",
+    "weightHidden": false
+  },
+  "replayInspectCheck": {
+    "clock": "实验时间 10.00 s · 非声压信号，Z计权",
+    "description": "u · 扬声器驱动 · 前左 FL · 归一化 drive多路参考经控制滤波器叠加后送给车门扬声器的电驱动量。它还需经过扬声器与声传播路径，才成为声压。",
+    "main": "时域 · E FL",
+    "status": "实验就绪 · 142 ms · 末4秒线性总改善 12.0 dB（教学模型）；四座位d/e共用试听衰减 0.059",
+    "time": "00:10.00 / 00:10.00"
+  },
+  "errors": []
+}

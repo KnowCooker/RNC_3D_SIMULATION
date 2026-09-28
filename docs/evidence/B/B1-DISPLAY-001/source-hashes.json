@@ -1,0 +1,42 @@
+[
+  {
+    "sha256": "73d68e57864b913eff916eff42a3ea94a5b96dfc9409a0def7fb463032f3ac29",
+    "path": "src/shared/lab-contracts.ts"
+  },
+  {
+    "sha256": "879587e927c2b50b21ca71dc928aa0176278b3b482b605692f2d82c9c842a038",
+    "path": "src/team-a/lab/index.ts"
+  },
+  {
+    "sha256": "80d680618d7a79994c9854588583aeed75ca0198c7ce1b8bb92c3acf8e45eb9c",
+    "path": "src/team-a/lab/plots.ts"
+  },
+  {
+    "sha256": "f9175be56fc979f7e4ef1cbefa62581cc5370f485296ac42c54216b1709e753a",
+    "path": "src/team-a/lab/plot-settings.ts"
+  },
+  {
+    "sha256": "ac8e0b9550268ffcd456a1a4c301ed926cfd50ea2acb7098c7673f5cec451521",
+    "path": "src/team-a/lab/style.css"
+  },
+  {
+    "sha256": "90d4d7823d7ef66685f0f36805af3be802fd19ea7e9bf6cf13e2a84fbd83417f",
+    "path": "src/team-b/lab/index.ts"
+  },
+  {
+    "sha256": "b848446ce7a4f61e3826f6ee196adcc9bb91e3f46604b9bee3c6a47f29d7ddd4",
+    "path": "src/team-b/lab/sources.ts"
+  },
+  {
+    "sha256": "461cd9c2bcccfeab0801f4416f4aa6d38349045dd39af876bae417d55ecf6263",
+    "path": "tests/a1-lab-plots.test.ts"
+  },
+  {
+    "sha256": "430e628c06f8f71f7898c9caf47157e91b09708d33a1714d07e516c98115b919",
+    "path": "tests/b-recorded-noise.test.ts"
+  },
+  {
+    "sha256": "9641d121b0a79ce282014f060bb0917898832e752d35aaae39deda76c4a2f6ba",
+    "path": "tests/b-lab-weighting.test.ts"
+  }
+]

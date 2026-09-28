@@ -165,13 +165,16 @@ test('wrapped live history retains five seconds at the audible clock despite pro
   assert.equal(analysis.spectrum?.length, 513, 'FFT remains a short current window');
 });
 
-test('numerical divergence is explicit and a partially advanced failed sample cannot be resumed', () => {
-  const stream = createLabStream({ ...defaultConfig, stepSize: 0.5, speakerEnabled: [true, false, false, false] }, 'divergent');
-  assert.throws(() => stream.process(16000), /数值不稳定/);
-  const count = stream.sampleCount;
-  assert.throws(() => stream.process(1000), /数值不稳定/);
-  assert.throws(() => stream.snapshot(), /数值不稳定/);
-  assert.equal(stream.sampleCount, count);
+test('numeric overflow returns the finite prefix, preserves history, and cannot resume', () => {
+  const stream = createLabStream({ ...defaultConfig, stepSize: 100 }, 'divergent');
+  const chunk=stream.process(16000);
+  assert.ok(chunk.divergence); assert.equal(chunk.sampleCount,stream.sampleCount);
+  const count=stream.sampleCount, snapshot=stream.snapshot();
+  assert.equal(snapshot.endSample,count); assert.deepEqual(snapshot.result.divergence,chunk.divergence);
+  for(const channels of Object.values(snapshot.result.signals)) for(const channel of channels) assert.ok(channel.every(Number.isFinite));
+  assert.throws(()=>stream.process(1000),/已经发散/);
+  assert.throws(()=>stream.setRncEnabled(false),/已经发散/);
+  assert.deepEqual(stream.snapshot(),snapshot); assert.equal(stream.sampleCount,count);
 });
 
 test('live generation ignores replay duration, preserves bounded adaptation for ten minutes and refuses overflow atomically', () => {

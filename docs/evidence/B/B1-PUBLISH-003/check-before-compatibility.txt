@@ -1,0 +1,5 @@
+$ pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build
+$ tsc --noEmit
+tests/a1-case-review.test.ts(10,9): error TS2741: Property 'spectrumDb' is missing in type '{ time: number; levelWeighting: "A"; valid: true; primarySpl: [number, number, number, number]; residualSpl: [number, number, number, number]; reductionDb: [number, number, number, number]; waveform: Float32Array<...>; spectrum: null; unit: string; }' but required in type 'LabAnalysis'.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.

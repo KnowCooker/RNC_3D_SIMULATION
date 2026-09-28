@@ -280,3 +280,19 @@
 @media (prefers-reduced-motion: reduce) {
   .lab-app button { transition: none; }
 }
+
+/* Transport is local to the scene, never a fixed overlay covering inspection plots. */
+.lab-app .lab-player{position:relative;bottom:auto;inset:auto;z-index:5;margin:10px 0;border:1px solid #3c586b;border-radius:6px}
+.lab-workspace>.lab-plots{padding:12px 0;border:0;background:transparent}
+.lab-app>.lab-signals,.lab-app>.lab-case{margin:18px clamp(12px,2vw,36px)}
+.lab-workspace>.lab-metrics{margin:10px 0}
+@media(min-width:1051px) and (max-width:1350px){.lab-workspace>.lab-plots{grid-template-columns:1fr}}
+
+/* Compact four-seat readout; retain all seats in one row beside the stage. */
+.lab-app .lab-metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;min-height:0;margin:8px 0}
+.lab-app .lab-metrics>div{padding:7px 8px;min-width:0}
+.lab-app .lab-metrics strong{font-size:10px}
+.lab-app .lab-metrics b{font-size:16px;margin:4px 0}
+.lab-app .lab-metrics small{font-size:10px;display:block;overflow-wrap:anywhere}
+.lab-workspace>.lab-view-tools{margin:7px 0}
+@media(max-width:420px){.lab-app .lab-metrics>div{padding:6px 5px}.lab-app .lab-metrics b{font-size:14px}.lab-app .lab-metrics small{font-size:9px}}
