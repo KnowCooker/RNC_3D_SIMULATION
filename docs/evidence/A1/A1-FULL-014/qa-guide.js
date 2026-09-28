@@ -31,6 +31,8 @@ async (page) => {
   await stage('listen');
   await page.waitForFunction(() => document.querySelector('#lab-field-status')?.textContent?.includes('空间窗口截至'), undefined, { timeout: 45000 });
   const field = await page.locator('#lab-field-status').textContent();
+  if (!field?.includes('10.00 s')) throw new Error(`field is not aligned with the A/B window: ${field}`);
+  await page.locator('.lab-workspace').screenshot({ path: 'docs/evidence/A1/A1-FULL-014/field-window.png' });
   await page.locator('#lab-guide-action').click();
   await page.waitForFunction(() => document.querySelector('#lab-guide-action')?.textContent?.includes('试听残差'), undefined, { timeout: 30000 });
   await page.locator('#lab-guide-action').click();

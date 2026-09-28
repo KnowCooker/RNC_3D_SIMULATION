@@ -244,7 +244,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       $<HTMLSelectElement>('field').value = 'residual';
       $<HTMLSelectElement>('field-slice').value = 'y';
       fieldOptions();
-      player.seek(Math.max(0.6, Math.min(3, result.sampleCount / result.config.sampleRateHz / 2)));
+      player.seek(result.sampleCount / result.config.sampleRateHz);
       draw();
     } else if (stage === 'listen' && result) {
       const wanted = guideHeardOriginal ? 'e' : 'd';

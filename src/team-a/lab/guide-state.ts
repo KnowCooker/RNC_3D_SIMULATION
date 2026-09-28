@@ -39,7 +39,7 @@ export function guideState(input: GuideInput): GuideState {
     const comparison = compareCases(input.baseline, input.candidate);
     if (!comparison.comparable) return step('repair', 2, '比较条件不一致', `${comparison.conditions.join('、')}不一致；不能计算 A/B 差值。基线 A 仍保留。`, '查看实验配置', true);
     if (comparison.changes.length !== 1) return step('repair', 2, '需要恰好一个变量', comparison.changes.length ? `当前改变了 ${comparison.changes.length} 项，不能把变化归因于其中一项。` : '两次配置完全相同，尚无候选条件。', '查看实验配置', true);
-    if (!input.candidateFieldReady) return step('field', 3, '查看候选 B 的车内声场', `已得到单变量比较：${comparison.changes[0]}。在同一候选实验中查看残余声场和四座数值；不将教学场投影到写实车。`, '显示候选声场');
+    if (!input.candidateFieldReady) return step('field', 3, '查看候选 B 的车内声场', `已得到单变量比较：${comparison.changes[0]}。查看候选末尾同一 0.5 秒窗口的残余声场和四座数值；不将教学场投影到写实车。`, '显示候选声场');
     if (!input.heardOriginal || !input.heardResidual) return step('listen', 4, '同座位、同片段公平试听', `A/B 数值已可复核。${input.heardOriginal ? '原声已试听；' : '先试听原声 d；'}${input.heardResidual ? '残差已试听。' : '再试听残差 e。'}试听切换不改变数值结果。`, input.heardOriginal ? '试听残差 e' : '试听原声 d');
     return step('review', 5, '形成有边界的工程判断', `单变量 ${comparison.changes[0]}；四座差值来自同窗计算。请区分自动事实、人工解释和待补测，不把教学结果签收为实车结论。`, '打开工程评审卡');
   }
