@@ -16,7 +16,9 @@
 
 正式 Worker 在预计算和实时取场时，把该实验已校验的 `layoutId` 写入 `FieldFrame`；integration 对缺失或不同于当前实验的场帧只拒绝该查询，不终止仍在运行的实验。A1 页面在送入 viewer 前再次核对场帧与当前结果配置的身份，不一致或查询失败会清除旧场，避免留下上一布局的颜色。`FieldFrame.layoutId` 暂为可选以兼容 B 纯函数的既有调用；**正式 Worker 传输必须携带**，B 纯函数的非 Worker 入口仍须在新布局开放前完成自身身份校验。A2 viewer 无需改动，当前仍只支持 `teaching-fixed-v1`。
 
-`tests/a1-lab-engine.test.ts` 的新增测试让伪 Worker 返回错误身份、缺失身份及正确身份三种场帧：前两种被拒且 Worker 保持运行，正确帧可继续读取。`pnpm check` 的类型/边界/全仓测试/生产构建通过。真实 Chromium 在同一 BEV 默认工况下分别运行 10 秒预计算并定位末尾、实时运行约 2.5 秒，场状态为“教学布局声场截至 10.00 s / 2.23 s”，主舞台均显示 `teaching-fixed-v1`，页面脚本异常 0；[复现脚本](qa-field-layout.playwright-cli.js)、[原始结果](qa-field-layout.result.json)、[预计算整台截图](layout-field-identity-replay.png)与[实时整台截图](layout-field-identity-live.png)保存了正常帧未被误挡的证据。该检查不证明将来的写实布局已接入，也不代替目标核显、实物声音或长稳验收。
+后续把校验前移到数据入口：预计算结果的 `config.layoutId` 必须等于启动身份；实时 `ready` 回应明确携带身份；每个实时 chunk 的运行 ID、快照运行 ID 和快照布局身份都要匹配。结果/数据包错配会终止该计算线程，不让信号、试听或图表先于场帧校验接受异布局数据；场帧错配仍只拒单次场查询。正式 Worker 的 `ready` 已携带身份，不要求 B 组改变计算输出格式。伪 Worker 测试分别覆盖批量结果、实时启动确认、数据包和场帧的错配，以及仍可用的正确数据。
+
+`pnpm check` 的类型/边界/133 项全仓测试/生产构建通过。最新真实 Chromium 在同一 BEV 默认工况下分别运行 10 秒预计算并定位末尾、实时运行约 2.2 秒，场状态为“教学布局声场截至 10.00 s / 2.03 s”，主舞台均显示 `teaching-fixed-v1`，页面脚本异常 0；[复现脚本](qa-field-layout.playwright-cli.js)、[原始结果](qa-field-layout.result.json)、[预计算整台截图](layout-field-identity-replay.png)与[实时整台截图](layout-field-identity-live.png)保存了正常结果与场帧未被误挡的证据。该检查不证明将来的写实布局已接入，也不代替目标核显、实物声音或长稳验收。
 
 ## 后续 A2/B 接入条件
 

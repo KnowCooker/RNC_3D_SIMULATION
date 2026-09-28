@@ -18,12 +18,12 @@ export function createLabEngine() {
       rejectStart = reject;
       let active: Worker;
       try { active = new Worker(new URL('./lab.worker.ts', import.meta.url), { type: 'module' }); }
-      catch (error) { rejectStart = null; mode = null; reject(error); return; }
+      catch (error) { rejectStart = null; mode = null; activeLayoutId = ''; reject(error); return; }
       worker = active;
       const fail = (error: Error) => {
         if (worker !== active) return;
         rejectStart?.(error); rejectStart = null;
-        active.terminate(); worker = null; mode = null;
+        active.terminate(); worker = null; mode = null; activeLayoutId = '';
         pending.forEach(p => p.reject(error)); pending.clear();
       };
       active.onmessage = ({ data }) => {
@@ -31,12 +31,17 @@ export function createLabEngine() {
         if (data.runId !== undefined && data.runId !== runId) { fail(new Error('计算返回了其他实验的数据')); return; }
         if (data.type === 'result' && kind === 'batch') {
           if (data.result?.runId !== id) { fail(new Error('实验标识不匹配')); return; }
+          if (data.result?.config?.layoutId !== activeLayoutId) { fail(new Error('计算结果物理布局身份与启动配置不一致')); return; }
           rejectStart = null; resolve(data.result);
         } else if (data.type === 'ready' && kind === 'live') {
+          if (data.layoutId !== activeLayoutId) { fail(new Error('实时实验物理布局身份与启动配置不一致')); return; }
           rejectStart = null; resolve(undefined as T);
         } else if (data.type === 'field' || data.type === 'chunk' || data.type === 'rnc') {
           const request = pending.get(data.id);
           if (request && request.kind === data.type) {
+            if (data.type === 'chunk' && (data.packet?.chunk?.runId !== runId || data.packet?.snapshot?.result?.runId !== runId || data.packet?.snapshot?.result?.config?.layoutId !== activeLayoutId)) {
+              fail(new Error('实时数据包的实验或物理布局身份不一致')); return;
+            }
             pending.delete(data.id);
             if (data.type === 'field' && data.frame?.layoutId !== activeLayoutId) request.reject(new Error('声场物理布局身份与当前实验不一致，已拒绝显示'));
             else request.resolve(data.type === 'field' ? data.frame : data.type === 'rnc' ? data.change : data.packet);
