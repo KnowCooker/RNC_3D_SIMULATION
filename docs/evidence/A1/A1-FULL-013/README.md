@@ -1,5 +1,7 @@
 # A1-FULL-013 / 物理布局身份边界
 
+[Worker 回复必须携带当前运行 ID](run-identity/README.md)补齐了缺失外层 `runId` 仍可能被接收的边界；正常生产预计算、实时开关和声场已复核。
+
 [最新 A1 #38 与 A2 #30 固定提交的隔离组合](latest-a2-composition/README.md)确认 142 项工程测试和四车型教学场/实时 RNC 切换兼容，同时保留一次间歇 GLB 请求中止；组合没有并入主线，也没有完成写实车声学配准。
 
 [同布局完整配置身份及实时 RNC 切换复核](config-identity/README.md)补齐了 `layoutId` 相同但车型、路面或参考点位不同的 Worker 结果防串实验校验；合法的实时 RNC 开关继续运行。

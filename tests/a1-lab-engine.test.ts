@@ -157,3 +157,17 @@ test('same-layout responses cannot substitute another vehicle or physical experi
   worker.receive({ type: 'chunk', id: worker.messages.at(-1).id, runId: 'live-correct', packet: packetFor(worker, 'live-correct', 'wrong reference', altered) });
   await badChunk; assert.equal(worker.terminated, true);
 });
+
+test('Worker replies without the active run identity cannot enter results or field views', async t => {
+  const engine = setup(t);
+  const batch = engine.calculate(defaultLabConfig(), 'batch-identity'), batchWorker = FakeWorker.instances.at(-1)!;
+  const missingBatch = assert.rejects(batch, /缺少实验标识/);
+  batchWorker.receive({ type: 'result', result: { runId: 'batch-identity', config: startedConfig(batchWorker) } });
+  await missingBatch; assert.equal(batchWorker.terminated, true);
+
+  const live = engine.startLive(defaultLabConfig(), 'live-identity'), worker = FakeWorker.instances.at(-1)!;
+  ready(worker, 'live-identity'); await live;
+  const field = engine.field(1, [[0, 1, 0]]), missingField = assert.rejects(field, /缺少实验标识/);
+  worker.receive({ type: 'field', id: worker.messages.at(-1).id, frame: { layoutId: TEACHING_LAYOUT_ID } });
+  await missingField; assert.equal(worker.terminated, true);
+});

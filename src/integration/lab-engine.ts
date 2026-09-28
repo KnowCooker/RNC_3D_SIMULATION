@@ -40,7 +40,7 @@ export function createLabEngine() {
       };
       active.onmessage = ({ data }) => {
         if (worker !== active) return;
-        if (data.runId !== undefined && data.runId !== runId) { fail(new Error('计算返回了其他实验的数据')); return; }
+        if (data.runId !== runId) { fail(new Error('计算返回了其他实验的数据或缺少实验标识')); return; }
         if (data.type === 'result' && kind === 'batch') {
           if (data.result?.runId !== id) { fail(new Error('实验标识不匹配')); return; }
           if (data.result?.config?.layoutId !== activeLayoutId) { fail(new Error('计算结果物理布局身份与启动配置不一致')); return; }
