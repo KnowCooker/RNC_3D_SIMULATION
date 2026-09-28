@@ -14,6 +14,8 @@
 
 ### B2-003依赖审计与精确下一步
 
+发布记录：状态更新提交`ad1fff1`已推送`hgyong:b/b2-status-003-readiness`，已创建[PR #36](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/36)，状态待合并。本条补充PR链接；最新CI以PR当前head为准。本批记录完毕停止写入，未认领003。
+
 | 核对项 | 已有证据 | 尚缺/结论 |
 | --- | --- | --- |
 | B1-001完整数值对照 | `tests/engine.test.ts`默认算例覆盖x/u/d/a/e共640000样本；五配置测试核对每点指标、μ0恒等关系和默认重复一致性 | seed29、seed47、taps32、μ0尚无五类信号逐路对独立Python数组的完整误差报告；不能将指标相符等同于逐样本通过 |
