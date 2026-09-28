@@ -16,4 +16,6 @@
 
 额外在 ICE 重新计算后进入 Range Rover Sport SVR 写实外观：[同一实验的写实外观截图](ice-showroom-gap.png)。主舞台仍标示 `teaching-fixed-v1`、残余场下拉选项仍被选中，底部显示“空间窗口截至 10.00 s”，但热力场和声学硬件不投影到该写实资产；写实面板明确说明座舱细件、动力结构和声学坐标尚未配准。因此“选写实车→改制→看该车声场”的最终闭环在当前源码中**未成立**，不能把同一实验的数值卡片当作写实 Range Rover 的测量或该车场图。
 
+针对上述易误读状态，A1 页面补充了“教学布局声场截至 10.00 s · 写实外观不投影”及图表归属说明；[补充后的写实外观截图](ice-showroom-clarified.png)来自同机 Chromium 的 ICE 10 秒实验。该改动只澄清数据来源和展示边界，不改变写实资产的安装坐标、B 组传播模型或最终闭环状态。
+
 接入条件以 [A2 PR #30 的布局交接请求](https://github.com/KnowCooker/RNC_3D_SIMULATION/blob/a/a2-full-017-asset-inspection/docs/evidence/A2/A2-FULL-017/LAYOUT_HANDOFF.md)和本批[布局接口记录](../README.md)为准：A2 须核实同资产四轮、四误差点、四门扬声器与默认参考的物理锚点；B 须用相同 `layoutId` 重算路径/场并保留全部交叉影响；A1 再接入显示、改制与同版四车型复验。当前 UI 字段仅标注教学身份，不能替代上述配准。
