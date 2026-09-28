@@ -90,6 +90,8 @@ export interface LabAnalysis {
   unit: string;
 }
 export interface FieldFrame {
+  /** Worker-stamped physical layout identity; direct legacy B samples may omit it. */
+  layoutId?: string;
   weighting?: AcousticWeighting;
   time: number;
   valid: boolean;

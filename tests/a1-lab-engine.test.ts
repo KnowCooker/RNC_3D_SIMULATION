@@ -92,3 +92,19 @@ test('legacy layout is stamped and unimplemented layouts fail before replacing a
   worker.receive({ type: 'chunk', id: worker.messages.at(-1).id, runId: 'legacy', packet: { marker: 'preserved' } });
   assert.deepEqual(await chunk, { marker: 'preserved' }); engine.cancel();
 });
+
+test('field frames without the active physical layout are rejected without killing the experiment', async t => {
+  const engine = setup(t), started = engine.startLive(defaultLabConfig(), 'layout-field'), worker = FakeWorker.instances.at(-1)!;
+  worker.receive({ type: 'ready', runId: 'layout-field' }); await started;
+  for (const layoutId of ['other-asset-v1', undefined]) {
+    const field = engine.field(1, [[0, 1, 0]]), id = worker.messages.at(-1).id;
+    const failure = assert.rejects(field, /物理布局身份/);
+    worker.receive({ type: 'field', id, runId: 'layout-field', frame: { layoutId } }); await failure;
+    assert.equal(worker.terminated, false);
+  }
+  const field = engine.field(1, [[0, 1, 0]]), id = worker.messages.at(-1).id;
+  const frame = { layoutId: TEACHING_LAYOUT_ID, time: 1, valid: true };
+  worker.receive({ type: 'field', id, runId: 'layout-field', frame });
+  assert.equal(await field, frame);
+  engine.cancel();
+});

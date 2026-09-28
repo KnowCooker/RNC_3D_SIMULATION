@@ -38,10 +38,13 @@ self.onmessage = async ({ data }) => {
         const localTime = data.time - offset;
         if (localTime < 0 || (snapshot.startSample > 0 && localTime < 0.5 + LAB_STREAM_CABIN_PREROLL_SAMPLES / snapshot.result.config.sampleRateHz)) throw new Error('所选声场时间已离开实时历史窗口');
         const frame = sampleField(snapshot.result, localTime, data.points, data.weighting);
+        frame.layoutId = supportedLabLayoutId(snapshot.result.config);
         frame.time += offset;
         self.postMessage({ type: 'field', id: data.id, runId, frame });
       } else if (result) {
-        self.postMessage({ type: 'field', id: data.id, runId, frame: sampleField(result, data.time, data.points, data.weighting) });
+        const frame = sampleField(result, data.time, data.points, data.weighting);
+        frame.layoutId = supportedLabLayoutId(result.config);
+        self.postMessage({ type: 'field', id: data.id, runId, frame });
       } else throw new Error('尚无实验结果');
     }
   } catch (error) { self.postMessage({ type: 'error', id: data.id, runId: data.runId ?? runId, message: error instanceof Error ? error.message : String(error) }); }

@@ -12,6 +12,12 @@
 
 案例 `rnc-case-v1` 格式号和原有来源边界字符串不变。导入旧文件时，缺失布局身份会被规范化为教学布局；新导出明确保存身份。A/B 身份不同或不是当前受支持布局时，比较结论不含数值差值。页面在问题卡、实验备注、自动事实和导入来源中明示布局身份及其教学限制。
 
+### 声场帧身份贯通（2026-09-29）
+
+正式 Worker 在预计算和实时取场时，把该实验已校验的 `layoutId` 写入 `FieldFrame`；integration 对缺失或不同于当前实验的场帧只拒绝该查询，不终止仍在运行的实验。A1 页面在送入 viewer 前再次核对场帧与当前结果配置的身份，不一致或查询失败会清除旧场，避免留下上一布局的颜色。`FieldFrame.layoutId` 暂为可选以兼容 B 纯函数的既有调用；**正式 Worker 传输必须携带**，B 纯函数的非 Worker 入口仍须在新布局开放前完成自身身份校验。A2 viewer 无需改动，当前仍只支持 `teaching-fixed-v1`。
+
+`tests/a1-lab-engine.test.ts` 的新增测试让伪 Worker 返回错误身份、缺失身份及正确身份三种场帧：前两种被拒且 Worker 保持运行，正确帧可继续读取。`pnpm check` 的类型/边界/全仓测试/生产构建通过。真实 Chromium 在同一 BEV 默认工况下分别运行 10 秒预计算并定位末尾、实时运行约 2.5 秒，场状态为“教学布局声场截至 10.00 s / 2.23 s”，主舞台均显示 `teaching-fixed-v1`，页面脚本异常 0；[复现脚本](qa-field-layout.playwright-cli.js)、[原始结果](qa-field-layout.result.json)、[预计算整台截图](layout-field-identity-replay.png)与[实时整台截图](layout-field-identity-live.png)保存了正常帧未被误挡的证据。该检查不证明将来的写实布局已接入，也不代替目标核显、实物声音或长稳验收。
+
 ## 后续 A2/B 接入条件
 
 ### ICE 写实资产与教学坐标的定量断点（2026-09-29）

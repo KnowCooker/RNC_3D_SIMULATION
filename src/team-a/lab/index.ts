@@ -605,7 +605,17 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     if (result && !halted && !busy && $<HTMLSelectElement>('field').value !== 'off' && !fieldPending && fieldInFlight < 2 && now - lastFieldClock > 350 && Math.abs(time - lastFieldAt) > 0.15) {
       const token = generation, epoch = fieldEpoch, points = viewer.fieldPoints;
       fieldPending = true; fieldInFlight++; lastFieldAt = time; lastFieldClock = now;
-      ports.field(time, points, levelWeighting).then(frame => { if (token === generation && epoch === fieldEpoch) { viewer.updateField(frame); $('field-status').textContent = frame.valid ? `教学布局声场截至 ${frame.time.toFixed(2)} s · 写实外观不投影` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场'; } }).catch(error => { if (token === generation && epoch === fieldEpoch) $('field-status').textContent = `声场计算失败：${String(error)}`; }).finally(() => { fieldInFlight--; if (token === generation && epoch === fieldEpoch) fieldPending = false; });
+      ports.field(time, points, levelWeighting).then(frame => {
+        if (token !== generation || epoch !== fieldEpoch) return;
+        if (!result || frame.layoutId !== labLayoutId(result.config)) {
+          clearField(); $('field-status').textContent = '声场物理布局身份与当前实验不一致，已拒绝显示'; return;
+        }
+        viewer.updateField(frame);
+        $('field-status').textContent = frame.valid ? `教学布局声场截至 ${frame.time.toFixed(2)} s · 写实外观不投影` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场';
+      }).catch(error => {
+        if (token !== generation || epoch !== fieldEpoch) return;
+        clearField(); $('field-status').textContent = `声场计算失败：${String(error)}`;
+      }).finally(() => { fieldInFlight--; if (token === generation && epoch === fieldEpoch) fieldPending = false; });
     }
     requestAnimationFrame(tick);
   };

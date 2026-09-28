@@ -1,11 +1,11 @@
 import { supportedLabLayoutId, type AcousticWeighting, type FieldFrame, type LabConfig, type LabLivePacket, type LabResult, type LabRncChange, type Vec3 } from '../shared/lab-contracts';
 
 export function createLabEngine() {
-  let worker: Worker | null = null, runId = '', mode: 'batch' | 'live' | null = null;
+  let worker: Worker | null = null, runId = '', activeLayoutId = '', mode: 'batch' | 'live' | null = null;
   let rejectStart: ((error: Error) => void) | null = null, requestId = 0;
   const pending = new Map<number, { kind: 'field' | 'chunk' | 'rnc'; resolve: (value: unknown) => void; reject: (error: Error) => void }>();
   function cancel() {
-    worker?.terminate(); worker = null; mode = null;
+    worker?.terminate(); worker = null; mode = null; activeLayoutId = '';
     rejectStart?.(new Error('计算已取消')); rejectStart = null;
     pending.forEach(p => p.reject(new Error('实验已更换'))); pending.clear();
   }
@@ -14,7 +14,7 @@ export function createLabEngine() {
       let layoutId: string;
       try { layoutId = supportedLabLayoutId(config); }
       catch (error) { reject(error); return; }
-      cancel(); runId = id; mode = kind;
+      cancel(); runId = id; activeLayoutId = layoutId; mode = kind;
       rejectStart = reject;
       let active: Worker;
       try { active = new Worker(new URL('./lab.worker.ts', import.meta.url), { type: 'module' }); }
@@ -36,7 +36,11 @@ export function createLabEngine() {
           rejectStart = null; resolve(undefined as T);
         } else if (data.type === 'field' || data.type === 'chunk' || data.type === 'rnc') {
           const request = pending.get(data.id);
-          if (request && request.kind === data.type) { pending.delete(data.id); request.resolve(data.type === 'field' ? data.frame : data.type === 'rnc' ? data.change : data.packet); }
+          if (request && request.kind === data.type) {
+            pending.delete(data.id);
+            if (data.type === 'field' && data.frame?.layoutId !== activeLayoutId) request.reject(new Error('声场物理布局身份与当前实验不一致，已拒绝显示'));
+            else request.resolve(data.type === 'field' ? data.frame : data.type === 'rnc' ? data.change : data.packet);
+          }
         } else if (data.type === 'error') {
           const error = new Error(data.message);
           // Rejected read/control requests do not corrupt the processor; failed processing does.
