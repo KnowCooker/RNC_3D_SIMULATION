@@ -1,0 +1,54 @@
+async (page) => {
+  const errors = [], failedRequests = [], stages = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('requestfailed', request => failedRequests.push({ url: request.url(), reason: request.failure()?.errorText }));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('http://127.0.0.1:5187/');
+  await page.locator('#lab-viewer canvas').waitFor();
+  await page.locator('#lab-guide-toggle').click();
+  const stage = async expected => {
+    await page.waitForFunction(value => document.querySelector('#lab-guide-action')?.getAttribute('data-stage') === value, expected, { timeout: 45000 });
+    stages.push({ stage: expected, text: await page.locator('#lab-guide-state').textContent() });
+  };
+  await stage('mode');
+  await page.locator('#lab-guide-action').click();
+  await stage('baseline-run');
+  await page.locator('#lab-duration').selectOption('10');
+  await page.locator('#lab-guide-action').click();
+  await stage('baseline-save');
+  await page.locator('#lab-guide-action').click();
+  await stage('road');
+  await page.locator('#lab-guide-action').click();
+  await stage('candidate-run');
+  const road = await page.locator('#lab-road').inputValue();
+  const roadPressed = await page.locator('[data-surface="gravel"]').getAttribute('aria-pressed');
+  if (road !== '2.2' || roadPressed !== 'true') throw new Error(`visual and acoustic road diverged: ${road}, ${roadPressed}`);
+  await page.locator('#lab-guide-action').click();
+  await stage('field');
+  const comparison = await page.locator('#lab-case-state').textContent();
+  if (!comparison?.includes('仅改变：路面粗糙度')) throw new Error(`missing single-variable comparison: ${comparison}`);
+  await page.locator('#lab-guide-action').click();
+  await stage('listen');
+  await page.waitForFunction(() => document.querySelector('#lab-field-status')?.textContent?.includes('空间窗口截至'), undefined, { timeout: 45000 });
+  const field = await page.locator('#lab-field-status').textContent();
+  await page.locator('#lab-guide-action').click();
+  await page.waitForFunction(() => document.querySelector('#lab-guide-action')?.textContent?.includes('试听残差'), undefined, { timeout: 30000 });
+  await page.locator('#lab-guide-action').click();
+  await stage('review');
+  await page.locator('.lab-workspace').screenshot({ path: 'docs/evidence/A1/A1-FULL-014/desktop.png' });
+  await page.locator('#lab-guide-action').click();
+  const reviewOpen = await page.locator('.lab-case-evidence').evaluate(element => element.open);
+  const reviewFocus = await page.evaluate(() => document.activeElement?.id);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('#lab-guide').screenshot({ path: 'docs/evidence/A1/A1-FULL-014/narrow-guide.png' });
+  const noHorizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
+  await page.locator('#lab-controls-toggle').click();
+  await page.locator('#lab-speed').evaluate(input => { input.value = '80'; input.dispatchEvent(new Event('change', { bubbles: true })); });
+  await stage('repair');
+  const staleField = await page.locator('#lab-field-status').textContent();
+  await page.locator('#lab-guide-exit').click();
+  const exited = await page.locator('#lab-guide-content').isHidden();
+  if (!reviewOpen || reviewFocus !== 'lab-case-observation' || !noHorizontalOverflow || !exited || errors.length || failedRequests.length)
+    throw new Error(JSON.stringify({ reviewOpen, reviewFocus, noHorizontalOverflow, exited, errors, failedRequests }));
+  return { stages, road, field, comparison, reviewOpen, reviewFocus, noHorizontalOverflow, staleField, exited, errors, failedRequests };
+}
