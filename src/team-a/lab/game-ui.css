@@ -155,6 +155,12 @@
 .lab-case-import input { max-width: 190px; font-size: 11px; }
 #lab-case-imported { margin-top: 10px; }
 #lab-case-imported p { white-space: pre-line; }
+.lab-review-facts { margin: 10px 0; padding: 10px 12px; background: #0b1d2a; border: 1px solid #365561; color: #dcebec; font-size: 11px; }
+.lab-review-facts strong { color: var(--gold); }
+.lab-review-facts ul { margin: 7px 0 0; padding-left: 18px; line-height: 1.6; }
+.lab-review-fact-list { color: #dcebec; }
+.lab-review-limit-list { color: #e2bf93; }
+.lab-review-human { white-space: pre-line; }
 .lab-view-heading {
   min-height: 58px;
   justify-content: flex-start;
