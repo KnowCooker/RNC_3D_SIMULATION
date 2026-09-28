@@ -1,5 +1,5 @@
 import type { Four } from '../../shared/contracts';
-import { supportedLabLayoutId, type LabConfig, type ReferenceSensor } from '../../shared/lab-contracts';
+import { TEACHING_LAYOUT_ID, type LabConfig, type ReferenceSensor } from '../../shared/lab-contracts';
 import { compareCases, type CaseComparison, type CaseSnapshot } from './case-compare';
 
 export const CASE_EVIDENCE_FORMAT = 'rnc-case-v1';
@@ -52,9 +52,9 @@ function config(value: unknown): LabConfig {
   if (c.schemaVersion !== 'lab-v3' || c.sampleRateHz !== 2000) throw new Error('案例协议或采样率不受支持');
   if (!['ice', 'bev', 'hev', 'erev'].includes(String(c.vehicle))) throw new Error('案例车型不受支持');
   if (c.sourceMode !== undefined && !['recorded-noise', 'shaped-noise'].includes(String(c.sourceMode))) throw new Error('案例声源不受支持');
-  let layoutId: string;
-  try { layoutId = supportedLabLayoutId(c as Pick<LabConfig, 'layoutId'>); }
-  catch { throw new Error('案例物理布局身份不受支持'); }
+  // A foreign layout is readable as an untrusted record, never executable by this parser.
+  const layoutId = c.layoutId === undefined ? TEACHING_LAYOUT_ID : string(c.layoutId, '物理布局身份', 120);
+  if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(layoutId)) throw new Error('案例格式错误：物理布局身份');
   const references = c.references;
   if (!Array.isArray(references) || references.length < 1 || references.length > 8) throw new Error('案例参考传感器数量无效');
   const normalizedReferences = references.map((value, i): ReferenceSensor => {

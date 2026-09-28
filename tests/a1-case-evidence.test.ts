@@ -42,14 +42,28 @@ test('rejects oversized, forged, malformed and nonfinite evidence', () => {
   const edit = (mutate: (record: Record<string, any>) => void) => { const record = JSON.parse(json); mutate(record); return JSON.stringify(record); };
   assert.throws(() => parseCaseEvidence(edit(r => { r.format = 'rnc-case-v0'; })), /版本/);
   assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.config.vehicle = 'truck'; })), /车型/);
-  assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.config.layoutId = 'showroom-unverified-v1'; })), /物理布局身份/);
   assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.config.layoutId = ''; })), /物理布局身份/);
+  assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.config.layoutId = 'showroom\nv1'; })), /物理布局身份/);
+  assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.config.layoutId = 'x'.repeat(121); })), /物理布局身份/);
   assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.config.taps = 18.5; })), /系数数/);
   assert.throws(() => parseCaseEvidence(edit(r => { r.boundary = '实车认证'; })), /来源边界/);
   assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.residualSpl = [1, 2, 3]; })), /残余/);
   assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.windowEndSeconds = 9; })), /窗口与时长/);
   assert.throws(() => parseCaseEvidence(edit(r => { r.candidate.residualSpl[0] = 'Infinity'; })), /残余/);
   assert.throws(() => createCaseEvidence(a, b, 'x'.repeat(1001), ''), /观察/);
+});
+
+test('foreign layouts remain readable but never acquire a numeric comparison', () => {
+  const a = snapshot('base'), b = snapshot('candidate');
+  b.config.layoutId = 'showroom-unverified-v1';
+  const parsed = parseCaseEvidence(createCaseEvidence(a, b, '', ''));
+  assert.equal(parsed.evidence.candidate.config.layoutId, 'showroom-unverified-v1');
+  assert.deepEqual(parsed.comparison.conditions, ['物理布局身份']);
+  assert.deepEqual(parsed.comparison.residualDeltaDb, [null, null, null, null]);
+  a.config.layoutId = 'showroom-unverified-v1';
+  const matchingUnknown = parseCaseEvidence(createCaseEvidence(a, b, '', ''));
+  assert.equal(matchingUnknown.comparison.comparable, false);
+  assert.deepEqual(matchingUnknown.comparison.residualDeltaDb, [null, null, null, null]);
 });
 
 test('older rnc-case-v1 without layout identity imports as teaching layout', () => {

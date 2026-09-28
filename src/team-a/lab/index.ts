@@ -481,6 +481,10 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     try {
       if (file.size > CASE_EVIDENCE_MAX_BYTES) throw new Error('案例文件超过64 KiB');
       const { evidence, comparison } = parseCaseEvidence(await file.text());
+      const unknownLayout = [evidence.baseline, evidence.candidate].some(snapshot => {
+        try { supportedLabLayoutId(snapshot.config); return false; }
+        catch { return true; }
+      });
       const heading = document.createElement('strong'); heading.textContent = `导入案例 · ${evidence.question}`;
       const provenance = document.createElement('p');
       const sourceName = (mode: LabConfig['sourceMode']) => mode === 'recorded-noise' ? '实录初级噪声 · 四轮等效声源' : '随机噪声 · 实录谱形整形';
@@ -503,7 +507,9 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       const notes = document.createElement('p'); notes.className = 'lab-review-human'; notes.textContent = `人工观察：${evidence.observation || '未填写'}\n人工解释（待验证）：${evidence.interpretation || '未填写'}\n临时行动：${evidence.decision || '未填写'}\n待补测事项：${evidence.nextCheck || '未填写'}`;
       const boundary = document.createElement('p'); boundary.textContent = CASE_EVIDENCE_BOUNDARY;
       output.append(heading, provenance, summary, reviewOutput, table, notes, boundary); output.hidden = false;
-      $('case-evidence-state').textContent = `已导入 ${file.name}；文件内容未经签名验证，仅供只读复核，不改变当前实验。`;
+      $('case-evidence-state').textContent = unknownLayout
+        ? `已只读导入 ${file.name}；文件未经签名验证且含当前版本未接入的物理布局，仅显示文件自报读数，不复算或比较，不改变当前实验。`
+        : `已导入 ${file.name}；文件内容未经签名验证，仅供只读复核，不改变当前实验。`;
     } catch (error) { $('case-evidence-state').textContent = error instanceof Error ? error.message : String(error); }
   };
   $('body').onchange = () => viewer.setBody($<HTMLSelectElement>('body').value);
