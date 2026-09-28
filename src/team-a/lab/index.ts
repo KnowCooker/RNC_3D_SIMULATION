@@ -1,6 +1,6 @@
 import type { LabDivergence, LabPathAnalysis, LabPathSelection } from '../../shared/lab-contracts';
 import { ORDER } from '../../shared/contracts';
-import { defaultLabConfig, labDurationLimit, labLayoutId, LAB_LIVE_LIMIT_SECONDS, LAB_WAVEFORM_SECONDS, VEHICLE_NAMES, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabLivePacket, type LabLiveSnapshot, type LabResult, type LabRncChange, type LabSelection, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
+import { defaultLabConfig, labDurationLimit, labLayoutId, supportedLabLayoutId, LAB_LIVE_LIMIT_SECONDS, LAB_WAVEFORM_SECONDS, VEHICLE_NAMES, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabLivePacket, type LabLiveSnapshot, type LabResult, type LabRncChange, type LabSelection, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
 import { Player, prepareLabPlayback } from '../player';
 import { LivePlayer } from '../player/live-player';
 import { createLabViewer } from '../viewer/lab-viewer';
@@ -219,7 +219,11 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       flow.drawInspection(analysis,null,config.sampleRateHz,offset);
     } else {
       const key=JSON.stringify([config,inspected.value]);
-      if(key!==cachedPathKey){cachedPath=ports.analyzePath?.(config,inspected.value)??null;cachedPathKey=key;}
+      if(key!==cachedPathKey){
+        try { cachedPath=ports.analyzePath?.(config,inspected.value)??null; }
+        catch(error) { cachedPath=null; $('status').textContent=error instanceof Error ? error.message : String(error); }
+        cachedPathKey=key;
+      }
       flow.drawInspection(null,cachedPath,config.sampleRateHz,offset);
     }
   }
@@ -353,6 +357,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   }
   async function calculate() {
     if (mountIssues().length) { $('status').textContent = '请先修正缺失的传感器安装部件。'; return; }
+    try { supportedLabLayoutId(config); }
+    catch (error) { $('status').textContent = error instanceof Error ? error.message : String(error); return; }
     if (realtime) { await startLive(); return; }
     const token = ++generation; ports.cancel(); busy = true; clearExperiment();
     for (const name of ['play', 'replay', 'seek', 'calculate']) $<HTMLButtonElement>(name).disabled = true;
@@ -369,7 +375,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       player.setComparison(ORDER[Number($<HTMLSelectElement>('seat').value)], audition);
       curves = { A: [], Z: [] };
       for (let frame = 5; frame <= result.sampleCount / config.sampleRateHz * 10; frame++) { const time = frame / 10; for (const weighting of ['A','Z'] as const) curves[weighting].push(splFrame(time, ports.analyze(result, time, selected, { levelWeighting: weighting, levelsOnly: true }))); }
-      $('run').textContent = `${VEHICLE_NAMES[result.config.vehicle]} · ${result.config.references.length}×4×4 · ${result.runId.slice(0, 8)}`;
+      $('run').textContent = `${VEHICLE_NAMES[result.config.vehicle]} · 布局 ${labLayoutId(result.config)} · ${result.config.references.length}×4×4 · ${result.runId.slice(0, 8)}`;
       $('status').textContent = `实验就绪 · ${result.computeMilliseconds.toFixed(0)} ms · 末${Math.min(4, config.durationSeconds)}秒线性总改善 ${result.metrics.aggregateReductionDb.toFixed(1)} dB（教学模型）；四座位d/e共用试听衰减 ${audioGain.toFixed(3)}`;
       for (const name of ['play', 'replay', 'seek']) $<HTMLButtonElement>(name).disabled = false;
       if (halted) stopDiverged(halted);
@@ -378,6 +384,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     finally { if (token === generation) { busy = false; $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = true; renderCase(); } }
   }
   async function startLive() {
+    try { supportedLabLayoutId(config); }
+    catch (error) { $('status').textContent = error instanceof Error ? error.message : String(error); return; }
     const token = ++generation; ports.cancel(); busy = true; clearExperiment();
     for (const name of ['play', 'replay', 'seek', 'calculate']) $<HTMLButtonElement>(name).disabled = true;
     $<HTMLButtonElement>('cancel').disabled = false; $('status').textContent = '正在启动持续计算与同步试听…';
@@ -389,7 +397,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       if (document.hidden) { livePlayer.pause(); backgroundPaused = true; }
       liveSession = true;
       livePlayer.setComparison(ORDER[Number($<HTMLSelectElement>('seat').value)], 'e');
-      $('run').textContent = `${VEHICLE_NAMES[config.vehicle]} · 实时 ${config.references.length}×4×4 · ${id.slice(0, 8)}`;
+      $('run').textContent = `${VEHICLE_NAMES[config.vehicle]} · 布局 ${labLayoutId(config)} · 实时 ${config.references.length}×4×4 · ${id.slice(0, 8)}`;
       for (const name of ['play', 'replay']) $<HTMLButtonElement>(name).disabled = false;
       await pumpLive();
     } catch (error) {
