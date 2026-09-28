@@ -243,6 +243,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     } else if (stage === 'field' && result) {
       $<HTMLSelectElement>('field').value = 'residual';
       $<HTMLSelectElement>('field-slice').value = 'y';
+      const fieldWeight = $<HTMLSelectElement>('field-weight');
+      if (fieldWeight.value !== 'A') { fieldWeight.value = 'A'; fieldWeight.dispatchEvent(new Event('change', { bubbles: true })); }
       fieldOptions();
       player.seek(result.sampleCount / result.config.sampleRateHz);
       draw();
@@ -715,7 +717,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
           clearField(); $('field-status').textContent = '声场物理布局身份与当前实验不一致，已拒绝显示'; return;
         }
         viewer.updateField(frame);
-        if (isFieldAtComparisonWindow(frame, result.sampleCount, result.config.sampleRateHz)) guideFieldRunId = result.runId;
+        if (isFieldAtComparisonWindow(frame, $<HTMLSelectElement>('field').value, result.sampleCount, result.config.sampleRateHz)) guideFieldRunId = result.runId;
         $('field-status').textContent = frame.valid ? `教学布局声场截至 ${frame.time.toFixed(2)} s · 写实外观不投影` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场';
       }).catch(error => {
         if (token !== generation || epoch !== fieldEpoch) return;

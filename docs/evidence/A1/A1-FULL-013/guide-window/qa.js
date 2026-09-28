@@ -20,7 +20,19 @@ async (page) => {
   await page.locator('#lab-guide-action').click();
   await stage('field');
 
+  await page.locator('#lab-field').selectOption('primary');
+  await page.locator('#lab-seek').evaluate(input => { input.value = '10'; input.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.waitForFunction(() => document.querySelector('#lab-field-status')?.textContent?.includes('10.00 s'), undefined, { timeout: 45000 });
+  const primaryStage = await page.locator('#lab-guide-action').getAttribute('data-stage');
+  if (primaryStage !== 'field') throw new Error(`primary field incorrectly unlocked ${primaryStage}`);
+
   await page.locator('#lab-field').selectOption('residual');
+  await page.locator('#lab-field-weight').selectOption('Z');
+  await page.waitForFunction(() => document.querySelector('#lab-field-status')?.textContent?.includes('10.00 s'), undefined, { timeout: 45000 });
+  const unweightedStage = await page.locator('#lab-guide-action').getAttribute('data-stage');
+  if (unweightedStage !== 'field') throw new Error(`Z-weighted field incorrectly unlocked ${unweightedStage}`);
+
+  await page.locator('#lab-field-weight').selectOption('A');
   await page.locator('#lab-seek').evaluate(input => {
     input.value = '3';
     input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -31,11 +43,14 @@ async (page) => {
   if (earlyStage !== 'field') throw new Error(`early field incorrectly unlocked ${earlyStage}: ${earlyField}`);
   await page.locator('.lab-workspace').screenshot({ path: 'docs/evidence/A1/A1-FULL-013/guide-window/early-field.png' });
 
+  await page.locator('#lab-field-weight').selectOption('Z');
   await page.locator('#lab-guide-action').click();
   await stage('listen');
   await page.waitForFunction(() => document.querySelector('#lab-field-status')?.textContent?.includes('10.00 s'), undefined, { timeout: 45000 });
   const terminalField = await page.locator('#lab-field-status').textContent();
+  const terminalWeighting = await page.locator('#lab-field-weight').inputValue();
+  if (terminalWeighting !== 'A') throw new Error(`guide failed to restore A weighting: ${terminalWeighting}`);
   await page.locator('.lab-workspace').screenshot({ path: 'docs/evidence/A1/A1-FULL-013/guide-window/terminal-field.png' });
   if (errors.length || failedRequests.length) throw new Error(JSON.stringify({ errors, failedRequests }));
-  return { earlyStage, earlyField, terminalStage: 'listen', terminalField, errors, failedRequests };
+  return { primaryStage, unweightedStage, earlyStage, earlyField, terminalStage: 'listen', terminalField, terminalWeighting, errors, failedRequests };
 }

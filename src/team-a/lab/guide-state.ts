@@ -26,8 +26,8 @@ export interface GuideState {
 }
 
 /** The guided spatial observation must end at the same sample as the A/B seat summary. */
-export function isFieldAtComparisonWindow(field: Pick<FieldFrame, 'valid' | 'time'>, sampleCount: number, sampleRateHz: number): boolean {
-  if (!field.valid || !Number.isFinite(field.time) || !Number.isInteger(sampleCount) || sampleCount <= 0 || !Number.isFinite(sampleRateHz) || sampleRateHz <= 0) return false;
+export function isFieldAtComparisonWindow(field: Pick<FieldFrame, 'valid' | 'time' | 'weighting'>, mode: string, sampleCount: number, sampleRateHz: number): boolean {
+  if (mode !== 'residual' || field.weighting !== 'A' || !field.valid || !Number.isFinite(field.time) || !Number.isInteger(sampleCount) || sampleCount <= 0 || !Number.isFinite(sampleRateHz) || sampleRateHz <= 0) return false;
   return Math.abs(field.time - sampleCount / sampleRateHz) <= 1 / sampleRateHz + Number.EPSILON;
 }
 

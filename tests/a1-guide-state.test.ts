@@ -65,9 +65,11 @@ test('a candidate field unlocks guidance only at the comparison window end', () 
   const candidate = snapshot('B', 2.2);
   const sampleCount = 20_000;
   const sampleRateHz = candidate.config.sampleRateHz;
-  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 3 }, sampleCount, sampleRateHz), false);
-  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 9.5 }, sampleCount, sampleRateHz), false);
-  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 10 }, sampleCount, sampleRateHz), true);
-  assert.equal(isFieldAtComparisonWindow({ valid: false, time: 10 }, sampleCount, sampleRateHz), false);
-  assert.equal(isFieldAtComparisonWindow({ valid: true, time: Number.NaN }, sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 3, weighting: 'A' }, 'residual', sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 9.5, weighting: 'A' }, 'residual', sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 10, weighting: 'A' }, 'primary', sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 10, weighting: 'Z' }, 'residual', sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 10, weighting: 'A' }, 'residual', sampleCount, sampleRateHz), true);
+  assert.equal(isFieldAtComparisonWindow({ valid: false, time: 10, weighting: 'A' }, 'residual', sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: Number.NaN, weighting: 'A' }, 'residual', sampleCount, sampleRateHz), false);
 });
