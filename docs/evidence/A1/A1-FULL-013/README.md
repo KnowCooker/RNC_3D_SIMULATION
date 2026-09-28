@@ -1,5 +1,7 @@
 # A1-FULL-013 / 物理布局身份边界
 
+[同布局完整配置身份及实时 RNC 切换复核](config-identity/README.md)补齐了 `layoutId` 相同但车型、路面或参考点位不同的 Worker 结果防串实验校验；合法的实时 RNC 开关继续运行。
+
 当前 A1 #38 与 A2 #30 的特定提交已完成[隔离组合工程与浏览器验证](current-a2-composition/README.md)；这不改变下述写实车型声学坐标未配准的结论。
 
 [B 组直连入口诊断](direct-engine-gap/README.md)进一步固定该断点：仅替换 `layoutId` 时，B 纯函数仍接受新身份并输出与教学布局逐样本相同的信号、路径和场。正式页面/Worker 已挡住未知身份；新布局启用前必须由 B 组把数值入口校验与按布局取几何同时完成。

@@ -24,7 +24,7 @@ self.onmessage = async ({ data }) => {
       const config: LabConfig = { ...data.config, layoutId };
       result = null; runId = data.runId;
       live = createLabStream(config, runId, LAB_LIVE_HISTORY_SAMPLES, await loadSource(config));
-      self.postMessage({ type: 'ready', runId, layoutId });
+      self.postMessage({ type: 'ready', runId, layoutId, config });
     } else if (data.type === 'chunk') {
       if (!live) throw new Error('实时计算尚未启动');
       const chunk = live.process(data.sampleCount);

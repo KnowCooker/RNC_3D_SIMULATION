@@ -1,0 +1,30 @@
+{
+  "role": "A1",
+  "task": "A1-FULL-013",
+  "executor": "Codex on behalf of A1",
+  "identitySource": "user-declared",
+  "sourceParent": "2bc3504f03e905c7b3aaf73900a1afff6b164856",
+  "productionAssets": {
+    "lab.worker-BgPsaBcn.js": "6AD4020CE68052B5C266B8B9D6EDD6E42190B07DD8DE70B6B357038263A24265",
+    "lab-engine-Ds1ZEocW.js": "2FC1BFD68B87E34641D077EF654AEED73313708503D8F360E9DBEE8249CA2ACF"
+  },
+  "browser": "Playwright Chromium, 1440x900, http://127.0.0.1:5188/",
+  "errors": [],
+  "replay": {
+    "run": "纯电 SUV · 布局 teaching-fixed-v1 · 4×4×4 · 985a7718",
+    "status": "实验就绪 · 244 ms · 末4秒线性总改善 12.0 dB（教学模型）；四座位d/e共用试听衰减 0.059"
+  },
+  "liveStarted": {
+    "run": "纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · e3ca904c",
+    "status": "实时运行 · 0.0 s · 缓冲 1.20 s · 共同安全增益 0.156 · 补缓冲 0 次"
+  },
+  "rncOff": {
+    "status": "实时运行 · 1.4 s · 缓冲 1.20 s · 共同安全增益 0.135 · 补缓冲 0 次",
+    "audition": "实时试听：残差 e · 权重冻结 / 输出关闭"
+  },
+  "rncRestored": {
+    "status": "实时运行 · 3.0 s · 缓冲 1.38 s · 共同安全增益 0.097 · 补缓冲 0 次",
+    "audition": "实时试听：残差 e · 自适应控制",
+    "field": "教学布局声场截至 2.82 s · 写实外观不投影"
+  }
+}
