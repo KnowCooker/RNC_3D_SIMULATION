@@ -7,7 +7,7 @@ import { createLabViewer } from '../viewer/lab-viewer';
 import { captureCase, compareCases, type CaseSnapshot } from './case-compare';
 import { CASE_EVIDENCE_BOUNDARY, CASE_EVIDENCE_MAX_BYTES, createCaseEvidence, parseCaseEvidence } from './case-evidence';
 import { reviewCase } from './case-review';
-import { guideState, type GuideStage } from './guide-state';
+import { guideState, isFieldAtComparisonWindow, type GuideStage } from './guide-state';
 import { createSignalFlow } from './signal-flow';
 import { drawSignalComparison, plot, splFrame, splRange, visibleSplFrames, ORIGINAL_COLOR, RESULT_COLOR, type SplFrame } from './plots';
 import { bindPlotSettings, plotSettingsMarkup } from './plot-settings';
@@ -715,7 +715,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
           clearField(); $('field-status').textContent = '声场物理布局身份与当前实验不一致，已拒绝显示'; return;
         }
         viewer.updateField(frame);
-        if (frame.valid) guideFieldRunId = result.runId;
+        if (isFieldAtComparisonWindow(frame, result.sampleCount, result.config.sampleRateHz)) guideFieldRunId = result.runId;
         $('field-status').textContent = frame.valid ? `教学布局声场截至 ${frame.time.toFixed(2)} s · 写实外观不投影` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场';
       }).catch(error => {
         if (token !== generation || epoch !== fieldEpoch) return;

@@ -1,4 +1,4 @@
-import type { LabConfig } from '../../shared/lab-contracts';
+import type { FieldFrame, LabConfig } from '../../shared/lab-contracts';
 import { compareCases, type CaseSnapshot } from './case-compare';
 
 export type GuideStage = 'mode' | 'baseline-run' | 'baseline-save' | 'road' | 'candidate-run' | 'repair' | 'field' | 'listen' | 'review';
@@ -23,6 +23,12 @@ export interface GuideState {
   detail: string;
   action: string;
   blocked: boolean;
+}
+
+/** The guided spatial observation must end at the same sample as the A/B seat summary. */
+export function isFieldAtComparisonWindow(field: Pick<FieldFrame, 'valid' | 'time'>, sampleCount: number, sampleRateHz: number): boolean {
+  if (!field.valid || !Number.isFinite(field.time) || !Number.isInteger(sampleCount) || sampleCount <= 0 || !Number.isFinite(sampleRateHz) || sampleRateHz <= 0) return false;
+  return Math.abs(field.time - sampleCount / sampleRateHz) <= 1 / sampleRateHz + Number.EPSILON;
 }
 
 /** Guidance follows recorded experiments; a button press alone never advances evidence. */

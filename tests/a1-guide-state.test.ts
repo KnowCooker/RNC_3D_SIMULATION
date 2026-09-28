@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { defaultLabConfig } from '../src/shared/lab-contracts';
-import { guideState, type GuideInput } from '../src/team-a/lab/guide-state';
+import { guideState, isFieldAtComparisonWindow, type GuideInput } from '../src/team-a/lab/guide-state';
 import type { CaseSnapshot } from '../src/team-a/lab/case-compare';
 
 function snapshot(id: string, road: number): CaseSnapshot {
@@ -59,4 +59,15 @@ test('invalid candidate and stale field never unlock listening', () => {
   assert.equal(guideState(state).stage, 'repair');
   state.currentValid = true; state.candidateFieldReady = false; state.heardOriginal = true; state.heardResidual = true;
   assert.equal(guideState(state).stage, 'field');
+});
+
+test('a candidate field unlocks guidance only at the comparison window end', () => {
+  const candidate = snapshot('B', 2.2);
+  const sampleCount = 20_000;
+  const sampleRateHz = candidate.config.sampleRateHz;
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 3 }, sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 9.5 }, sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: 10 }, sampleCount, sampleRateHz), true);
+  assert.equal(isFieldAtComparisonWindow({ valid: false, time: 10 }, sampleCount, sampleRateHz), false);
+  assert.equal(isFieldAtComparisonWindow({ valid: true, time: Number.NaN }, sampleCount, sampleRateHz), false);
 });

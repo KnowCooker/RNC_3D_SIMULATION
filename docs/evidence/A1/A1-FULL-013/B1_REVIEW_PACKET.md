@@ -1,6 +1,6 @@
 # B1 共享接口审查包：A1-FULL-013
 
-Role: A1；Identity-Source: user-declared；执行者 Codex 代 A1。对应原仓库 [PR #38](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/38)，最新运行源码 `faa6b0c42c05db9889e261a22659e64b7e74e046`，基线 main `cb3d84316a4b9906d490f17d684de006c51532c1`。此页是供 B1 审查的具体接口与决策清单，不代表 B1 已批准，也不启用写实车布局。
+Role: A1；Identity-Source: user-declared；执行者 Codex 代 A1。对应原仓库 [PR #38](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/38)；`faa6b0c42c05db9889e261a22659e64b7e74e046` 是本审查包初写时的运行源码，旧基线 main 为 `cb3d84316a4b9906d490f17d684de006c51532c1`。#38 后续已合入包含 #39 的 main，引导流程与声场同窗门禁见[新增复核](guide-window/README.md)；审查应以 PR 最新 HEAD 为准。此页是供 B1 审查的具体接口与决策清单，不代表 B1 已批准，也不启用写实车布局。
 
 ## 本 PR 实际改变的 A/B 边界
 
@@ -21,7 +21,7 @@ Role: A1；Identity-Source: user-declared；执行者 Codex 代 A1。对应原�
 
 ## 复核入口与当前证据边界
 
-- `pnpm check` 对 PR #38 最新运行源码已在本机及原仓库 CI 通过；[生产浏览器配置与 RNC 切换](config-identity/README.md)、[运行 ID 必填](run-identity/README.md)、[旧/未知案例导入](read-only-import/README.md)给出脚本和原始结果。
+- `pnpm check` 对 #38 合入 #39 后的运行源码已在本机通过，合并提交 `2af50e4` 的原仓库 CI 成功；本次同窗门禁提交的 CI 须另核。[生产浏览器配置与 RNC 切换](config-identity/README.md)、[运行 ID 必填](run-identity/README.md)、[旧/未知案例导入](read-only-import/README.md)和[引导声场同窗](guide-window/README.md)给出脚本和原始结果。
 - `pnpm exec tsx docs/evidence/A1/A1-FULL-013/direct-engine-gap/audit.ts` 复现 B 直连缺口；它是诊断，不改 B 源码。
 - [A1 `c26cc3b` + A2 `d8e2717` 隔离组合](latest-a2-composition/README.md)的 142/142 测试及浏览器流程只证明旧教学声学布局的工程兼容；首次 ICE GLB 请求曾 `net::ERR_ABORTED`，重试成功，可靠性未签收。它不证明写实车声学已配准。
 - 本 PR 不改 `src/team-b/**`、`src/team-a/viewer/**` 或旧 `demo-v2` fixture。目标核显、实物音画、第二台 Windows 断网及正式同版包仍待验。
