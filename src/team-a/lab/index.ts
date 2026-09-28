@@ -8,9 +8,11 @@ import { captureCase, compareCases, type CaseSnapshot } from './case-compare';
 import { CASE_EVIDENCE_BOUNDARY, CASE_EVIDENCE_MAX_BYTES, createCaseEvidence, parseCaseEvidence } from './case-evidence';
 import { reviewCase } from './case-review';
 import { guideState, isFieldAtComparisonWindow, type GuideStage } from './guide-state';
+import { fieldEvidence } from './field-evidence';
 import { createSignalFlow } from './signal-flow';
 import { drawSignalComparison, plot, splFrame, splRange, visibleSplFrames, ORIGINAL_COLOR, RESULT_COLOR, type SplFrame } from './plots';
 import { bindPlotSettings, plotSettingsMarkup } from './plot-settings';
+import { fieldFrameMatchesPoints } from '../viewer/field-slices';
 import './style.css';
 import './game-ui.css';
 
@@ -62,7 +64,9 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <div id="lab-viewer"><span class="lab-view-help">左键旋转 · 滚轮缩放 · 右击硬件查看信号</span></div>
       <div class="lab-view-tools"><label>车身<select id="lab-body"><option value="transparent">透明</option><option value="solid">实体</option><option value="hidden">隐藏</option></select></label><button id="lab-explode" aria-pressed="false">分解动画</button><button id="lab-reset">复位</button><label>剖面<select id="lab-section"><option value="none">关闭</option><option value="x">纵剖 X</option><option value="y">水平 Y</option><option value="z">横剖 Z</option></select></label><label>剖面位置 / m<input id="lab-section-position" type="range" min="-2.5" max="2.5" step="0.05" value="0"></label></div>
       <div class="lab-view-tools"><label>声压场<select id="lab-field"><option value="off">关闭</option><option value="residual">残余 e / SPL</option><option value="primary">原始 d / SPL</option></select></label><label>声场 / 指标计权<select id="lab-field-weight"><option value="A">A 计权</option><option value="Z">Z（不计权）</option></select></label><label>场显示<select id="lab-field-slice"><option value="volume">三维采样体</option><option value="x">中央纵切片</option><option value="y">头部水平切片</option><option value="z">前排横切片</option></select></label><label>传播路径<select id="lab-paths"><option value="none">关闭</option><option value="primary">初级路径</option><option value="secondary">次级路径</option><option value="both">全部</option></select></label><label class="lab-check"><input id="lab-waves" type="checkbox">扬声器波前</label></div>
-      <div class="lab-field-note"><span class="lab-colorbar"></span><span id="lab-field-scale">30—80 dBA，固定色标；0.5秒RMS</span><span id="lab-field-status">声场未开启</span></div><p class="lab-help">空间场由四轮源和实际扬声器驱动经同一传播模型计算，只投影在教学车；写实外观尚未完成声学坐标配准，切换后图表仍属教学实验，不能解释为该写实车的声场。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。</p>
+      <div class="lab-field-note"><span class="lab-colorbar"></span><span id="lab-field-scale">30—80 dBA，固定色标；0.5秒RMS</span><span id="lab-field-status">声场未开启</span></div>
+      <section id="lab-field-evidence" class="lab-field-evidence" aria-label="空间采样点改善证据" hidden><div class="lab-field-evidence-heading"><strong>空间改善证据</strong><span id="lab-field-evidence-window"></span></div><div class="lab-field-evidence-bar" aria-hidden="true"><i id="lab-field-evidence-improved"></i><i id="lab-field-evidence-near"></i><i id="lab-field-evidence-worsened"></i></div><p id="lab-field-evidence-summary"></p><small>正值＝原声−残余，负值表示该点变吵；仅统计本帧有效采样点，比例不是车厢体积占比或实车结论。</small></section>
+      <p class="lab-help">空间场由四轮源和实际扬声器驱动经同一传播模型计算，只投影在教学车；写实外观尚未完成声学坐标配准，切换后图表仍属教学实验，不能解释为该写实车的声场。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。</p>
       <div id="lab-metrics" class="lab-metrics"></div><section class="lab-signals"><h2>04 / 信号流与控制机理</h2><div id="lab-flow"></div></section>
     </section></main>
     <section class="lab-plots">
@@ -78,7 +82,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   const plotsPanel=root.querySelector<HTMLElement>('.lab-plots')!;
   const signalsPanel=root.querySelector<HTMLElement>('.lab-signals')!;
   const viewTools=[...root.querySelectorAll<HTMLElement>('.lab-workspace>.lab-view-tools')];
-  $('viewer').after(...viewTools,root.querySelector<HTMLElement>('.lab-field-note')!,playerPanel); playerPanel.after($('metrics')); $('metrics').after(plotsPanel);
+  $('viewer').after(...viewTools,root.querySelector<HTMLElement>('.lab-field-note')!,$('field-evidence'),playerPanel); playerPanel.after($('metrics')); $('metrics').after(plotsPanel);
   root.append($('case')); root.append(signalsPanel);
   const player = new Player(); player.setVolume(0.15);
   const livePlayer = new LivePlayer(); livePlayer.setVolume(0.15);
@@ -364,7 +368,21 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     ++fieldEpoch; fieldPending = false; lastFieldAt = -1;
     guideFieldRunId = '';
     viewer.updateField({ valid: false, time: 0, points: [], primarySpl: new Float32Array(), residualSpl: new Float32Array(), reductionDb: new Float32Array() });
+    $('field-evidence').hidden = true;
     $('field-status').textContent = $<HTMLSelectElement>('field').value === 'off' ? '声场未开启' : '等待当前实验声场';
+  }
+  function showFieldEvidence(frame: FieldFrame) {
+    const evidence = fieldFrameMatchesPoints(frame, viewer.fieldPoints) ? fieldEvidence(frame) : null;
+    const panel = $('field-evidence');
+    panel.hidden = !evidence;
+    if (!evidence) return;
+    const signed = (value: number) => `${value > 0.05 ? '+' : ''}${(Math.abs(value) < 0.05 ? 0 : value).toFixed(1)}`;
+    const percent = (count: number) => `${count / evidence.valid * 100}%`;
+    $('field-evidence-window').textContent = `${frame.time.toFixed(2)} s · ${frame.weighting === 'Z' ? 'Z' : 'A'} 计权 · 0.5 s 窗`;
+    $('field-evidence-improved').style.width = percent(evidence.improved);
+    $('field-evidence-near').style.width = percent(evidence.nearZero);
+    $('field-evidence-worsened').style.width = percent(evidence.worsened);
+    $('field-evidence-summary').textContent = `${evidence.valid}/${evidence.sampled} 有效采样点：改善 ${evidence.improved} · 接近持平 ${evidence.nearZero} · 变差 ${evidence.worsened}；改善量中位数 ${signed(evidence.medianDb)} dB，范围 ${signed(evidence.lowestDb)}～${signed(evidence.highestDb)} dB。`;
   }
   function clearExperiment() {
     halted = null; result = null; liveSession = false; livePullPending = false; liveSnapshot = null; backgroundPaused = false; livePlayer.reset();
@@ -716,9 +734,14 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
         if (!result || frame.layoutId !== labLayoutId(result.config)) {
           clearField(); $('field-status').textContent = '声场物理布局身份与当前实验不一致，已拒绝显示'; return;
         }
+        if (frame.valid && !fieldFrameMatchesPoints(frame, viewer.fieldPoints)) {
+          clearField(); $('field-status').textContent = '声场采样点与当前剖面不一致，已拒绝显示'; return;
+        }
         viewer.updateField(frame);
+        showFieldEvidence(frame);
         if (isFieldAtComparisonWindow(frame, $<HTMLSelectElement>('field').value, result.sampleCount, result.config.sampleRateHz)) guideFieldRunId = result.runId;
-        $('field-status').textContent = frame.valid ? `教学布局声场截至 ${frame.time.toFixed(2)} s · 写实外观不投影` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场';
+        $('field-status').textContent = frame.valid ? `教学布局声场截至 ${frame.time.toFixed(2)} s · 写实外观不投影`
+          : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场';
       }).catch(error => {
         if (token !== generation || epoch !== fieldEpoch) return;
         clearField(); $('field-status').textContent = `声场计算失败：${String(error)}`;
