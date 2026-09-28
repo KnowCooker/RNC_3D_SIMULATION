@@ -48,3 +48,5 @@ git diff --check
 发布：运行修复/证据提交`f6aff07`、日志行尾空白整理`dfa1365`已推送个人fork，PR #33已转可审查，目标原仓库main，未自动合并。日志仅清除行尾空白，失败内容保持；整批`git diff origin/main --check`通过。云端CI以PR最新提交为准。
 
 云端：`dfa1365`的[Engineering checks](https://github.com/KnowCooker/RNC_3D_SIMULATION/actions/runs/36367204599)已成功；包含本次113项回归的Ubuntu检查通过。后续交接文档提交仍需查看最新PR检查。
+
+最新main同步：发布期间A1 #34合入main `5f1fa26`，仅共同根日志产生冲突。已保留双方记录并合入main；A1/shared/integration与main完全一致。合并后完整检查**116/116、类型/边界/构建通过**，见[after-main-check.txt](after-main-check.txt)。B2运行源码未变，原113项/200帧证据仍绑定原基线；新合并提交的云端检查须单独核对。

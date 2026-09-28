@@ -146,6 +146,15 @@
 .lab-case-results th { color: var(--gold); font-weight: 600; }
 .lab-case-results td:last-child { color: var(--cyan); font-weight: 700; }
 .lab-case-results p { margin-top: 8px; }
+.lab-case-evidence { grid-column: 1 / -1; min-width: 0; border-top: 1px solid #365561; padding-top: 8px; }
+.lab-case-evidence summary { color: var(--gold); cursor: pointer; font-size: 12px; font-weight: 700; }
+.lab-case-evidence > p { margin: 7px 0; }
+.lab-case-evidence > label { display: block; margin: 8px 0; color: #d8e6e7; font-size: 11px; }
+.lab-case-evidence textarea { box-sizing: border-box; display: block; width: 100%; margin-top: 4px; padding: 8px; color: #f3f7f2; background: #0b1d2a; border: 1px solid #46707a; resize: vertical; font: inherit; }
+.lab-case-import { display: inline-flex; align-items: center; gap: 6px; color: #d8e6e7; font-size: 11px; }
+.lab-case-import input { max-width: 190px; font-size: 11px; }
+#lab-case-imported { margin-top: 10px; }
+#lab-case-imported p { white-space: pre-line; }
 .lab-view-heading {
   min-height: 58px;
   justify-content: flex-start;

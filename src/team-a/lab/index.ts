@@ -4,6 +4,7 @@ import { Player, prepareLabPlayback } from '../player';
 import { LivePlayer } from '../player/live-player';
 import { createLabViewer } from '../viewer/lab-viewer';
 import { captureCase, compareCases, type CaseSnapshot } from './case-compare';
+import { CASE_EVIDENCE_BOUNDARY, CASE_EVIDENCE_MAX_BYTES, createCaseEvidence, parseCaseEvidence } from './case-evidence';
 import { createSignalFlow } from './signal-flow';
 import { drawSignalComparison, plot, splFrame, splRange, visibleSplFrames, ORIGINAL_COLOR, RESULT_COLOR, type SplFrame } from './plots';
 import './style.css';
@@ -51,7 +52,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <fieldset><legend>车门扬声器</legend><div id="lab-speakers">${ORDER.map((name, i) => `<label class="lab-check"><input type="checkbox" data-speaker="${i}" checked>${name.toUpperCase()}</label>`).join('')}</div></fieldset>
       <button id="lab-calculate" class="lab-primary">启动 / 重启实时实验</button><button id="lab-cancel" disabled>结束实时实验</button><p id="lab-status" role="status">实时仿真已就绪，点击“启动 / 重启实时实验”开始计算与试听。</p>
     </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">LIVE 3D / INTERACTIVE BAY</span><h2>03 / 结构与空间声场</h2></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
-      <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；结果来自教学模型。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div></section>
+      <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；结果来自教学模型。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div><details class="lab-case-evidence"><summary>保存案例证据 / 导入复核</summary><p>记录本次观察和后续核查，导出可携带的 JSON 摘要。导入仅供查看，不恢复实验或原始音频。</p><label>观察<textarea id="lab-case-observation" maxlength="1000" rows="2" placeholder="例如：右后座残余声压变化，是否符合预期？"></textarea></label><label>下一步核查<textarea id="lab-case-next-check" maxlength="1000" rows="2" placeholder="例如：保持车速不变，复测不同路面。"></textarea></label><div class="lab-case-actions"><button id="lab-case-export" type="button" disabled>导出当前 A/B 摘要</button><label class="lab-case-import">导入 JSON 复核<input id="lab-case-import" type="file" accept="application/json,.json"></label></div><p id="lab-case-evidence-state" role="status">导出需要当前页面中完成两次预计算实验。</p><div id="lab-case-imported" class="lab-case-results" hidden></div></details></section>
       <div id="lab-viewer"><span class="lab-view-help">左键旋转 · 滚轮缩放 · 右击硬件查看信号</span></div>
       <div class="lab-view-tools"><label>车身<select id="lab-body"><option value="transparent">透明</option><option value="solid">实体</option><option value="hidden">隐藏</option></select></label><button id="lab-explode" aria-pressed="false">分解动画</button><button id="lab-reset">复位</button><label>剖面<select id="lab-section"><option value="none">关闭</option><option value="x">纵剖 X</option><option value="y">水平 Y</option><option value="z">横剖 Z</option></select></label><label>剖面位置 / m<input id="lab-section-position" type="range" min="-2.5" max="2.5" step="0.05" value="0"></label></div>
       <div class="lab-view-tools"><label>声压场<select id="lab-field"><option value="off">关闭</option><option value="residual">残余 e / SPL</option><option value="primary">原始 d / SPL</option></select></label><label>场显示<select id="lab-field-slice"><option value="volume">三维采样体</option><option value="x">中央纵切片</option><option value="y">头部水平切片</option><option value="z">前排横切片</option></select></label><label>传播路径<select id="lab-paths"><option value="none">关闭</option><option value="primary">初级路径</option><option value="secondary">次级路径</option><option value="both">全部</option></select></label><label class="lab-check"><input id="lab-waves" type="checkbox">扬声器波前</label></div>
@@ -83,11 +84,17 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   let frequencyRange: [number, number] = [20, 500];
   const caseLevel = (value: number | null) => value === null ? '—' : value.toFixed(1);
   const caseDelta = (value: number | null) => value === null ? '—' : `${Math.abs(value) < 0.05 ? '' : value > 0 ? '+' : ''}${(Math.abs(value) < 0.05 ? 0 : value).toFixed(1)}`;
+  function candidateCase(): CaseSnapshot | null {
+    if (!caseBaseline || !result || realtime || result.runId === caseBaseline.runId) return null;
+    try { return captureCase(result, ports.analyze(result, result.sampleCount / result.config.sampleRateHz, { signal: 'e', channel: 0 }, { levelWeighting: 'A', levelsOnly: true })); }
+    catch { return null; }
+  }
   function renderCase() {
     const state = $('case-state'), output = $('case-results');
     const save = $<HTMLButtonElement>('case-save'), clear = $<HTMLButtonElement>('case-clear');
     save.disabled = realtime || busy || !result;
     clear.disabled = !caseBaseline;
+    $<HTMLButtonElement>('case-export').disabled = busy || !candidateCase();
     output.replaceChildren(); output.hidden = true;
     if (!caseBaseline) {
       state.textContent = realtime ? '先切换到“计算后回放”，运行一次实验并保存基线 A。' : result ? '当前实验已就绪；保存为基线 A，再修改一个条件并重新计算。' : '运行一次预计算实验后，可保存基线 A。';
@@ -97,10 +104,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       state.textContent = realtime ? '基线 A 已保留在本页内存中；切回预计算模式运行候选 B。' : `基线 A 已保存（${caseBaseline.runId.slice(0, 8)}）；修改配置后重新计算候选 B。`;
       return;
     }
-    let candidate: CaseSnapshot;
-    try {
-      candidate = captureCase(result, ports.analyze(result, result.sampleCount / result.config.sampleRateHz, { signal: 'e', channel: 0 }, { levelWeighting: 'A', levelsOnly: true }));
-    } catch {
+    const candidate = candidateCase();
+    if (!candidate) {
       state.textContent = '候选 B 的末尾窗口没有有效声压数据，无法对比；基线 A 仍保留。';
       return;
     }
@@ -389,6 +394,49 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     } catch (error) { $('case-state').textContent = error instanceof Error ? error.message : String(error); }
   };
   $('case-clear').onclick = () => { caseBaseline = null; renderCase(); };
+  $('case-export').onclick = () => {
+    const candidate = candidateCase();
+    if (!caseBaseline || !candidate || busy) return;
+    try {
+      const json = createCaseEvidence(caseBaseline, candidate, $<HTMLTextAreaElement>('case-observation').value, $<HTMLTextAreaElement>('case-next-check').value);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob), link = document.createElement('a');
+      link.href = url; link.download = `rnc-case-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+      $('case-evidence-state').textContent = `已导出 ${link.download}；这是教学模型摘要，不含原始信号。`;
+    } catch (error) { $('case-evidence-state').textContent = error instanceof Error ? error.message : String(error); }
+  };
+  $<HTMLInputElement>('case-import').onchange = async event => {
+    const input = event.currentTarget as HTMLInputElement, file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    const output = $('case-imported'); output.replaceChildren(); output.hidden = true;
+    try {
+      if (file.size > CASE_EVIDENCE_MAX_BYTES) throw new Error('案例文件超过64 KiB');
+      const { evidence, comparison } = parseCaseEvidence(await file.text());
+      const heading = document.createElement('strong'); heading.textContent = `导入案例 · ${evidence.question}`;
+      const provenance = document.createElement('p');
+      const sourceName = (mode: LabConfig['sourceMode']) => mode === 'recorded-noise' ? '实录初级噪声 · 四轮等效声源' : '随机噪声 · 实录谱形整形';
+      provenance.textContent = `文件自报时间 ${evidence.createdAt}；A ${evidence.baseline.runId}（${sourceName(evidence.baseline.config.sourceMode)}）→ B ${evidence.candidate.runId}（${sourceName(evidence.candidate.config.sourceMode)}）。`;
+      const summary = document.createElement('p');
+      summary.textContent = comparison.comparable
+        ? `${comparison.changes.length === 1 ? `单变量：${comparison.changes[0]}` : comparison.changes.length > 1 ? `改变 ${comparison.changes.length} 项，不能单因子归因：${comparison.changes.join('、')}` : '配置未改变；重复实验'}。后排 B−A 残余：RL ${caseDelta(comparison.residualDeltaDb[2])} dB，RR ${caseDelta(comparison.residualDeltaDb[3])} dB。`
+        : `条件不一致（${comparison.conditions.join('、')}），不计算 A/B 差值。`;
+      const table = document.createElement('table');
+      const header = document.createElement('tr');
+      for (const label of ['座位', 'A 原声 / 残余 / 改善', 'B 原声 / 残余 / 改善', 'B−A 残余']) { const cell = document.createElement('th'); cell.textContent = label; header.append(cell); }
+      table.append(header);
+      for (let i = 0; i < 4; i++) {
+        const row = document.createElement('tr');
+        for (const value of [seatNames[i], `${caseLevel(evidence.baseline.primarySpl[i])} / ${caseLevel(evidence.baseline.residualSpl[i])} / ${caseLevel(evidence.baseline.reductionDb[i])}`, `${caseLevel(evidence.candidate.primarySpl[i])} / ${caseLevel(evidence.candidate.residualSpl[i])} / ${caseLevel(evidence.candidate.reductionDb[i])}`, caseDelta(comparison.residualDeltaDb[i])]) { const cell = document.createElement('td'); cell.textContent = value; row.append(cell); }
+        table.append(row);
+      }
+      const notes = document.createElement('p'); notes.textContent = `观察：${evidence.observation || '未填写'}\n下一步核查：${evidence.nextCheck || '未填写'}`;
+      const boundary = document.createElement('p'); boundary.textContent = CASE_EVIDENCE_BOUNDARY;
+      output.append(heading, provenance, summary, table, notes, boundary); output.hidden = false;
+      $('case-evidence-state').textContent = `已导入 ${file.name}；文件内容未经签名验证，仅供只读复核，不改变当前实验。`;
+    } catch (error) { $('case-evidence-state').textContent = error instanceof Error ? error.message : String(error); }
+  };
   $('body').onchange = () => viewer.setBody($<HTMLSelectElement>('body').value);
   $('explode').onclick = () => { exploded = !exploded; viewer.setExploded(exploded); $('explode').setAttribute('aria-pressed', String(exploded)); };
   $('reset').onclick = () => { viewer.reset(); exploded = false; $('explode').setAttribute('aria-pressed', 'false'); };
