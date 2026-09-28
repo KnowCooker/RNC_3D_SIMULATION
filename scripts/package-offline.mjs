@@ -28,12 +28,14 @@ async function files(directory) {
 try { await stat(destination); throw new Error(`Refusing to overwrite ${destination}`); }
 catch (error) { if (error.code !== 'ENOENT') throw error; }
 requireCleanSource();
-const check = spawnSync(process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm', ['check'], {
-  cwd: root, stdio: 'inherit', shell: process.platform === 'win32',
-});
+const check = process.platform === 'win32'
+  ? spawnSync(process.env.ComSpec ?? 'cmd.exe', ['/d', '/s', '/c', 'pnpm.cmd check'], { cwd: root, stdio: 'inherit' })
+  : spawnSync('pnpm', ['check'], { cwd: root, stdio: 'inherit' });
 if (check.error) throw check.error;
 if (check.status !== 0) throw new Error(`pnpm check failed with exit status ${check.status}`);
 requireCleanSource();
+const checkedCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+if (checkedCommit !== sourceCommit) throw new Error('HEAD changed during the package build');
 await stat(resolve(root, 'dist', 'index.html'));
 await mkdir(join(destination, 'scripts'), { recursive: true });
 await cp(resolve(root, 'dist'), join(destination, 'dist'), { recursive: true, force: false, errorOnExist: true });
