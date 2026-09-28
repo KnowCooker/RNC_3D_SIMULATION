@@ -1,0 +1,20 @@
+{
+  "batch": {
+    "accepted": "showroom-unverified-v1",
+    "identical": {
+      "x": true,
+      "u": true,
+      "d": true,
+      "a": true,
+      "e": true
+    },
+    "teachingField": 62.3857536315918,
+    "foreignField": 62.3857536315918,
+    "identicalPrimaryPath": true
+  },
+  "live": {
+    "accepted": "foreign-live",
+    "layoutId": "showroom-unverified-v1",
+    "sampleCount": 400
+  }
+}
