@@ -8,7 +8,7 @@ Role: A1；Identity-Source: user-declared；执行者 Codex 代 A1。对应原�
 | --- | --- | --- |
 | `src/shared/lab-contracts.ts` | `LabConfig.layoutId?`；旧配置缺省解释为 `teaching-fixed-v1`。`FieldFrame.layoutId?` 暂时可选，以兼容 B 纯函数既有返回；正式 Worker 必填。 | `supportedLabLayoutId` 目前只允许教学布局，未知 ID 明确拒绝。 |
 | `src/integration/lab.worker.ts` | 预计算/实时启动在调用 B 前规范化并校验布局；实时 `ready` 新增完整 `config`；场帧标记布局。 | 所有发往主线程的回复包含 `runId`，错误也回传请求的运行 ID。 |
-| `src/integration/lab-engine.ts` | 启动配置快照与 Worker 结果/实时回执/每包快照进行完整配置比对；实时 RNC 开关是唯一允许的动态字段变化。 | 缺失或错配 `runId`、布局或配置会拒绝该实验；错配单次场帧只拒查询。开关回执必须与请求一致才更新期望配置。 |
+| `src/integration/lab-engine.ts` | 启动配置快照与 Worker 结果/实时回执/每包快照进行完整配置比对；实时 RNC 开关是唯一允许的动态字段变化。 | 缺失或错配 `runId`、布局或配置会拒绝该实验；场帧还须与本次请求的时间、计权和逐点采样坐标一致，错配单帧只拒查询。开关回执必须与请求一致才更新期望配置。 |
 | `src/integration/main.ts` | 直接查看 H/S/Ŝ 时仍调用 B 的 `analyzeLabPath`。 | 装配层先用同一布局门禁拦截未知 ID。 |
 | `src/team-a/lab/**` | 案例保存/导入带布局；旧 `rnc-case-v1` 缺省归教学布局。 | 未注册布局案例只读展示文件自报数据，不复算或产生 A/B 数值差值；运行中实验不被导入替换。 |
 
@@ -23,6 +23,7 @@ Role: A1；Identity-Source: user-declared；执行者 Codex 代 A1。对应原�
 
 - `pnpm check` 对 #38 合入 #39 后的运行源码已在本机通过，合并提交 `2af50e4` 的原仓库 CI 成功；本次同窗门禁提交的 CI 须另核。[生产浏览器配置与 RNC 切换](config-identity/README.md)、[运行 ID 必填](run-identity/README.md)、[旧/未知案例导入](read-only-import/README.md)和[引导声场同窗](guide-window/README.md)给出脚本和原始结果。
 - `pnpm exec tsx docs/evidence/A1/A1-FULL-013/direct-engine-gap/audit.ts` 复现 B 直连缺口；它是诊断，不改 B 源码。
+- [同一实验的场请求身份](field-request-identity/README.md)复核新的时间/计权/采样点回执校验及四车、实时正式 Worker 正常路径；B1 请连同原布局门禁审查。
 - [A1 `c26cc3b` + A2 `d8e2717` 隔离组合](latest-a2-composition/README.md)的 142/142 测试及浏览器流程只证明旧教学声学布局的工程兼容；首次 ICE GLB 请求曾 `net::ERR_ABORTED`，重试成功，可靠性未签收。它不证明写实车声学已配准。
 - 本 PR 不改 `src/team-b/**`、`src/team-a/viewer/**` 或旧 `demo-v2` fixture。目标核显、实物音画、第二台 Windows 断网及正式同版包仍待验。
 

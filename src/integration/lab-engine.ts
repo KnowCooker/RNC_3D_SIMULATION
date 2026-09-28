@@ -10,11 +10,24 @@ function configIdentity(config: unknown): string {
   return JSON.stringify(ordered(config)) ?? '';
 }
 
+interface FieldRequestIdentity { time: number; sampleRateHz: number; weighting: AcousticWeighting; points: Vec3[] }
+
+function fieldReplyMatchesRequest(frame: FieldFrame, requested: FieldRequestIdentity): boolean {
+  if (frame.weighting !== requested.weighting || !Number.isFinite(requested.time) || !Number.isFinite(frame.time)
+    || !(requested.sampleRateHz > 0) || Math.abs(frame.time - requested.time) > 1 / requested.sampleRateHz + 1e-6
+    || !Array.isArray(frame.points) || frame.points.length !== requested.points.length) return false;
+  return requested.points.every(([x, y, z], i) => {
+    const actual = frame.points[i];
+    return !!actual && Number.isFinite(actual[0]) && Number.isFinite(actual[1]) && Number.isFinite(actual[2])
+      && Math.abs(actual[0] - x) < 1e-5 && Math.abs(actual[1] - y) < 1e-5 && Math.abs(actual[2] - z) < 1e-5;
+  });
+}
+
 export function createLabEngine() {
   let worker: Worker | null = null, runId = '', activeLayoutId = '', activeConfigIdentity = '', mode: 'batch' | 'live' | null = null;
   let activeConfig: LabConfig | null = null;
   let rejectStart: ((error: Error) => void) | null = null, requestId = 0;
-  const pending = new Map<number, { kind: 'field' | 'chunk' | 'rnc'; enabled?: boolean; resolve: (value: unknown) => void; reject: (error: Error) => void }>();
+  const pending = new Map<number, { kind: 'field' | 'chunk' | 'rnc'; enabled?: boolean; field?: FieldRequestIdentity; resolve: (value: unknown) => void; reject: (error: Error) => void }>();
   function cancel() {
     worker?.terminate(); worker = null; mode = null; activeLayoutId = ''; activeConfigIdentity = ''; activeConfig = null;
     rejectStart?.(new Error('计算已取消')); rejectStart = null;
@@ -66,6 +79,7 @@ export function createLabEngine() {
             }
             pending.delete(data.id);
             if (data.type === 'field' && data.frame?.layoutId !== activeLayoutId) request.reject(new Error('声场物理布局身份与当前实验不一致，已拒绝显示'));
+            else if (data.type === 'field' && (!request.field || !fieldReplyMatchesRequest(data.frame, request.field))) request.reject(new Error('声场响应与本次时间、计权或采样点请求不一致，已拒绝显示'));
             else request.resolve(data.type === 'field' ? data.frame : data.type === 'rnc' ? data.change : data.packet);
           }
         } else if (data.type === 'error') {
@@ -86,7 +100,11 @@ export function createLabEngine() {
       if (!worker || rejectStart) { reject(new Error('请先启动实验')); return; }
       if (kind !== 'field' && mode !== 'live') { reject(new Error('当前不是实时实验')); return; }
       const id = ++requestId;
-      pending.set(id, { kind, ...(kind === 'rnc' ? { enabled: (payload as { enabled: boolean }).enabled } : {}), resolve: value => resolve(value as T), reject });
+      const field = kind === 'field' ? payload as { time: number; points: Vec3[]; weighting: AcousticWeighting } : null;
+      pending.set(id, { kind,
+        ...(kind === 'rnc' ? { enabled: (payload as { enabled: boolean }).enabled } : {}),
+        ...(field ? { field: { time: field.time, sampleRateHz: activeConfig?.sampleRateHz ?? 0, weighting: field.weighting, points: field.points.map(([x, y, z]) => [x, y, z] as Vec3) } } : {}),
+        resolve: value => resolve(value as T), reject });
       try { worker.postMessage({ type: kind, id, ...payload }); }
       catch (error) { pending.delete(id); reject(error); }
     });

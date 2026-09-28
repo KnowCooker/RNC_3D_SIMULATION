@@ -110,10 +110,34 @@ test('field frames without the active physical layout are rejected without killi
     assert.equal(worker.terminated, false);
   }
   const field = engine.field(1, [[0, 1, 0]]), id = worker.messages.at(-1).id;
-  const frame = { layoutId: TEACHING_LAYOUT_ID, time: 1, valid: true };
+  const frame = { layoutId: TEACHING_LAYOUT_ID, time: 1, valid: true, weighting: 'Z', points: [[0, 1, 0]] };
   worker.receive({ type: 'field', id, runId: 'layout-field', frame });
   assert.equal(await field, frame);
   engine.cancel();
+});
+
+test('a field reply cannot substitute another time, weighting or sampling plane within the same run', async t => {
+  const engine = setup(t), started = engine.startLive(defaultLabConfig(), 'field-request'), worker = FakeWorker.instances.at(-1)!;
+  ready(worker, 'field-request'); await started;
+  const points: [number, number, number][] = [[0, 1, 0], [0.5, 1.2, -0.4]];
+  const correct = { layoutId: TEACHING_LAYOUT_ID, time: 1, valid: true, weighting: 'A', points };
+  for (const mismatch of [
+    { ...correct, time: 0.5 },
+    { ...correct, weighting: 'Z' },
+    { ...correct, points: [points[1], points[0]] },
+    { ...correct, points: [[0.1, 1, 0], points[1]] },
+  ]) {
+    const field = engine.field(1, points, 'A'), id = worker.messages.at(-1).id;
+    const rejected = assert.rejects(field, /声场响应.*时间、计权或采样点/);
+    worker.receive({ type: 'field', id, runId: 'field-request', frame: mismatch });
+    await rejected; assert.equal(worker.terminated, false);
+  }
+  const field = engine.field(1, points, 'A'), id = worker.messages.at(-1).id;
+  worker.receive({ type: 'field', id, runId: 'field-request', frame: correct });
+  assert.equal(await field, correct);
+  const rounded = engine.field(1 + 0.25 / defaultLabConfig().sampleRateHz, points, 'A');
+  worker.receive({ type: 'field', id: worker.messages.at(-1).id, runId: 'field-request', frame: correct });
+  assert.equal(await rounded, correct); engine.cancel();
 });
 
 test('batch results and live packets cannot switch physical layout inside an accepted run', async t => {
