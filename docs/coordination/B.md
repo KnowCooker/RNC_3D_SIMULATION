@@ -1,5 +1,7 @@
 # B1/B2 共同任务与串行交接
 
+**2026-09-28 / B1 / B1-PUBLISH-003 已推送 PR #37**：Role: B1，Identity-Source: local-config，执行者Codex。功能a9cae3a及main合入复验c5a3bcf已推送origin/b/b1-coordination，GitHub PR head确认c5a3bcf0815e4cc2a249a74af7e4eab3a3991b88；[PR #37](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/37)已创建为可审查、未合并，base为main 51a8563。128/128完整测试、类型/边界/构建通过，合并页面加载核验见docs/evidence/B/B1-PUBLISH-003。本条为发布回填，之后分支SHA以前述PR最新head为准；云端CI另行核对。当前三批源码写入结束，下一步维护者评审与合并；A2 #30和B2状态文档 #36仍独立，未改其分支。
+
 **2026-09-28 / B1 / B1-PUBLISH-003 合入复验完成**：Role: B1，Identity-Source: local-config，执行者Codex。当前三批修改已保存为a9cae3a，合入origin/main 51a8563保留A1 #35；根日志冲突保留双方条目。首次类型检查发现A1新测试缺少spectrumDb，补齐null测试字段后pnpm check通过：128/128测试、类型、目录边界、生产构建。浏览器重载确认实时默认、工具栏/三图/底部信号流及4个人工评审字段并存；未重跑长时设备验收。证据docs/evidence/B/B1-PUBLISH-003。跨组影响仅已授权三批及A1测试接口适配；冻结fixture未改。下一步推送当前分支并创建PR，尚未合并main。
 
 **2026-09-28 / B1 / B1-PUBLISH-003 发布准备**：用户明确要求推送当前版本并提交PR。Role: B1，Identity-Source: local-config，执行者Codex。复用b/b1-coordination，汇总DISPLAY-001/INSPECT-001/DIVERGENCE-001；修改前125/125完整检查、55/55 B组通过。已fetch，origin/main新增A1 #35至51a8563；开放PR为A2 #30和B2文档状态 #36。先保存当前代码，再合入main保留A1评审卡，解决重叠并复验后推送。跨组影响沿用三批用户授权；个人规则/原始数据/冻结fixture不提交。下一步合入复验、创建PR并登记真实结果，当前尚未推送。
