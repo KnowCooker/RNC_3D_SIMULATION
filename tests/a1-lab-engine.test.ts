@@ -1,7 +1,7 @@
 import test, { type TestContext } from 'node:test';
 import assert from 'node:assert/strict';
 import { createLabEngine } from '../src/integration/lab-engine';
-import { defaultLabConfig } from '../src/shared/lab-contracts';
+import { defaultLabConfig, TEACHING_LAYOUT_ID } from '../src/shared/lab-contracts';
 
 class FakeWorker {
   static instances: FakeWorker[] = [];
@@ -78,4 +78,17 @@ test('live RNC control returns the exact sample boundary and a rejected switch p
   const next = engine.pullLive(200), packet = { marker: 'still running' };
   worker.receive({ type: 'chunk', id: worker.messages.at(-1).id, runId: 'switch', packet });
   assert.equal(await next, packet); engine.cancel();
+});
+
+test('legacy layout is stamped and unimplemented layouts fail before replacing a running experiment', async t => {
+  const engine = setup(t), legacy = defaultLabConfig(); delete legacy.layoutId;
+  const started = engine.startLive(legacy, 'legacy'), worker = FakeWorker.instances.at(-1)!;
+  assert.equal(worker.messages[0].config.layoutId, TEACHING_LAYOUT_ID);
+  worker.receive({ type: 'ready', runId: 'legacy' }); await started;
+  await assert.rejects(engine.calculate({ ...legacy, layoutId: 'showroom-unverified-v1' }, 'wrong'), /尚未接入声学路径/);
+  assert.equal(FakeWorker.instances.length, 1);
+  assert.equal(worker.terminated, false);
+  const chunk = engine.pullLive(200);
+  worker.receive({ type: 'chunk', id: worker.messages.at(-1).id, runId: 'legacy', packet: { marker: 'preserved' } });
+  assert.deepEqual(await chunk, { marker: 'preserved' }); engine.cancel();
 });

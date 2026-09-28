@@ -1,4 +1,4 @@
-import type { AcousticWeighting, FieldFrame, LabConfig, LabLivePacket, LabResult, LabRncChange, Vec3 } from '../shared/lab-contracts';
+import { supportedLabLayoutId, type AcousticWeighting, type FieldFrame, type LabConfig, type LabLivePacket, type LabResult, type LabRncChange, type Vec3 } from '../shared/lab-contracts';
 
 export function createLabEngine() {
   let worker: Worker | null = null, runId = '', mode: 'batch' | 'live' | null = null;
@@ -10,8 +10,11 @@ export function createLabEngine() {
     pending.forEach(p => p.reject(new Error('实验已更换'))); pending.clear();
   }
   function start<T>(config: LabConfig, id: string, kind: 'batch' | 'live') {
-    cancel(); runId = id; mode = kind;
     return new Promise<T>((resolve, reject) => {
+      let layoutId: string;
+      try { layoutId = supportedLabLayoutId(config); }
+      catch (error) { reject(error); return; }
+      cancel(); runId = id; mode = kind;
       rejectStart = reject;
       let active: Worker;
       try { active = new Worker(new URL('./lab.worker.ts', import.meta.url), { type: 'module' }); }
@@ -43,7 +46,7 @@ export function createLabEngine() {
         }
       };
       active.onerror = event => fail(new Error(event.message || '计算线程停止'));
-      try { active.postMessage({ type: kind === 'live' ? 'live-start' : 'calculate', config, runId: id }); }
+      try { active.postMessage({ type: kind === 'live' ? 'live-start' : 'calculate', config: { ...config, layoutId }, runId: id }); }
       catch (error) { fail(error instanceof Error ? error : new Error(String(error))); }
     });
   }
