@@ -1,7 +1,7 @@
 # A1-FULL-013 / 物理布局身份边界
 
 - 角色：A1；执行者：Codex 代 A1；身份来源：本会话用户声明。
-- 基线：原仓库 main `cb3d843`；任务分支 `a/a1-full-013-layout-identity`；[PR #38](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/38)。本报告在功能提交前编写，最终源码 SHA 以 PR 最新提交为准。
+- 基线：原仓库 main `cb3d843`；功能源码提交 `527ade517eb8675fa9c7e9afe88d98bf9062aa6e`；任务分支 `a/a1-full-013-layout-identity`；[PR #38](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/38)。该功能提交的[云端 verify](https://github.com/KnowCooker/RNC_3D_SIMULATION/actions/runs/36449710203/job/109020998848) 通过；后续纯文档提交不改变所验运行源码。
 - 目标：当前固定声学坐标必须有可追溯身份；旧数据继续可读；未配准的车型布局不能在现有 Worker 中按固定 H/S/声场运行，也不能与旧案例直接比较。
 
 ## 契约与边界
