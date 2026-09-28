@@ -4,7 +4,19 @@
 
 依据：[B组需求](../plan/02_B组独立需求.md)、[每日任务与验收](../plan/03_每日任务与验收.md)、[固定接口](../../src/shared/contracts.ts)。以下拆分针对当前已合入 main 的 demo-v2 范围；A 组未合并草稿中的扩展不自动改变 B 组验收或契约，有跨组新需求时另行确认。
 
-## 当前发布：B1-PUSH-002（2026-09-27）
+## 当前接班：B2-002（2026-09-28）
+
+- 用户角色B2；Identity-Source: user-declared；执行者Codex，延续本会话。B1-PUSH-002记录明确本批实现已结束，PR #31已合并为`bb07dd7`；本次检查无B组开放PR，仅A2 #30，按串行流程接班。
+- B2-001 PR #29已于2026-09-27合并，合并SHA `8724b098838f158359e4167a05399512e7cbba26`；下方待合并/CI待批准是历史状态。
+- 当前任务B2-002：指标与频谱边界；状态待合并，[PR #33](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/33)已转可审查；认领`17974b9`、运行修复/证据`f6aff07`及日志空白整理`dfa1365`已推送。发布后复查仅#30/#33，无重复B组任务。分支`hgyong:b/b2-002-analysis-boundaries`；基线`3d81ebc84c5b79c561917d86bdea30b2517d6374`，推送前再次fetch未变化。
+- 范围：`src/team-b/analysis/**`、B组已有分析测试/必要lab调用回归、B组说明与`docs/evidence/B/B2-002/`、本页及根日志。核对0.5秒RMS、20μPa SPL、同窗功率比、四点合功率、Hann1024/50%重叠/单边归一、短窗/静音/非有限值/首尾/单位边界；先复现后最小修复，不改共享契约、A组或冻结fixture。
+- 已复现并修复：NaN声压错误valid=true；非法功率窗口返回零；PSD在坏样本/越界窗口传播NaN。有限游标夹到实际长度，非有限游标/采样率及坏样本返回null；功率非法窗口返回NaN，帧无效字段置null；负/非有限RMS不再伪装成有限SPL。
+- 验证：专项12/12、B组54/54、全仓113/113、类型/边界/生产构建通过；200组有效分析帧与基线逐值一致，fixture SHA-256不变，diff检查通过。[证据](../evidence/B/B2-002/README.md)包括修复前3项产品失败、新测试夹具/类型修正及最终日志。跨组影响：共享PSD的lab计权/录音回归通过；不改学习算法或UI。
+- 实现及证据已远端同步，下一步审查#33最新CI并由维护者合并；本批停止写入、按串行规则交接。B2-003尚未认领，先核对B1-001前置依赖；共享契约无效数值语义需沿用，不能序列化为假0dB。云端检查以PR最新提交为准，本地通过不代替云端结果。
+- 云端验证：`dfa1365`的[Engineering checks](https://github.com/KnowCooker/RNC_3D_SIMULATION/actions/runs/36367204599)已成功；本交接文档提交的最新检查仍须核对。未自动合并。
+- 发布期间main合入A1 #34，前移到`5f1fa26`；已将其合入本分支，唯一冲突是根日志相邻状态，保留B2与A1全部记录。A1/shared/integration与新main完全一致，无B2越界改写；合入后`pnpm check`116/116及类型/边界/构建通过，见[after-main-check.txt](../evidence/B/B2-002/after-main-check.txt)。后续最新CI须重新核对；旧113项日志保留原基线含义。
+
+## 上一发布：B1-PUSH-002（2026-09-27）
 
 - 2026-09-27：用户授权后已创建[PR #31](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/31)，`b/b1-coordination` → `main`，open、非草稿、未合并，创建时head `4998067`。PR已列出100/100及44/44验证、浏览器证据、教学模型限制和与A1 #27的集成重叠。Role: B1；Identity-Source: local-config；执行者Codex。本批实现已结束；下一步审查最新CI和共管接口，等待后续集成指令，不自动合并。下方“未创建PR/不创建PR”为此前发布阶段的历史状态。
 
@@ -121,8 +133,8 @@
 
 | 任务 ID | 状态 | 工作与完成条件 | 原验收 / 依赖 |
 | --- | --- | --- | --- |
-| B2-001 | 待合并 | 合成源/路径及复现说明：三种子、整形、时标/工况/单位、全部P/S及S_hat=S已核对；[证据](../evidence/B/B2-001/README.md)；[PR #29](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/29) | 原B需求第2/3/6节；不替代lab-v3或设备验收 |
-| B2-002 | 待认领 | 指标与频谱边界：0.5s RMS、20μPa合成SPL、同窗功率比、四点先合功率；Hann1024/50%重叠/单边PSD归一。补窗不足、静音/近零、首尾样本、各类信号单位等边界证据，无效值不显示假0dB | 原B需求第3节；沿用analyzeAt契约；已有正弦/DC测试 |
+| B2-001 | 已合并 | 合成源/路径及复现说明：[证据](../evidence/B/B2-001/README.md)；[PR #29](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/29)，合并`8724b09` | 原B需求第2/3/6节；不替代lab-v3或设备验收 |
+| B2-002 | 待合并 | 指标与频谱边界及非有限测量修复已完成；专项12/12、B组54/54、合入新main后全仓116/116；[PR #33](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/33)、[证据](../evidence/B/B2-002/README.md) | 原B需求第3节；analyzeAt契约保持；不替代设备验收 |
 | B2-003 | 待认领 | 结果/配方导出：提供无DOM的兼容API，导出配置、模型/路径版本、seed、runId、来源、通道顺序/单位、样本数及指标；结果数据可还原，配方可复算；对导出再读入/复算作一致性验证。格式和内存成本写清楚，禁止单独归一化信号 | B1-001、B2-002；API交给A1接UI，B组不代写页面 |
 | B2-004 | 待认领 | 数据适配与最终报告：核对RunResult维度、时标、来源及分析/导出接口；整理B01～B08矩阵、固定配置、运行方法、代码SHA、真实验证、待测项与A1联调请求；协助第二台Windows离线复现。Worker/common修改须先协调，不能凭A组旧证据声称新引擎通过 | B2-001～003；汇总B1结果；设备条件不可用单列待测 |
 

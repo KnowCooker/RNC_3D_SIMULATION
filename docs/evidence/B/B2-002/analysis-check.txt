@@ -1,0 +1,20 @@
+✔ Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak (8.1197ms)
+✔ B2-002: RMS uses exactly the trailing 1000 samples, including first and final windows (6.5683ms)
+✔ B2-002: same-window reduction preserves negative gains and aggregates powers before dB (4.1954ms)
+✔ B2-002: silence and near-floor pressure never report valid zero-dB benefit (11.3956ms)
+✔ B2-002: non-finite pressure is unavailable, never a valid analysis frame (11.3664ms)
+✔ B2-002: power rejects invalid ranges and PSD clamps finite sample cursors to actual data (1.0925ms)
+✔ B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples (0.7617ms)
+✔ B2-002: non-finite PSD cursors cannot trap a caller in an unbounded loop (221.8856ms)
+✔ B2-002: shared PSD preserves lab pressure weighting and vibration/drive/source units (5.3432ms)
+✔ B2-002: asymmetric signal Welch bins match direct DFT, 50% overlap and incomplete-tail handling (89.4539ms)
+✔ B2-002: DC and Nyquist are not doubled; PSD scales as signal-unit squared per Hz (9.3967ms)
+✔ analysis warming-up, window boundary, channel identity and pressure calibration (0.8755ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 876.0136
