@@ -11,6 +11,8 @@ export interface CaseEvidence {
   createdAt: string;
   question: string;
   observation: string;
+  interpretation: string;
+  decision: string;
   nextCheck: string;
   boundary: typeof CASE_EVIDENCE_BOUNDARY;
   baseline: CaseSnapshot;
@@ -106,14 +108,16 @@ export function parseCaseEvidence(json: string): { evidence: CaseEvidence; compa
   if (baseline.runId === candidate.runId) throw new Error('案例A/B实验ID相同');
   const evidence: CaseEvidence = { format: CASE_EVIDENCE_FORMAT, createdAt,
     question: string(raw.question, '问题', 240), observation: string(raw.observation, '观察', 1000, true),
+    interpretation: raw.interpretation === undefined ? '' : string(raw.interpretation, '人工解释', 1000, true),
+    decision: raw.decision === undefined ? '' : string(raw.decision, '临时行动', 1000, true),
     nextCheck: string(raw.nextCheck, '后续核查', 1000, true), boundary: CASE_EVIDENCE_BOUNDARY,
     baseline, candidate };
   return { evidence, comparison: compareCases(baseline, candidate) };
 }
 
-export function createCaseEvidence(baseline: CaseSnapshot, candidate: CaseSnapshot, observation: string, nextCheck: string, createdAt = new Date().toISOString()): string {
+export function createCaseEvidence(baseline: CaseSnapshot, candidate: CaseSnapshot, observation: string, nextCheck: string, createdAt = new Date().toISOString(), interpretation = '', decision = ''): string {
   const record: CaseEvidence = { format: CASE_EVIDENCE_FORMAT, createdAt, question: '改变一个条件后，后排会更安静吗？',
-    observation: observation.trim(), nextCheck: nextCheck.trim(), boundary: CASE_EVIDENCE_BOUNDARY,
+    observation: observation.trim(), interpretation: interpretation.trim(), decision: decision.trim(), nextCheck: nextCheck.trim(), boundary: CASE_EVIDENCE_BOUNDARY,
     baseline: structuredClone(baseline), candidate: structuredClone(candidate) };
   const json = JSON.stringify(record, null, 2);
   parseCaseEvidence(json);
