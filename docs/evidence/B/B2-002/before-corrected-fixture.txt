@@ -22,9 +22,9 @@
 test at tests\analysis.test.ts:1:3467
 ✖ B2-002: non-finite pressure is unavailable, never a valid analysis frame (5.997ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   true !== false
-  
+
       at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\analysis.test.ts:79:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -62,7 +62,7 @@ test at tests\analysis.test.ts:1:4819
 ✖ B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples (3.5808ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + Float32Array(513) [
   +   NaN,
   +   NaN,
@@ -579,7 +579,7 @@ test at tests\analysis.test.ts:1:4819
   +   NaN
   + ]
   - null
-  
+
       at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\analysis.test.ts:108:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)

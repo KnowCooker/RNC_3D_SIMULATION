@@ -22,9 +22,9 @@
 test at tests\analysis.test.ts:1:2268
 ✖ B2-002: same-window reduction preserves negative gains and aggregates powers before dB (13.276ms)
   AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
-  
+
     assert.ok(Math.abs(metrics.aggregateReductionDb - expected.reduce((a, b) => a + b) / 4) > 1)
-  
+
       at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\analysis.test.ts:57:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -43,9 +43,9 @@ test at tests\analysis.test.ts:1:2268
 test at tests\analysis.test.ts:1:3481
 ✖ B2-002: non-finite pressure is unavailable, never a valid analysis frame (5.8208ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   true !== false
-  
+
       at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\analysis.test.ts:79:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -83,7 +83,7 @@ test at tests\analysis.test.ts:1:4833
 ✖ B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples (4.676ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + Float32Array(513) [
   +   NaN,
   +   NaN,
@@ -600,7 +600,7 @@ test at tests\analysis.test.ts:1:4833
   +   NaN
   + ]
   - null
-  
+
       at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\analysis.test.ts:108:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
