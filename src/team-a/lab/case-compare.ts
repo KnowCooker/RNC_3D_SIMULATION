@@ -1,5 +1,5 @@
 import type { Four } from '../../shared/contracts';
-import type { LabAnalysis, LabConfig, LabResult } from '../../shared/lab-contracts';
+import { labLayoutId, supportedLabLayoutId, TEACHING_LAYOUT_ID, type LabAnalysis, type LabConfig, type LabResult } from '../../shared/lab-contracts';
 
 /** A small evidence snapshot, not a copy of the audio buffers or a calibrated vehicle test. */
 export interface CaseSnapshot {
@@ -29,7 +29,7 @@ export function captureCase(result: LabResult, analysis: LabAnalysis): CaseSnaps
   if (analysis.levelWeighting !== 'A' || analysis.time < 0.5 || !analysis.valid) throw new Error('基线需要有效的末尾0.5秒A计权窗口');
   return {
     runId: result.runId,
-    config: structuredClone(result.config),
+    config: { ...structuredClone(result.config), layoutId: supportedLabLayoutId(result.config) },
     windowEndSeconds: analysis.time,
     primarySpl: four(analysis.primarySpl, clean),
     residualSpl: four(analysis.residualSpl, clean),
@@ -42,6 +42,7 @@ export function compareCases(base: CaseSnapshot, candidate: CaseSnapshot): CaseC
   const conditions: string[] = [];
   const check = (matches: boolean, label: string) => { if (!matches) conditions.push(label); };
   check(a.schemaVersion === b.schemaVersion && a.sampleRateHz === b.sampleRateHz, '计算协议/采样率');
+  check(labLayoutId(a) === labLayoutId(b) && labLayoutId(a) === TEACHING_LAYOUT_ID, '物理布局身份');
   check(a.vehicle === b.vehicle, '车型');
   check((a.sourceMode ?? 'shaped-noise') === (b.sourceMode ?? 'shaped-noise'), '声源素材');
   check(a.seed === b.seed, '声源种子');

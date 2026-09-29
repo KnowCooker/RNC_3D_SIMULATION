@@ -1,0 +1,177 @@
+{
+  "format": "rnc-case-v1",
+  "createdAt": "2026-09-28T07:02:34.835Z",
+  "question": "改变一个条件后，后排会更安静吗？",
+  "observation": "右后座残余升高。",
+  "interpretation": "可能由路面粗糙度变化导致，仍需验证。",
+  "decision": "先保留基线，不作实车方案签收。",
+  "nextCheck": "保持其他工况不变，再做复测。",
+  "boundary": "教学仿真摘要：A计权、0–1 kHz、末尾0.5秒；实录声源为未校准V的四轮等效输入，空间路径和声压为教学模型。文件不含原始信号、音频或模型版本哈希，不是实车测量或方案认证。",
+  "baseline": {
+    "runId": "5967751f-73e6-4468-9a48-3f1f09467f1e",
+    "config": {
+      "schemaVersion": "lab-v3",
+      "vehicle": "bev",
+      "sampleRateHz": 2000,
+      "durationSeconds": 10,
+      "adaptationStartsSeconds": 0,
+      "seed": 11,
+      "taps": 64,
+      "stepSize": 0.08,
+      "rncEnabled": true,
+      "speedKph": 60,
+      "roadRoughness": 0.6,
+      "treadRoughness": 1,
+      "pressureKpa": 240,
+      "temperatureC": 20,
+      "references": [
+        {
+          "id": "ref-1",
+          "name": "REF FL",
+          "position": [
+            0.85,
+            0.67,
+            1.45
+          ]
+        },
+        {
+          "id": "ref-2",
+          "name": "REF FR",
+          "position": [
+            -0.85,
+            0.67,
+            1.45
+          ]
+        },
+        {
+          "id": "ref-3",
+          "name": "REF RL",
+          "position": [
+            0.85,
+            0.67,
+            -1.45
+          ]
+        },
+        {
+          "id": "ref-4",
+          "name": "REF RR",
+          "position": [
+            -0.85,
+            0.67,
+            -1.45
+          ]
+        }
+      ],
+      "speakerEnabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "sourceMode": "recorded-noise"
+    },
+    "windowEndSeconds": 10,
+    "primarySpl": [
+      60.334465783697425,
+      59.12542546731326,
+      61.97734700331818,
+      62.256623889571934
+    ],
+    "residualSpl": [
+      57.113170639854886,
+      57.25074610128547,
+      59.64435076051991,
+      60.70132587056116
+    ],
+    "reductionDb": [
+      3.221295143842541,
+      1.8746793660277852,
+      2.332996242798265,
+      1.5552980190107626
+    ]
+  },
+  "candidate": {
+    "runId": "e9a19d08-5bdc-4484-afbd-146ad2a95c18",
+    "config": {
+      "schemaVersion": "lab-v3",
+      "vehicle": "bev",
+      "sampleRateHz": 2000,
+      "durationSeconds": 10,
+      "adaptationStartsSeconds": 0,
+      "seed": 11,
+      "taps": 64,
+      "stepSize": 0.08,
+      "rncEnabled": true,
+      "speedKph": 60,
+      "roadRoughness": 1.2,
+      "treadRoughness": 1,
+      "pressureKpa": 240,
+      "temperatureC": 20,
+      "references": [
+        {
+          "id": "ref-1",
+          "name": "REF FL",
+          "position": [
+            0.85,
+            0.67,
+            1.45
+          ]
+        },
+        {
+          "id": "ref-2",
+          "name": "REF FR",
+          "position": [
+            -0.85,
+            0.67,
+            1.45
+          ]
+        },
+        {
+          "id": "ref-3",
+          "name": "REF RL",
+          "position": [
+            0.85,
+            0.67,
+            -1.45
+          ]
+        },
+        {
+          "id": "ref-4",
+          "name": "REF RR",
+          "position": [
+            -0.85,
+            0.67,
+            -1.45
+          ]
+        }
+      ],
+      "speakerEnabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "sourceMode": "recorded-noise",
+      "layoutId": "showroom-unverified-v1"
+    },
+    "windowEndSeconds": 10,
+    "primarySpl": [
+      63.34476584613297,
+      62.135725416888945,
+      64.98764696626702,
+      65.26692381326015
+    ],
+    "residualSpl": [
+      60.123470883851525,
+      60.26104605018138,
+      62.654650873364986,
+      63.71162573241066
+    ],
+    "reductionDb": [
+      3.221294962281446,
+      1.8746793667075654,
+      2.3329960929020364,
+      1.555298080849482
+    ]
+  }
+}

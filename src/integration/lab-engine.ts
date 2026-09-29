@@ -1,39 +1,87 @@
-import type { AcousticWeighting, FieldFrame, LabConfig, LabLivePacket, LabResult, LabRncChange, Vec3 } from '../shared/lab-contracts';
+import { supportedLabLayoutId, type AcousticWeighting, type FieldFrame, type LabConfig, type LabLivePacket, type LabResult, type LabRncChange, type Vec3 } from '../shared/lab-contracts';
+
+function configIdentity(config: unknown): string {
+  if (!config || typeof config !== 'object' || Array.isArray(config)) return '';
+  const ordered = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(ordered);
+    if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, ordered(item)]));
+    return value;
+  };
+  return JSON.stringify(ordered(config)) ?? '';
+}
+
+interface FieldRequestIdentity { time: number; sampleRateHz: number; weighting: AcousticWeighting; points: Vec3[] }
+
+function fieldReplyMatchesRequest(frame: FieldFrame, requested: FieldRequestIdentity): boolean {
+  if (frame.weighting !== requested.weighting || !Number.isFinite(requested.time) || !Number.isFinite(frame.time)
+    || !(requested.sampleRateHz > 0) || Math.abs(frame.time - requested.time) > 1 / requested.sampleRateHz + 1e-6
+    || !Array.isArray(frame.points) || frame.points.length !== requested.points.length) return false;
+  return requested.points.every(([x, y, z], i) => {
+    const actual = frame.points[i];
+    return !!actual && Number.isFinite(actual[0]) && Number.isFinite(actual[1]) && Number.isFinite(actual[2])
+      && Math.abs(actual[0] - x) < 1e-5 && Math.abs(actual[1] - y) < 1e-5 && Math.abs(actual[2] - z) < 1e-5;
+  });
+}
 
 export function createLabEngine() {
-  let worker: Worker | null = null, runId = '', mode: 'batch' | 'live' | null = null;
+  let worker: Worker | null = null, runId = '', activeLayoutId = '', activeConfigIdentity = '', mode: 'batch' | 'live' | null = null;
+  let activeConfig: LabConfig | null = null;
   let rejectStart: ((error: Error) => void) | null = null, requestId = 0;
-  const pending = new Map<number, { kind: 'field' | 'chunk' | 'rnc'; resolve: (value: unknown) => void; reject: (error: Error) => void }>();
+  const pending = new Map<number, { kind: 'field' | 'chunk' | 'rnc'; enabled?: boolean; field?: FieldRequestIdentity; resolve: (value: unknown) => void; reject: (error: Error) => void }>();
   function cancel() {
-    worker?.terminate(); worker = null; mode = null;
+    worker?.terminate(); worker = null; mode = null; activeLayoutId = ''; activeConfigIdentity = ''; activeConfig = null;
     rejectStart?.(new Error('计算已取消')); rejectStart = null;
     pending.forEach(p => p.reject(new Error('实验已更换'))); pending.clear();
   }
   function start<T>(config: LabConfig, id: string, kind: 'batch' | 'live') {
-    cancel(); runId = id; mode = kind;
     return new Promise<T>((resolve, reject) => {
+      let layoutId: string;
+      try { layoutId = supportedLabLayoutId(config); }
+      catch (error) { reject(error); return; }
+      const startedConfig: LabConfig = structuredClone({ ...config, layoutId });
+      cancel(); runId = id; activeLayoutId = layoutId; activeConfig = startedConfig; activeConfigIdentity = configIdentity(startedConfig); mode = kind;
       rejectStart = reject;
       let active: Worker;
       try { active = new Worker(new URL('./lab.worker.ts', import.meta.url), { type: 'module' }); }
-      catch (error) { rejectStart = null; mode = null; reject(error); return; }
+      catch (error) { rejectStart = null; mode = null; activeLayoutId = ''; activeConfigIdentity = ''; activeConfig = null; reject(error); return; }
       worker = active;
       const fail = (error: Error) => {
         if (worker !== active) return;
         rejectStart?.(error); rejectStart = null;
-        active.terminate(); worker = null; mode = null;
+        active.terminate(); worker = null; mode = null; activeLayoutId = ''; activeConfigIdentity = ''; activeConfig = null;
         pending.forEach(p => p.reject(error)); pending.clear();
       };
       active.onmessage = ({ data }) => {
         if (worker !== active) return;
-        if (data.runId !== undefined && data.runId !== runId) { fail(new Error('计算返回了其他实验的数据')); return; }
+        if (data.runId !== runId) { fail(new Error('计算返回了其他实验的数据或缺少实验标识')); return; }
         if (data.type === 'result' && kind === 'batch') {
           if (data.result?.runId !== id) { fail(new Error('实验标识不匹配')); return; }
+          if (data.result?.config?.layoutId !== activeLayoutId) { fail(new Error('计算结果物理布局身份与启动配置不一致')); return; }
+          if (configIdentity(data.result?.config) !== activeConfigIdentity) { fail(new Error('计算结果配置与启动配置不一致')); return; }
           rejectStart = null; resolve(data.result);
         } else if (data.type === 'ready' && kind === 'live') {
+          if (data.layoutId !== activeLayoutId) { fail(new Error('实时实验物理布局身份与启动配置不一致')); return; }
+          if (configIdentity(data.config) !== activeConfigIdentity) { fail(new Error('实时实验配置与启动配置不一致')); return; }
           rejectStart = null; resolve(undefined as T);
         } else if (data.type === 'field' || data.type === 'chunk' || data.type === 'rnc') {
           const request = pending.get(data.id);
-          if (request && request.kind === data.type) { pending.delete(data.id); request.resolve(data.type === 'field' ? data.frame : data.type === 'rnc' ? data.change : data.packet); }
+          if (request && request.kind === data.type) {
+            if (data.type === 'chunk' && (data.packet?.chunk?.runId !== runId || data.packet?.snapshot?.result?.runId !== runId || data.packet?.snapshot?.result?.config?.layoutId !== activeLayoutId)) {
+              fail(new Error('实时数据包的实验或物理布局身份不一致')); return;
+            }
+            if (data.type === 'chunk' && configIdentity(data.packet?.snapshot?.result?.config) !== activeConfigIdentity) {
+              fail(new Error('实时数据包配置与启动配置不一致')); return;
+            }
+            if (data.type === 'rnc') {
+              if (data.change?.enabled !== request.enabled || !activeConfig) { fail(new Error('实时RNC开关回执与请求不一致')); return; }
+              activeConfig.rncEnabled = data.change.enabled;
+              activeConfigIdentity = configIdentity(activeConfig);
+            }
+            pending.delete(data.id);
+            if (data.type === 'field' && data.frame?.layoutId !== activeLayoutId) request.reject(new Error('声场物理布局身份与当前实验不一致，已拒绝显示'));
+            else if (data.type === 'field' && (!request.field || !fieldReplyMatchesRequest(data.frame, request.field))) request.reject(new Error('声场响应与本次时间、计权或采样点请求不一致，已拒绝显示'));
+            else request.resolve(data.type === 'field' ? data.frame : data.type === 'rnc' ? data.change : data.packet);
+          }
         } else if (data.type === 'error') {
           const error = new Error(data.message);
           // Rejected read/control requests do not corrupt the processor; failed processing does.
@@ -43,7 +91,7 @@ export function createLabEngine() {
         }
       };
       active.onerror = event => fail(new Error(event.message || '计算线程停止'));
-      try { active.postMessage({ type: kind === 'live' ? 'live-start' : 'calculate', config, runId: id }); }
+      try { active.postMessage({ type: kind === 'live' ? 'live-start' : 'calculate', config: startedConfig, runId: id }); }
       catch (error) { fail(error instanceof Error ? error : new Error(String(error))); }
     });
   }
@@ -52,7 +100,11 @@ export function createLabEngine() {
       if (!worker || rejectStart) { reject(new Error('请先启动实验')); return; }
       if (kind !== 'field' && mode !== 'live') { reject(new Error('当前不是实时实验')); return; }
       const id = ++requestId;
-      pending.set(id, { kind, resolve: value => resolve(value as T), reject });
+      const field = kind === 'field' ? payload as { time: number; points: Vec3[]; weighting: AcousticWeighting } : null;
+      pending.set(id, { kind,
+        ...(kind === 'rnc' ? { enabled: (payload as { enabled: boolean }).enabled } : {}),
+        ...(field ? { field: { time: field.time, sampleRateHz: activeConfig?.sampleRateHz ?? 0, weighting: field.weighting, points: field.points.map(([x, y, z]) => [x, y, z] as Vec3) } } : {}),
+        resolve: value => resolve(value as T), reject });
       try { worker.postMessage({ type: kind, id, ...payload }); }
       catch (error) { pending.delete(id); reject(error); }
     });

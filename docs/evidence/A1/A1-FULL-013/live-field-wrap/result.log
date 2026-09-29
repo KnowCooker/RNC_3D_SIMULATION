@@ -1,0 +1,47 @@
+### Result
+{"samples":[{"clock":"累计 00:02.93","field":"教学布局声场截至 2.75 s · 写实外观不投影","window":"2.75 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"},{"clock":"累计 00:05.95","field":"教学布局声场截至 5.58 s · 写实外观不投影","window":"5.58 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"},{"clock":"累计 00:08.97","field":"教学布局声场截至 8.78 s · 写实外观不投影","window":"8.78 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"},{"clock":"累计 00:12.00","field":"教学布局声场截至 11.63 s · 写实外观不投影","window":"11.63 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"},{"clock":"累计 00:15.03","field":"教学布局声场截至 14.81 s · 写实外观不投影","window":"14.81 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"},{"clock":"累计 00:18.05","field":"教学布局声场截至 17.65 s · 写实外观不投影","window":"17.65 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"},{"clock":"累计 00:21.05","field":"教学布局声场截至 20.84 s · 写实外观不投影","window":"20.84 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"},{"clock":"累计 00:24.10","field":"教学布局声场截至 23.68 s · 写实外观不投影","window":"23.68 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"},{"clock":"累计 00:27.12","field":"教学布局声场截至 26.87 s · 写实外观不投影","window":"26.87 s · A 计权 · 0.5 s 窗","evidenceVisible":true,"run":"纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · c1e5b0ed"}],"z":"27.23 s · Z 计权 · 0.5 s 窗","a":"27.58 s · A 计权 · 0.5 s 窗","errors":[],"failedRequests":[]}
+### Ran Playwright code
+```js
+await (// Production build: PORT=5194 pnpm start
+// npx --yes --package @playwright/cli playwright-cli -s=a1-field-wrap run-code --filename docs/evidence/A1/A1-FULL-013/live-field-wrap/qa-live-wrap.js
+async (page) => {
+  const errors = [], failedRequests = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('requestfailed', request => {
+    if (!request.url().endsWith('/favicon.ico')) failedRequests.push(`${request.url()}: ${request.failure()?.errorText}`);
+  });
+  await page.goto('http://127.0.0.1:5194/');
+  await page.locator('#lab-viewer canvas').waitFor();
+  await page.selectOption('#lab-mode', 'live');
+  await page.selectOption('#lab-field', 'residual');
+  await page.click('#lab-calculate');
+  await page.waitForFunction(() => document.querySelector('#lab-status')?.textContent?.includes('实时运行'), undefined, { timeout: 30000 });
+  const samples = [];
+  for (let i = 0; i < 9; i++) {
+    await page.waitForTimeout(3000);
+    const sample = {
+      clock: await page.locator('#lab-time').textContent(),
+      field: await page.locator('#lab-field-status').textContent(),
+      window: await page.locator('#lab-field-evidence-window').textContent(),
+      evidenceVisible: await page.locator('#lab-field-evidence').isVisible(),
+      run: await page.locator('#lab-run').textContent(),
+    };
+    if (!sample.field?.includes('教学布局声场截至') || !sample.evidenceVisible || !sample.window?.includes('A 计权')) {
+      throw new Error(`live field failed after history moved: ${JSON.stringify(sample)}`);
+    }
+    samples.push(sample);
+  }
+  await page.selectOption('#lab-field-weight', 'Z');
+  await page.waitForFunction(() => document.querySelector('#lab-field-evidence-window')?.textContent?.includes('Z 计权'), undefined, { timeout: 30000 });
+  const z = await page.locator('#lab-field-evidence-window').textContent();
+  await page.selectOption('#lab-field-weight', 'A');
+  await page.waitForFunction(() => document.querySelector('#lab-field-evidence-window')?.textContent?.includes('A 计权'), undefined, { timeout: 30000 });
+  const a = await page.locator('#lab-field-evidence-window').textContent();
+  if (errors.length || failedRequests.length) throw new Error(JSON.stringify({ errors, failedRequests }));
+  await page.locator('.lab-workspace').screenshot({ path: 'docs/evidence/A1/A1-FULL-013/live-field-wrap/after-27s.png' });
+  return { samples, z, a, errors, failedRequests };
+}
+)(page);
+```
+### Events
+- New console entries: .playwright-cli\console-2026-09-28T20-57-38-667Z.log#L2

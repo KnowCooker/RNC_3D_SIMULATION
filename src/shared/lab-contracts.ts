@@ -13,8 +13,12 @@ export interface LabDivergence { sample: number; message: string }
 export interface LabAnalysisOptions { spectrumWeighting?: AcousticWeighting; levelWeighting?: AcousticWeighting; /** Local result time; clamped to available history and current cursor. */ waveformStartSeconds?: number; /** Skip FFTs when collecting convergence history. */ levelsOnly?: boolean }
 export type Vec3 = readonly [number, number, number];
 export interface ReferenceSensor { id: string; name: string; position: Vec3; /** Visual attachment only; position remains an unexpanded physical coordinate. */ mountPart?: string }
+/** Existing fixed source/mic/speaker coordinates. It is not a registered showroom-asset layout. */
+export const TEACHING_LAYOUT_ID = 'teaching-fixed-v1';
 export interface LabConfig {
   schemaVersion: 'lab-v3';
+  /** Missing in legacy lab-v3 runs means TEACHING_LAYOUT_ID. Other layouts need verified geometry and B paths first. */
+  layoutId?: string;
   /** Omitted in saved runs: retain the original shaped-random source. */
   sourceMode?: 'recorded-noise' | 'shaped-noise';
   vehicle: VehicleKind;
@@ -86,6 +90,8 @@ export interface LabAnalysis {
   unit: string;
 }
 export interface FieldFrame {
+  /** Worker-stamped physical layout identity; direct legacy B samples may omit it. */
+  layoutId?: string;
   weighting?: AcousticWeighting;
   time: number;
   valid: boolean;
@@ -100,6 +106,15 @@ export const VEHICLE_NAMES: Record<VehicleKind, string> = {
 export const MIC_POSITIONS: Four<Vec3> = [[0.48, 1.65, 0.4], [-0.48, 1.65, 0.4], [0.48, 1.65, -1.01], [-0.48, 1.65, -1.01]];
 export const SPEAKER_POSITIONS: Four<Vec3> = [[0.96, 1.1, 0.65], [-0.96, 1.1, 0.65], [0.96, 1.1, -0.75], [-0.96, 1.1, -0.75]];
 export const SOURCE_POSITIONS: Four<Vec3> = [[1, 0.1, 1.45], [-1, 0.1, 1.45], [1, 0.1, -1.45], [-1, 0.1, -1.45]];
+export function labLayoutId(config: Pick<LabConfig, 'layoutId'>): string {
+  return config.layoutId === undefined ? TEACHING_LAYOUT_ID : config.layoutId;
+}
+/** Guard the current fixed-coordinate engine until A2 anchors and B paths share a new layout ID. */
+export function supportedLabLayoutId(config: Pick<LabConfig, 'layoutId'>): typeof TEACHING_LAYOUT_ID {
+  const id = labLayoutId(config);
+  if (id !== TEACHING_LAYOUT_ID) throw new Error(`物理布局 ${String(id)} 尚未接入声学路径和声场，不能运行实验`);
+  return TEACHING_LAYOUT_ID;
+}
 /** Conservative 256MiB working budget: worker arrays, transfers, weighted signals
  * and all eight cached 16kHz playback buffers. It is not a browser RAM probe. */
 export function labDurationLimit(config: Pick<LabConfig, 'references' | 'taps'>): number {
@@ -109,7 +124,7 @@ export function labDurationLimit(config: Pick<LabConfig, 'references' | 'taps'>)
   return Math.min(300, Math.floor((256 * 1024 * 1024 - reserved) / (2000 * bytesPerSample)));
 }
 export function defaultLabConfig(): LabConfig {
-  return { schemaVersion: 'lab-v3', vehicle: 'bev', sampleRateHz: 2000, durationSeconds: 16,
+  return { schemaVersion: 'lab-v3', layoutId: TEACHING_LAYOUT_ID, vehicle: 'bev', sampleRateHz: 2000, durationSeconds: 16,
     adaptationStartsSeconds: 0, seed: 11, taps: 64, stepSize: 0.08, rncEnabled: true,
     speedKph: 60, roadRoughness: 1, treadRoughness: 1, pressureKpa: 240, temperatureC: 20,
     references: SOURCE_POSITIONS.map(([x, , z], i) => ({ id: `ref-${i + 1}`, name: `REF ${['FL', 'FR', 'RL', 'RR'][i]}`, position: [x * 0.85, 0.67, z] })),

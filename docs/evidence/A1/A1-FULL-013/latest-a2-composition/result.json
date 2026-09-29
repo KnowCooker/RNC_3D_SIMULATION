@@ -1,0 +1,53 @@
+{
+  "role": "A1",
+  "task": "A1-FULL-013",
+  "executor": "Codex on behalf of A1",
+  "identitySource": "user-declared",
+  "a1Commit": "c26cc3b437146bbccf810a314490b7b69ec753ac",
+  "a2Commit": "d8e27178ca634c75e17448a2bb98fd1f1a7f85f7",
+  "uncommittedMergeTree": "69ae5b8407379c7900e0c87fbb8a2eb20bc6f8f7",
+  "environment": "Windows; Node v24.13.1; pnpm 11.19.0; production build on 127.0.0.1:5186; Playwright Chromium",
+  "buildSha256": {
+    "index.html": "A6480067597BAB215A2EA49D0F02CE843EFBD2EF28C32397C8D52A1E47C18F80",
+    "lab.worker-BgPsaBcn.js": "6AD4020CE68052B5C266B8B9D6EDD6E42190B07DD8DE70B6B357038263A24265",
+    "lab-engine-Ds1ZEocW.js": "2FC1BFD68B87E34641D077EF654AEED73313708503D8F360E9DBEE8249CA2ACF",
+    "viewer-Crt6eMbq.js": "9E8A75A0437CF1D3D58FB4CA9B9B8D1E519D7C98F6E8918B8FBB691CD1947E0D"
+  },
+  "check": "typecheck, boundaries, 142/142 tests and production build passed",
+  "iceFirstAttempt": {
+    "assetVisible": true,
+    "workshopAndReturnReached": true,
+    "teachingExperimentReady": true,
+    "field": "教学布局声场截至 10.00 s · 写实外观不投影",
+    "pageErrors": [],
+    "failedRequests": [
+      { "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb", "reason": "net::ERR_ABORTED" }
+    ],
+    "scriptVerdict": "failed because a GLB request was aborted"
+  },
+  "iceRetry": {
+    "assetVisible": true,
+    "workshopAndReturnReached": true,
+    "teachingExperimentReady": true,
+    "run": "纯燃油 SUV · 布局 teaching-fixed-v1 · 4×4×4 · bd0cdbc2",
+    "field": "教学布局声场截至 10.00 s · 写实外观不投影",
+    "pageErrors": [],
+    "failedRequests": []
+  },
+  "fourTeachingVehicles": [
+    { "vehicle": "ice", "run": "纯燃油 SUV · 布局 teaching-fixed-v1 · 4×4×4 · f1f5780c", "field": "教学布局声场截至 10.00 s · 写实外观不投影" },
+    { "vehicle": "bev", "run": "纯电 SUV · 布局 teaching-fixed-v1 · 4×4×4 · c90784fa", "field": "教学布局声场截至 10.00 s · 写实外观不投影" },
+    { "vehicle": "hev", "run": "混合动力 SUV · 布局 teaching-fixed-v1 · 4×4×4 · 85b1c931", "field": "教学布局声场截至 10.00 s · 写实外观不投影" },
+    { "vehicle": "erev", "run": "增程 SUV · 布局 teaching-fixed-v1 · 4×4×4 · cb4bf947", "field": "教学布局声场截至 10.00 s · 写实外观不投影" }
+  ],
+  "bevLive": {
+    "start": "实时运行 · 2.2 s · 缓冲 1.22 s · 共同安全增益 0.097 · 补缓冲 0 次",
+    "rncOff": "实时运行 · 3.6 s · 缓冲 1.40 s · 共同安全增益 0.097 · 补缓冲 0 次",
+    "rncOffAudition": "实时试听：残差 e · 权重冻结 / 输出关闭",
+    "rncRestored": "实时运行 · 5.2 s · 缓冲 1.20 s · 共同安全增益 0.097 · 补缓冲 0 次",
+    "rncRestoredAudition": "实时试听：残差 e · 自适应控制",
+    "fieldAfterRestore": "教学布局声场截至 4.89 s · 写实外观不投影",
+    "pageErrors": [],
+    "failedRequests": []
+  }
+}

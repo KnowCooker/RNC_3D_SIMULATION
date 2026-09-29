@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { defaultLabConfig, type LabAnalysis, type LabResult } from '../src/shared/lab-contracts';
+import { defaultLabConfig, TEACHING_LAYOUT_ID, type LabAnalysis, type LabResult } from '../src/shared/lab-contracts';
 import { captureCase, compareCases } from '../src/team-a/lab/case-compare';
 
 function snapshot(id: string) {
@@ -45,4 +45,16 @@ test('multiple configuration changes remain visible and missing seat values stay
   assert.equal(comparison.reductionDeltaDb[3], null);
   assert.throws(() => captureCase({ runId: 'invalid', config: base.config } as LabResult,
     { time: 0.3, levelWeighting: 'A' } as LabAnalysis), /0.5秒/);
+});
+
+test('legacy teaching layout compares with explicit teaching ID but another layout suppresses deltas', () => {
+  const base = snapshot('base'), candidate = snapshot('candidate');
+  delete base.config.layoutId;
+  assert.equal(compareCases(base, candidate).comparable, true);
+  candidate.config.layoutId = 'showroom-unverified-v1';
+  const comparison = compareCases(base, candidate);
+  assert.deepEqual(comparison.conditions, ['物理布局身份']);
+  assert.deepEqual(comparison.residualDeltaDb, [null, null, null, null]);
+  candidate.config.layoutId = TEACHING_LAYOUT_ID;
+  assert.equal(compareCases(base, candidate).comparable, true);
 });

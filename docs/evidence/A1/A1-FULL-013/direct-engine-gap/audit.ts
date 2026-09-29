@@ -1,0 +1,20 @@
+import { createHash } from 'node:crypto';
+import { defaultLabConfig, MIC_POSITIONS } from '../../../../../src/shared/lab-contracts.ts';
+import { calculateLab, createLabStream, sampleField } from '../../../../../src/team-b/lab/index.ts';
+import { analyzeLabPath } from '../../../../../src/team-b/lab/path-analysis.ts';
+
+const config = { ...defaultLabConfig(), sourceMode: 'shaped-noise' as const, durationSeconds: 1 };
+const foreign = { ...config, layoutId: 'showroom-unverified-v1' };
+const teachingResult = calculateLab(config, 'same-run');
+const foreignResult = calculateLab(foreign, 'same-run');
+const hash = (array: Float32Array) => createHash('sha256').update(Buffer.from(array.buffer, array.byteOffset, array.byteLength)).digest('hex');
+const channels = ['x', 'u', 'd', 'a', 'e'] as const;
+const identical = Object.fromEntries(channels.map(kind => [kind, teachingResult.signals[kind].every((channel, i) => hash(channel) === hash(foreignResult.signals[kind][i]))]));
+const teachingField = sampleField(teachingResult, 1, [MIC_POSITIONS[0]], 'A');
+const foreignField = sampleField(foreignResult, 1, [MIC_POSITIONS[0]], 'A');
+const teachingPath = analyzeLabPath(config, { kind: 'H', input: 0, output: 0 });
+const foreignPath = analyzeLabPath(foreign, { kind: 'H', input: 0, output: 0 });
+const batch = { accepted: foreignResult.config.layoutId, identical, teachingField: teachingField.residualSpl[0], foreignField: foreignField.residualSpl[0], identicalPrimaryPath: teachingPath.impulse.every((value, i) => value === foreignPath.impulse[i]) };
+const live = createLabStream(foreign, 'foreign-live', 16384);
+const livePacket = live.process(400);
+console.log(JSON.stringify({ batch, live: { accepted: livePacket.runId, layoutId: live.snapshot(16384).result.config.layoutId, sampleCount: livePacket.sampleCount } }, null, 2));

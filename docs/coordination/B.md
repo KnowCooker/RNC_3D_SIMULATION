@@ -1,7 +1,5 @@
 # B1/B2 共同任务与串行交接
 
-**2026-09-29 / B2 / B2-STATUS-001 合并准备复核**：Role: B2；Identity-Source: user-declared；执行者Codex。用户询问如何合并#36，检查发现主分支前移产生冲突。本分支已合入main `b1d07cc`，仅根日志冲突，保留A1/B1/B2全部记录；相对该main仍只修改本页与根日志。B1 #37已合并`cb3d843`、最新交接注明源码写入结束；现开放PR为本状态#36与A2 #30。B1-001参考脚本及engine对照测试相对原审计基线未变，未发现B1-001新增证据目录，故003依赖判断保持。合入后`pnpm check`134/134及类型/边界/构建、`pnpm test:b`55/55通过；日志在本地`test-results/B2-STATUS-001/after-main-*.txt`，既有大块提示保留。下一步推送冲突修复、核对#36最新CI，由有合并权限的维护者确认合并；不以旧head的CI代替新head结果。下方状态和测试数量均保留原记录时点。
-
 **2026-09-28 / B1 / B1-PUBLISH-003 已推送 PR #37**：Role: B1，Identity-Source: local-config，执行者Codex。功能a9cae3a及main合入复验c5a3bcf已推送origin/b/b1-coordination，GitHub PR head确认c5a3bcf0815e4cc2a249a74af7e4eab3a3991b88；[PR #37](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/37)已创建为可审查、未合并，base为main 51a8563。128/128完整测试、类型/边界/构建通过，合并页面加载核验见docs/evidence/B/B1-PUBLISH-003。本条为发布回填，之后分支SHA以前述PR最新head为准；云端CI另行核对。当前三批源码写入结束，下一步维护者评审与合并；A2 #30和B2状态文档 #36仍独立，未改其分支。
 
 **2026-09-28 / B1 / B1-PUBLISH-003 合入复验完成**：Role: B1，Identity-Source: local-config，执行者Codex。当前三批修改已保存为a9cae3a，合入origin/main 51a8563保留A1 #35；根日志冲突保留双方条目。首次类型检查发现A1新测试缺少spectrumDb，补齐null测试字段后pnpm check通过：128/128测试、类型、目录边界、生产构建。浏览器重载确认实时默认、工具栏/三图/底部信号流及4个人工评审字段并存；未重跑长时设备验收。证据docs/evidence/B/B1-PUBLISH-003。跨组影响仅已授权三批及A1测试接口适配；冻结fixture未改。下一步推送当前分支并创建PR，尚未合并main。
@@ -22,6 +20,10 @@ Role: B1；Identity-Source: local-config；执行者Codex；基线6a5a71b加本�
 - 本地完成：17/17专项、55/55 B组、118/118完整测试及类型/边界/构建通过，平均谱峰48.0000000179dBA/Hz；实时83.73秒0补缓冲，独立设置/历史时域/非法坐标/宽窄等尺寸通过。声场/指标计权独立保留。见[完整证据](../evidence/B/B1-DISPLAY-001/README.md)。下一步用户检查预览，再按明确指令同步；未提交/推送。
 
 ## 当前交接：B2-STATUS-001 / 合并状态与B2-003就绪核对（2026-09-28）
+
+**2026-09-29再次复核**：Role: B2；Identity-Source: user-declared；执行者Codex。main新增A1 #38/#43至`e793a10`后，#36根日志顶部再次冲突；已合入并保留双方全文，本PR新增B2根日志条目移至文末独立章节。本页B2补记集中在本章节，避免继续争用页首。相对main只改本页和根日志；`pnpm check`145/145及类型/边界/构建通过，本地日志`test-results/B2-STATUS-001/after-e793a10-check.txt`。推送后必须确认GitHub可合并及最新CI，不按本地祖先关系宣称云端已解除冲突；本批未合并PR、未认领003。
+
+**2026-09-29 / B2 / B2-STATUS-001 合并准备复核**：Role: B2；Identity-Source: user-declared；执行者Codex。用户询问如何合并#36，检查发现主分支前移产生冲突。本分支已合入main `b1d07cc`，仅根日志冲突，保留A1/B1/B2全部记录；相对该main仍只修改本页与根日志。B1 #37已合并`cb3d843`、最新交接注明源码写入结束；现开放PR为本状态#36与A2 #30。B1-001参考脚本及engine对照测试相对原审计基线未变，未发现B1-001新增证据目录，故003依赖判断保持。合入后`pnpm check`134/134及类型/边界/构建、`pnpm test:b`55/55通过；日志在本地`test-results/B2-STATUS-001/after-main-*.txt`，既有大块提示保留。下一步推送冲突修复、核对#36最新CI，由有合并权限的维护者确认合并；不以旧head的CI代替新head结果。下方状态和测试数量均保留原记录时点。
 
 - 用户角色B2；Identity-Source: user-declared；执行者Codex，延续本会话。用户要求更新Git中的状态并判断是否进行003。本批仅维护状态与依赖结论，不认领B1-001或B2-003功能开发；分支`b/b2-status-003-readiness`，基线`6a5a71bfb7953bea7ad829980b1968184dd7b222`。
 - B2-001已合并（#29，`8724b09`）；B2-002已于2026-09-28 05:38:07 UTC合并（[#33](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/33)，`6a5a71bfb7953bea7ad829980b1968184dd7b222`）。#33最终head `181a8c22d30ce3e23e70505e01cf4e72f86e5fc8`的[Engineering checks](https://github.com/KnowCooker/RNC_3D_SIMULATION/actions/runs/36367642733)成功，本地合入验证116/116。下方“待合并/待核对最新CI”均为历史状态。
