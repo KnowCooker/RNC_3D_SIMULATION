@@ -46,6 +46,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   root.innerHTML = `
     <header class="lab-header"><div class="lab-brand-lockup"><span class="lab-brand-emblem" aria-hidden="true">R<span>/</span></span><div><span class="lab-eyebrow">RNC / IMMERSIVE ACOUSTIC LAB</span><h1>车辆声学实验室</h1></div></div><div class="lab-header-meta"><span class="lab-header-signal"><i aria-hidden="true"></i> 3D INTERACTIVE SYSTEM</span><span class="lab-badge">完整目标 · 开发中</span><a href="?legacy=1">两周基准版本 ↗</a></div></header>
     <div class="lab-disclosure"><span id="lab-source-disclosure">实录初级噪声驱动的四轮等效声源</span> · 基准：纯电 / 40 km/h / 粗糙路 · 合成空间路径 · <span id="lab-disclosure-mode">实时分块仿真 · 保留学习状态</span> · 实录为未校准V；图中Pa/SPL为教学尺度，非实测声压</div>
+    <section class="lab-journey" aria-labelledby="lab-journey-title"><div class="lab-journey-intro"><span class="lab-stage-kicker">01 / ROAD TO QUIET</span><h2 id="lab-journey-title">让每一段旅程，都更安静。</h2><p>选一段路，沿当前教学车从路噪源头走到座舱声场，再用计算与试听检验主动降噪；写实车型声学配准仍在开发。</p><div class="lab-journey-actions" role="group" aria-label="探索实验台"><button type="button" data-lab-journey="scene">进入三维道路 <span aria-hidden="true">↗</span></button><button type="button" data-lab-journey="field">查看声场 <span aria-hidden="true">↗</span></button><button type="button" data-lab-journey="assembly">拆解与路径 <span aria-hidden="true">↗</span></button><button type="button" data-lab-journey="evidence">ANC 与证据 <span aria-hidden="true">↗</span></button></div></div><div class="lab-journey-road"><div class="lab-journey-road-heading"><strong>当前可切换的三维路面</strong><span id="lab-road-selection-status" role="status">平整沥青 · 声学参数已同步</span></div><div class="lab-road-preset-grid" role="group" aria-label="选择三维路面与声学粗糙度"><button type="button" data-lab-road-preset="smooth" aria-pressed="true"><span class="lab-road-art" aria-hidden="true"></span><strong>平整沥青</strong><small>声学粗糙度 0.6</small></button><button type="button" data-lab-road-preset="coarse" aria-pressed="false"><span class="lab-road-art" aria-hidden="true"></span><strong>粗糙沥青</strong><small>声学粗糙度 1.2</small></button><button type="button" data-lab-road-preset="gravel" aria-pressed="false"><span class="lab-road-art" aria-hidden="true"></span><strong>碎石路</strong><small>声学粗糙度 2.2</small></button></div><small class="lab-road-future">海岸、山地、沙漠、雪山四种完整三维环境为最终交付目标；当前切换的是已实现的路面材质与声学预设。</small></div></section>
     <main class="lab-main"><aside id="lab-controls" class="lab-controls"><button id="lab-controls-close" type="button">返回三维场景</button>
       <h2>01 / 车辆与工况</h2><label>运行方式<select id="lab-mode"><option value="live" selected>实时连续仿真</option><option value="replay">计算后回放</option></select></label><p id="lab-mode-help"></p><label>声源素材<select id="lab-source-mode"><option value="recorded-noise" selected>实录初级噪声 · 四轮声源</option><option value="shaped-noise">随机噪声 · 实录谱形整形</option></select></label><p id="lab-source-help" class="lab-help"></p><label>动力类型<select id="lab-vehicle">${types.map(key => `<option value="${key}" ${key === 'bev' ? 'selected' : ''}>${VEHICLE_NAMES[key]}</option>`).join('')}</select></label><p id="lab-architecture"></p>
       <label>车速 / km/h<input id="lab-speed" type="range" min="10" max="130" step="5" value="60"><output id="lab-speed-value">60</output></label>
@@ -59,7 +60,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <label class="lab-check"><input id="lab-edit" type="checkbox">车辆改制：点击结构添加参考传感器</label><p class="lab-help">参考1–8个；右击标记可查看或移除。误差点固定。所有改制将要求重新计算。</p><div id="lab-references"></div><p id="lab-mount-warning" role="status" hidden></p>
       <fieldset><legend>车门扬声器</legend><div id="lab-speakers">${ORDER.map((name, i) => `<label class="lab-check"><input type="checkbox" data-speaker="${i}" checked>${name.toUpperCase()}</label>`).join('')}</div></fieldset>
       <button id="lab-calculate" class="lab-primary">启动 / 重启实时实验</button><button id="lab-cancel" disabled>结束实时实验</button><p id="lab-status" role="status">实时仿真已就绪，点击“启动 / 重启实时实验”开始计算与试听。</p>
-    </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">VISUAL LAB / LIVE 3D ENVIRONMENT</span><h2><em>03</em> 结构与空间声场</h2><p id="lab-current-config">纯电 SUV · 60 km/h · 平整沥青 · 实时连续仿真</p></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
+    </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">02 / VEHICLE & ACOUSTIC FIELD</span><h2><em>02</em> 车辆结构与三维声场</h2><p id="lab-current-config">纯电 SUV · 60 km/h · 平整沥青 · 实时连续仿真</p></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
       <section id="lab-guide" class="lab-guide" aria-labelledby="lab-guide-title"><div class="lab-guide-top"><div><span class="lab-stage-kicker">EXPERIMENT MISSION / 可复核演示</span><h3 id="lab-guide-title">一条证据链看懂路噪控制</h3></div><button id="lab-guide-toggle" type="button" aria-expanded="false" aria-controls="lab-guide-content">开始引导</button></div><div id="lab-guide-content" hidden><ol id="lab-guide-steps" aria-label="引导进度"><li>基线 A</li><li>单变量 B</li><li>声场</li><li>公平试听</li><li>工程评审</li></ol><p id="lab-guide-state" role="status"></p><div class="lab-guide-actions"><button id="lab-guide-action" type="button"></button><button id="lab-guide-exit" type="button">退出引导</button></div><small>当前仅为固定教学声学布局；数值来自实际计算，写实车型尚未完成物理配准。</small></div></section>
             <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；当前声学路径使用教学固定布局，尚未与写实车型配准。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div><details class="lab-case-evidence"><summary>工程评审卡 / 案例证据</summary><p>自动事实与限制由 A/B 数据计算；解释、行动和补测由工程师填写。导入仅供查看，不恢复实验或原始音频。</p><div id="lab-case-review-current" class="lab-review-facts" hidden></div><label>人工观察 · 看到什么<textarea id="lab-case-observation" maxlength="1000" rows="2" placeholder="例如：右后座残余声压升高。"></textarea></label><label>人工解释 · 可能原因<textarea id="lab-case-interpretation" maxlength="1000" rows="2" placeholder="这是待验证假设；多变量变化时不能单因子归因。"></textarea></label><label>临时行动 · 下一步怎么处理<textarea id="lab-case-decision" maxlength="1000" rows="2" placeholder="例如：先保留基线方案，补测后再决策。"></textarea></label><label>待补测事项<textarea id="lab-case-next-check" maxlength="1000" rows="2" placeholder="例如：保持车速不变，复测不同路面。"></textarea></label><div class="lab-case-actions"><button id="lab-case-export" type="button" disabled>导出当前 A/B 评审摘要</button><label class="lab-case-import">导入 JSON 复核<input id="lab-case-import" type="file" accept="application/json,.json"></label></div><p id="lab-case-evidence-state" role="status">导出需要当前页面中完成两次预计算实验。</p><div id="lab-case-imported" class="lab-case-results" hidden></div></details></section>
       <div id="lab-viewer"><span class="lab-view-help">左键旋转 · 滚轮缩放 · 右击硬件查看信号</span></div>
@@ -68,7 +69,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <div class="lab-field-note"><span class="lab-colorbar"></span><span id="lab-field-scale">30—80 dBA，固定色标；0.5秒RMS</span><span id="lab-field-status">声场未开启</span></div>
       <section id="lab-field-evidence" class="lab-field-evidence" aria-label="空间采样点改善证据" hidden><div class="lab-field-evidence-heading"><strong>空间改善证据</strong><span id="lab-field-evidence-window"></span></div><div class="lab-field-evidence-bar" aria-hidden="true"><i id="lab-field-evidence-improved"></i><i id="lab-field-evidence-near"></i><i id="lab-field-evidence-worsened"></i></div><p id="lab-field-evidence-summary"></p><small>正值＝原声−残余，负值表示该点变吵；仅统计本帧有效采样点，比例不是车厢体积占比或实车结论。</small></section>
       <p class="lab-help">空间场由四轮源和实际扬声器驱动经同一传播模型计算，只投影在教学车；写实外观尚未完成声学坐标配准，切换后图表仍属教学实验，不能解释为该写实车的声场。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。</p>
-      <div id="lab-metrics" class="lab-metrics"></div><section class="lab-signals"><h2>04 / 信号流与控制机理</h2><div id="lab-flow"></div></section>
+      <div class="lab-evidence-heading"><span class="lab-stage-kicker">03 / ANC CONTROL & EVIDENCE</span><h2>原声、残余声与改善证据</h2><p>四座位指标、时域、频谱和收敛均来自当前实验；选择同一座位和时间位置后，可切换原声与降噪后试听。</p></div><div id="lab-metrics" class="lab-metrics"></div><section class="lab-signals"><h2>04 / 信号流与控制机理</h2><div id="lab-flow"></div></section>
     </section></main>
     <section class="lab-plots">
       <article><div class="lab-plot-heading"><h3 id="lab-signal-title">时域</h3>${plotSettingsMarkup('wave')}</div><p id="lab-wave-legend" class="lab-plot-legend"></p><canvas id="lab-wave" aria-label="时域图"></canvas></article>
@@ -83,7 +84,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   const plotsPanel=root.querySelector<HTMLElement>('.lab-plots')!;
   const signalsPanel=root.querySelector<HTMLElement>('.lab-signals')!;
   const viewTools=[...root.querySelectorAll<HTMLElement>('.lab-workspace>.lab-view-tools')];
-  $('viewer').after(...viewTools,root.querySelector<HTMLElement>('.lab-field-note')!,$('field-evidence'),playerPanel); playerPanel.after($('metrics')); $('metrics').after(plotsPanel);
+  $('viewer').after(...viewTools,root.querySelector<HTMLElement>('.lab-field-note')!,$('field-evidence'),playerPanel); playerPanel.after(root.querySelector<HTMLElement>('.lab-evidence-heading')!, $('metrics')); $('metrics').after(plotsPanel);
   root.append($('case')); root.append(signalsPanel);
   const player = new Player(); player.setVolume(0.15);
   const livePlayer = new LivePlayer(); livePlayer.setVolume(0.15);
@@ -204,6 +205,45 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       } else updateRoadNote();
     },
   });
+  root.querySelectorAll<HTMLButtonElement>('[data-lab-road-preset]').forEach(button => {
+    button.onclick = () => {
+      const surface = button.dataset.labRoadPreset;
+      $('viewer').querySelector<HTMLButtonElement>('[aria-label="道路三维场景"]')?.click();
+      $('viewer').querySelector<HTMLButtonElement>(`[data-surface="${surface}"]`)?.click();
+      $('viewer').scrollIntoView({ block: 'center', behavior: 'smooth' });
+    };
+  });
+  root.querySelectorAll<HTMLButtonElement>('[data-lab-journey]').forEach(button => {
+    button.onclick = () => {
+      const destination = button.dataset.labJourney;
+      if (destination === 'scene') {
+        $('viewer').querySelector<HTMLButtonElement>('[aria-label="道路三维场景"]')?.click();
+        $('viewer').scrollIntoView({ block: 'center', behavior: 'smooth' });
+      } else if (destination === 'field') {
+        if (!result) {
+          setControlsCollapsed(false);
+          $('status').textContent = '先启动实验，才可查看来自当前计算的三维声场。';
+          $('calculate').focus();
+        } else {
+          $<HTMLSelectElement>('field').value = 'residual';
+          fieldOptions();
+          $('viewer').scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+      } else if (destination === 'assembly') {
+        $('viewer').querySelector<HTMLButtonElement>('[aria-label="车间三维场景"]')?.click();
+        if (!exploded) $<HTMLButtonElement>('explode').click();
+        $<HTMLSelectElement>('paths').value = 'primary';
+        $<HTMLSelectElement>('paths').dispatchEvent(new Event('change', { bubbles: true }));
+        $('viewer').scrollIntoView({ block: 'center', behavior: 'smooth' });
+      } else if (destination === 'evidence') {
+        if (!result) {
+          setControlsCollapsed(false);
+          $('status').textContent = '先启动实验，才可比较当前工况的 ANC 指标与图表。';
+          $('calculate').focus();
+        } else root.querySelector<HTMLElement>('.lab-evidence-heading')!.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
+    };
+  });
   const controlsToggle = $<HTMLButtonElement>('controls-toggle');
   const controlsClose = $<HTMLButtonElement>('controls-close');
   function setControlsCollapsed(collapsed: boolean) {
@@ -280,7 +320,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   const narrowViewport = matchMedia('(max-width: 680px)');
   const onNarrowViewport = (event: MediaQueryListEvent) => { if (event.matches) setControlsCollapsed(true); };
   narrowViewport.addEventListener('change', onNarrowViewport);
-  if (narrowViewport.matches) setControlsCollapsed(true);
+  setControlsCollapsed(true);
   function updateRoadNote() {
     const actual = config.roadRoughness.toFixed(1);
     const applied = result?.config.roadRoughness === config.roadRoughness;
@@ -289,6 +329,13 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
         ? `${visualRoad.name} · 声学粗糙度 ${actual} 已同步；${applied ? '当前实验已采用。' : '重新运行后生效。'}`
         : `手动粗糙度 ${actual} 将用于声学计算；三维路面仍显示${visualRoad.name}材质。`
       : `尚未选择三维路面预设；声学计算使用当前粗糙度 ${actual}。`;
+    root.querySelectorAll<HTMLButtonElement>('[data-lab-road-preset]').forEach(button => {
+      const surface = button.dataset.labRoadPreset as keyof typeof roadNames;
+      button.setAttribute('aria-pressed', String(visualRoad?.name === roadNames[surface]));
+    });
+    $('road-selection-status').textContent = visualRoad && config.roadRoughness === visualRoad.roughness
+      ? `${visualRoad.name} · 声学粗糙度 ${actual} 已同步${applied ? ' · 当前实验已采用' : ' · 重新运行生效'}`
+      : `当前为手动粗糙度 ${actual}；三维路面仍显示${visualRoad?.name ?? '默认'}材质`;
     renderConfigLine();
   }
   function renderConfigLine() {
