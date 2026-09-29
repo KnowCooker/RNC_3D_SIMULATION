@@ -15,6 +15,7 @@ import { bindPlotSettings, plotSettingsMarkup } from './plot-settings';
 import { fieldFrameMatchesPoints } from '../viewer/field-slices';
 import './style.css';
 import './game-ui.css';
+import './cockpit-ui.css';
 
 export interface LabPorts {
   calculate(config: LabConfig, runId: string): Promise<LabResult>;
@@ -43,7 +44,7 @@ const modelNotes: Record<VehicleKind, string> = {
 export function mountLab(root: HTMLElement, ports: LabPorts) {
   root.className = 'lab-app';
   root.innerHTML = `
-    <header class="lab-header"><div><span class="lab-eyebrow">INTERACTIVE ACOUSTICS / RNC</span><h1>车辆声学实验室</h1></div><span class="lab-badge">完整目标 · 开发中</span><a href="?legacy=1">两周基准版本</a></header>
+    <header class="lab-header"><div class="lab-brand-lockup"><span class="lab-brand-emblem" aria-hidden="true">R<span>/</span></span><div><span class="lab-eyebrow">RNC / IMMERSIVE ACOUSTIC LAB</span><h1>车辆声学实验室</h1></div></div><div class="lab-header-meta"><span class="lab-header-signal"><i aria-hidden="true"></i> 3D INTERACTIVE SYSTEM</span><span class="lab-badge">完整目标 · 开发中</span><a href="?legacy=1">两周基准版本 ↗</a></div></header>
     <div class="lab-disclosure"><span id="lab-source-disclosure">实录初级噪声驱动的四轮等效声源</span> · 基准：纯电 / 40 km/h / 粗糙路 · 合成空间路径 · <span id="lab-disclosure-mode">实时分块仿真 · 保留学习状态</span> · 实录为未校准V；图中Pa/SPL为教学尺度，非实测声压</div>
     <main class="lab-main"><aside id="lab-controls" class="lab-controls"><button id="lab-controls-close" type="button">返回三维场景</button>
       <h2>01 / 车辆与工况</h2><label>运行方式<select id="lab-mode"><option value="live" selected>实时连续仿真</option><option value="replay">计算后回放</option></select></label><p id="lab-mode-help"></p><label>声源素材<select id="lab-source-mode"><option value="recorded-noise" selected>实录初级噪声 · 四轮声源</option><option value="shaped-noise">随机噪声 · 实录谱形整形</option></select></label><p id="lab-source-help" class="lab-help"></p><label>动力类型<select id="lab-vehicle">${types.map(key => `<option value="${key}" ${key === 'bev' ? 'selected' : ''}>${VEHICLE_NAMES[key]}</option>`).join('')}</select></label><p id="lab-architecture"></p>
@@ -58,7 +59,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <label class="lab-check"><input id="lab-edit" type="checkbox">车辆改制：点击结构添加参考传感器</label><p class="lab-help">参考1–8个；右击标记可查看或移除。误差点固定。所有改制将要求重新计算。</p><div id="lab-references"></div><p id="lab-mount-warning" role="status" hidden></p>
       <fieldset><legend>车门扬声器</legend><div id="lab-speakers">${ORDER.map((name, i) => `<label class="lab-check"><input type="checkbox" data-speaker="${i}" checked>${name.toUpperCase()}</label>`).join('')}</div></fieldset>
       <button id="lab-calculate" class="lab-primary">启动 / 重启实时实验</button><button id="lab-cancel" disabled>结束实时实验</button><p id="lab-status" role="status">实时仿真已就绪，点击“启动 / 重启实时实验”开始计算与试听。</p>
-    </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">LIVE 3D / INTERACTIVE BAY</span><h2>03 / 结构与空间声场</h2></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
+    </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">VISUAL LAB / LIVE 3D ENVIRONMENT</span><h2><em>03</em> 结构与空间声场</h2><p id="lab-current-config">纯电 SUV · 60 km/h · 平整沥青 · 实时连续仿真</p></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
       <section id="lab-guide" class="lab-guide" aria-labelledby="lab-guide-title"><div class="lab-guide-top"><div><span class="lab-stage-kicker">EXPERIMENT MISSION / 可复核演示</span><h3 id="lab-guide-title">一条证据链看懂路噪控制</h3></div><button id="lab-guide-toggle" type="button" aria-expanded="false" aria-controls="lab-guide-content">开始引导</button></div><div id="lab-guide-content" hidden><ol id="lab-guide-steps" aria-label="引导进度"><li>基线 A</li><li>单变量 B</li><li>声场</li><li>公平试听</li><li>工程评审</li></ol><p id="lab-guide-state" role="status"></p><div class="lab-guide-actions"><button id="lab-guide-action" type="button"></button><button id="lab-guide-exit" type="button">退出引导</button></div><small>当前仅为固定教学声学布局；数值来自实际计算，写实车型尚未完成物理配准。</small></div></section>
             <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；当前声学路径使用教学固定布局，尚未与写实车型配准。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div><details class="lab-case-evidence"><summary>工程评审卡 / 案例证据</summary><p>自动事实与限制由 A/B 数据计算；解释、行动和补测由工程师填写。导入仅供查看，不恢复实验或原始音频。</p><div id="lab-case-review-current" class="lab-review-facts" hidden></div><label>人工观察 · 看到什么<textarea id="lab-case-observation" maxlength="1000" rows="2" placeholder="例如：右后座残余声压升高。"></textarea></label><label>人工解释 · 可能原因<textarea id="lab-case-interpretation" maxlength="1000" rows="2" placeholder="这是待验证假设；多变量变化时不能单因子归因。"></textarea></label><label>临时行动 · 下一步怎么处理<textarea id="lab-case-decision" maxlength="1000" rows="2" placeholder="例如：先保留基线方案，补测后再决策。"></textarea></label><label>待补测事项<textarea id="lab-case-next-check" maxlength="1000" rows="2" placeholder="例如：保持车速不变，复测不同路面。"></textarea></label><div class="lab-case-actions"><button id="lab-case-export" type="button" disabled>导出当前 A/B 评审摘要</button><label class="lab-case-import">导入 JSON 复核<input id="lab-case-import" type="file" accept="application/json,.json"></label></div><p id="lab-case-evidence-state" role="status">导出需要当前页面中完成两次预计算实验。</p><div id="lab-case-imported" class="lab-case-results" hidden></div></details></section>
       <div id="lab-viewer"><span class="lab-view-help">左键旋转 · 滚轮缩放 · 右击硬件查看信号</span></div>
@@ -288,6 +289,11 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
         ? `${visualRoad.name} · 声学粗糙度 ${actual} 已同步；${applied ? '当前实验已采用。' : '重新运行后生效。'}`
         : `手动粗糙度 ${actual} 将用于声学计算；三维路面仍显示${visualRoad.name}材质。`
       : `尚未选择三维路面预设；声学计算使用当前粗糙度 ${actual}。`;
+    renderConfigLine();
+  }
+  function renderConfigLine() {
+    const road = visualRoad && visualRoad.roughness === config.roadRoughness ? visualRoad.name : `手动声学粗糙度 ${config.roadRoughness.toFixed(1)}`;
+    $('current-config').textContent = `${VEHICLE_NAMES[config.vehicle]} · ${config.speedKph} km/h · ${road} · ${realtime ? '实时连续仿真' : `${config.durationSeconds}秒预计算回放`}`;
   }
   const transport = () => liveSession ? livePlayer : player;
   const displayTime = () => halted ? halted.sample/config.sampleRateHz : transport().currentTime;
@@ -351,6 +357,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     $('duration-help').textContent = limit === 90 ? `可选10–90秒，每10秒一档。${recorded ? '超过素材长度时平滑循环，学习状态连续。' : '超过录音长度时连续合成新样本。'}` : `当前参考通道配置可选10–${limit}秒；较长档位超出内存预算，已禁用。`;
     $('disclosure-mode').textContent = realtime ? '实时分块仿真 · 保留学习状态' : `${config.durationSeconds}秒预计算回放`;
     $('architecture').textContent = modelNotes[config.vehicle]; viewer.setConfig(config);
+    renderConfigLine();
     const issues = mountIssues();
     $('mount-warning').hidden = issues.length === 0;
     $('mount-warning').textContent = issues.length ? `当前车型缺少安装部件：${issues.map(i => i.mountPart).join('、')}。请在改制模式移除对应参考并重新安装，之后再运行。` : '';
