@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-29",
+  "role": "A1",
+  "task": "A1-FULL-014",
+  "identitySource": "user-declared",
+  "baseMain": "cb3d84316a4b9906d490f17d684de006c51532c1",
+  "productionBundleSha256": "78E2B2849BDCAC1E9E9618BF4398F31A6795C25D9566887184E1DC466347F7C3",
+  "browser": "Playwright Chromium against pnpm start on 127.0.0.1:5187",
+  "stagesObserved": ["mode", "baseline-run", "baseline-save", "road", "candidate-run", "field", "listen", "review", "repair"],
+  "roadRoughness": { "baseline": 0.6, "candidate": 2.2, "visualPreset": "gravel", "visualPressed": true },
+  "comparison": { "changeCount": 1, "change": "roadRoughness", "rearResidualDeltaDb": { "RL": 5.6, "RR": 5.6 }, "window": "last 0.5 s of each 10 s experiment, A-weighted 0-1 kHz" },
+  "candidateField": "valid at 10.00 s, matching the A/B terminal 0.5 s window, residual SPL, head-height slice",
+  "guidedAudition": "rear-left seat, original then residual, each started at the same 2.00 s sample position and advanced at least 0.5 s",
+  "review": { "opened": true, "focusedField": "lab-case-observation" },
+  "narrowViewportPx": 390,
+  "horizontalOverflow": false,
+  "invalidatedAfterSpeedChange": true,
+  "staleFieldCleared": true,
+  "exitToManual": true,
+  "pageErrors": [],
+  "failedRequests": [],
+  "knownConsoleNoise": "GET /favicon.ico 404; not an application request failure"
+}

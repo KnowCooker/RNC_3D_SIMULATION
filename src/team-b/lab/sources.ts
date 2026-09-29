@@ -4,6 +4,10 @@ import { convolve, uniform } from '../engine/data';
 import { RECORDED_PROFILE } from './recorded-profile';
 import { createRecordedNoiseReader, type RecordedNoise } from './recorded-noise';
 
+/** FR, BEV, 40 km/h, roughness 1, 20°C: mean A-PSD peak (200–300 Hz) = 48 dB re (20 µPa)^2/Hz.
+ * Shared gain keeps inter-channel amplitude/coherence intact. See B1-DISPLAY-001/calibrate.ts. */
+export const RECORDED_SOURCE_AMPLITUDE_GAIN = 2.7035289248832903;
+
 /** Teaching source scale: recorded q is relative noise amplitude; shaped q is equivalent acceleration. */
 export function sourceParameters(config: LabConfig) {
   const speed = config.speedKph / RECORDED_PROFILE.baselineSpeedKph;
@@ -13,7 +17,7 @@ export function sourceParameters(config: LabConfig) {
   // Parameter extrapolation is still a teaching assumption, not identified by
   // a single 40 km/h recording. Stretch the broadband envelope, not fake tones.
   const spectrumScale = Math.sqrt(config.pressureKpa / 240) * Math.sqrt((config.temperatureC + 273.15) / 293.15);
-  return { amplitude: amplitude * temperatureGain, spectrumScale };
+  return { amplitude: amplitude * temperatureGain * (config.sourceMode === 'recorded-noise' ? RECORDED_SOURCE_AMPLITUDE_GAIN : 1), spectrumScale };
 }
 
 /** Shared by batch and streaming; coefficients describe normalized shape only. */

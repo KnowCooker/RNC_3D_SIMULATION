@@ -16,7 +16,7 @@ const analysis = analyzeLab(view.result, localTime, { signal: 'q', channel: 0 })
 - `process` 返回的 `startSample`、只读 `sampleCount`、快照的 `startSample/endSample` 都使用同一个全局样本序号。
 - `config.durationSeconds=16` 保持批量契约兼容，不限制流式运行时长。真正的停止条件是调用者暂停生成、数值错误，或计算机数值表示/资源限制。
 - `q` 的四套 PRNG 状态、97点源 FIR 的前史、参考/初级/次级路径前史、全部控制权值、filtered-x 延迟及归一化能量全部跨块保留。更改工况应建立新实验；构造后修改原配置对象不改变已运行内核。
-- 当前块可为1～1000000样本；不合法块长度不会推进时钟或改变健康状态。数值发散会明确报错并使该实例不能继续计算/读取快照，避免部分样本已经推进 PRNG 后冒充无缝恢复。需修改配置后新建实验。
+- 当前块可为1～1000000样本；不合法块长度不会推进时钟或改变健康状态。数值溢出的首次process返回有效前缀及divergence元数据；失败样本不计入sampleCount，也不写入历史。该实例不能继续process或修改RNC，snapshot仍可读最后有效数据。页面暂停并保留诊断，需修改配置后新建实验；不把部分推进的PRNG状态当作可无缝恢复。
 
 ## 历史与空间窗口
 

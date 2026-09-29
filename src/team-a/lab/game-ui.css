@@ -155,6 +155,12 @@
 .lab-case-import input { max-width: 190px; font-size: 11px; }
 #lab-case-imported { margin-top: 10px; }
 #lab-case-imported p { white-space: pre-line; }
+.lab-review-facts { margin: 10px 0; padding: 10px 12px; background: #0b1d2a; border: 1px solid #365561; color: #dcebec; font-size: 11px; }
+.lab-review-facts strong { color: var(--gold); }
+.lab-review-facts ul { margin: 7px 0 0; padding-left: 18px; line-height: 1.6; }
+.lab-review-fact-list { color: #dcebec; }
+.lab-review-limit-list { color: #e2bf93; }
+.lab-review-human { white-space: pre-line; }
 .lab-view-heading {
   min-height: 58px;
   justify-content: flex-start;
@@ -274,3 +280,47 @@
 @media (prefers-reduced-motion: reduce) {
   .lab-app button { transition: none; }
 }
+
+/* Transport is local to the scene, never a fixed overlay covering inspection plots. */
+.lab-app .lab-player{position:relative;bottom:auto;inset:auto;z-index:5;margin:10px 0;border:1px solid #3c586b;border-radius:6px}
+.lab-workspace>.lab-plots{padding:12px 0;border:0;background:transparent}
+.lab-app>.lab-signals,.lab-app>.lab-case{margin:18px clamp(12px,2vw,36px)}
+.lab-workspace>.lab-metrics{margin:10px 0}
+@media(min-width:1051px) and (max-width:1350px){.lab-workspace>.lab-plots{grid-template-columns:1fr}}
+
+.lab-field-evidence{margin:9px 0 0;padding:10px 13px;border:1px solid #416b79;border-left:3px solid #73e4bc;background:linear-gradient(110deg,#13303bee,#0d2331ee);color:#dcecee}
+.lab-field-evidence-heading{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.lab-field-evidence-heading strong{font-size:11px;color:#dff6ee;letter-spacing:.08em}
+.lab-field-evidence-heading span{font:10px Consolas,monospace;color:#a8c6cd}
+.lab-field-evidence-bar{display:flex;overflow:hidden;width:100%;height:7px;margin:8px 0;border-radius:4px;background:#304455}
+.lab-field-evidence-bar i{display:block;height:100%;flex:none}
+#lab-field-evidence-improved{background:#66ddbd}
+#lab-field-evidence-near{background:#b2c0c5}
+#lab-field-evidence-worsened{background:#f3a16f}
+.lab-field-evidence p{margin:0 0 3px;font-size:11px;line-height:1.55;font-variant-numeric:tabular-nums}
+.lab-field-evidence small{display:block;color:#a9c3c8;font-size:10px;line-height:1.5}
+
+/* Compact four-seat readout; retain all seats in one row beside the stage. */
+.lab-app .lab-metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;min-height:0;margin:8px 0}
+.lab-app .lab-metrics>div{padding:7px 8px;min-width:0}
+.lab-app .lab-metrics strong{font-size:10px}
+.lab-app .lab-metrics b{font-size:16px;margin:4px 0}
+.lab-app .lab-metrics small{font-size:10px;display:block;overflow-wrap:anywhere}
+.lab-workspace>.lab-view-tools{margin:7px 0}
+@media(max-width:420px){.lab-app .lab-metrics>div{padding:6px 5px}.lab-app .lab-metrics b{font-size:14px}.lab-app .lab-metrics small{font-size:9px}}
+
+/* The guided experiment is a compact stage console, not a second source of results. */
+.lab-guide{margin:10px 0 13px;padding:12px 15px;border:1px solid #4b7580;border-left:3px solid var(--gold);border-radius:7px;background:linear-gradient(115deg,#163342ee,#0d2433ee 75%);box-shadow:0 12px 28px #06121a66}
+.lab-guide-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lab-guide h3{margin:3px 0 0;font-size:15px;letter-spacing:.03em}
+.lab-guide-top button,.lab-guide-actions button{padding:8px 12px;white-space:nowrap}
+.lab-guide-top button{border-color:var(--gold);color:#ffdda4}
+.lab-guide ol{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0 9px;padding:0;list-style:none}
+.lab-guide li{padding:5px 8px;border:1px solid #365466;border-radius:4px;color:#9fb4c3;font:600 10px/1.3 Consolas,'Microsoft YaHei',sans-serif}
+.lab-guide li.is-current{color:#092b31;background:var(--cyan);border-color:var(--cyan)}
+.lab-guide li.is-complete{color:#aaf1d7;border-color:#57ac94}
+.lab-guide #lab-guide-state{margin:5px 0 10px;color:#d9e9e9;font-size:12px;line-height:1.65}
+.lab-guide-actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.lab-guide-actions #lab-guide-action{color:#0c2b31;background:linear-gradient(100deg,#8aeeea,#b4eac4);border-color:#9cf3df;font-weight:700}
+.lab-guide small{display:block;color:#a1bec5;font-size:10px;line-height:1.5}
+@media(max-width:680px){.lab-guide{padding:10px}.lab-guide h3{font-size:13px}.lab-guide-top button{padding:6px 8px;font-size:11px}.lab-guide li{font-size:9px}}

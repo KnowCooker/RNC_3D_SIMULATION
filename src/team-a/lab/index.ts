@@ -1,3 +1,4 @@
+import type { LabDivergence, LabPathAnalysis, LabPathSelection } from '../../shared/lab-contracts';
 import { ORDER } from '../../shared/contracts';
 import { defaultLabConfig, labDurationLimit, LAB_LIVE_LIMIT_SECONDS, LAB_WAVEFORM_SECONDS, VEHICLE_NAMES, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabLivePacket, type LabLiveSnapshot, type LabResult, type LabRncChange, type LabSelection, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
 import { Player, prepareLabPlayback } from '../player';
@@ -5,8 +6,13 @@ import { LivePlayer } from '../player/live-player';
 import { createLabViewer } from '../viewer/lab-viewer';
 import { captureCase, compareCases, type CaseSnapshot } from './case-compare';
 import { CASE_EVIDENCE_BOUNDARY, CASE_EVIDENCE_MAX_BYTES, createCaseEvidence, parseCaseEvidence } from './case-evidence';
+import { reviewCase } from './case-review';
+import { guideState, type GuideStage } from './guide-state';
+import { fieldEvidence } from './field-evidence';
 import { createSignalFlow } from './signal-flow';
 import { drawSignalComparison, plot, splFrame, splRange, visibleSplFrames, ORIGINAL_COLOR, RESULT_COLOR, type SplFrame } from './plots';
+import { bindPlotSettings, plotSettingsMarkup } from './plot-settings';
+import { fieldFrameMatchesPoints } from '../viewer/field-slices';
 import './style.css';
 import './game-ui.css';
 
@@ -17,6 +23,7 @@ export interface LabPorts {
   setLiveRnc(enabled: boolean): Promise<LabRncChange>;
   field(time: number, points: Vec3[], weighting?: AcousticWeighting): Promise<FieldFrame>;
   cancel(): void;
+  analyzePath?(config: LabConfig, selection: LabPathSelection): LabPathAnalysis;
   analyze(result: LabResult, time: number, selection: LabSelection, options?: LabAnalysisOptions): LabAnalysis;
 }
 const types = ['ice', 'bev', 'hev', 'erev'] as const;
@@ -46,31 +53,43 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <label>胎面粗糙度 / 相对值<input id="lab-tread" type="range" min="0.1" max="3" step="0.1" value="1"><output id="lab-tread-value">1</output></label>
       <div class="lab-pair"><label>胎压 / kPa<input id="lab-pressure" type="number" min="160" max="320" value="240"></label><label>温度 / °C<input id="lab-temperature" type="number" min="-20" max="50" value="20"></label></div>
       <p id="lab-parameters-help" class="lab-help"></p>
-      <label>教学声压修正 / dB<input id="lab-level-offset" type="number" min="-12" max="12" step="1" value="0"></label><p class="lab-help">40 km/h基准工况四座平均约60 dBA（0–1 kHz），属教学幅度锚点；不是原始V换算的实测值。</p><div id="lab-duration-control"><label>预计算时长<select id="lab-duration">${replayDurations.map(seconds => `<option value="${seconds}" ${seconds === defaultReplayDuration ? 'selected' : ''}>${seconds} s</option>`).join('')}</select></label><p id="lab-duration-help" class="lab-help"></p></div><h2>02 / 算法与改制</h2><div class="lab-pair"><label>NFxLMS 系数数<input id="lab-taps" type="number" min="16" max="128" step="1" value="64"></label><label>归一化步长 μ<input id="lab-step" type="number" min="0" max="0.5" step="0.01" value="0.08"></label></div><p class="lab-help">FIR数学阶数为系数数减1。参数/改制变化将结束当前运行并重新开始学习。</p>
+      <label>教学声压修正 / dB<input id="lab-level-offset" type="number" min="-12" max="12" step="1" value="0"></label><p id="lab-calibration-help" class="lab-help"></p><div id="lab-duration-control"><label>预计算时长<select id="lab-duration">${replayDurations.map(seconds => `<option value="${seconds}" ${seconds === defaultReplayDuration ? 'selected' : ''}>${seconds} s</option>`).join('')}</select></label><p id="lab-duration-help" class="lab-help"></p></div><h2>02 / 算法与改制</h2><div class="lab-pair"><label>NFxLMS 系数数<input id="lab-taps" type="number" min="16" max="128" step="1" value="64"></label><label>归一化步长 μ<input id="lab-step" type="number" min="0" step="any" value="0.08"></label></div><p class="lab-help">FIR数学阶数为系数数减1。步长≥0，无预设上限；数值溢出自动暂停。试听单独保护，图表保留真实幅值。参数变化需重新学习。</p>
       <label id="lab-rnc-config" class="lab-check"><input id="lab-rnc" type="checkbox" checked>启用 RNC（更改后重算）</label>
       <label class="lab-check"><input id="lab-edit" type="checkbox">车辆改制：点击结构添加参考传感器</label><p class="lab-help">参考1–8个；右击标记可查看或移除。误差点固定。所有改制将要求重新计算。</p><div id="lab-references"></div><p id="lab-mount-warning" role="status" hidden></p>
       <fieldset><legend>车门扬声器</legend><div id="lab-speakers">${ORDER.map((name, i) => `<label class="lab-check"><input type="checkbox" data-speaker="${i}" checked>${name.toUpperCase()}</label>`).join('')}</div></fieldset>
       <button id="lab-calculate" class="lab-primary">启动 / 重启实时实验</button><button id="lab-cancel" disabled>结束实时实验</button><p id="lab-status" role="status">实时仿真已就绪，点击“启动 / 重启实时实验”开始计算与试听。</p>
     </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">LIVE 3D / INTERACTIVE BAY</span><h2>03 / 结构与空间声场</h2></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
-      <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；结果来自教学模型。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div><details class="lab-case-evidence"><summary>保存案例证据 / 导入复核</summary><p>记录本次观察和后续核查，导出可携带的 JSON 摘要。导入仅供查看，不恢复实验或原始音频。</p><label>观察<textarea id="lab-case-observation" maxlength="1000" rows="2" placeholder="例如：右后座残余声压变化，是否符合预期？"></textarea></label><label>下一步核查<textarea id="lab-case-next-check" maxlength="1000" rows="2" placeholder="例如：保持车速不变，复测不同路面。"></textarea></label><div class="lab-case-actions"><button id="lab-case-export" type="button" disabled>导出当前 A/B 摘要</button><label class="lab-case-import">导入 JSON 复核<input id="lab-case-import" type="file" accept="application/json,.json"></label></div><p id="lab-case-evidence-state" role="status">导出需要当前页面中完成两次预计算实验。</p><div id="lab-case-imported" class="lab-case-results" hidden></div></details></section>
+      <section id="lab-guide" class="lab-guide" aria-labelledby="lab-guide-title"><div class="lab-guide-top"><div><span class="lab-stage-kicker">EXPERIMENT MISSION / 可复核演示</span><h3 id="lab-guide-title">一条证据链看懂路噪控制</h3></div><button id="lab-guide-toggle" type="button" aria-expanded="false" aria-controls="lab-guide-content">开始引导</button></div><div id="lab-guide-content" hidden><ol id="lab-guide-steps" aria-label="引导进度"><li>基线 A</li><li>单变量 B</li><li>声场</li><li>公平试听</li><li>工程评审</li></ol><p id="lab-guide-state" role="status"></p><div class="lab-guide-actions"><button id="lab-guide-action" type="button"></button><button id="lab-guide-exit" type="button">退出引导</button></div><small>当前仅为固定教学声学布局；数值来自实际计算，写实车型尚未完成物理配准。</small></div></section>
+      <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；结果来自教学模型。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div><details class="lab-case-evidence"><summary>工程评审卡 / 案例证据</summary><p>自动事实与限制由 A/B 数据计算；解释、行动和补测由工程师填写。导入仅供查看，不恢复实验或原始音频。</p><div id="lab-case-review-current" class="lab-review-facts" hidden></div><label>人工观察 · 看到什么<textarea id="lab-case-observation" maxlength="1000" rows="2" placeholder="例如：右后座残余声压升高。"></textarea></label><label>人工解释 · 可能原因<textarea id="lab-case-interpretation" maxlength="1000" rows="2" placeholder="这是待验证假设；多变量变化时不能单因子归因。"></textarea></label><label>临时行动 · 下一步怎么处理<textarea id="lab-case-decision" maxlength="1000" rows="2" placeholder="例如：先保留基线方案，补测后再决策。"></textarea></label><label>待补测事项<textarea id="lab-case-next-check" maxlength="1000" rows="2" placeholder="例如：保持车速不变，复测不同路面。"></textarea></label><div class="lab-case-actions"><button id="lab-case-export" type="button" disabled>导出当前 A/B 评审摘要</button><label class="lab-case-import">导入 JSON 复核<input id="lab-case-import" type="file" accept="application/json,.json"></label></div><p id="lab-case-evidence-state" role="status">导出需要当前页面中完成两次预计算实验。</p><div id="lab-case-imported" class="lab-case-results" hidden></div></details></section>
       <div id="lab-viewer"><span class="lab-view-help">左键旋转 · 滚轮缩放 · 右击硬件查看信号</span></div>
       <div class="lab-view-tools"><label>车身<select id="lab-body"><option value="transparent">透明</option><option value="solid">实体</option><option value="hidden">隐藏</option></select></label><button id="lab-explode" aria-pressed="false">分解动画</button><button id="lab-reset">复位</button><label>剖面<select id="lab-section"><option value="none">关闭</option><option value="x">纵剖 X</option><option value="y">水平 Y</option><option value="z">横剖 Z</option></select></label><label>剖面位置 / m<input id="lab-section-position" type="range" min="-2.5" max="2.5" step="0.05" value="0"></label></div>
-      <div class="lab-view-tools"><label>声压场<select id="lab-field"><option value="off">关闭</option><option value="residual">残余 e / SPL</option><option value="primary">原始 d / SPL</option></select></label><label>场显示<select id="lab-field-slice"><option value="volume">三维采样体</option><option value="x">中央纵切片</option><option value="y">头部水平切片</option><option value="z">前排横切片</option></select></label><label>传播路径<select id="lab-paths"><option value="none">关闭</option><option value="primary">初级路径</option><option value="secondary">次级路径</option><option value="both">全部</option></select></label><label class="lab-check"><input id="lab-waves" type="checkbox">扬声器波前</label></div>
-      <div class="lab-field-note"><span class="lab-colorbar"></span><span id="lab-field-scale">30—80 dBA，固定色标；0.5秒RMS</span><span id="lab-field-status">声场未开启</span></div><p class="lab-help">空间场由四轮源和实际扬声器驱动经同一传播模型计算。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。</p>
+      <div class="lab-view-tools"><label>声压场<select id="lab-field"><option value="off">关闭</option><option value="residual">残余 e / SPL</option><option value="primary">原始 d / SPL</option></select></label><label>声场 / 指标计权<select id="lab-field-weight"><option value="A">A 计权</option><option value="Z">Z（不计权）</option></select></label><label>场显示<select id="lab-field-slice"><option value="volume">三维采样体</option><option value="x">中央纵切片</option><option value="y">头部水平切片</option><option value="z">前排横切片</option></select></label><label>传播路径<select id="lab-paths"><option value="none">关闭</option><option value="primary">初级路径</option><option value="secondary">次级路径</option><option value="both">全部</option></select></label><label class="lab-check"><input id="lab-waves" type="checkbox">扬声器波前</label></div>
+      <div class="lab-field-note"><span class="lab-colorbar"></span><span id="lab-field-scale">30—80 dBA，固定色标；0.5秒RMS</span><span id="lab-field-status">声场未开启</span></div>
+      <section id="lab-field-evidence" class="lab-field-evidence" aria-label="空间采样点改善证据" hidden><div class="lab-field-evidence-heading"><strong>空间改善证据</strong><span id="lab-field-evidence-window"></span></div><div class="lab-field-evidence-bar" aria-hidden="true"><i id="lab-field-evidence-improved"></i><i id="lab-field-evidence-near"></i><i id="lab-field-evidence-worsened"></i></div><p id="lab-field-evidence-summary"></p><small>正值＝原声−残余，负值表示该点变吵；仅统计本帧有效采样点，比例不是车厢体积占比或实车结论。</small></section>
+      <p class="lab-help">空间场由四轮源和实际扬声器驱动经同一传播模型计算。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。</p>
       <div id="lab-metrics" class="lab-metrics"></div><section class="lab-signals"><h2>04 / 信号流与控制机理</h2><div id="lab-flow"></div></section>
     </section></main>
-    <div class="lab-view-tools lab-analysis-tools"><label>声压频谱计权<select id="lab-spectrum-weight"><option value="A">A 计权</option><option value="Z">线性（Z）</option></select></label><label>总声压级<select id="lab-level-weight"><option value="A">dBA</option><option value="Z">dB（线性 / Z）</option></select></label><label>频谱下限 / Hz<input id="lab-freq-min" type="number" min="0" max="999" value="20"></label><label>频谱上限 / Hz<input id="lab-freq-max" type="number" min="1" max="1000" value="500"></label><span id="lab-analysis-help">计权仅用于分析；时域和试听保持原信号。总声压级统计0–1 kHz，不随频谱显示范围改变。</span></div><section class="lab-plots">
-      <article><h3 id="lab-signal-title">误差声压 e</h3><p id="lab-wave-legend" class="lab-plot-legend"></p><p class="lab-plot-status">最近5秒 · 随试听时间滚动</p><canvas id="lab-wave" aria-label="时域图：所选信号与原始噪声，最近5秒"></canvas></article>
-      <article><h3 id="lab-spectrum-title">单边 PSD · Hann 1024</h3><p id="lab-spectrum-legend" class="lab-plot-legend"></p><p class="lab-plot-status">当前窗口频谱 · 与试听时刻同步</p><canvas id="lab-spectrum" aria-label="频域图：所选信号与原始噪声"></canvas></article>
-      <article class="lab-convergence-panel"><h3 id="lab-convergence-title">收敛 · 总声压级</h3><p class="lab-plot-legend"><span class="lab-original-key">原始噪声 d</span><span class="lab-result-key">残差 e</span> · <span id="lab-level-legend">0–1 kHz / A计权 / 0.5秒窗口</span></p><p id="lab-convergence-status" class="lab-plot-status">从首个有效窗口开始，保留本次实验历史。</p><canvas id="lab-convergence" aria-label="所选座位总声压级收敛图"></canvas></article>
+    <section class="lab-plots">
+      <article><div class="lab-plot-heading"><h3 id="lab-signal-title">时域</h3>${plotSettingsMarkup('wave')}</div><p id="lab-wave-legend" class="lab-plot-legend"></p><canvas id="lab-wave" aria-label="时域图"></canvas></article>
+      <article><div class="lab-plot-heading"><h3 id="lab-spectrum-title">频谱</h3>${plotSettingsMarkup('spectrum')}</div><p id="lab-spectrum-legend" class="lab-plot-legend"></p><canvas id="lab-spectrum" aria-label="频谱图"></canvas></article>
+      <article class="lab-convergence-panel"><div class="lab-plot-heading"><h3 id="lab-convergence-title">收敛</h3>${plotSettingsMarkup('convergence')}</div><p id="lab-convergence-legend" class="lab-plot-legend"></p><canvas id="lab-convergence" aria-label="所选座位总声压级收敛图"></canvas></article>
     </section>
     <footer class="lab-player"><button id="lab-play" disabled>播放</button><button id="lab-replay" disabled>重播</button><span id="lab-time">0.00 / ${defaultReplayDuration} s</span><input id="lab-seek" aria-label="播放进度" type="range" min="0" max="${defaultReplayDuration}" step="0.01" value="0" disabled><label>座位（图表 / 试听）<select id="lab-seat">${seatNames.map((name, i) => `<option value="${i}">${name}</option>`).join('')}</select></label><button id="lab-rnc-on" aria-pressed="true" aria-describedby="lab-audition-state" title="仅切换原声/降噪后试听，不重置实验">RNC ON</button><span id="lab-audition-state" role="status">正在试听：降噪后 e</span><label>音量<input id="lab-volume" aria-label="音量" type="range" min="0" max="0.5" step="0.01" value="0.15"></label><button id="lab-mute" aria-pressed="false">静音</button></footer>
     <div id="lab-context" class="lab-context" role="menu" hidden></div><details class="lab-sources"><summary>公开依据与模型限制</summary><p>结构参考 DOE AFDC、Toyota RAV4 Hybrid、VW ID.4、Stellantis C10 REEV；原型外形为原创，不冒充其量产车型。硬件位置参考 EP3156998B1。源谱/传递参数为有依据的教学假设，尚未实车标定；模型精细度仍在改进。</p><a href="https://afdc.energy.gov/vehicles/how-do-hybrid-electric-cars-work" target="_blank" rel="noreferrer">DOE 结构原理</a> · <a href="https://patents.google.com/patent/EP3156998B1/en" target="_blank" rel="noreferrer">RNC硬件专利</a><p>更完整的逐项来源与适用边界见仓库 docs/research。完整目标仍在开发验证中。</p></details>`;
   const $ = <T extends HTMLElement = HTMLElement>(id: string) => root.querySelector<T>(`#lab-${id}`)!;
+  // Keep transport and ANC feedback next to the 3D scene; mechanism is the last section.
+  const playerPanel=root.querySelector<HTMLElement>('.lab-player')!;
+  const plotsPanel=root.querySelector<HTMLElement>('.lab-plots')!;
+  const signalsPanel=root.querySelector<HTMLElement>('.lab-signals')!;
+  const viewTools=[...root.querySelectorAll<HTMLElement>('.lab-workspace>.lab-view-tools')];
+  $('viewer').after(...viewTools,root.querySelector<HTMLElement>('.lab-field-note')!,$('field-evidence'),playerPanel); playerPanel.after($('metrics')); $('metrics').after(plotsPanel);
+  root.append($('case')); root.append(signalsPanel);
   const player = new Player(); player.setVolume(0.15);
   const livePlayer = new LivePlayer(); livePlayer.setVolume(0.15);
   let config: LabConfig = { ...defaultLabConfig(), sourceMode: 'recorded-noise', durationSeconds: defaultReplayDuration }, result: LabResult | null = null, selected: LabSelection = { signal: 'e', channel: 0 };
   let caseBaseline: CaseSnapshot | null = null;
+  let guideActive = false, guideFieldRunId = '', guideHeardOriginal = false, guideHeardResidual = false;
+  let guideExpectedAudition: 'd' | 'e' | null = null, guideListenStart = 0, guideListenSeat = -1, lastGuideAt = 0;
   // Match the viewer's initial smooth asphalt rather than starting with two road states.
   config.roadRoughness = 0.6;
   let generation = 0, busy = false, exploded = false, muted = false, nextReference = 5, disposed = false;
@@ -80,19 +99,30 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   let liveRncChange: LabRncChange | null = null, liveRncError = '';
   let fieldPending = false, fieldInFlight = 0, fieldEpoch = 0, lastFieldAt = -1, lastFieldClock = 0, lastChart = 0;
   let curves: Record<AcousticWeighting, SplFrame[]> = { A: [], Z: [] };
-  let spectrumWeighting: AcousticWeighting = 'A', levelWeighting: AcousticWeighting = 'A';
-  let frequencyRange: [number, number] = [20, 500];
+  let levelWeighting: AcousticWeighting = 'A';
+  let halted: LabDivergence | null = null;
+  const chartSettings = bindPlotSettings(root, () => { if (result) draw(); else clearPlots(); });
   const caseLevel = (value: number | null) => value === null ? '—' : value.toFixed(1);
   const caseDelta = (value: number | null) => value === null ? '—' : `${Math.abs(value) < 0.05 ? '' : value > 0 ? '+' : ''}${(Math.abs(value) < 0.05 ? 0 : value).toFixed(1)}`;
+  function appendReviewFacts(target: HTMLElement, base: CaseSnapshot, candidate: CaseSnapshot) {
+    const review = reviewCase(base, candidate);
+    const heading = document.createElement('strong'); heading.textContent = '自动整理 · 事实与判断边界';
+    const facts = document.createElement('ul'); facts.className = 'lab-review-fact-list';
+    for (const item of review.facts) { const li = document.createElement('li'); li.textContent = item; facts.append(li); }
+    const limits = document.createElement('ul'); limits.className = 'lab-review-limit-list';
+    for (const item of review.limits) { const li = document.createElement('li'); li.textContent = item; limits.append(li); }
+    target.append(heading, facts, limits);
+  }
   function candidateCase(): CaseSnapshot | null {
-    if (!caseBaseline || !result || realtime || result.runId === caseBaseline.runId) return null;
+    if (halted || !caseBaseline || !result || realtime || result.runId === caseBaseline.runId) return null;
     try { return captureCase(result, ports.analyze(result, result.sampleCount / result.config.sampleRateHz, { signal: 'e', channel: 0 }, { levelWeighting: 'A', levelsOnly: true })); }
     catch { return null; }
   }
   function renderCase() {
     const state = $('case-state'), output = $('case-results');
+    const reviewOutput = $('case-review-current'); reviewOutput.replaceChildren(); reviewOutput.hidden = true;
     const save = $<HTMLButtonElement>('case-save'), clear = $<HTMLButtonElement>('case-clear');
-    save.disabled = realtime || busy || !result;
+    save.disabled = !!halted || realtime || busy || !result;
     clear.disabled = !caseBaseline;
     $<HTMLButtonElement>('case-export').disabled = busy || !candidateCase();
     output.replaceChildren(); output.hidden = true;
@@ -110,6 +140,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       return;
     }
     const comparison = compareCases(caseBaseline, candidate);
+    appendReviewFacts(reviewOutput, caseBaseline, candidate); reviewOutput.hidden = false;
     if (!comparison.comparable) {
       state.textContent = `两次实验的${comparison.conditions.join('、')}不同，不能直接计算方案差值。请恢复相同条件后重跑；基线 A 仍保留。`;
       return;
@@ -131,10 +162,34 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     const note = document.createElement('p'); note.textContent = `原声/残余：dBA；改善/差值：dB。B−A 残余正值表示候选更吵，B−A 改善正值表示候选控制效果更好。A、B 均为末尾 ${caseBaseline.windowEndSeconds.toFixed(1)} s 的 0.5 秒窗，A 计权、0–1 kHz；${sourceNote}，声压为教学尺度。基线仅保存在当前页面，刷新后清除。`;
     output.append(table, note); output.hidden = false;
   }
+  function currentGuideStage(): ReturnType<typeof guideState> {
+    return guideState({ realtime, busy, config, currentRunId: result?.runId ?? null, currentValid: !!result && !halted,
+      baseline: caseBaseline, candidate: candidateCase(), candidateFieldReady: !!result && guideFieldRunId === result.runId && $<HTMLSelectElement>('field').value !== 'off',
+      heardOriginal: guideHeardOriginal, heardResidual: guideHeardResidual });
+  }
+  function renderGuide() {
+    if (!guideActive) return;
+    const stage = currentGuideStage();
+    const labels = ['基线 A', '单变量 B', '声场', '公平试听', '工程评审'];
+    const activeIndex = stage.index === 0 || stage.index === 1 ? 0 : stage.index === 2 ? 1 : stage.index - 1;
+    $('guide-steps').querySelectorAll('li').forEach((item, index) => {
+      item.classList.toggle('is-current', index === activeIndex);
+      item.classList.toggle('is-complete', index < activeIndex);
+      item.setAttribute('aria-current', index === activeIndex ? 'step' : 'false');
+      item.textContent = `${String(index + 1).padStart(2, '0')} / ${labels[index]}`;
+    });
+    $('guide-state').textContent = `${stage.title} · ${stage.detail}`;
+    const action = $<HTMLButtonElement>('guide-action');
+    action.textContent = busy ? '实验计算中…' : stage.action;
+    action.disabled = busy;
+    action.dataset.stage = stage.stage;
+  }
   const levelUnit = () => levelWeighting === 'A' ? 'dBA' : 'dB';
   let visualRoad: { name: string; roughness: number } | null = { name: '平整沥青', roughness: 0.6 };
   const roadNames = { smooth: '平整沥青', coarse: '粗糙沥青', gravel: '碎石路' } as const;
-  const flow = createSignalFlow($('flow'), (signal, channel) => select({ signal, channel }));
+  const flow = createSignalFlow($('flow'), () => {}, () => drawInspector());
+  let cachedPathKey = '';
+  let cachedPath: LabPathAnalysis | null = null;
   const viewer = createLabViewer($('viewer'), {
     select, add: addReference, context,
     roadPreset(surface, roughness) {
@@ -161,6 +216,64 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     if (!collapsed && matchMedia('(max-width: 680px)').matches) controlsClose.focus();
   };
   controlsClose.onclick = () => { setControlsCollapsed(true); controlsToggle.focus(); };
+  function exitGuide() {
+    guideActive = false;
+    $('guide-content').hidden = true;
+    $<HTMLButtonElement>('guide-toggle').setAttribute('aria-expanded', 'false');
+    $('guide-toggle').textContent = '开始引导';
+  }
+  $('guide-toggle').onclick = () => {
+    if (guideActive) { exitGuide(); return; }
+    guideActive = true;
+    $('guide-content').hidden = false;
+    $<HTMLButtonElement>('guide-toggle').setAttribute('aria-expanded', 'true');
+    $('guide-toggle').textContent = '收起引导';
+    renderGuide();
+  };
+  $('guide-exit').onclick = exitGuide;
+  $('guide-action').onclick = () => {
+    const stage: GuideStage = currentGuideStage().stage;
+    if (busy) return;
+    if (stage === 'mode') {
+      $<HTMLSelectElement>('mode').value = 'replay'; realtime = false; dirty();
+    } else if (stage === 'baseline-run' || stage === 'candidate-run') {
+      void calculate();
+    } else if (stage === 'baseline-save') {
+      $<HTMLButtonElement>('case-save').click();
+    } else if (stage === 'road') {
+      const surface = caseBaseline?.config.roadRoughness === 2.2 ? 'smooth' : 'gravel';
+      $('viewer').querySelector<HTMLButtonElement>('[aria-label="道路三维场景"]')?.click();
+      $('viewer').querySelector<HTMLButtonElement>(`[data-surface="${surface}"]`)?.click();
+    } else if (stage === 'field' && result) {
+      $<HTMLSelectElement>('field').value = 'residual';
+      $<HTMLSelectElement>('field-slice').value = 'y';
+      fieldOptions();
+      player.seek(result.sampleCount / result.config.sampleRateHz);
+      draw();
+    } else if (stage === 'listen' && result) {
+      const wanted = guideHeardOriginal ? 'e' : 'd';
+      player.pause();
+      $<HTMLSelectElement>('seat').value = '2';
+      selected = { signal: 'e', channel: 2 };
+      audition = wanted;
+      comparison();
+      guideListenStart = Math.max(0.5, Math.min(2, result.sampleCount / result.config.sampleRateHz / 3));
+      guideListenSeat = 2;
+      guideExpectedAudition = wanted;
+      player.seek(guideListenStart);
+      void play();
+    } else if (stage === 'review') {
+      const card = root.querySelector<HTMLDetailsElement>('.lab-case-evidence')!;
+      card.open = true;
+      card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      $<HTMLTextAreaElement>('case-observation').focus({ preventScroll: true });
+    } else if (stage === 'repair') {
+      setControlsCollapsed(false);
+      $('controls').scrollIntoView({ block: 'start', behavior: 'smooth' });
+      $<HTMLInputElement>('road').focus({ preventScroll: true });
+    }
+    renderGuide();
+  };
   const narrowViewport = matchMedia('(max-width: 680px)');
   const onNarrowViewport = (event: MediaQueryListEvent) => { if (event.matches) setControlsCollapsed(true); };
   narrowViewport.addEventListener('change', onNarrowViewport);
@@ -175,18 +288,28 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       : `尚未选择三维路面预设；声学计算使用当前粗糙度 ${actual}。`;
   }
   const transport = () => liveSession ? livePlayer : player;
+  const displayTime = () => halted ? halted.sample/config.sampleRateHz : transport().currentTime;
   const timeOffset = () => liveSnapshot ? liveSnapshot.startSample / config.sampleRateHz : 0;
   const mountIssues = () => (viewer as typeof viewer & { getMountIssues?: () => { sensorId: string; mountPart: string }[] }).getMountIssues?.() ?? [];
   function select(value: LabSelection) {
-    selected = value; flow.setSelected(value.signal, value.channel);
-    if (['d', 'e'].includes(value.signal)) {
-      $<HTMLSelectElement>('seat').value = String(value.channel);
-      if (!realtime) audition = value.signal as 'd' | 'e';
-      player.setComparison(ORDER[value.channel], audition);
-      livePlayer.setComparison(ORDER[value.channel], 'e');
-      refreshRncControl();
+    flow.openSignal(value.signal, value.channel);
+    $('context').hidden = true;
+    $('flow').scrollIntoView({block:'start',behavior:'smooth'});
+    drawInspector();
+  }
+  function drawInspector() {
+    const inspected=flow.getInspection();
+    if (!inspected || inspected.type === 'info') return;
+    const offset=timeOffset(), localTime=Math.max(0,displayTime()-offset);
+    if (inspected.type === 'signal') {
+      const weighting=root.querySelector<HTMLSelectElement>('[data-sf-weight]')!.value as AcousticWeighting;
+      const analysis=result ? ports.analyze(result,localTime,inspected.value,{spectrumWeighting:weighting}) : null;
+      flow.drawInspection(analysis,null,config.sampleRateHz,offset);
+    } else {
+      const key=JSON.stringify([config,inspected.value]);
+      if(key!==cachedPathKey){cachedPath=ports.analyzePath?.(config,inspected.value)??null;cachedPathKey=key;}
+      flow.drawInspection(null,cachedPath,config.sampleRateHz,offset);
     }
-    $('context').hidden = true; draw();
   }
   function context(value: LabSelection, x: number, y: number) {
     const menu = $('context'); menu.replaceChildren();
@@ -218,6 +341,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     $('replay').textContent = realtime ? '重新开始' : '重播';
     refreshRncControl();
     $<HTMLInputElement>('seek').max = String(config.durationSeconds);
+    $('calibration-help').textContent = recorded ? '实录基准：纯电、40 km/h、粗糙路，副驾驶200–300 Hz平均谱峰约48 dBA/Hz（参考20 μPa）。瞬时谱随素材波动；单点幅度匹配，非完整实车标定。' : '随机模式保留40 km/h粗糙路、四座平均约60 dBA的教学尺度。';
     $('duration-help').textContent = limit === 90 ? `可选10–90秒，每10秒一档。${recorded ? '超过素材长度时平滑循环，学习状态连续。' : '超过录音长度时连续合成新样本。'}` : `当前参考通道配置可选10–${limit}秒；较长档位超出内存预算，已禁用。`;
     $('disclosure-mode').textContent = realtime ? '实时分块仿真 · 保留学习状态' : `${config.durationSeconds}秒预计算回放`;
     $('architecture').textContent = modelNotes[config.vehicle]; viewer.setConfig(config);
@@ -236,11 +360,27 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   }
   function clearField() {
     ++fieldEpoch; fieldPending = false; lastFieldAt = -1;
+    guideFieldRunId = '';
     viewer.updateField({ valid: false, time: 0, points: [], primarySpl: new Float32Array(), residualSpl: new Float32Array(), reductionDb: new Float32Array() });
+    $('field-evidence').hidden = true;
     $('field-status').textContent = $<HTMLSelectElement>('field').value === 'off' ? '声场未开启' : '等待当前实验声场';
   }
+  function showFieldEvidence(frame: FieldFrame) {
+    const evidence = fieldFrameMatchesPoints(frame, viewer.fieldPoints) ? fieldEvidence(frame) : null;
+    const panel = $('field-evidence');
+    panel.hidden = !evidence;
+    if (!evidence) return;
+    const signed = (value: number) => `${value > 0.05 ? '+' : ''}${(Math.abs(value) < 0.05 ? 0 : value).toFixed(1)}`;
+    const percent = (count: number) => `${count / evidence.valid * 100}%`;
+    $('field-evidence-window').textContent = `${frame.time.toFixed(2)} s · ${frame.weighting === 'Z' ? 'Z' : 'A'} 计权 · 0.5 s 窗`;
+    $('field-evidence-improved').style.width = percent(evidence.improved);
+    $('field-evidence-near').style.width = percent(evidence.nearZero);
+    $('field-evidence-worsened').style.width = percent(evidence.worsened);
+    $('field-evidence-summary').textContent = `${evidence.valid}/${evidence.sampled} 有效采样点：改善 ${evidence.improved} · 接近持平 ${evidence.nearZero} · 变差 ${evidence.worsened}；改善量中位数 ${signed(evidence.medianDb)} dB，范围 ${signed(evidence.lowestDb)}～${signed(evidence.highestDb)} dB。`;
+  }
   function clearExperiment() {
-    result = null; liveSession = false; livePullPending = false; liveSnapshot = null; backgroundPaused = false; livePlayer.reset();
+    halted = null; result = null; liveSession = false; livePullPending = false; liveSnapshot = null; backgroundPaused = false; livePlayer.reset();
+    guideHeardOriginal = false; guideHeardResidual = false; guideExpectedAudition = null; guideListenSeat = -1;
     liveRncPending = false; liveRncChange = null; liveRncError = ''; liveAudibleRnc = liveRncEnabled;
     curves = { A: [], Z: [] };
     player.pause(); player.seek(0); clearField(); clearPlots();
@@ -262,40 +402,51 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     config.references.push({ id: `ref-${id}`, name: `REF ${id}`, position, mountPart }); dirty();
   }
   function drawSpl(time: number) {
-    const visible = visibleSplFrames(curves[levelWeighting], time, 0.5), range = splRange(visible);
-    const start = 0.5, end = Math.max(start + 1, time);
+    const settings = chartSettings.convergence;
+    const visible = visibleSplFrames(curves[settings.weighting], time, 0.5);
     const mic = Number($<HTMLSelectElement>('seat').value);
-    $('convergence-title').textContent = `收敛 · ${seatNames[mic]} · 总声压级`;
+    const x = settings.x ?? [0, Math.max(5, time)] as [number,number];
+    const inView = visible.filter(frame => frame.time >= x[0] && frame.time <= x[1]);
+    const range = splRange(inView.map(frame => ({ time:frame.time, primary: settings.showOriginal ? [frame.primary[mic]] : [], residual:[frame.residual[mic]] })));
+    $('convergence-title').textContent = `收敛 · ${ORDER[mic].toUpperCase()}`;
     $('convergence').setAttribute('aria-label', `${seatNames[mic]}总声压级收敛图`);
+    $('convergence-legend').innerHTML = `${settings.showOriginal ? '<span class="lab-original-key">原声 d</span>' : ''}<span class="lab-result-key">残差 e</span>`;
     plot($<HTMLCanvasElement>('convergence'), [
-        { x: visible.map(f => f.time), values: visible.map(f => f.primary[mic]), color: ORIGINAL_COLOR },
+        ...(settings.showOriginal ? [{ x: visible.map(f => f.time), values: visible.map(f => f.primary[mic]), color: ORIGINAL_COLOR }] : []),
         { x: visible.map(f => f.time), values: visible.map(f => f.residual[mic]), color: RESULT_COLOR },
-      ], { x: [start, end], y: range, xLabel: '实验时间 / s', yLabel: `总声压级 / ${levelUnit()}`,
-        empty: time < 0.5 ? '采集中 · 首窗 0.5 s' : '声压低于计算底限' });
-    $('convergence-status').textContent = `截至 ${time.toFixed(2)} s · 0.5秒窗口 · ${liveSession ? '本次实验全程总声压级' : '随播放显示，无未来数据'}`;
+      ], { x, y: settings.y ?? range, xLabel: '实验时间 / s', yLabel: `总声压级 / ${settings.weighting === 'A' ? 'dBA' : 'dBZ'}`,
+        empty: time < 0.5 ? '等待数据' : '当前范围无数据' });
   }
   function clearPlots() {
-    plot($('wave'), [], { x: [0, LAB_WAVEFORM_SECONDS], y: [-1, 1], xLabel: '实验时间 / s', yLabel: 'Pa' });
-    plot($('spectrum'), [], { x: frequencyRange, y: [-140, 20], xLabel: '频率 / Hz', yLabel: 'PSD / dB' });
-    drawSpl(0);
+    root.querySelectorAll<HTMLInputElement>('[data-axis-auto="rightY"]').forEach(input => { input.closest('fieldset')!.hidden = true; });
+    $('signal-title').textContent = '时域'; $('spectrum-title').textContent = '频谱';
+    $('wave-legend').replaceChildren(); $('spectrum-legend').replaceChildren();
+    plot($('wave'), [], { x: chartSettings.wave.x ?? [0, LAB_WAVEFORM_SECONDS], y: chartSettings.wave.y ?? [-1, 1], xLabel: '实验时间 / s', yLabel: 'Pa' });
+    plot($('spectrum'), [], { x: chartSettings.spectrum.x ?? [chartSettings.spectrum.xScale === 'log' ? 2000/1024 : 0,1000], xScale: chartSettings.spectrum.xScale, y: chartSettings.spectrum.y ?? [0,70], xLabel: '频率 / Hz', yLabel: `PSD / ${chartSettings.spectrum.weighting === 'A' ? 'dBA' : 'dBZ'}/Hz` });
+    drawSpl(0); drawInspector();
   }
   function draw() {
+    drawInspector();
     if (!result) return;
-    const time = transport().currentTime, offset = timeOffset(), localTime = Math.max(0, time - offset);
-    const options = { spectrumWeighting, levelWeighting };
+    const time = displayTime(), offset = timeOffset(), localTime = Math.max(0, time - offset);
+    const spectrumWeighting = chartSettings.spectrum.weighting;
+    const options = { spectrumWeighting, levelWeighting,
+      waveformStartSeconds: chartSettings.wave.x ? Math.max(0,chartSettings.wave.x[0]-offset) : undefined };
     const analysis = ports.analyze(result, localTime, selected, options);
     const seat = ['d', 'e', 'a'].includes(selected.signal) ? selected.channel : Number($<HTMLSelectElement>('seat').value);
     const original = selected.signal === 'd' ? analysis : ports.analyze(result, localTime, { signal: 'd', channel: seat }, options);
-    const unavailable = localTime < 0.5 ? '准备中' : '声压低于计算底限';
+    const unavailable = localTime < 0.5 ? halted ? '不足0.5秒' : '准备中' : '声压低于计算底限';
     const kind = selected.signal === 'x' ? config.references[selected.channel]?.name : selected.signal === 'q' ? `Q${selected.channel + 1}` : `${selected.signal.toUpperCase()} ${ORDER[selected.channel]?.toUpperCase()}`;
-    $('signal-title').textContent = `时域 · ${kind} / ${analysis.unit}`;
-    $('spectrum-title').textContent = `频域 · ${kind} · PSD · ${analysis.spectrumWeighting}计权 · ${analysis.spectrum ? 'Hann 1024' : '需0.512秒数据'}`;
+    $('signal-title').textContent = `时域 · ${kind}`;
+    $('spectrum-title').textContent = `频谱 · ${kind}`;
     const mixed = analysis.unit !== 'Pa';
-    const legend = `<span class="lab-original-key">原声 d · ${ORDER[seat].toUpperCase()}${mixed ? '（右轴 Pa）' : ''}</span>${selected.signal === 'd' ? '' : `<span class="lab-result-key">${kind}${mixed ? '（左轴）' : ''}</span>`}`;
-    $('wave-legend').innerHTML = legend;
-    $('spectrum-legend').innerHTML = legend.replace('右轴 Pa', '右轴') + `<span> dB re 1 (${analysis.unit})²/Hz${mixed ? `；原声 re 1 Pa²/Hz（${spectrumWeighting}计权）；非声压通道保持线性` : ''}</span>`;
-    drawSignalComparison($('wave'), analysis, original, config.sampleRateHz, offset, false, selected.signal === 'd');
-    drawSignalComparison($('spectrum'), analysis, original, config.sampleRateHz, offset, true, selected.signal === 'd', frequencyRange);
+    root.querySelectorAll<HTMLInputElement>('[data-axis-auto="rightY"]').forEach(input => { input.closest('fieldset')!.hidden = !mixed; });
+    for (const chart of ['wave','spectrum'] as const) {
+      const show = chartSettings[chart].showOriginal;
+      $(chart+'-legend').innerHTML = `${show ? `<span class="lab-original-key">原声 d · ${ORDER[seat].toUpperCase()}${mixed ? '（右轴）' : ''}</span>` : ''}${selected.signal === 'd' ? '' : `<span class="lab-result-key">${kind}${mixed && show ? '（左轴）' : ''}</span>`}`;
+    }
+    drawSignalComparison($('wave'), analysis, original, config.sampleRateHz, offset, false, selected.signal === 'd', undefined, chartSettings.wave);
+    drawSignalComparison($('spectrum'), analysis, original, config.sampleRateHz, offset, true, selected.signal === 'd', undefined, chartSettings.spectrum);
     if (liveSession && localTime >= 0.5 && time - (curves.A.at(-1)?.time ?? 0) >= 0.1) {
       for (const weighting of ['A', 'Z'] as const) {
         curves[weighting].push(splFrame(time, weighting === levelWeighting ? analysis : ports.analyze(result, localTime, selected, { levelWeighting: weighting, levelsOnly: true })));
@@ -316,13 +467,16 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       if (token !== generation) return;
       result = computed;
       updateRoadNote();
-      const audio = prepareLabPlayback(computed); player.load(audio.result);
+      let audioGain=0;
+      if (computed.divergence) stopDiverged(computed.divergence);
+      else { const audio=prepareLabPlayback(computed); player.load(audio.result); audioGain=audio.gain; }
       player.setComparison(ORDER[Number($<HTMLSelectElement>('seat').value)], audition);
       curves = { A: [], Z: [] };
-      for (let frame = 5; frame <= config.durationSeconds * 10; frame++) { const time = frame / 10; for (const weighting of ['A','Z'] as const) curves[weighting].push(splFrame(time, ports.analyze(result, time, selected, { levelWeighting: weighting, levelsOnly: true }))); }
+      for (let frame = 5; frame <= result.sampleCount / config.sampleRateHz * 10; frame++) { const time = frame / 10; for (const weighting of ['A','Z'] as const) curves[weighting].push(splFrame(time, ports.analyze(result, time, selected, { levelWeighting: weighting, levelsOnly: true }))); }
       $('run').textContent = `${VEHICLE_NAMES[result.config.vehicle]} · ${result.config.references.length}×4×4 · ${result.runId.slice(0, 8)}`;
-      $('status').textContent = `实验就绪 · ${result.computeMilliseconds.toFixed(0)} ms · 末${Math.min(4, config.durationSeconds)}秒线性总改善 ${result.metrics.aggregateReductionDb.toFixed(1)} dB（教学模型）；四座位d/e共用试听衰减 ${audio.gain.toFixed(3)}`;
+      $('status').textContent = `实验就绪 · ${result.computeMilliseconds.toFixed(0)} ms · 末${Math.min(4, config.durationSeconds)}秒线性总改善 ${result.metrics.aggregateReductionDb.toFixed(1)} dB（教学模型）；四座位d/e共用试听衰减 ${audioGain.toFixed(3)}`;
       for (const name of ['play', 'replay', 'seek']) $<HTMLButtonElement>(name).disabled = false;
+      if (halted) stopDiverged(halted);
       lastFieldAt = -1; fieldPending = false; draw();
     } catch (error) { if (token === generation) $('status').textContent = `计算未完成：${error instanceof Error ? error.message : String(error)}`; }
     finally { if (token === generation) { busy = false; $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = true; renderCase(); } }
@@ -348,13 +502,20 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       if (token === generation) { busy = false; $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = !liveSession; }
     }
   }
+  function stopDiverged(detail: LabDivergence) {
+    halted=detail; livePlayer.pause(); player.pause(); clearField();
+    for (const name of ['play','seek','rnc-on']) $<HTMLButtonElement>(name).disabled=true;
+    $('play').textContent='已发散 · 已暂停'; $('replay').textContent='重新开始';
+    $('status').textContent=detail.message;
+    renderCase();
+  }
   // Cover observed ~0.6 s first-view and ~1 s tab-scheduling stalls. Each pull
   // adds 0.2 s, so the queue stays below the player's 2 s hard limit and the
   // 8.192 s rolling snapshot still contains the 5 s waveform at the
   // audio clock time. Rendering never follows the producer's ahead position.
   const liveBufferTargetSeconds = 1.2;
   async function pumpLive() {
-    if (!liveSession || !livePlayer.playing || livePullPending) return;
+    if (halted || !liveSession || !livePlayer.playing || livePullPending) return;
     const token = generation; livePullPending = true;
     try {
       while (token === generation && liveSession && livePlayer.playing && livePlayer.bufferedUntil - livePlayer.currentTime < liveBufferTargetSeconds) {
@@ -363,7 +524,9 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
         const packet = await ports.pullLive(Math.min(400, remaining));
         if (token !== generation) return;
         const firstPacket = !result;
-        livePlayer.enqueue(packet.chunk); liveSnapshot = packet.snapshot; result = packet.snapshot.result;
+        liveSnapshot = packet.snapshot; result = packet.snapshot.result;
+        if (packet.chunk.divergence) { stopDiverged(packet.chunk.divergence); draw(); break; }
+        livePlayer.enqueue(packet.chunk);
         if (firstPacket) updateRoadNote();
       }
     } catch (error) {
@@ -390,15 +553,17 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     if (realtime || busy || !result) return;
     try {
       caseBaseline = captureCase(result, ports.analyze(result, result.sampleCount / result.config.sampleRateHz, { signal: 'e', channel: 0 }, { levelWeighting: 'A', levelsOnly: true }));
+      guideHeardOriginal = false; guideHeardResidual = false; guideExpectedAudition = null; guideListenSeat = -1;
       renderCase();
+      renderGuide();
     } catch (error) { $('case-state').textContent = error instanceof Error ? error.message : String(error); }
   };
-  $('case-clear').onclick = () => { caseBaseline = null; renderCase(); };
+  $('case-clear').onclick = () => { caseBaseline = null; guideHeardOriginal = false; guideHeardResidual = false; guideExpectedAudition = null; guideListenSeat = -1; renderCase(); renderGuide(); };
   $('case-export').onclick = () => {
     const candidate = candidateCase();
     if (!caseBaseline || !candidate || busy) return;
     try {
-      const json = createCaseEvidence(caseBaseline, candidate, $<HTMLTextAreaElement>('case-observation').value, $<HTMLTextAreaElement>('case-next-check').value);
+      const json = createCaseEvidence(caseBaseline, candidate, $<HTMLTextAreaElement>('case-observation').value, $<HTMLTextAreaElement>('case-next-check').value, new Date().toISOString(), $<HTMLTextAreaElement>('case-interpretation').value, $<HTMLTextAreaElement>('case-decision').value);
       const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob), link = document.createElement('a');
       link.href = url; link.download = `rnc-case-${new Date().toISOString().slice(0, 10)}.json`;
@@ -423,6 +588,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
         ? `${comparison.changes.length === 1 ? `单变量：${comparison.changes[0]}` : comparison.changes.length > 1 ? `改变 ${comparison.changes.length} 项，不能单因子归因：${comparison.changes.join('、')}` : '配置未改变；重复实验'}。后排 B−A 残余：RL ${caseDelta(comparison.residualDeltaDb[2])} dB，RR ${caseDelta(comparison.residualDeltaDb[3])} dB。`
         : `条件不一致（${comparison.conditions.join('、')}），不计算 A/B 差值。`;
       const table = document.createElement('table');
+      const reviewOutput = document.createElement('div'); reviewOutput.className = 'lab-review-facts';
+      appendReviewFacts(reviewOutput, evidence.baseline, evidence.candidate);
       const header = document.createElement('tr');
       for (const label of ['座位', 'A 原声 / 残余 / 改善', 'B 原声 / 残余 / 改善', 'B−A 残余']) { const cell = document.createElement('th'); cell.textContent = label; header.append(cell); }
       table.append(header);
@@ -431,9 +598,9 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
         for (const value of [seatNames[i], `${caseLevel(evidence.baseline.primarySpl[i])} / ${caseLevel(evidence.baseline.residualSpl[i])} / ${caseLevel(evidence.baseline.reductionDb[i])}`, `${caseLevel(evidence.candidate.primarySpl[i])} / ${caseLevel(evidence.candidate.residualSpl[i])} / ${caseLevel(evidence.candidate.reductionDb[i])}`, caseDelta(comparison.residualDeltaDb[i])]) { const cell = document.createElement('td'); cell.textContent = value; row.append(cell); }
         table.append(row);
       }
-      const notes = document.createElement('p'); notes.textContent = `观察：${evidence.observation || '未填写'}\n下一步核查：${evidence.nextCheck || '未填写'}`;
+      const notes = document.createElement('p'); notes.className = 'lab-review-human'; notes.textContent = `人工观察：${evidence.observation || '未填写'}\n人工解释（待验证）：${evidence.interpretation || '未填写'}\n临时行动：${evidence.decision || '未填写'}\n待补测事项：${evidence.nextCheck || '未填写'}`;
       const boundary = document.createElement('p'); boundary.textContent = CASE_EVIDENCE_BOUNDARY;
-      output.append(heading, provenance, summary, table, notes, boundary); output.hidden = false;
+      output.append(heading, provenance, summary, reviewOutput, table, notes, boundary); output.hidden = false;
       $('case-evidence-state').textContent = `已导入 ${file.name}；文件内容未经签名验证，仅供只读复核，不改变当前实验。`;
     } catch (error) { $('case-evidence-state').textContent = error instanceof Error ? error.message : String(error); }
   };
@@ -448,28 +615,16 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   $('section').onchange = section; $('section-position').oninput = section;
   function fieldOptions() { clearField(); viewer.setField($<HTMLSelectElement>('field').value, $<HTMLSelectElement>('field-slice').value as 'volume' | 'x' | 'y' | 'z'); }
   $('field').onchange = fieldOptions; $('field-slice').onchange = fieldOptions;
-  $('paths').onchange = () => viewer.setPaths($<HTMLSelectElement>('paths').value);
-  function analysisOptions() {
-    spectrumWeighting = $<HTMLSelectElement>('spectrum-weight').value as AcousticWeighting;
-    levelWeighting = $<HTMLSelectElement>('level-weight').value as AcousticWeighting;
-    $('level-legend').textContent = `0–1 kHz / ${levelWeighting}计权 / 0.5秒窗口`;
+  $('field-weight').onchange = () => {
+    levelWeighting = $<HTMLSelectElement>('field-weight').value as AcousticWeighting;
     $('field-scale').textContent = `30—80 ${levelUnit()}，固定色标；0.5秒RMS`;
-    clearField(); if (result) draw(); else clearPlots();
-  }
-  $('spectrum-weight').onchange = analysisOptions; $('level-weight').onchange = analysisOptions;
-  function frequencyOptions() {
-    const min = Number($<HTMLInputElement>('freq-min').value), max = Number($<HTMLInputElement>('freq-max').value);
-    if (!Number.isFinite(min) || !Number.isFinite(max) || min < 0 || max > 1000 || min >= max) {
-      $('analysis-help').textContent = '请输入有效频谱范围：0 ≤ 下限 < 上限 ≤ 1000 Hz。当前图保留上次有效范围。'; return;
-    }
-    frequencyRange = [min, max];
-    $('analysis-help').textContent = '计权仅用于分析；时域和试听保持原信号。总声压级统计0–1 kHz，不随频谱显示范围改变。';
-    if (result) draw(); else clearPlots();
-  }
-  $('freq-min').onchange = frequencyOptions; $('freq-max').onchange = frequencyOptions;
+    clearField(); if (result) draw();
+  };
+  $('paths').onchange = () => viewer.setPaths($<HTMLSelectElement>('paths').value);
   $('waves').onchange = () => viewer.setWaves($<HTMLInputElement>('waves').checked);
   async function play(restart = false) { if (!result) return; if (restart) { player.seek(0); clearField(); } try { await player.play(); } catch (e) { $('status').textContent = `音频未启动：${String(e)}`; } }
   $('play').onclick = () => {
+    if (halted) return;
     if (liveSession) {
       if (livePlayer.ended) return;
       if (livePlayer.playing || livePlayer.starting) livePlayer.pause();
@@ -483,7 +638,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     }
     else if (player.playing || player.starting) player.pause(); else void play();
   };
-  $('replay').onclick = () => { if (liveSession) void calculate(); else { player.pause(); void play(true); } };
+  $('replay').onclick = () => { if (liveSession || halted) void calculate(); else { player.pause(); void play(true); } };
   $('seek').oninput = () => { player.seek(Number($<HTMLInputElement>('seek').value)); clearField(); draw(); };
   function comparison() {
     const seat = Number($<HTMLSelectElement>('seat').value);
@@ -497,8 +652,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     button.textContent = enabled ? 'RNC ON' : 'RNC OFF';
     button.setAttribute('aria-pressed', String(enabled));
     button.title = realtime ? '开关实时控制；关闭时冻结权重并将扬声器驱动置零' : '仅切换已计算的残差/原声试听';
-    button.disabled = realtime && (busy || liveRncPending || (liveSession && livePlayer.bufferedUntil >= LAB_LIVE_LIMIT_SECONDS));
-    $('audition-state').textContent = realtime
+    button.disabled = !!halted || realtime && (busy || liveRncPending || (liveSession && livePlayer.bufferedUntil >= LAB_LIVE_LIMIT_SECONDS));
+    $('audition-state').textContent = halted ? '发散已暂停 · 试听已停止' : realtime
       ? `实时试听：残差 e · ${liveRncError || (liveRncPending ? '正在切换，随新样本生效' : liveAudibleRnc ? '自适应控制' : '权重冻结 / 输出关闭')}`
       : audition === 'e' ? '回放试听：残差 e' : '回放试听：原始噪声 d';
   }
@@ -519,7 +674,6 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   $('seat').onchange = () => {
     // Return from hardware inspection to paired seat pressure traces. Audition stays independent.
     selected = { signal: 'e', channel: Number($<HTMLSelectElement>('seat').value) };
-    flow.setSelected(selected.signal, selected.channel);
     if (!result) clearPlots();
     comparison();
   };
@@ -529,26 +683,37 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   root.addEventListener('keydown', event => { if (event.key === 'Escape') $('context').hidden = true; });
   const tick = () => {
     if (disposed) return;
-    const active = transport(), time = active.currentTime, n = Math.max(0, Math.min((result?.sampleCount ?? 1) - 1, Math.floor((time - timeOffset()) * 2000))), now = performance.now();
+    const active = transport(), time = displayTime(), n = Math.max(0, Math.min((result?.sampleCount ?? 1) - 1, Math.floor((time - timeOffset()) * 2000))), now = performance.now();
     if (liveRncChange && time * config.sampleRateHz >= liveRncChange.effectiveSample) {
       liveAudibleRnc = liveRncChange.enabled; liveRncPending = false; liveRncChange = null;
     }
     refreshRncControl();
     const ended = liveSession && livePlayer.ended;
-    $('play').textContent = ended ? '已结束' : active.starting ? '启动中' : active.playing ? '暂停' : '播放';
-    if (ended) $<HTMLButtonElement>('play').disabled = true;
+    $('play').textContent = halted ? '已发散 · 已暂停' : ended ? '已结束' : active.starting ? '启动中' : active.playing ? '暂停' : '播放';
+    if (ended || halted) $<HTMLButtonElement>('play').disabled = true;
     $('time').textContent = realtime ? `累计 ${clockText(time)}${ended ? ' · 已结束' : ''}` : `${clockText(time)} / ${clockText(config.durationSeconds)}`; $<HTMLInputElement>('seek').value = String(time);
-    viewer.render(time, selected, result?.signals.u.map(signal => signal[n]) ?? [], result?.sources.map(signal => signal[n]) ?? []);
+    viewer.render(time, selected, result?.signals.u.map(signal => signal[n] ?? 0) ?? [], result?.sources.map(signal => signal[n] ?? 0) ?? []);
     flow.render(time, active.playing, !!result && (liveSession ? liveAudibleRnc : result.config.rncEnabled) && result.config.stepSize > 0 && time >= result.config.adaptationStartsSeconds);
-    if (liveSession) {
+    if (liveSession && !halted) {
       void pumpLive();
       if (!busy) $('status').textContent = ended ? '实时实验已达到10分钟运行上限并自动结束；收敛曲线已保留，点击“重新开始”可开启新实验。' : `${livePlayer.starting ? '正在恢复试听' : !livePlayer.playing ? '实时已暂停' : livePlayer.status === 'buffering' ? '等待新样本' : '实时运行'} · ${time.toFixed(1)} s · 缓冲 ${(livePlayer.bufferedUntil - time).toFixed(2)} s · 共同安全增益 ${livePlayer.safetyGain.toFixed(3)} · 补缓冲 ${livePlayer.underruns} 次`;
     }
+    if (halted) $('status').textContent=halted.message;
     if (now - lastChart >= 100) { draw(); lastChart = now; }
-    if (result && !busy && $<HTMLSelectElement>('field').value !== 'off' && !fieldPending && fieldInFlight < 2 && now - lastFieldClock > 350 && Math.abs(time - lastFieldAt) > 0.15) {
+    if (guideActive && result && !realtime && guideFieldRunId === result.runId && !halted && player.playing && !muted && Number($<HTMLInputElement>('volume').value) > 0) {
+      const seat = Number($<HTMLSelectElement>('seat').value);
+      if (guideListenSeat !== -1 && guideListenSeat !== seat) { guideHeardOriginal = false; guideHeardResidual = false; guideExpectedAudition = null; guideListenSeat = -1; }
+      if (guideExpectedAudition === audition && seat === 2 && time - guideListenStart >= 0.5 && time - guideListenStart < 1.5) {
+        if (audition === 'd') guideHeardOriginal = true;
+        else guideHeardResidual = true;
+        guideExpectedAudition = null;
+      }
+    }
+    if (guideActive && now - lastGuideAt >= 250) { renderGuide(); lastGuideAt = now; }
+    if (result && !halted && !busy && $<HTMLSelectElement>('field').value !== 'off' && !fieldPending && fieldInFlight < 2 && now - lastFieldClock > 350 && Math.abs(time - lastFieldAt) > 0.15) {
       const token = generation, epoch = fieldEpoch, points = viewer.fieldPoints;
       fieldPending = true; fieldInFlight++; lastFieldAt = time; lastFieldClock = now;
-      ports.field(time, points, levelWeighting).then(frame => { if (token === generation && epoch === fieldEpoch) { viewer.updateField(frame); $('field-status').textContent = frame.valid ? `空间窗口截至 ${frame.time.toFixed(2)} s` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场'; } }).catch(error => { if (token === generation && epoch === fieldEpoch) $('field-status').textContent = `声场计算失败：${String(error)}`; }).finally(() => { fieldInFlight--; if (token === generation && epoch === fieldEpoch) fieldPending = false; });
+      ports.field(time, points, levelWeighting).then(frame => { if (token === generation && epoch === fieldEpoch) { viewer.updateField(frame); showFieldEvidence(frame); if (frame.valid && result && fieldFrameMatchesPoints(frame, viewer.fieldPoints)) guideFieldRunId = result.runId; $('field-status').textContent = frame.valid ? `空间窗口截至 ${frame.time.toFixed(2)} s` : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场'; } }).catch(error => { if (token === generation && epoch === fieldEpoch) { viewer.updateField({ valid: false, time, points: [], primarySpl: new Float32Array(), residualSpl: new Float32Array(), reductionDb: new Float32Array() }); $('field-evidence').hidden = true; $('field-status').textContent = `声场计算失败：${String(error)}`; } }).finally(() => { fieldInFlight--; if (token === generation && epoch === fieldEpoch) fieldPending = false; });
     }
     requestAnimationFrame(tick);
   };

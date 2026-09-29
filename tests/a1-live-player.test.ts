@@ -4,6 +4,20 @@ import type { Four } from '../src/shared/contracts';
 import type { LabChunk } from '../src/shared/lab-contracts';
 import { LivePlayer, StreamingAudioResampler } from '../src/team-a/player/live-player';
 import { resampleForAudio } from '../src/team-a/player';
+import { prepareLabPlayback } from '../src/team-a/player';
+
+test('divergent but finite Float32 pressure is bounded only in the audition copies',()=>{
+  const source=chunk(0,1000,1e37);
+  const before=source.signals.e[0].slice();
+  const resampler=new StreamingAudioResampler();
+  const audio=resampler.push([...source.signals.d,...source.signals.e])!;
+  assert.ok(audio.channels.every(c=>c.every(v=>Number.isFinite(v)&&Math.abs(v)<=.900001)));
+  assert.ok(resampler.safetyGain < 1e-30);
+  assert.deepEqual(source.signals.e[0],before);
+  const replay=prepareLabPlayback(source);
+  for(const channel of [...replay.result.signals.d,...replay.result.signals.e]) assert.ok(resampleForAudio(channel).every(v=>Number.isFinite(v)&&Math.abs(v)<=.900001));
+  assert.deepEqual(source.signals.e[0],before);
+});
 
 function chunk(startSample: number, sampleCount = 400, amplitude = 0.04, runId = 'live'): LabChunk {
   const d = Array.from({ length: 4 }, (_, seat) => Float32Array.from({ length: sampleCount }, (_, n) => amplitude * (seat + 1) * Math.sin(2 * Math.PI * 125 * (n + startSample) / 2000))) as unknown as Four<Float32Array>;

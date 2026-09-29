@@ -7,7 +7,7 @@ import { CASE_EVIDENCE_MAX_BYTES, createCaseEvidence, parseCaseEvidence } from '
 function snapshot(runId: string) {
   const config = defaultLabConfig(); config.durationSeconds = 10;
   const analysis: LabAnalysis = { time: 10, levelWeighting: 'A', valid: true, primarySpl: [60, 61, 62, 63],
-    residualSpl: [55, 56, 57, 58], reductionDb: [5, 5, 5, 5], waveform: new Float32Array(), spectrum: null, unit: 'Pa' };
+    residualSpl: [55, 56, 57, 58], reductionDb: [5, 5, 5, 5], waveform: new Float32Array(), spectrum: null, spectrumDb: null, unit: 'Pa' };
   return captureCase({ runId, config } as LabResult, analysis);
 }
 

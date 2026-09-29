@@ -7,7 +7,7 @@ function snapshot(id: string) {
   const config = defaultLabConfig();
   config.durationSeconds = 10;
   const result = { runId: id, config } as LabResult;
-  const analysis: LabAnalysis = { time: 10, levelWeighting: 'A', primarySpl: [60, 61, 62, 63], residualSpl: [57, 58, 59, 60], reductionDb: [3, 3, 3, 3], valid: true, waveform: new Float32Array(), spectrum: null, unit: 'Pa' };
+  const analysis: LabAnalysis = { time: 10, levelWeighting: 'A', primarySpl: [60, 61, 62, 63], residualSpl: [57, 58, 59, 60], reductionDb: [3, 3, 3, 3], valid: true, waveform: new Float32Array(), spectrum: null, spectrumDb: null, unit: 'Pa' };
   return captureCase(result, analysis);
 }
 

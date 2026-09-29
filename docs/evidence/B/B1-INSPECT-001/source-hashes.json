@@ -1,0 +1,13 @@
+{
+  "src/shared/lab-contracts.ts": "b8ca603593ce34c503177d31d74f38ff966fca5cd3676b6311f9143353f6bf69",
+  "src/integration/main.ts": "625f055201a176a3b8b7b4a7a8921e999806fa3cec89122b66a72ccff882e038",
+  "src/team-b/lab/path-analysis.ts": "8d9a95b6510dc6140c7497de3158c01d02cc22df210cbd1f5357e28261d64dee",
+  "src/team-a/lab/index.ts": "df548e7adca15178815233b022492634ad506a306548e0dad28615e7551effea",
+  "src/team-a/lab/plots.ts": "c40cc7a499bfaf9d5735d09e61048557ad83a5fa9df4d3e138df586af6f36993",
+  "src/team-a/lab/plot-settings.ts": "aae52c6b26da05b7293fa5ef13a6ae1452ab7a7ed0b454f8a701ed36254d490e",
+  "src/team-a/lab/signal-flow.ts": "5108001119cefce41dc8299cd64c13a0f46f541d21619b94880938070804d7a3",
+  "src/team-a/lab/signal-flow.css": "ba248fde22a1793c7f9689243e9b128ac865a03c13d3188c24fd1f6325857034",
+  "src/team-a/lab/game-ui.css": "ab6a18e51e5de2ecef7378205fbe06d4cf5fbbd0afbc0f937a7f128a825e080c",
+  "tests/b-path-analysis.test.ts": "60d4563af9d0219eb61858f31f725b4ede95be3d4053245856d9ebc001f7bd61",
+  "tests/a1-lab-plots.test.ts": "b75e88f22b6f01277528ffbbc52f2c3b3728e1b6ca75639b8e25d7d296db74e2"
+}

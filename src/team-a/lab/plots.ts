@@ -1,4 +1,5 @@
 import { LAB_WAVEFORM_SECONDS, type LabAnalysis } from '../../shared/lab-contracts';
+import type { PlotSettings } from './plot-settings';
 
 export const ORIGINAL_COLOR = '#a7b5c8';
 export const RESULT_COLOR = '#73e4bc';
@@ -19,12 +20,12 @@ export function splRange(frames: SplFrame[]): [number, number] {
   return [min, max];
 }
 const finite = (v: number | null): v is number => v !== null && Number.isFinite(v);
-const tick = (v: number) => Math.abs(v) > 0 && Math.abs(v) < 0.01 ? v.toExponential(1) : Number(v.toFixed(2)).toString();
+const tick = (v: number) => (Math.abs(v) > 0 && Math.abs(v) < 0.01) || Math.abs(v) >= 1e5 ? v.toExponential(1) : Number(v.toFixed(2)).toString();
 
 /** Rendering only: SPL/PSD values are supplied by B's analysis, never recomputed here. */
 export function plot(canvas: HTMLCanvasElement, series: PlotSeries[], options: {
   x: [number, number]; y: [number, number]; xLabel: string; yLabel: string;
-  right?: { range: [number, number]; label: string }; empty?: string;
+  xScale?: 'linear' | 'log'; right?: { range: [number, number]; label: string }; empty?: string;
 }) {
   const width = canvas.clientWidth, height = canvas.clientHeight;
   if (!width || !height) return;
@@ -42,15 +43,19 @@ export function plot(canvas: HTMLCanvasElement, series: PlotSeries[], options: {
       ctx.fillText(tick(options.right.range[1] - (options.right.range[1] - options.right.range[0]) * i / 4), left+w+7,y+4);
     }
   }
+  const log = options.xScale === 'log' && options.x[0] > 0;
+  const transform = (value: number) => log ? Math.log10(value) : value;
+  const lo = transform(options.x[0]), hi = transform(options.x[1]);
   const steps = w < 260 ? 2 : 4;
   for (let i = 0; i <= steps; i++) {
     const x = left + w * i / steps; grid(x,top,x,top+h);
     ctx.fillStyle = '#bfd0e2'; ctx.textAlign = i === 0 ? 'left' : i === steps ? 'right' : 'center';
-    ctx.fillText(tick(options.x[0] + (options.x[1] - options.x[0]) * i / steps),x,top+h+18);
+    ctx.fillText(tick(log ? 10 ** (lo + (hi-lo)*i/steps) : lo + (hi-lo)*i/steps),x,top+h+18);
   }
   ctx.textAlign = 'left'; ctx.fillStyle = '#bfd0e2'; ctx.fillText(options.yLabel,left,13);
   if (options.right) { ctx.textAlign = 'right'; ctx.fillStyle = ORIGINAL_COLOR; ctx.fillText(options.right.label,left+w,13); }
   ctx.textAlign = 'center'; ctx.fillStyle = '#bfd0e2'; ctx.fillText(options.xLabel,left+w/2,height-4);
+  ctx.save(); ctx.beginPath(); ctx.rect(left,top,w,h); ctx.clip();
   for (const line of series) {
     const range = line.secondary && options.right ? options.right.range : options.y;
     ctx.strokeStyle = line.color; ctx.fillStyle = line.color; ctx.lineWidth = 1.6; ctx.beginPath();
@@ -58,36 +63,48 @@ export function plot(canvas: HTMLCanvasElement, series: PlotSeries[], options: {
     line.values.forEach((value,i) => {
       const time = line.x[i];
       if (!finite(value) || !Number.isFinite(time) || time < options.x[0] || time > options.x[1]) { connected = false; return; }
-      const x = left + (time-options.x[0]) / (options.x[1]-options.x[0]) * w;
+      const x = left + (transform(time)-lo) / (hi-lo) * w;
       const y = top + (range[1]-value) / (range[1]-range[0]) * h;
       if (connected) ctx.lineTo(x,y); else { ctx.moveTo(x,y); ctx.fillRect(x-1.5,y-1.5,3,3); }
       connected = true;
     }); ctx.stroke();
   }
-  if (!series.some(line => line.values.some(finite))) {
+  ctx.restore();
+  if (!series.some(line => line.values.some((v,i) => finite(v) && line.x[i] >= options.x[0] && line.x[i] <= options.x[1]))) {
     ctx.fillStyle = '#93a8c0'; ctx.textAlign = 'center'; ctx.fillText(options.empty ?? '等待有效数据',left+w/2,top+h/2);
   }
   ctx.textAlign = 'left';
 }
 
 export function drawSignalComparison(canvas: HTMLCanvasElement, analysis: LabAnalysis, original: LabAnalysis,
-  sampleRate: number, offset: number, spectrum: boolean, originalOnly: boolean, frequencyRange?: [number, number]) {
+  sampleRate: number, offset: number, spectrum: boolean, originalOnly: boolean, frequencyRange?: [number, number], settings?: PlotSettings) {
   const values = (a: LabAnalysis) => spectrum
-    ? Array.from(a.spectrum ?? [], value => 10*Math.log10(Math.max(value,1e-14))) : Array.from(a.waveform);
+    ? Array.from(a.spectrumDb ?? []) : Array.from(a.waveform);
   const coordinates = (a: LabAnalysis, length: number) => Array.from({length},(_,i)=>spectrum
     ? i*sampleRate/1024 : offset+a.time-(a.waveform.length-i)/sampleRate);
   const raw = values(original), selected = values(analysis), mixedUnits = analysis.unit !== 'Pa';
   const peak = (values: number[]) => values.reduce((p,v)=>Math.max(p,Math.abs(v)),0.001)*1.05;
-  const maximum = peak(mixedUnits ? selected : [...raw,...selected]);
+  const showOriginal = settings?.showOriginal ?? true;
+  const maximum = peak(mixedUnits || !showOriginal ? selected : [...raw,...selected]);
   const rightPeak = peak(raw);
-  const series: PlotSeries[] = [{ x: coordinates(original,raw.length), values: raw, color: ORIGINAL_COLOR, secondary: mixedUnits }];
+  const series: PlotSeries[] = showOriginal ? [{ x: coordinates(original,raw.length), values: raw, color: ORIGINAL_COLOR, secondary: mixedUnits }] : [];
   if (!originalOnly) series.push({ x: coordinates(analysis,selected.length), values:selected, color:RESULT_COLOR });
   const end = offset+analysis.time, start = Math.max(0,end-LAB_WAVEFORM_SECONDS);
+  let x = settings?.x ?? (spectrum ? frequencyRange ?? [0,sampleRate/2] : [start,Math.max(LAB_WAVEFORM_SECONDS,end)]) as [number,number];
+  if (spectrum && settings?.xScale === 'log') x = [Math.max(sampleRate/1024,x[0]),x[1]];
+  const densityRange = (values: number[]) : [number,number] => {
+    const visible = values.filter((v,i) => Number.isFinite(v) && i*sampleRate/1024 >= x[0] && i*sampleRate/1024 <= x[1]);
+    if (!visible.length) return [0,70];
+    const max = visible.reduce((a,b)=>Math.max(a,b),-Infinity), min = visible.reduce((a,b)=>Math.min(a,b),Infinity);
+    return [Math.floor(Math.max(min,max-80)/10)*10-5,Math.ceil(max/10)*10+5];
+  };
+  const selectedRange = densityRange(selected), rawRange = densityRange(raw);
+  const spectrumRange: [number,number] = mixedUnits || !showOriginal ? selectedRange
+    : [Math.min(selectedRange[0],rawRange[0]),Math.max(selectedRange[1],rawRange[1])];
   plot(canvas,series,{
-    x:spectrum ? frequencyRange ?? [0,sampleRate/2] : [start,Math.max(LAB_WAVEFORM_SECONDS,end)],
-    y:spectrum ? [-140,20] : [-maximum,maximum], xLabel:spectrum ? '频率 / Hz' : '实验时间 / s',
-    yLabel:spectrum ? `PSD ${analysis.spectrumWeighting === 'A' ? '(A)' : '(Z)'} / dB` : analysis.unit.startsWith('m/s') ? 'm/s²' : analysis.unit,
-    right:mixedUnits ? { range:spectrum ? [-140,20] : [-rightPeak,rightPeak], label:spectrum ? '原声 PSD / dB' : '原声 / Pa' } : undefined,
+    x, xScale: spectrum ? settings?.xScale : 'linear', y: settings?.y ?? (spectrum ? spectrumRange : [-maximum,maximum]), xLabel:spectrum ? '频率 / Hz' : '实验时间 / s',
+    yLabel:spectrum ? mixedUnits ? 'PSD / dB' : `PSD / ${analysis.spectrumWeighting === 'A' ? 'dBA' : 'dBZ'}/Hz` : analysis.unit.startsWith('m/s') ? 'm/s²' : analysis.unit,
+    right:mixedUnits && showOriginal ? { range:settings?.rightY ?? (spectrum ? densityRange(raw) : [-rightPeak,rightPeak]), label:spectrum ? `原声 / ${original.spectrumWeighting === 'A' ? 'dBA' : 'dBZ'}/Hz` : '原声 / Pa' } : undefined,
     empty:spectrum ? '频谱准备中 · 需 0.512 秒' : '从首个样本开始显示',
   });
 }

@@ -1,0 +1,25 @@
+✔ seat curves preserve full-run SPL history and missing values while excluding future frames (1.632ms)
+✔ physical traces share Pa scale, show original and use absolute sample time after a live history wrap (1.858ms)
+✔ the initial waveform uses the same five-second scale as a full rolling window (0.843ms)
+✔ PSD comparisons use actual FFT bin positions and original selection is not drawn twice (0.9515ms)
+✔ first valid point is visible and null SPL gaps never create fake zero levels (0.8479ms)
+✔ acceleration and speaker drive never masquerade as pressure on a common axis (0.6128ms)
+✔ manual plot bounds and hidden primary traces apply independently without changing samples (0.9885ms)
+✔ A weighting matches reference corrections and applies power rather than amplitude to PSD (11.9151ms)
+✔ teaching calibration anchors pooled 40 km/h baseline at 60 dBA; offset changes H only (368.8676ms)
+✔ A/Z analysis and field agree at microphones, including first window and wrapped live history (1035.0158ms)
+✔ duration budget rejects invalid allocations; short runs have finite metrics and long runs share streaming samples (1761.4408ms)
+✔ pressure density levels use 20uPa while other signals keep unit reference; manual waveform bounds never reveal future samples (183.9088ms)
+✔ NFxLMS joint normalization scales inversely with filtered-reference power and regularizes silence (0.2067ms)
+✔ recorded sources use the four primary-noise ears, validate assets and require explicit data (26.4274ms)
+✔ recorded source samples retain shared timing and gain, crossfade synchronously and do not become random or pitch shifted (34.3897ms)
+✔ recorded batch and irregular live blocks agree exactly through two source loops; storage and adaptation remain continuous (2833.1934ms)
+✔ recorded primary paths stay causal and fully coupled, match the passenger 48dBA/Hz peak anchor, and match microphone fields (177.3672ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3794.1003

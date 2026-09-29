@@ -25,6 +25,7 @@ const four = <T, U>(input: Four<T>, map: (value: T, index: number) => U): Four<U
   [map(input[0], 0), map(input[1], 1), map(input[2], 2), map(input[3], 3)];
 
 export function captureCase(result: LabResult, analysis: LabAnalysis): CaseSnapshot {
+  if (result.divergence) throw new Error('发散实验不能保存为完整比较案例');
   if (analysis.levelWeighting !== 'A' || analysis.time < 0.5 || !analysis.valid) throw new Error('基线需要有效的末尾0.5秒A计权窗口');
   return {
     runId: result.runId,

@@ -1,3 +1,4 @@
+import { finiteSignal, finiteWeight, LabDivergenceError } from './divergence';
 import type { Four } from '../../shared/contracts';
 import { LAB_LIVE_LIMIT_SECONDS, MIC_POSITIONS, type LabChunk, type LabConfig, type LabLiveSnapshot, type LabResult, type LabRncChange } from '../../shared/lab-contracts';
 import { primaryPath, referencePath, secondaryPath, type SparsePath } from './paths';
@@ -69,7 +70,7 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
     const sources = four(blank(4, sampleCount));
     const signals: LabResult['signals'] = { x: blank(nReferences, sampleCount), u: four(blank(4, sampleCount)),
       d: four(blank(4, sampleCount)), a: four(blank(4, sampleCount)), e: four(blank(4, sampleCount)) };
-    for (let n = 0; n < sampleCount; n++) {
+    try { for (let n = 0; n < sampleCount; n++) {
       const absolute = count, index = absolute & SHORT_MASK, end = index + SHORT_CAPACITY;
       const historyIndex = absolute % historySamples;
       for (let i = 0; i < 4; i++) {
@@ -80,15 +81,15 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
           put(raw[i], index, ((states[i] + 0.5) / 4294967296) * 2 - 1);
           for (let j = 0; j < shape.length; j++) broad += shape[j] * raw[i][end - j];
         }
-        const value = Math.fround(source.amplitude * broad);
-        put(q[i], index, value); sources[i][n] = value; historySources[i][historyIndex] = value;
+        const value = finiteSignal(source.amplitude * broad, absolute);
+        put(q[i], index, value); sources[i][n] = value;
       }
       for (let k = 0; k < nReferences; k++) {
-        const value = mixedPath(references[k], end);
-        put(x[k], index, value); signals.x[k][n] = value; history.x[k][historyIndex] = value;
+        const value = finiteSignal(mixedPath(references[k], end), absolute);
+        put(x[k], index, value); signals.x[k][n] = value;
       }
       for (let m = 0; m < 4; m++) {
-        const value = mixedPath(primary[m], end); signals.d[m][n] = value; history.d[m][historyIndex] = value;
+        const value = finiteSignal(mixedPath(primary[m], end), absolute); signals.d[m][n] = value;
       }
       if (canAdapt) {
         for (const output of active) {
@@ -97,14 +98,13 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
             const w = weights[output][k], inputValues = x[k];
             for (let j = 0; j < taps; j++) drive += w[j] * inputValues[end - j];
           }
-          if (!Number.isFinite(drive) || Math.abs(drive) > 100) throw new Error(`FxLMS 数值不稳定，样本 ${absolute}；请降低步长或更改传感器位置`);
-          const value = Math.fround(drive); put(u[output], index, value); signals.u[output][n] = value; history.u[output][historyIndex] = value;
+          const value = finiteSignal(drive, absolute); put(u[output], index, value); signals.u[output][n] = value;
         }
         for (let m = 0; m < 4; m++) {
           let anti = 0;
           for (const output of active) anti += pathSample(u[output], secondary[m][output], end);
-          const value = Math.fround(anti); signals.a[m][n] = value; history.a[m][historyIndex] = value;
-          const error = Math.fround(signals.d[m][n] + value); signals.e[m][n] = error; history.e[m][historyIndex] = error;
+          const value = finiteSignal(anti, absolute); signals.a[m][n] = value;
+          const error = finiteSignal(signals.d[m][n] + value, absolute); signals.e[m][n] = error;
         }
         for (const output of active) {
           let change = 0;
@@ -123,16 +123,27 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
             const w = weights[output][k], f0 = filtered[0][output][k], f1 = filtered[1][output][k], f2 = filtered[2][output][k], f3 = filtered[3][output][k];
             for (let j = 0; j < taps; j++) {
               const at = end - j;
-              w[j] -= gain * (e0 * f0[at] + e1 * f1[at] + e2 * f2[at] + e3 * f3[at]);
+              w[j] = finiteWeight(w[j] - gain * (e0 * f0[at] + e1 * f1[at] + e2 * f2[at] + e3 * f3[at]), absolute);
             }
           }
         }
       } else {
-        for (let m = 0; m < 4; m++) { signals.e[m][n] = signals.d[m][n]; history.e[m][historyIndex] = signals.d[m][n]; }
+        for (let m = 0; m < 4; m++) { signals.e[m][n] = signals.d[m][n]; }
       }
+      for (let i=0;i<4;i++) historySources[i][historyIndex]=sources[i][n];
+      for (const key of ['x','u','d','a','e'] as const) signals[key].forEach((channel,i)=>{history[key][i][historyIndex]=channel[n];});
       count++;
     }
+    } catch (error) {
+      if (!(error instanceof LabDivergenceError)) throw error;
+      failure=error;
+    }
     computeMilliseconds += performance.now() - started;
+    const completed=count-startSample;
+    if (failure instanceof LabDivergenceError) {
+      const trim=(channels: readonly Float32Array[])=>channels.map(channel=>channel.slice(0,completed));
+      return {runId,startSample,sampleCount:completed,sources:four(trim(sources)),signals:{x:trim(signals.x),u:four(trim(signals.u)),d:four(trim(signals.d)),a:four(trim(signals.a)),e:four(trim(signals.e))},divergence:failure.detail};
+    }
     return { runId, startSample, sampleCount, sources, signals };
   }
   function process(sampleCount: number): LabChunk {
@@ -148,7 +159,7 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
     }
   }
   function snapshot(maxSamples = 32000): LabLiveSnapshot {
-    if (failure) throw failure;
+    if (failure && !(failure instanceof LabDivergenceError)) throw failure;
     if (!Number.isSafeInteger(maxSamples) || maxSamples < 1) throw new Error('快照最大长度须为正安全整数');
     const sampleCount = Math.min(maxSamples, count, historySamples), startSample = count - sampleCount;
     const copy = (values: Float32Array) => {
@@ -167,7 +178,7 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
     };
     const dp = signals.d.map(power), ep = signals.e.map(power);
     const reduction = (d: number, e: number) => d <= 1e-20 ? 0 : 10 * Math.log10(d / Math.max(1e-20, e));
-    const result: LabResult = { runId, config: structuredClone(config), sampleCount, computeMilliseconds, sources, signals,
+    const result: LabResult = { ...(failure instanceof LabDivergenceError ? {divergence:failure.detail}:{}), runId, config: structuredClone(config), sampleCount, computeMilliseconds, sources, signals,
       metrics: { reductionDbByMic: four(dp.map((value, i) => reduction(value, ep[i]))), aggregateReductionDb: reduction(dp.reduce((sum, value) => sum + value, 0), ep.reduce((sum, value) => sum + value, 0)) } };
     return { startSample, endSample: count, result };
   }

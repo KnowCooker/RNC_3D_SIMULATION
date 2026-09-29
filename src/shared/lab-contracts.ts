@@ -9,7 +9,8 @@ export const LAB_WAVEFORM_SECONDS = 5;
 /** Five seconds at the audio clock plus producer prefetch and causal pre-roll. */
 export const LAB_LIVE_HISTORY_SAMPLES = 16384;
 export interface LabRncChange { enabled: boolean; effectiveSample: number }
-export interface LabAnalysisOptions { spectrumWeighting?: AcousticWeighting; levelWeighting?: AcousticWeighting; /** Skip FFTs when collecting convergence history. */ levelsOnly?: boolean }
+export interface LabDivergence { sample: number; message: string }
+export interface LabAnalysisOptions { spectrumWeighting?: AcousticWeighting; levelWeighting?: AcousticWeighting; /** Local result time; clamped to available history and current cursor. */ waveformStartSeconds?: number; /** Skip FFTs when collecting convergence history. */ levelsOnly?: boolean }
 export type Vec3 = readonly [number, number, number];
 export interface ReferenceSensor { id: string; name: string; position: Vec3; /** Visual attachment only; position remains an unexpanded physical coordinate. */ mountPart?: string }
 export interface LabConfig {
@@ -37,6 +38,7 @@ export interface LabConfig {
   speakerEnabled: Four<boolean>;
 }
 export interface LabResult {
+  divergence?: LabDivergence;
   runId: string;
   config: LabConfig;
   sampleCount: number;
@@ -47,6 +49,7 @@ export interface LabResult {
 }
 /** Sequential processed samples. Recorded-source loops never reset the controller or clock. */
 export interface LabChunk {
+  divergence?: LabDivergence;
   runId: string;
   startSample: number;
   sampleCount: number;
@@ -61,6 +64,13 @@ export interface LabLiveSnapshot {
 }
 export interface LabLivePacket { chunk: LabChunk; snapshot: LabLiveSnapshot }
 export interface LabSelection { signal: SignalKind | 'q'; channel: number }
+export type LabPathKind = 'H' | 'S' | 'Shat';
+export interface LabPathSelection { kind: LabPathKind; input: number; output: number }
+/** Responses of the actual causal FIR used by the model; phase singularities are null. */
+export interface LabPathAnalysis {
+  impulse: Float64Array; frequencyHz: number[]; magnitudeDb: (number | null)[];
+  phaseDegrees: (number | null)[]; groupDelayMs: (number | null)[]; sampleRateHz: number;
+}
 export interface LabAnalysis {
   spectrumWeighting?: AcousticWeighting;
   levelWeighting?: AcousticWeighting;
@@ -70,7 +80,9 @@ export interface LabAnalysis {
   residualSpl: Four<number | null>;
   reductionDb: Four<number | null>;
   waveform: Float32Array;
-  spectrum: Float32Array | null;
+  spectrum: Float32Array | Float64Array | null;
+  /** B-computed density level: pressure re (20 µPa)^2/Hz; other signals re 1 unit^2/Hz. */
+  spectrumDb: Float32Array | null;
   unit: string;
 }
 export interface FieldFrame {

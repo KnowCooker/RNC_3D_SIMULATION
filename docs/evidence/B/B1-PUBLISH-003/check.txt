@@ -1,0 +1,176 @@
+$ pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build
+$ tsc --noEmit
+$ node scripts/check-boundaries.mjs
+源码边界通过：A/B 互不导入；shared 独立；integration 负责装配。
+$ tsx --test tests/*.test.ts
+✔ one road change compares the same weighted window without keeping mutable config (4.4521ms)
+✔ changed operating conditions block numeric deltas even when values are present (0.7178ms)
+✔ multiple configuration changes remain visible and missing seat values stay unavailable (1.1764ms)
+✔ exported A/B summary survives JSON roundtrip and recomputes deltas (5.7345ms)
+✔ condition mismatch imports but suppresses unsupported deltas (3.2497ms)
+✔ rejects oversized, forged, malformed and nonfinite evidence (3.8299ms)
+✔ one-variable review reports measured direction without assigning cause or approval (3.3533ms)
+✔ confounded or mismatched cases never receive a causal or numeric verdict (1.0452ms)
+✔ new human fields roundtrip, legacy v1 imports blank, computed facts ignore human claims (5.5398ms)
+✔ A1: unavailable convergence values leave gaps rather than zero gain or connecting across missing data (3.2823ms)
+✔ A1: original noise draws once in grey, residual compares against the same original channel (1.3384ms)
+✔ lab playback applies one gain to all eight signals, preserves d/e ratios and does not mutate physics (68.3375ms)
+✔ actual extreme valid lab experiment has no clipped samples after shared preparation (1144.459ms)
+✔ sinc overshoot is covered by the strict bound; silence and low-level legacy gain remain unchanged (2.3096ms)
+✔ live Worker cancellation rejects pending work and late old errors cannot kill the new run (4.2907ms)
+✔ field failure is recoverable but a processor failure rejects every pending query (1.3117ms)
+✔ start cancellation and foreign run identities fail explicitly; batch mode cannot produce live chunks (1.4564ms)
+✔ live RNC control returns the exact sample boundary and a rejected switch preserves the running worker (2.0975ms)
+✔ log frequency coordinates give equal spacing to equal ratios and omit DC (3.1591ms)
+✔ seat curves preserve full-run SPL history and missing values while excluding future frames (1.5634ms)
+✔ physical traces share Pa scale, show original and use absolute sample time after a live history wrap (1.3146ms)
+✔ the initial waveform uses the same five-second scale as a full rolling window (0.7661ms)
+✔ PSD comparisons use actual FFT bin positions and original selection is not drawn twice (0.9183ms)
+✔ first valid point is visible and null SPL gaps never create fake zero levels (0.5714ms)
+✔ acceleration and speaker drive never masquerade as pressure on a common axis (0.7558ms)
+✔ manual plot bounds and hidden primary traces apply independently without changing samples (0.9726ms)
+✔ divergent but finite Float32 pressure is bounded only in the audition copies (102.1853ms)
+✔ streaming sinc is independent of chunk partition and matches continuous interpolation before the real lookahead tail (350.347ms)
+✔ common lookahead safety envelope preserves all eight d/e ratios, bounds peaks and retains bounded memory (1845.8573ms)
+✔ finishing releases exactly the real lookahead tail, including a run shorter than that tail (16.3566ms)
+✔ live queue validates complete finite contiguous chunks without changing accepted state on rejection (49.2013ms)
+✔ one audio clock freezes on starvation and resumes at the missing sample instead of skipping wall time (11.6248ms)
+✔ queued chunks are gapless and all comparisons share one eight-channel buffer without a new clock on switching (7.6635ms)
+✔ pause preserves partly consumed audio and a cold allocation never advances the simulation clock (7.053ms)
+✔ async resume cannot revive pause/reset/dispose or clear a newer request, and failure is retryable (10.758ms)
+✔ continuous enqueue stays bounded for ten minutes and finishes exactly without a false underrun or restart (9116.023ms)
+✔ pause and resume while draining keeps the final samples and exact endpoint (14.0087ms)
+✔ A1: preparing first audio buffer does not skip the requested playback position (60.6827ms)
+✔ A1: pause cancels pending audio resume; repeated play creates one start (40.7197ms)
+✔ A1: loading a new experiment cancels an earlier pending play (0.9585ms)
+✔ A1: reaching the end stays stopped when seeking, including before ended is delivered (27.6581ms)
+✔ A1: seeking to the end stops; replay starts only on explicit play (36.4585ms)
+✔ A1: cold seat/mode switches prepare audio before fading, keep time and use the same gain (479.8976ms)
+✔ A1: audio resume failure leaves a retryable paused player (26.5816ms)
+✔ A1: an obsolete resume cannot clear or start a newer play request (27.1446ms)
+✔ A1: seeking while playing continues at the new position without a retired ended event stopping it (26.2465ms)
+✔ A1: a cold comparison prepared across the end never restarts the clip (46.3889ms)
+✔ variable duration playback seeks past 16s, switches modes and stops exactly at each loaded clip end (146.1342ms)
+✔ three slice meshes use the original 280 queried positions, including their fixed physical planes (4.1524ms)
+✔ a reordered, truncated or non-finite B field frame cannot color the old locations (0.9357ms)
+✔ moving each sampled plane requests its physical position and refuses the previous field frame (4.091ms)
+✔ 12 coincident projections remain separate and inside the narrow supported viewer (5.4798ms)
+✔ four source illustrations can share a narrow view with all 12 hardware labels (6.3552ms)
+✔ labels at viewport edges and densely grouped hardware remain clickable (19.952ms)
+✔ lab labels stay on the side rails at full-page size, leaving the vehicle clear (1.1358ms)
+✔ lab side rails remain separate and clickable in a narrow 360 px viewer (0.8803ms)
+✔ featured structures exist in each generated architecture and explain its actual drive path (487.0041ms)
+✔ true mesh-plane sections preserve area, plane position and outward normal after transforms (12.2637ms)
+✔ section through exact edges is closed; tangencies and existing coplanar faces are not duplicated (2.9174ms)
+✔ ring sections keep their holes and disconnected islands; open surfaces never get a solid cap (39.3555ms)
+✔ section display updates from exploded geometry, respects ancestor visibility and material opacity (6.437ms)
+✔ bundled showroom SUV is the attributed, offline CC BY asset within the geometry budget (10.7088ms)
+✔ BEV showroom keeps the original attribution and bundles a decodable offline model (17.6827ms)
+✔ four drivetrains preserve their physical differences and five-seat cabin (497.8674ms)
+✔ vehicle geometry is finite and every owned GPU resource is disposed once (448.5304ms)
+✔ the BEV and EREV battery enclosure remains directly visible from the underbody (290.7812ms)
+✔ the closed side sill hides the floor and battery at door level on all four vehicles (275.1735ms)
+✔ Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak (12.439ms)
+✔ B2-002: RMS uses exactly the trailing 1000 samples, including first and final windows (13.0305ms)
+✔ B2-002: same-window reduction preserves negative gains and aggregates powers before dB (6.8081ms)
+✔ B2-002: silence and near-floor pressure never report valid zero-dB benefit (33.0625ms)
+✔ B2-002: non-finite pressure is unavailable, never a valid analysis frame (42.4624ms)
+✔ B2-002: power rejects invalid ranges and PSD clamps finite sample cursors to actual data (3.3532ms)
+✔ B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples (3.5463ms)
+✔ B2-002: non-finite PSD cursors cannot trap a caller in an unbounded loop (633.9732ms)
+✔ B2-002: shared PSD preserves lab pressure weighting and vibration/drive/source units (16.6384ms)
+✔ B2-002: asymmetric signal Welch bins match direct DFT, 50% overlap and incomplete-tail handling (245.6158ms)
+✔ B2-002: DC and Nyquist are not doubled; PSD scales as signal-unit squared per Hz (13.5213ms)
+✔ analysis warming-up, window boundary, channel identity and pressure calibration (1.867ms)
+✔ step size accepts every nonnegative finite value and finite drives exceed the former 100 threshold (265.9526ms)
+✔ batch and chunked overflow stop at the same Float32 boundary, keeping the last finite samples and spectra (487.9207ms)
+✔ overflow on the first weight update gives an empty finite prefix and a terminal diagnostic (35.9721ms)
+✔ new lab experiments learn before two seconds without changing sources or superposition (669.7341ms)
+✔ lab FxLMS produces finite true superposition, baseline then learned reduction at all microphones (12.3119ms)
+✔ all 16 secondary paths have causal cross coupling and every source reaches every mic (2.6816ms)
+✔ first adaptive output matches an independent all-error normalized gradient calculation (41.419ms)
+✔ RNC off, zero step and all disabled speakers retain original noise exactly (572.555ms)
+✔ one and eight references and disabled output actually change controller dimensions and results (1098.3474ms)
+✔ recording-shaped sources retain high finite values and return the valid prefix on overflow (1988.8233ms)
+✔ field at microphone positions equals independently measured trace power in the same window (23.674ms)
+✔ off-microphone field is recalculated from wheel q and speaker u, not microphone interpolation (95.9607ms)
+✔ vehicle paths vary, seed is reproducible and speed/roughness trends are source-driven (854.4631ms)
+✔ warm-up, zero-speed energy floor and bad configurations are explicit (407.3886ms)
+✔ q selection analyzes each actual wheel source independently of reference layout (257.6208ms)
+✔ A weighting matches reference corrections and applies power rather than amplitude to PSD (20.4888ms)
+✔ teaching calibration anchors pooled 40 km/h baseline at 60 dBA; offset changes H only (635.7569ms)
+✔ A/Z analysis and field agree at microphones, including first window and wrapped live history (2454.1881ms)
+✔ duration budget rejects invalid allocations; short runs have finite metrics and long runs share streaming samples (3600.3427ms)
+✔ pressure density levels use 20uPa while other signals keep unit reference; manual waveform bounds never reveal future samples (277.7573ms)
+✔ NFxLMS joint normalization scales inversely with filtered-reference power and regularizes silence (0.5071ms)
+✔ stateful first 16 seconds match the unchanged batch q/x/u/d/a/e bit for bit (1848.5977ms)
+✔ arbitrary block sizes preserve source/filter/weight state beyond 16 seconds and repeated history wraps (4772.3543ms)
+✔ RNC off, zero step, disabled speakers and eight references retain the batch semantics across blocks (4276.7686ms)
+✔ wrapped snapshots use one absolute clock and yield the same field window at mic and off-mic points (1685.9757ms)
+✔ resident storage stays bounded through two minutes and invalid requests do not advance the stream (5966.6041ms)
+✔ live RNC OFF freezes learned weights and zeros drive; ON resumes from those weights without restarting sources (1113.799ms)
+✔ an initially disabled live controller can start adapting later (311.4089ms)
+✔ wrapped live history retains five seconds at the audible clock despite producer prefetch (3313.939ms)
+✔ numeric overflow returns the finite prefix, preserves history, and cannot resume (19.0364ms)
+✔ live generation ignores replay duration, preserves bounded adaptation for ten minutes and refuses overflow atomically (52566.7318ms)
+✔ a pure delayed gain has constant magnitude and exact analytic group delay (5.2756ms)
+✔ response zeros are undefined rather than false finite phase/delay; all sixteen paths remain selectable (47.7389ms)
+✔ recorded sources use the four primary-noise ears, validate assets and require explicit data (52.4998ms)
+✔ recorded source samples retain shared timing and gain, crossfade synchronously and do not become random or pitch shifted (76.981ms)
+✔ recorded batch and irregular live blocks agree exactly through two source loops; storage and adaptation remain continuous (5551.5207ms)
+✔ recorded primary paths stay causal and fully coupled, match the passenger 48dBA/Hz peak anchor, and match microphone fields (215.7328ms)
+✔ recording-derived data keeps all references and uncalibrated provenance; spectra distinguish vibration and cabin noise (1113.2597ms)
+✔ spectral stretch remains causal, normalized and exactly shared by batch/stream at temperature-pressure limits (1456.8803ms)
+✔ B01/B03: all 640,000 samples match immutable Python Float32 golden and e=d+a (29.5705ms)
+✔ B02/B04/B05: five configurations match Python metrics; repeat is deterministic (940.5433ms)
+✔ B06: every output reaches every mic; removing one cross-path removes only that response (0.3441ms)
+✔ B07: rejects invalid taps, negative/NaN step, wrong fixed dimensions, null config (0.695ms)
+✔ B2-001: independent unsigned PRNG oracle preserves all three seeds and distinct channel streams (2.2983ms)
+✔ B2-001: three-seed shaped references and primary pressure match every Python Float32 sample (138.9929ms)
+✔ B2-001: all primary and secondary FIRs retain oracle taps, causal delays and complete cross-coupling (0.5749ms)
+✔ B2-001: original pressure includes the documented independent disturbance after causal P*x (65.8824ms)
+✔ B2-001: exported demo-v2 identity, units and last-sample time stay explicit (0.35ms)
+✔ audio paths use the same linear gain and sinc resampling (19.473ms)
+ℹ tests 128
+ℹ suites 0
+ℹ pass 128
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 78118.9841
+$ tsc --noEmit && vite build
+vite v7.1.7 building for production...
+transforming...
+✓ 62 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        0.64 kB │ gzip:     0.37 kB
+dist/assets/engine.worker-D9E23hSn.js                  4.26 kB
+dist/assets/lab.worker-45pyDPwW.js                    28.62 kB
+dist/assets/recorded-primary-BSu6qUp_.f32          1,280.02 kB
+dist/assets/golden_browser_fixture-BhKaGSeS.json   3,414.19 kB │ gzip: 2,407.80 kB
+dist/assets/range-rover-sport-svr-4ykCwhl8.glb     5,726.33 kB
+dist/assets/tesla-model-y.meshopt-DxsAdN_g.glb    10,353.64 kB
+dist/assets/index-Di_b5R-_.css                         6.73 kB │ gzip:     2.23 kB
+dist/assets/viewer-BHE4Qc7o.css                       10.35 kB │ gzip:     2.62 kB
+dist/assets/index-wtc-f39L.css                        25.82 kB │ gzip:     6.50 kB
+dist/assets/contracts-nWp9BSjY.js                      0.09 kB │ gzip:     0.11 kB │ map:     2.22 kB
+dist/assets/lab-contracts-BTinaqwd.js                  0.95 kB │ gzip:     0.64 kB │ map:     7.60 kB
+dist/assets/preload-helper-PPVm8Dsz.js                 1.28 kB │ gzip:     0.75 kB │ map:     0.11 kB
+dist/assets/path-analysis-B8QnMKdi.js                  1.45 kB │ gzip:     0.84 kB │ map:     5.18 kB
+dist/assets/lab-engine-DgH07At8.js                     1.95 kB │ gzip:     1.05 kB │ map:     7.21 kB
+dist/assets/index-BJJq3Ru5.js                          2.00 kB │ gzip:     1.05 kB │ map:     7.96 kB
+dist/assets/index-DBLXHAU6.js                          3.56 kB │ gzip:     1.79 kB │ map:     6.59 kB
+dist/assets/paths-D1pKoju3.js                         10.87 kB │ gzip:     5.34 kB │ map:    28.86 kB
+dist/assets/index-3ZWlhsrI.js                         17.88 kB │ gzip:     8.10 kB │ map:    71.43 kB
+dist/assets/index-Da6wtmGc.js                         20.52 kB │ gzip:     9.21 kB │ map:    53.78 kB
+dist/assets/showroom-model-B2C4hdE6.js                77.29 kB │ gzip:    23.27 kB │ map:   291.56 kB
+dist/assets/index-CyhxtbYQ.js                        161.45 kB │ gzip:    61.80 kB │ map:   475.37 kB
+dist/assets/viewer-CCiDXucP.js                       593.26 kB │ gzip:   151.98 kB │ map: 2,905.36 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.45s

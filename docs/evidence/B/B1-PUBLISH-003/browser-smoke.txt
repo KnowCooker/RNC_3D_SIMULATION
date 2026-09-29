@@ -1,0 +1,273 @@
+- banner:
+  - text: INTERACTIVE ACOUSTICS / RNC
+  - heading "车辆声学实验室" [level=1]
+  - link "两周基准版本":
+    - /url: "?legacy=1"
+- generic: 实录初级噪声驱动的四轮等效声源 · 基准：纯电 / 40 km/h / 粗糙路 · 合成空间路径 · 实时分块仿真 · 保留学习状态 · 实录为未校准V；图中Pa/SPL为教学尺度，非实测声压
+- main:
+  - complementary:
+    - heading "01 / 车辆与工况" [level=2]
+    - text: 运行方式
+    - combobox "运行方式":
+      - option "实时连续仿真" [selected]
+      - option "计算后回放"
+    - paragraph: 连续计算并始终试听残差 e。RNC OFF 冻结控制系数、扬声器驱动置零；重新开启沿用权重学习。暂停保留状态，重新开始或修改参数后重新学习。
+    - text: 声源素材
+    - combobox "声源素材":
+      - option "实录初级噪声 · 四轮声源" [selected]
+      - option "随机噪声 · 实录谱形整形"
+    - paragraph: 四路耳旁原声分别放置在四轮位置，按同一时钟平滑循环40秒素材。初级路径保留空间传播，不重复叠加振动转噪声的谱形。
+    - text: 动力类型
+    - combobox "动力类型":
+      - option "纯燃油 SUV"
+      - option "纯电 SUV" [selected]
+      - option "混合动力 SUV"
+      - option "增程 SUV"
+    - paragraph: 底板动力电池 → 逆变器 → 电机/减速器；纯电驱轮。
+    - text: 车速 / km/h
+    - slider "车速 / km/h": "60"
+    - status: "60"
+    - text: 路面粗糙度 / 相对值
+    - slider "路面粗糙度 / 相对值": "0.6"
+    - status: "0.6"
+    - status: 平整沥青 · 声学粗糙度 0.6 已同步。
+    - text: 胎面粗糙度 / 相对值
+    - slider "胎面粗糙度 / 相对值": "1"
+    - status: "1"
+    - text: 胎压 / kPa
+    - spinbutton "胎压 / kPa" [disabled]: "240"
+    - text: 温度 / °C
+    - spinbutton "温度 / °C": "20"
+    - paragraph: 实录基准为40 km/h粗糙路。速度/粗糙度仅缩放幅值，温度改变幅值与传播；保持录音原频率，胎压在此模式不参与计算。参考x由等效声源合成，未使用实录振动。
+    - text: 教学声压修正 / dB
+    - spinbutton "教学声压修正 / dB": "0"
+    - paragraph: 实录基准：纯电、40 km/h、粗糙路，副驾驶200–300 Hz平均谱峰约48 dBA/Hz（参考20 μPa）。瞬时谱随素材波动；单点幅度匹配，非完整实车标定。
+    - heading "02 / 算法与改制" [level=2]
+    - text: NFxLMS 系数数
+    - spinbutton "NFxLMS 系数数": "64"
+    - text: 归一化步长 μ
+    - spinbutton "归一化步长 μ": "0.08"
+    - paragraph: FIR数学阶数为系数数减1。步长≥0，无预设上限；数值溢出自动暂停。试听单独保护，图表保留真实幅值。参数变化需重新学习。
+    - checkbox "车辆改制：点击结构添加参考传感器"
+    - text: 车辆改制：点击结构添加参考传感器
+    - paragraph: 参考1–8个；右击标记可查看或移除。误差点固定。所有改制将要求重新计算。
+    - button "REF FL"
+    - generic: 0.85, 0.67, 1.45
+    - button "移除 REF FL" [disabled]: 移除
+    - button "REF FR"
+    - generic: "-0.85, 0.67, 1.45"
+    - button "移除 REF FR" [disabled]: 移除
+    - button "REF RL"
+    - generic: 0.85, 0.67, -1.45
+    - button "移除 REF RL" [disabled]: 移除
+    - button "REF RR"
+    - generic: "-0.85, 0.67, -1.45"
+    - button "移除 REF RR" [disabled]: 移除
+    - group "车门扬声器":
+      - generic: 车门扬声器
+      - checkbox "FL" [checked]
+      - text: FL
+      - checkbox "FR" [checked]
+      - text: FR
+      - checkbox "RL" [checked]
+      - text: RL
+      - checkbox "RR" [checked]
+      - text: RR
+    - button "启动 / 重启实时实验"
+    - button "结束实时实验" [disabled]
+    - status: 实时仿真已就绪，点击“启动 / 重启实时实验”开始计算与试听。
+  - generic: LIVE 3D / INTERACTIVE BAY
+  - heading "03 / 结构与空间声场" [level=2]
+  - button "收起控制台" [expanded]
+  - generic: 左键旋转 · 滚轮缩放 · 右击硬件查看信号
+  - generic "可旋转、剖切、改制的车辆三维视图"
+  - group "三维场景":
+    - button "道路三维场景" [pressed]: 道路
+    - button "车间三维场景": 车间
+  - group "三维路面类型":
+    - generic: 路面 / SURFACE
+    - button "切换三维路面为平整沥青" [pressed]: 平整沥青
+    - button "切换三维路面为粗糙沥青": 粗糙沥青
+    - button "切换三维路面为碎石路": 碎石路
+    - generic: 选中路面将设粗糙度 0.60 并要求重算
+  - text: 查看车辆结构
+  - combobox "选择车辆结构":
+    - option "选择关键部件，或点击车模" [selected]
+    - option "底板动力电池"
+    - option "逆变器与高压配电"
+    - option "后驱电机与减速差速器"
+    - option "外接充电口、车载充电器与 DC/DC"
+    - option "承载式底板、纵梁与副车架"
+    - option "FL 轮胎与轮辋"
+    - option "左前车门及扬声器"
+    - option "前排座椅 1（含头枕）"
+    - option "仪表台、方向盘、踏板与中央扶手"
+  - button "打开写实 SUV 外观范例": 写实外观
+  - button "REF FL · 查看信号和频谱": REF FL
+  - button "REF FR · 查看信号和频谱": REF FR
+  - button "REF RL · 查看信号和频谱": REF RL
+  - button "REF RR · 查看信号和频谱": REF RR
+  - button "OUT 1 · 查看信号和频谱": OUT 1
+  - button "OUT 2 · 查看信号和频谱": OUT 2
+  - button "OUT 3 · 查看信号和频谱": OUT 3
+  - button "OUT 4 · 查看信号和频谱": OUT 4
+  - button "MIC FL · 查看信号和频谱" [pressed]: MIC FL
+  - button "MIC FR · 查看信号和频谱": MIC FR
+  - button "MIC RL · 查看信号和频谱": MIC RL
+  - button "MIC RR · 查看信号和频谱": MIC RR
+  - button "Q1 · 查看轮端激励源信号和频谱": Q1
+  - button "Q2 · 查看轮端激励源信号和频谱": Q2
+  - button "Q3 · 查看轮端激励源信号和频谱": Q3
+  - button "Q4 · 查看轮端激励源信号和频谱": Q4
+  - text: 车身
+  - combobox "车身":
+    - option "透明" [selected]
+    - option "实体"
+    - option "隐藏"
+  - button "分解动画"
+  - button "复位"
+  - text: 剖面
+  - combobox "剖面":
+    - option "关闭" [selected]
+    - option "纵剖 X"
+    - option "水平 Y"
+    - option "横剖 Z"
+  - text: 剖面位置 / m
+  - slider "剖面位置 / m": "0"
+  - text: 声压场
+  - combobox "声压场":
+    - option "关闭" [selected]
+    - option "残余 e / SPL"
+    - option "原始 d / SPL"
+  - text: 声场 / 指标计权
+  - combobox "声场 / 指标计权":
+    - option "A 计权" [selected]
+    - option "Z（不计权）"
+  - text: 场显示
+  - combobox "场显示":
+    - option "三维采样体" [selected]
+    - option "中央纵切片"
+    - option "头部水平切片"
+    - option "前排横切片"
+  - text: 传播路径
+  - combobox "传播路径":
+    - option "关闭" [selected]
+    - option "初级路径"
+    - option "次级路径"
+    - option "全部"
+  - checkbox "扬声器波前"
+  - text: 扬声器波前
+  - generic: 30—80 dBA，固定色标；0.5秒RMS
+  - generic: 声场未开启
+  - button "播放" [disabled]
+  - button "重新开始" [disabled]
+  - generic: 累计 00:00.00
+  - text: 座位（图表 / 试听）
+  - combobox "座位（图表 / 试听）":
+    - option "左前座 · FL" [selected]
+    - option "右前座 · FR"
+    - option "左后座 · RL"
+    - option "右后座 · RR"
+  - button "RNC ON" [pressed]
+  - status: 实时试听：残差 e · 自适应控制
+  - text: 音量
+  - slider "音量": "0.15"
+  - button "静音"
+  - article:
+    - heading "时域" [level=3]
+    - generic "时域显示设置": 显示设置
+    - paragraph
+    - generic "时域图"
+  - article:
+    - heading "频谱" [level=3]
+    - generic "频谱显示设置": 显示设置
+    - option "线性" [selected]
+    - option "对数"
+    - option "A 计权" [selected]
+    - option "Z（不计权）"
+    - paragraph
+    - generic "频谱图"
+  - article:
+    - heading "收敛 · FL" [level=3]
+    - generic "收敛显示设置": 显示设置
+    - option "A 计权" [selected]
+    - option "Z（不计权）"
+    - paragraph:
+      - generic: 原声 d
+      - generic: 残差 e
+    - generic "左前座 · FL总声压级收敛图"
+  - paragraph: 空间场由四轮源和实际扬声器驱动经同一传播模型计算。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。
+- generic "公开依据与模型限制"
+- text: ·
+- region "改变一个条件后，后排会更安静吗？":
+  - generic: ENGINEERING QUESTION / 方案对比
+  - heading "改变一个条件后，后排会更安静吗？" [level=3]
+  - paragraph: 保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；结果来自教学模型。
+  - button "保存当前实验为基线 A" [disabled]
+  - button "清除基线" [disabled]
+  - status: 先切换到“计算后回放”，运行一次实验并保存基线 A。
+  - generic "工程评审卡 / 案例证据" [active]
+  - paragraph: 自动事实与限制由 A/B 数据计算；解释、行动和补测由工程师填写。导入仅供查看，不恢复实验或原始音频。
+  - text: 人工观察 · 看到什么
+  - textbox "人工观察 · 看到什么":
+    - /placeholder: 例如：右后座残余声压升高。
+  - text: 人工解释 · 可能原因
+  - textbox "人工解释 · 可能原因":
+    - /placeholder: 这是待验证假设；多变量变化时不能单因子归因。
+  - text: 临时行动 · 下一步怎么处理
+  - textbox "临时行动 · 下一步怎么处理":
+    - /placeholder: 例如：先保留基线方案，补测后再决策。
+  - text: 待补测事项
+  - textbox "待补测事项":
+    - /placeholder: 例如：保持车速不变，复测不同路面。
+  - button "导出当前 A/B 评审摘要" [disabled]
+  - text: 导入 JSON 复核
+  - button "导入 JSON 复核"
+  - status: 导出需要当前页面中完成两次预计算实验。
+- heading "04 / 信号流与控制机理" [level=2]
+- region "RNC 信号流 · 多通道 NFxLMS":
+  - heading "RNC 信号流 · 多通道 NFxLMS" [level=3]
+  - status: 已暂停 ｜ 控制关闭 / 未生效 · 权重不更新，u = 0；路径余响消退后 e = d
+  - paragraph: 上方是声的叠加，下方是控制与学习。点击信号或路径，在下方展开说明与实时分析。
+  - group "多输入、多输出、四误差点的前馈主动路噪控制 四轮噪声经初级路径形成原声 d；振动参考 x 经控制滤波器 W 形成驱动 u，u 经次级路径 S 形成次级声压 a。误差 e 等于 d 加 a。x 经次级路径估计 S 帽得到 filtered-x，与所有误差点一起更新 W。各路径是多通道矩阵，不是四套独立控制器。":
+    - button "选择轮端源激励 q":
+      - generic: 四轮噪声源 q
+      - generic: 4 路 · 相对幅值
+    - button "查看初级路径 H":
+      - generic: 初级路径 H
+      - generic: 四轮 → 四个误差点
+    - button "选择原始噪声 d":
+      - generic: 原声 d
+      - generic: 4 路 · Pa
+    - generic: ＋
+    - generic: d + a 在同一位置叠加
+    - button "选择残余误差 e":
+      - generic: 误差 e
+      - generic: 4 路 · Pa
+    - generic: 振动测量
+    - button "选择振动参考 x":
+      - generic: 参考 x
+      - generic: 4 路 · m/s²
+    - button "查看控制滤波器 W":
+      - generic: 控制滤波器 W
+      - generic: 4 输出 × 4 参考
+    - button "选择扬声器驱动 u":
+      - generic: 驱动 u
+      - generic: 4 / 4 启用
+    - button "查看次级路径 S":
+      - generic: 次级路径 S
+      - generic: 扬声器 → 误差点
+    - button "选择次级声压 a":
+      - generic: 次级声 a
+      - generic: 4 路 · Pa
+    - generic: 声压求和
+    - button "查看次级路径估计 Ŝ":
+      - generic: 次级路径估计 Ŝ
+      - generic: 参考经 Ŝ 滤波
+    - generic: Filtered-x
+    - button "查看NFxLMS 权重更新":
+      - generic: NFxLMS 权重更新
+      - generic: 所有误差点共同参与
+    - generic: 误差反馈
+    - generic: 更新 W；μ = 0 时权重不变
+  - generic "理解符号、动画与数据"

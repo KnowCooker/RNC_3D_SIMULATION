@@ -68,7 +68,7 @@ export class StreamingAudioResampler {
           const readyPeak = ready.reduce((value, sampleValue) => Math.max(value, Math.abs(sampleValue)), 0);
           const minimum = this.minima[this.head];
           this.gain = Math.min(this.gain, readyPeak > 0.9 ? 0.9 / readyPeak : 1, minimum.safe + (minimum.index - n) / LOOKAHEAD);
-          for (let channel = 0; channel < 8; channel++) output[channel].push(ready[channel] * this.gain);
+          for (let channel = 0; channel < 8; channel++) output[channel].push(Math.max(-0.9, Math.min(0.9, ready[channel] * this.gain)));
           this.emitted++;
         }
         this.rawCount++;

@@ -2,11 +2,25 @@
 
 /* Equal cards and drawing areas; stack all three at narrow widths. */
 .lab-plots{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:18px;background:#0d1826}
-.lab-plots>article{display:grid;grid-template-rows:34px 60px 36px 220px;gap:8px;border:1px solid #31485d;border-radius:10px;background:#122132;padding:16px;min-width:0}
+.lab-plots>article{display:grid;grid-template-rows:34px 32px 220px;gap:8px;border:1px solid #31485d;border-radius:10px;background:#122132;padding:16px;min-width:0}
 .lab-plots h3{margin:0;line-height:1.4;align-self:center}
 .lab-plots canvas{display:block;width:100%;height:220px}
 .lab-plot-legend{display:flex;gap:3px 12px;flex-wrap:wrap;align-items:center;align-content:start;color:#a9bdd1;font-size:11px;line-height:1.6;min-height:0;margin:0;overflow:auto}
 .lab-plot-status{margin:0;font-size:11px;line-height:1.6;color:#8fa2b7}
+.lab-plot-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative;min-width:0}
+.lab-plot-heading h3{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lab-plot-settings{flex-shrink:0}
+.lab-plot-settings summary{cursor:pointer;font-size:11px;color:#b5dacc;white-space:nowrap;padding:6px;border:1px solid #4a6b79;border-radius:4px}
+.lab-plot-menu{position:absolute;z-index:30;right:0;top:100%;width:min(320px,calc(100vw - 56px));max-height:65vh;overflow:auto;padding:14px;background:#122b3b;border:1px solid #70929f;border-radius:6px;box-shadow:0 12px 24px #0009;color:#cbdbe8;font-size:12px}
+.lab-plot-menu fieldset{border:1px solid #3c586b;border-radius:4px;margin:0 0 10px;padding:8px;min-width:0}
+.lab-axis-inputs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:8px}
+.lab-axis-inputs label{display:grid;gap:4px;min-width:0}
+.lab-axis-inputs input{width:100%;min-width:0;padding:6px}
+.lab-plot-menu input:disabled{opacity:.45}
+.lab-plot-menu .lab-setting-weight{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0}
+.lab-plot-menu select,.lab-plot-menu button{font-size:12px}
+.lab-settings-help{font-size:11px;line-height:1.6;color:#a7bbcc;margin:10px 0}
+.lab-settings-error{color:#ffb4a4;line-height:1.5}
 .lab-original-key,.lab-result-key{display:inline-flex;align-items:center;gap:6px}
 .lab-original-key:before,.lab-result-key:before{content:'';display:inline-block;width:20px;height:3px;background:#a7b5c8;border-radius:2px}
 .lab-result-key:before{background:#73e4bc}
