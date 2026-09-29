@@ -32,6 +32,16 @@ test('confounded or mismatched cases never receive a causal or numeric verdict',
   assert.ok(!mismatch.facts.some(value => value.includes('B−A：')));
 });
 
+test('an unregistered layout is labeled as file-reported evidence without a verdict', () => {
+  const a = snapshot('base'), b = snapshot('candidate');
+  b.config.layoutId = 'showroom-unverified-v1';
+  const review = reviewCase(a, b);
+  assert.ok(review.facts.some(value => value.includes('showroom-unverified-v1')));
+  assert.ok(review.limits.some(value => value.includes('文件自报')));
+  assert.ok(review.limits.some(value => value.includes('不计算或解释 A/B 差值')));
+  assert.ok(!review.facts.some(value => value.includes('B−A：')));
+});
+
 test('new human fields roundtrip, legacy v1 imports blank, computed facts ignore human claims', () => {
   const a = snapshot('base'), b = snapshot('candidate'); b.config.roadRoughness = 2.2;
   const current = parseCaseEvidence(createCaseEvidence(a, b, '观察', '复测', '2026-09-28T00:00:00.000Z', '可能由路面导致', '暂不发布'));

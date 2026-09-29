@@ -107,6 +107,14 @@ A1/A2从同一已提交基线开各自分支/PR，每角色同一时间只有一
 
 ## 7. 当前差距与下一步
 
+### 2026-09-29 最新状态
+
+原仓库 `main` `b1d07cc` 已有四类教学车、真实 Worker/FxLMS、场采样点改善证据、引导流程及离线包校验脚本；A1 [#38 布局身份门禁](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/38) 在 `20478fc` 已合入最新 main 并通过 `verify`，但尚无 B1 共管接口 review，仍是开放 PR。A2 [#30 ICE 同资产拆装](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/30) 为草稿。原始 [#23/#20](CURRENT_BRANCHES.md) 等编号只说明其记录日期的历史阶段，不再是当前认领入口。以原仓库开放 PR、各角色交接和[完整目标追踪](../plan/10_FULL_GOAL.md)实时核对。
+
+当前真正阻断最终交付的顺序是：① A2 四架构写实同车几何、四门/座舱可拆件与有依据的安装锚点；② B 按版本布局重算四源 H、全部 16 条 S、批量/持续处理与空间场，保留旧教学回归；③ B1 审查 #38 共管接口，A1 集成四车型同版闭环；④ 最终源码的参考图视觉对照、20 分钟/重复操作、指定核显/实物音画、第二台 Windows 真断网、包与录像。旧教学布局的绿灯和独显本机候选包均不能替代这些验收。
+
+### 2026-09-24 阶段快照（保留历史）
+
 当前等级：**完整目标开发中，尚非最终交付**。阶段分支已按[当前分支表](CURRENT_BRANCHES.md)收拢：fork/main及[A1/整合草稿PR #23](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/23)包含旧#7～#19、#21、#22成果，A2当前独立进度仍在[PR #20](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/20)。旧阶段PR关闭不等于已合入原仓库main，原仓库main仍为旧阶段。[#22组合长稳](../evidence/full-lab/integration-021/stability/README.md)1210.65秒、15项门槛通过，首实时run2次补缓冲；[#23 A1候选长稳](../evidence/A1/A1-FULL-008/stability/README.md)1204.22秒、15项门槛通过，补缓冲抽样最大0。旧版 `6e982b7` 离线候选不证明组合版可正式分发。历史demo-v2另见[第一轮](../evidence/full-lab/iteration-01/README.md)。
 
 | 优先次序 | 尚需达成的结果 | 责任与交接 |

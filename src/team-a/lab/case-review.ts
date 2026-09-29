@@ -1,3 +1,4 @@
+import { labLayoutId, TEACHING_LAYOUT_ID } from '../../shared/lab-contracts';
 import { compareCases, type CaseSnapshot } from './case-compare';
 
 export interface CaseReview {
@@ -12,9 +13,12 @@ export function reviewCase(baseline: CaseSnapshot, candidate: CaseSnapshot): Cas
   const comparison = compareCases(baseline, candidate);
   const facts = [
     `车型 A ${baseline.config.vehicle} / B ${candidate.config.vehicle}；实验 A ${baseline.runId.slice(0, 8)} / B ${candidate.runId.slice(0, 8)}。`,
+    `物理布局 A ${labLayoutId(baseline.config)} / B ${labLayoutId(candidate.config)}。`,
     `A 末尾 ${baseline.windowEndSeconds.toFixed(1)} s、B 末尾 ${candidate.windowEndSeconds.toFixed(1)} s，各取 0.5 秒窗口，A 计权、0–1 kHz。`,
   ];
   const limits = ['数值来自未实车标定的教学模型；案例摘要不含原始信号，不能用于实车认证。'];
+  if (labLayoutId(baseline.config) !== TEACHING_LAYOUT_ID || labLayoutId(candidate.config) !== TEACHING_LAYOUT_ID)
+    limits.unshift('文件包含当前版本未接入的物理布局；座位读数仅为文件自报，不支持复算或 A/B 比较。');
   if (!comparison.comparable) {
     limits.unshift(`可比条件不一致：${comparison.conditions.join('、')}。不计算或解释 A/B 差值。`);
     return { facts, limits };
