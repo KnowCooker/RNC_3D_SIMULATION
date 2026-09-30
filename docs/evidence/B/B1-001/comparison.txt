@@ -1,0 +1,5 @@
+default: 20 channels / 640000 samples, metrics and repeat PASS
+seed29: 20 channels / 640000 samples, metrics and repeat PASS
+seed47: 20 channels / 640000 samples, metrics and repeat PASS
+taps32: 20 channels / 640000 samples, metrics and repeat PASS
+mu0: 20 channels / 640000 samples, metrics and repeat PASS

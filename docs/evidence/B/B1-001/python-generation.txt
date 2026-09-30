@@ -1,0 +1,5 @@
+default: 640000 finite samples; Python Float64 repeat exact
+seed29: 640000 finite samples; Python Float64 repeat exact
+seed47: 640000 finite samples; Python Float64 repeat exact
+taps32: 640000 finite samples; Python Float64 repeat exact
+mu0: 640000 finite samples; Python Float64 repeat exact
