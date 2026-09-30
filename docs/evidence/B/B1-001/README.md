@@ -1,7 +1,7 @@
 # B1-001 五算例完整数值对照
 
 日期：2026-09-30；Role: B1；Identity-Source: local-config；执行者：Codex。
-基线：`83ee77af207742ab88d03c2e353d6a13960a6006`。按用户要求从 GitHub main 快进同步，在原分支继续工作。核对开放 PR 仅 A2 #30；B2 #44 设计已合并，交接说明停止写入。此次仅本地完成验证与交接，未提交、推送或创建 PR。
+基线：`83ee77af207742ab88d03c2e353d6a13960a6006`。按用户要求从 GitHub main 快进同步，在原分支继续工作。核对开放 PR 仅 A2 #30；B2 #44 设计已合并，交接说明停止写入。验证完成后按用户授权发布：[PR #48](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/48)，实现/证据提交 `8402815109854f47a6e8fe61eb1823ca3ea7e256`，已推送、待合并。
 
 ## 范围与独立参考
 
@@ -47,4 +47,4 @@ python docs/evidence/B/B1-001/generate-reference.py --out test-results/B1-001/ne
 
 实际验证：`pnpm test:b` **61/61**；`pnpm check` **151/151**、类型、目录边界与生产构建全部通过。原始日志见 [test-b.txt](test-b.txt)、[check.txt](check.txt)、[python-generation.txt](python-generation.txt)。保留原有 viewer 大于500kB的构建提示。本轮检查结束后再次核对8个冻结文件哈希不变，详见 [final-integrity.json](final-integrity.json)；`git diff --check`与证据链接检查通过。没有运行源码变更，未追加浏览器/实物试听/设备性能验收。
 
-B1-001 的五算例证据供 B2 核对后用于 B2-003 的 demo-v2 配方复算验收。本任务不批准 B2 的 API 提案，也不代替 lab-v3 布局身份、实录素材版本或实时状态续算验证。A1 提出的布局接口审查、B1-002～004、设备/听感与第二机离线验收保持各自待办。当前代码/证据尚未上传，B2 从远端接班须等待用户授权发布并核对实际版本。
+B1-001 的五算例证据供 B2 核对后用于 B2-003 的 demo-v2 配方复算验收。本任务不批准 B2 的 API 提案，也不代替 lab-v3 布局身份、实录素材版本或实时状态续算验证。A1 提出的布局接口审查、B1-002～004、设备/听感与第二机离线验收保持各自待办。当前代码/证据已随 PR #48 上传。B2 从远端接班先核对该 PR 的实际合并/版本状态，再确认其余接口依赖；本次发布不代表自动批准或启动 B2-003。
