@@ -1,0 +1,242 @@
+{
+  "role": "B1",
+  "task": "B1-003",
+  "identitySource": "local-config",
+  "executor": "Codex",
+  "baseline": "fa805e2da2ec16ce7e17a087b202ec3380a48ba2",
+  "scope": "demo-v2",
+  "invalid": {
+    "invalidConfigurations": 128,
+    "checkedEntryPoints": [
+      "validateConfig",
+      "calculateSync"
+    ],
+    "passed": true
+  },
+  "valid": [
+    {
+      "seed": 11,
+      "taps": 32,
+      "stepSize": 0,
+      "maxDrive": 0,
+      "maxSuperpositionError": 0,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "aggregateReductionDb": 0
+    },
+    {
+      "seed": 11,
+      "taps": 32,
+      "stepSize": 0.08,
+      "maxDrive": 1.1198691129684448,
+      "maxSuperpositionError": 1.3504177331924438e-8,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        28.98439309504003,
+        28.995616758073332,
+        29.15718819292389,
+        29.032896167980674
+      ],
+      "aggregateReductionDb": 29.04161398457604
+    },
+    {
+      "seed": 11,
+      "taps": 64,
+      "stepSize": 0,
+      "maxDrive": 0,
+      "maxSuperpositionError": 0,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "aggregateReductionDb": 0
+    },
+    {
+      "seed": 11,
+      "taps": 64,
+      "stepSize": 0.08,
+      "maxDrive": 1.1247848272323608,
+      "maxSuperpositionError": 1.234002411365509e-8,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        28.899678155342205,
+        28.711028742446917,
+        28.96180208984694,
+        28.816193288413498
+      ],
+      "aggregateReductionDb": 28.84791833663798
+    },
+    {
+      "seed": 29,
+      "taps": 32,
+      "stepSize": 0,
+      "maxDrive": 0,
+      "maxSuperpositionError": 0,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "aggregateReductionDb": 0
+    },
+    {
+      "seed": 29,
+      "taps": 32,
+      "stepSize": 0.08,
+      "maxDrive": 1.1219464540481567,
+      "maxSuperpositionError": 1.4202669262886047e-8,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        28.81884426200486,
+        29.030064922463925,
+        28.508522358663534,
+        28.94925657824097
+      ],
+      "aggregateReductionDb": 28.826795821325927
+    },
+    {
+      "seed": 29,
+      "taps": 64,
+      "stepSize": 0,
+      "maxDrive": 0,
+      "maxSuperpositionError": 0,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "aggregateReductionDb": 0
+    },
+    {
+      "seed": 29,
+      "taps": 64,
+      "stepSize": 0.08,
+      "maxDrive": 1.117962121963501,
+      "maxSuperpositionError": 1.3737007975578308e-8,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        28.64645537025972,
+        28.715209034149588,
+        28.396952990769385,
+        28.72554090030367
+      ],
+      "aggregateReductionDb": 28.6218123885499
+    },
+    {
+      "seed": 47,
+      "taps": 32,
+      "stepSize": 0,
+      "maxDrive": 0,
+      "maxSuperpositionError": 0,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "aggregateReductionDb": 0
+    },
+    {
+      "seed": 47,
+      "taps": 32,
+      "stepSize": 0.08,
+      "maxDrive": 1.0382699966430664,
+      "maxSuperpositionError": 1.2310920283198357e-8,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        28.888552965573595,
+        29.140096229477848,
+        28.99639873598496,
+        29.201797125597526
+      ],
+      "aggregateReductionDb": 29.055756827529194
+    },
+    {
+      "seed": 47,
+      "taps": 64,
+      "stepSize": 0,
+      "maxDrive": 0,
+      "maxSuperpositionError": 0,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "aggregateReductionDb": 0
+    },
+    {
+      "seed": 47,
+      "taps": 64,
+      "stepSize": 0.08,
+      "maxDrive": 1.029550313949585,
+      "maxSuperpositionError": 1.132139004766941e-8,
+      "all20ChannelsFinite": true,
+      "reductionDbByMic": [
+        28.66980768396906,
+        28.832783515253947,
+        28.658626520407353,
+        29.010857472084513
+      ],
+      "aggregateReductionDb": 28.791749640511718
+    }
+  ],
+  "faults": [
+    {
+      "name": "reference-NaN",
+      "code": "NUMERIC_FAILURE",
+      "runId": "fault-reference-NaN",
+      "message": "输出越界，样本 0"
+    },
+    {
+      "name": "primary-Infinity",
+      "code": "NUMERIC_FAILURE",
+      "runId": "fault-primary-Infinity",
+      "message": "结果长度或数值错误"
+    },
+    {
+      "name": "secondary-NaN",
+      "code": "NUMERIC_FAILURE",
+      "runId": "fault-secondary-NaN",
+      "message": "输出越界，样本 4001"
+    },
+    {
+      "name": "last-sample-NaN",
+      "code": "NUMERIC_FAILURE",
+      "runId": "fault-last-sample-NaN",
+      "message": "结果长度或数值错误"
+    },
+    {
+      "name": "Float32-export-overflow",
+      "code": "NUMERIC_FAILURE",
+      "runId": "fault-Float32-export-overflow",
+      "message": "结果长度或数值错误"
+    },
+    {
+      "name": "short-reference",
+      "code": "NUMERIC_FAILURE",
+      "runId": "fault-short-reference",
+      "message": "结果长度或数值错误"
+    },
+    {
+      "name": "legacy-drive-bound",
+      "code": "NUMERIC_FAILURE",
+      "runId": "fault-legacy-drive-bound",
+      "message": "输出越界，样本 4001"
+    }
+  ]
+}
