@@ -1,7 +1,7 @@
 # B1-003 参数边界、数值失败与恢复
 
 2026-09-30；Role: B1；Identity-Source: local-config；执行者 Codex。
-基线 `fa805e2da2ec16ce7e17a087b202ec3380a48ba2` 加 B1-002 本地验证。按用户指令在002专项完成后串行接续；当前仅本地，未提交/推送。范围为任务表的 demo-v2，不改变 lab-v3 实时发散前缀及播放语义。
+基线 `fa805e2da2ec16ce7e17a087b202ec3380a48ba2` 加 B1-002 本地验证。按用户指令在002专项完成后串行接续；当前已推送[PR #50](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/50)，待合并。范围为任务表的 demo-v2，不改变 lab-v3 实时发散前缀及播放语义。
 
 ## 复现问题与最小修复
 
@@ -34,3 +34,5 @@ pnpm check
 ```
 
 新增4项注册在既有engine测试入口。最终组合验证：`pnpm test:b` **69/69**、`pnpm check` **159/159**及类型/边界/生产构建全部通过，B1-001五算例逐样本对照重新通过。见[test-b.txt](test-b.txt)、[check.txt](check.txt)；源码及8个冻结文件哈希见[final-integrity.json](final-integrity.json)，冻结文件与B1-001完全一致，原有viewer大块提示保留。`git diff --check`与证据本地链接检查通过。下一项是B1-004目标设备性能/版本冻结；B2-003接口协调、lab-v3布局核对和设备/离线验收不在本批完成范围内。
+
+发布补记：实现提交 `dc9628fa800221b4645862e4f5d2091d8132a323`；之后无冲突合入 main `b209262` 的A1设计素材/文档。运行/测试/依赖与已验证实现无差异，源码及冻结哈希复核一致，类型/边界另验通过。最新分支及CI状态以PR最新head为准，未自动合并。

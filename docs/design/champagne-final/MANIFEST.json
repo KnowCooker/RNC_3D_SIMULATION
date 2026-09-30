@@ -1,0 +1,125 @@
+{
+  "version": "E-FINAL-1.0",
+  "date": "2026-09-30",
+  "style": "云境香槟",
+  "approvedHomepageUnchanged": true,
+  "approvedHomepageSHA256": "b23f83da43c8ce8976a4cc2495ad438b0ce069961fc6fda0e871c983e57c366b",
+  "screens": [
+    {
+      "file": "screens/01-overview-approved.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "b23f83da43c8ce8976a4cc2495ad438b0ce069961fc6fda0e871c983e57c366b"
+    },
+    {
+      "file": "screens/02-acoustic-field.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "0e5b676f0a3f98c14e17301b9bc99c60b5b89c672df69be7c589265186b049a1"
+    },
+    {
+      "file": "screens/03-structure-layout.png",
+      "width": 1671,
+      "height": 941,
+      "sha256": "8c6a06d3b7bb31f339d44146acb61f0b7e06c624728f1187432dd0fa7a171292"
+    },
+    {
+      "file": "screens/04-scenario-comparison.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "40f8c8a8f8814ed423581600618a698d6169ecf4352bbd71f5e95159f44a1bcc"
+    }
+  ],
+  "files": [
+    {
+      "path": "design-tokens.json",
+      "bytes": 896,
+      "sha256": "afef12e7dff9d6002525fc0b864d26ebfd453c676f029fe4e7c4534c7f743410"
+    },
+    {
+      "path": "index.html",
+      "bytes": 2638,
+      "sha256": "b05af398201f06cf9b87c0c0407ebc6475e2336c278c9170ad67c2848298eadd"
+    },
+    {
+      "path": "PROMPTS.json",
+      "bytes": 8799,
+      "sha256": "b0a985b0eda44c8d86f698301c89b8a417d816f7a978703fcc38a8eaa89f34b2"
+    },
+    {
+      "path": "prototype.js",
+      "bytes": 26818,
+      "sha256": "05f143c25cf7e5c90ca9f2526f8fb028171b1e0f0bb8cc23adf8a6e27615b435"
+    },
+    {
+      "path": "QA.md",
+      "bytes": 3091,
+      "sha256": "7782531b953e6f6a869e514bb7f927fd18e9ec2cdde633875b73cf24a4fce8b5"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2992,
+      "sha256": "42b162cc2ecc550bed60bc9863f0762168d714aadf7d6378a04806fc6f8e3626"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 9569,
+      "sha256": "a347c30d031041c22546b028a3094724b32d7a6e9dd1b3facdc6b3983f986800"
+    },
+    {
+      "path": "UI-INTERACTION-SPEC.md",
+      "bytes": 12009,
+      "sha256": "fc9a7e88669ea071085a21852d308e6331ee0bff593707297478473e3f9d5e90"
+    },
+    {
+      "path": "screens/01-overview-approved.png",
+      "bytes": 2114133,
+      "sha256": "b23f83da43c8ce8976a4cc2495ad438b0ce069961fc6fda0e871c983e57c366b"
+    },
+    {
+      "path": "screens/02-acoustic-field.png",
+      "bytes": 2181701,
+      "sha256": "0e5b676f0a3f98c14e17301b9bc99c60b5b89c672df69be7c589265186b049a1"
+    },
+    {
+      "path": "screens/03-structure-layout.png",
+      "bytes": 2070964,
+      "sha256": "8c6a06d3b7bb31f339d44146acb61f0b7e06c624728f1187432dd0fa7a171292"
+    },
+    {
+      "path": "screens/04-scenario-comparison.png",
+      "bytes": 1950499,
+      "sha256": "40f8c8a8f8814ed423581600618a698d6169ecf4352bbd71f5e95159f44a1bcc"
+    },
+    {
+      "path": "output/playwright/01-overview-desktop.png",
+      "bytes": 1848115,
+      "sha256": "b455fd7a2c73dbcb2216d6f42f7e70dafdce2cfc2b0c92478c1ff69921b9d0db"
+    },
+    {
+      "path": "output/playwright/02-incomparable-report.png",
+      "bytes": 745937,
+      "sha256": "056bc81352ea1d2ca9ac365ad8844be4a63245125f2fd5ae4f6c841511eb7590"
+    },
+    {
+      "path": "output/playwright/03-unsaved-layout.png",
+      "bytes": 758608,
+      "sha256": "607470c304a6a441a04e55c78b950f65b1021828793a1a1aed2a0ff3eef9a40f"
+    },
+    {
+      "path": "output/playwright/04-components.png",
+      "bytes": 720525,
+      "sha256": "bde72effa15b68090efcba2eaaa5e6bdbf3b272a6ca90168ae4be5ea1d264018"
+    },
+    {
+      "path": "output/playwright/05-mobile-controls.png",
+      "bytes": 139582,
+      "sha256": "514b8e0c47e024adafc2dd7aae33dc60e4b8ebb8af5e2d546e78028a11feac88"
+    },
+    {
+      "path": "output/playwright/example-report.json",
+      "bytes": 995,
+      "sha256": "78be149323ac309d4216ca9d8adeebb5eb0a24dfde579bc7c5bb1804df5e7977"
+    }
+  ]
+}
