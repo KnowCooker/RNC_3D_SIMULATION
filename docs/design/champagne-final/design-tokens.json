@@ -1,0 +1,46 @@
+{
+  "version": "E-FINAL-1.0",
+  "selectedStyle": "云境香槟",
+  "approvedAt": "2026-09-30",
+  "colors": {
+    "canvas": "#F6F1E9",
+    "text": "#2F281F",
+    "muted": "#716657",
+    "accent": "#B68B55",
+    "accentLight": "#F5DEB4",
+    "accentDark": "#87613C",
+    "glass": "rgba(248,243,235,.82)",
+    "border": "rgba(255,255,255,.8)",
+    "danger": "#A64C39",
+    "focus": "#6F4D27"
+  },
+  "radius": {
+    "panel": 28,
+    "inner": 18,
+    "button": 32,
+    "input": 14
+  },
+  "spacing": [
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "type": {
+    "body": 16,
+    "secondary": 14,
+    "title": 28,
+    "hero": 48
+  },
+  "motion": {
+    "controlMs": 180,
+    "pageMs": 350
+  },
+  "reference": {
+    "width": 1672,
+    "height": 941,
+    "file": "screens/01-overview-approved.png"
+  },
+  "status": "visual-direction-approved; detailed-page-design-delivered; not-production-implementation"
+}

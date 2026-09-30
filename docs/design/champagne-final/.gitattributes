@@ -1,0 +1,5 @@
+# Preserve the bytes and hashes of the approved E-FINAL-1.0 design snapshot.
+* -text
+# The archived manifest uses CRLF; Markdown keeps intentional hard breaks/EOF.
+MANIFEST.json whitespace=cr-at-eol
+*.md whitespace=-blank-at-eol,-blank-at-eof
