@@ -8,6 +8,8 @@ import { DEFAULT_CONFIG } from '../src/shared/defaults';
 import { decodeFixture } from '../src/shared/fixture';
 import type { RunConfig } from '../src/shared/contracts';
 import { auditNumericCase, compareChannel, numericCases } from './helpers/engine-numeric-audit';
+import './helpers/engine-timing-tests';
+import './helpers/engine-failure-tests';
 
 for (const spec of numericCases) test(`B1-001: ${spec.name} all 640000 samples and metrics match independent Python; exact repeat`, () => {
   auditNumericCase(spec);

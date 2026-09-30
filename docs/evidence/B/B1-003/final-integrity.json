@@ -1,0 +1,45 @@
+{
+  "role": "B1",
+  "tasks": [
+    "B1-002",
+    "B1-003"
+  ],
+  "identitySource": "local-config",
+  "executor": "Codex",
+  "date": "2026-09-30",
+  "baseline": "fa805e2da2ec16ce7e17a087b202ec3380a48ba2",
+  "sourceSha256": {
+    "src/team-b/engine/core.ts": "5f1186ba0601f5a6cb0dd253a216a2b4a991a37de0930e58f3c7d293f119ed65",
+    "src/team-b/engine/data.ts": "fd5312226e52ae83c3d4973fcaa91c1e4782f649164c9106d8b7cc6b175088e5",
+    "tests/engine.test.ts": "1c6196df09d8a5d309c12b95a1fede7dc46014e49deb31528c8ffff399513da2",
+    "tests/helpers/engine-harness.ts": "d540b21260c3bc9b14e56db3dc840f5e94c8927e742bf94f6284ad71017edd12",
+    "tests/helpers/engine-timing-audit.ts": "e2bbfab90e50500663326a01b5719e3c70b20496909df38bacb7b556f004cdfd",
+    "tests/helpers/engine-timing-tests.ts": "2c0f7e15acfcc0cc2f7ff4aa1865b1263089b82e118e0b742cc086e10038def0",
+    "tests/helpers/engine-failure-audit.ts": "d5aefce9eee36661bbbe3c46a395c4610706126127b4209c7a83f7f0a18ea198",
+    "tests/helpers/engine-failure-tests.ts": "6136d8812f5805ea2383dfe9507ef3e9b1611b2d1dfe704b035e22d6396c5ad3"
+  },
+  "frozenSha256": {
+    "fixtures/reference/decoder_check.json": "0b4c0f72a358f6d8561d702a0c5df6b5d5c2a0a92470033f71ba97b8c81c49a0",
+    "fixtures/reference/driver_primary.wav": "602b6fde9c1d81e73ad6fad2be91978f2dbe6e4da54f7c90c159a38493905eb7",
+    "fixtures/reference/driver_residual.wav": "4cada47b49b8a27f6c9d0309ac0473dd03baac455fde6287d48876dc993d04e8",
+    "fixtures/reference/golden_4x4x4.npz": "50c27ec884aaf7c8562b40de0dfe94089536102eabb57b7554ecf1f756caf8b6",
+    "fixtures/reference/golden_browser_fixture.json": "a84793dd6134347c06bf4729fcd3cfec672f06688d6a2c4cab4e9ae31481fde2",
+    "fixtures/reference/initial_256_samples.csv": "72898a5ee3484f7025a990ca525ca1dd9f6dbea47ffeb68abd79c3ac7c47b260",
+    "fixtures/reference/reference_mimo.py": "e368d0090dfb56e72eb0317d6dfaf9e34535b162d8f97022bc8f83aab88a9817",
+    "fixtures/reference/verification.json": "7cc90b0fb8f529bccc1d844a78d55378f501e86a9a6e26ad01c29ca441f98d90"
+  },
+  "frozenUnchangedFromB1001": true,
+  "checks": {
+    "testB": {
+      "pass": 69,
+      "fail": 0
+    },
+    "full": {
+      "pass": 159,
+      "fail": 0
+    },
+    "typecheck": true,
+    "boundaries": true,
+    "build": true
+  }
+}

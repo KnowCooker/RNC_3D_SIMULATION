@@ -1,0 +1,12 @@
+✔ B1-003: invalid shapes, every missing/fixed field and nonfinite values return structured config errors (2.7294ms)
+✔ B1-003: all 12 legal configurations have finite isolated Float32 channels and exact zero-step identities (1573.8047ms)
+✔ B1-003: nonfinite data, short arrays, drive failure and Float32 overflow never return partial success (976.7152ms)
+✔ B1-003: a failed call preserves prior results and cannot poison the next run (534.145ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4431.6965

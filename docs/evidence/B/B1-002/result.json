@@ -1,0 +1,84 @@
+{
+  "role": "B1",
+  "task": "B1-002",
+  "identitySource": "local-config",
+  "executor": "Codex",
+  "baseline": "fa805e2da2ec16ce7e17a087b202ec3380a48ba2",
+  "scope": "demo-v2; controlled asymmetric test inputs",
+  "timing": [
+    {
+      "taps": 32,
+      "maxAbsError": 0,
+      "superpositionMax": 1.8353603081777692e-9,
+      "firstDriveSample": 4001,
+      "firstSecondaryByMic": [
+        4005,
+        4006,
+        4007,
+        4008
+      ]
+    },
+    {
+      "taps": 64,
+      "maxAbsError": 0,
+      "superpositionMax": 1.8462742445990443e-9,
+      "firstDriveSample": 4001,
+      "firstSecondaryByMic": [
+        4005,
+        4006,
+        4007,
+        4008
+      ]
+    }
+  ],
+  "primary": {
+    "maxAbsError": 5.551115123125783e-17,
+    "samples": 128000
+  },
+  "mutations": [
+    {
+      "name": "gradient-sign",
+      "detected": true
+    },
+    {
+      "name": "missing-error-contribution",
+      "detected": true
+    },
+    {
+      "name": "diagonal-only-filtered-x",
+      "detected": true
+    },
+    {
+      "name": "secondary-transpose",
+      "detected": true
+    },
+    {
+      "name": "control-reference-transpose",
+      "detected": true
+    },
+    {
+      "name": "secondary-one-sample-early",
+      "detected": true
+    },
+    {
+      "name": "filtered-x-one-sample-late",
+      "detected": true
+    },
+    {
+      "name": "adaptation-one-sample-early",
+      "detected": true
+    },
+    {
+      "name": "adaptation-one-sample-late",
+      "detected": true
+    },
+    {
+      "name": "superposition-sign",
+      "detected": true
+    },
+    {
+      "name": "primary-transpose",
+      "detected": true
+    }
+  ]
+}

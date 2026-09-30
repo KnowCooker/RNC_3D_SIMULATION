@@ -8,7 +8,7 @@ export class EngineError extends Error implements DemoError {
 }
 
 export function validateConfig(config: RunConfig, runId = ''): void {
-  if (!config || typeof config !== 'object') throw new EngineError('INVALID_CONFIG', '配置必须是对象', runId);
+  if (!config || typeof config !== 'object' || Array.isArray(config)) throw new EngineError('INVALID_CONFIG', '配置必须是非数组对象', runId);
   for (const key of Object.keys(DEFAULT_CONFIG) as (keyof RunConfig)[]) {
     const valid = key === 'taps' ? [32, 64].includes(config.taps)
       : key === 'stepSize' ? [0, 0.08].includes(config.stepSize)
