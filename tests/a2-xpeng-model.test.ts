@@ -10,7 +10,7 @@ for (const spec of xpengCatalog) {
     assert.equal(model.assetId, `xpeng-${spec.id}`);
     assert.equal(new Set(model.parts.map(p => p.id)).size, model.parts.length);
     assert.equal(model.parts.filter(p => p.id.startsWith('seat-')).length, spec.rows.reduce((a: number, b) => a + b, 0));
-    assert.equal(model.parts.filter(p => p.id.startsWith('motor-')).length, spec.drive === 'awd' ? 2 : spec.drive === 'unverified' ? 0 : 1);
+    assert.equal(model.parts.filter(p => p.id.startsWith('motor-')).length, spec.drive === 'awd' ? 2 : 1);
     assert.equal(model.parts.some(p => p.id === 'generator'), spec.generator);
     const wheels = model.group.children.filter(o => o.name.startsWith('wheel-'));
     assert.equal(wheels.length, 4);
