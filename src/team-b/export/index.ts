@@ -9,6 +9,8 @@ export { ExportError, type ExportErrorCode } from './errors';
 export { encodeLabRecipe, decodeLabRecipe, recomputeLabRecipeAsync, LAB_RECORDING_ASSET,
   type LabRecipe, type LabRecipeInput, type LabRecomputeContext, type LabRecipeLimits } from './lab-recipe';
 export { LAB_RECIPE_MODEL } from './lab-model';
+export { encodeLabResult, encodeLabResultAsync, decodeLabResult, decodeLabResultAsync, estimateLabExport,
+  type LabBatchExportInput, type LabResultManifest, type DecodedLabResult, type LabChannel, type LabMeasuredReduction } from './lab-result';
 /** Trusted caller supplies SHA-256; this module performs no I/O or environment-specific crypto. */
 export type Sha256 = (bytes: Uint8Array) => string;
 export type AsyncSha256 = (bytes: Uint8Array) => Promise<string>;
