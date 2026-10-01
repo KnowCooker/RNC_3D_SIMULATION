@@ -188,7 +188,7 @@ Role: B1；Identity-Source: local-config；执行者Codex；基线6a5a71b加本�
 | --- | --- | --- | --- |
 | B2-001 | 已合并 | 合成源/路径及复现说明：[证据](../evidence/B/B2-001/README.md)；[PR #29](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/29)，合并`8724b09` | 原B需求第2/3/6节；不替代lab-v3或设备验收 |
 | B2-002 | 已合并 | 指标与频谱边界及非有限测量修复；专项12/12、B组54/54、合入新main后全仓116/116，最终CI成功；[PR #33](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/33)，合并`6a5a71b`；[证据](../evidence/B/B2-002/README.md) | 原B需求第3节；analyzeAt契约保持；不替代设备验收 |
-| B2-003 | demo-v2 API 已实现待合并（#51）；lab-v3 待协调 | 设计 #44 已合并 `83ee77a`；B1-001 #48 已合并 `fa805e2`。无 DOM 结果往返/配方复算与五工况 320 万样本逐位验收通过，B 85/85、全仓 175/175；[证据](../evidence/B/B2-003/demo-api/README.md)。保留来源/模型/单位/通道/无效值，不单独归一化；lab-v3/UI/设备仍待办，不宣称整项完成 | B1-001、B2-002已满足；无 shared/integration 修改；API供A1后续接UI |
+| B2-003 | demo-v2 API 已合并（#51，c2b0f43）；异步批次待合并（#52） | 五工况320万值往返/复算逐位一致；异步SHA-256适配、等待期间数据快照及生产浏览器Worker 20/20通过，B 90/90、全仓180/180；[异步证据](../evidence/B/B2-003/async-api/README.md)。保留来源/模型/单位/通道/无效值；lab-v3/UI/峰值内存/设备仍待办，整项未完成 | B1-001、B2-002已满足；无shared/integration修改；A1后续接产品UI/Worker |
 | B2-004 | 待认领 | 数据适配与最终报告：核对RunResult维度、时标、来源及分析/导出接口；整理B01～B08矩阵、固定配置、运行方法、代码SHA、真实验证、待测项与A1联调请求；协助第二台Windows离线复现。Worker/common修改须先协调，不能凭A组旧证据声称新引擎通过 | B2-001～003；汇总B1结果；设备条件不可用单列待测 |
 
 B2-003是当前A1等待的跨组导出接口。B2可以先核对设计与格式；涉及共享契约变更必须与A1+B1协调。B1主责完整数值正确性，B2主责数据和报告整理，避免两人重复维护两套算法或两套指标公式。
@@ -288,3 +288,12 @@ B1/B2串行共用文件，确认前任已停止并保存工作后，继续我负
 Role: B2；Identity-Source: user-declared；执行者 Codex。用户授权继续工作；main `c2b0f43abff449e25a87eb3dba35ce188ff1057f` 已合并 #51，上一 demo 批次云端 verify 成功（36812481040）。开放 PR 仅 A2 #30，B1 最近交接仍停止写入，无 B 重复占用。新分支 `b/b2-003-async-export` 从 main 建立，工作区干净。
 
 本批只认领 B 导出接口的异步 SHA-256 适配及真实浏览器 Worker 验证，保留同步 API/格式/数值行为。等待哈希期间输入变化或失效不能改变保存的样本/身份；预算在复制或调用哈希前核对，异步拒绝可传达。本批范围 B export、B 测试/说明/证据、B/根记录，不改 A/shared/integration/配置/冻结 fixture，不代写页面。lab-v3 与实时状态仍待协调。先推送认领/草稿 PR、复查重复，再修改功能；当前功能和本批新验收未开始。
+
+### 2026-10-01 / B2 / B2-003 / 异步接口批次完成
+
+- Role: B2；Identity-Source: user-declared；执行者 Codex。认领 `260d99a` 与[草稿 PR #52](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/52)先发布，复查仅#52/#30后实现。基线 main `c2b0f43` 已合并#51；分支 `hgyong:b/b2-003-async-export`。
+- 变更：B export 新增 `encodeResultAsync` / `decodeResultAsync`、Promise型SHA-256适配；编码在等待前捕获信号/元信息，解码先检查预算边界再保存独立容器，在结构/有限性/哈希通过后还原。同步格式保持，配方与估算仅需源码commit。新增5项B专项、B用法和[异步证据](../evidence/B/B2-003/async-api/README.md)，无shared/integration/A/根配置/冻结fixture或计算公式改动。
+- 实际验证：专项33/33、B90/90、最终`pnpm check`180/180及类型/边界/生产构建通过。只读提取#51旧API对照，新旧完整文件逐字节一致且互相可读。独立生产构建在Windows Chromium154 module Worker使用真实Web Crypto，20/20，包括五工况往返/复算各320万值逐位一致、等待时输入修改/转移、坏哈希/预算拒绝；最终重载error/warn为0。源码/产物SHA和8个冻结文件未改见source-integrity.json。首次沙箱dev启动被esbuild访问限制拒绝，首次页连接失败；改用授权独立生产构建后通过，未改根配置。
+- 当前状态：本批已验证、待提交推送/审查；#51已合并是事实，旧“待合并”记录保留历史含义。异步解码增加容器副本，未测浏览器峰值/目标设备耗时/取消/第二机；独立Worker验证不代替A1正式产品接入。lab-v3布局/素材版本/动态参考/发散及实时状态仍待协调，完整003未签收，004未认领。
+- 跨组影响：A1可使用异步Web Crypto适配器接B接口，但正式产品文件UI/Worker、实验隔离和内存验收仍由A1/指定集成者实现。本批只提供B API与请求，不修改或批准共管接口。
+- 下一步：提交推送并核对#52最终head/CI/冲突，转可审查；本批结束停止写入，不自动合并。维护者审查后由A1接入、B1核定lab-v3门槛，B2按串行接续。

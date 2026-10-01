@@ -1,6 +1,6 @@
 # demo-v2 结果与配方 API
 
-本模块只支持从样本 0 开始的完整 demo-v2 批量结果，固定 2000 Hz、32000 点、x/u/d/a/e 各四路。lab-v3、发散前缀、实时快照和状态续算均未实现；不会自动把这些对象转换成旧版数据。无 DOM、文件读写、网络或 A/integration 依赖，不修改引擎公式或共享契约。
+本模块只支持从样本 0 开始的完整 demo-v2 批量结果，固定 2000 Hz、32000 点、x/u/d/a/e 各四路。同步与异步结果 API 使用相同格式；lab-v3、发散前缀、实时快照和状态续算均未实现。无 DOM、文件读写、网络或 A/integration 依赖，不修改引擎公式或共享契约。
 
 ```ts
 import {
@@ -24,7 +24,21 @@ const repeated = recomputeRecipe(recipe, 'a-new-run-id');
 // repeated.originalRunId 关联原运行；新结果 source 为 computed-browser。
 ```
 
-`sha256(bytes)` 必须返回 64 位小写十六进制，且不得修改字节。Node 验证使用 `createHash('sha256')`；B 运行模块不导入 Node crypto。浏览器 Web Crypto 的异步调用不能直接作为该同步接口传入；A1/integration 若要接入，应先协调同步哈希适配或异步 API 批次及 Worker 执行位置。本批没有向页面注入哈希、构建版本或文件操作。
+同步 `sha256(bytes)` 必须返回 64 位小写十六进制，且不得修改字节。Node 验证使用 `createHash('sha256')`；B 运行模块不导入 Node crypto。浏览器可调用 `encodeResultAsync` / `decodeResultAsync`，向其注入返回 `Promise<string>` 的 Web Crypto 适配器：
+
+```ts
+import { encodeResultAsync, decodeResultAsync } from './index';
+const asyncSha256 = async (bytes: Uint8Array) => {
+  const digest = await crypto.subtle.digest('SHA-256', Uint8Array.from(bytes));
+  return Array.from(new Uint8Array(digest), v => v.toString(16).padStart(2, '0')).join('');
+};
+const file = await encodeResultAsync(input, { sourceCommit: buildCommit, sha256: asyncSha256 });
+const restored = await decodeResultAsync(file, asyncSha256);
+```
+
+异步编码在调用哈希前捕获配置、运行身份、指标和全部信号，后续输入修改不会改变该次文件。异步解码先核对预算/容器边界，再复制输入视图；等待期间调用方修改或转移原 buffer 不影响校验和还原，Node Buffer 同样会复制。先验证元数据/有限性，再调用哈希，哈希通过才分配输出通道。哈希适配器不得改写提供给它的内部字节；适配器拒绝会原样传播，错误摘要或校验失败均不返回部分结果。预算也在开始时复制。
+
+异步解码额外持有一个容器副本，其信号驻留下界约为“输入容器 + 副本容器 + 解码信号”；`estimateExport` 的下界只针对编码，不用于声称异步解码峰值。同步采样捕获阶段仍占用执行线程，建议在 Worker 中运行；不能把异步函数解释为整段编解码都不阻塞线程。配方编码及字节估算仅需 `{sourceCommit}`，不依赖哈希函数。真实生产浏览器 Worker 验证见 [异步 API 证据](../../../docs/evidence/B/B2-003/async-api/README.md)。本批未修改产品 Worker 或页面。
 
 结果容器采用 `RNCRSLT1`、16 字节头、UTF-8 manifest、零填充至四字节对齐，再按 x/u/d/a/e 和 FL/FR/RL/RR 顺序保存 2560000 字节 Float32 小端载荷。通道描述记录单位、稳定 ID、偏移、样本数与字节数；读取严格核对顺序和连续偏移。最后样本时间 15.9995 秒，覆盖 `[0,16)`；声压为教学 Pa，x 为教学 m/s²，u 为 drive，不表示实车标定。PSD 未存储，可从独立结果使用现有 B 分析 API 计算。
 
@@ -38,4 +52,4 @@ const repeated = recomputeRecipe(recipe, 'a-new-run-id');
 
 容器硬上限 64 MiB，manifest/配方分别 64 KiB；调用方可以进一步降低预算，不能提高硬上限。导入先验证头部、实际长度、预算、通道、哈希及全部样本有限性，再分配输出通道。非零 byteOffset 的输入视图按自身范围读取。截断、尾随字节、非零填充、无效 UTF-8、未知格式、重复/错位通道、额外配置字段、异常指标或来源、坏哈希、过量及非有限数据均抛出 `ExportError`；哈希仅用于完整性检查，不认证来源。
 
-验收及复现见 [B2-003 demo API 证据](../../../docs/evidence/B/B2-003/demo-api/README.md)。A1 后续负责独立文件流程、错误展示、实验身份隔离和浏览器 Worker/内存验收；lab-v3 仍需 B1/指定集成者核定布局、素材及版本清单后接续同一任务。
+验收及复现见 [B2-003 demo API 证据](../../../docs/evidence/B/B2-003/demo-api/README.md)及上述异步证据。A1 后续负责独立文件流程、错误展示、实验身份隔离、产品 Worker 接入和峰值内存验收；lab-v3 仍需 B1/指定集成者核定布局、素材及版本清单后接续同一任务。
