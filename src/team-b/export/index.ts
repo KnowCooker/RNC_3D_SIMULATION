@@ -12,7 +12,9 @@ export class ExportError extends Error {
 }
 /** Trusted caller supplies SHA-256; this module performs no I/O or environment-specific crypto. */
 export type Sha256 = (bytes: Uint8Array) => string;
+export type AsyncSha256 = (bytes: Uint8Array) => Promise<string>;
 export interface ExportContext { sha256: Sha256; sourceCommit: string }
+export interface AsyncExportContext { sha256: AsyncSha256; sourceCommit: string }
 export interface ImportLimits { maxContainerBytes?: number; maxManifestBytes?: number; maxRecipeBytes?: number }
 export interface BatchExportInput { mode: 'batch'; originSample: 0; result: RunResult }
 export interface BatchRecipeInput { mode: 'batch'; originSample: 0; config: RunConfig; originalRunId: string; source: RunResult['source'] }
@@ -108,7 +110,7 @@ function identity(value: Record<string, unknown>): Identity {
   return { modelSchema: 'demo-v2', modelIdentity: model(value.modelIdentity), sourceCommit: commit(value.sourceCommit),
     config: original, normalizedConfig: normalized, normalization: 'demo-explicit-v1' };
 }
-function makeIdentity(value: RunConfig, context: ExportContext): Identity {
+function makeIdentity(value: RunConfig, context: Pick<ExportContext, 'sourceCommit'>): Identity {
   const original = config(value);
   return { modelSchema: 'demo-v2', modelIdentity: structuredClone(DEMO_MODEL), sourceCommit: commit(context.sourceCommit),
     config: original, normalizedConfig: { ...original }, normalization: 'demo-explicit-v1' };
@@ -196,7 +198,7 @@ function checkMetrics(result: RunResult): NonNullable<DecodedResult['verifiedSte
     microphones: d.map((power, i) => measured(power, e[i], derived.reductionDbByMic[i])) as unknown as Four<MeasuredReduction>,
     aggregate: measured(d.reduce((a, b) => a + b), e.reduce((a, b) => a + b), derived.aggregateReductionDb) };
 }
-function makeManifest(input: BatchExportInput, context: ExportContext, payloadHash: string): Manifest {
+function makeManifest(input: BatchExportInput, context: Pick<ExportContext, 'sourceCommit'>, payloadHash: string): Manifest {
   const wrapper = batch(input); keys(wrapper, ['mode', 'originSample', 'result']);
   const result = keys(input.result, ['runId', 'source', 'config', 'sampleCount', 'order', 'units', 'signals', 'metrics', 'computeMilliseconds']);
   const ids = makeIdentity(input.result.config, context);
@@ -221,25 +223,43 @@ function makeManifest(input: BatchExportInput, context: ExportContext, payloadHa
     integrity: { payloadBytes: PAYLOAD, sha256: hash(payloadHash) } };
 }
 /** Exact size before constructing the signal payload. minimumResidentSignalBytes is a lower bound, not a measured peak. */
-export function estimateExport(input: BatchExportInput, context: ExportContext, limits: ImportLimits = {}): ExportEstimate {
+export function estimateExport(input: BatchExportInput, context: Pick<ExportContext, 'sourceCommit'>, limits: ImportLimits = {}): ExportEstimate {
   const manifest = jsonBytes(makeManifest(input, context, '0'.repeat(64)), limit(limits.maxManifestBytes, MAX_JSON));
   const containerBytes = HEADER + Math.ceil(manifest.length / 4) * 4 + PAYLOAD;
   if (containerBytes > limit(limits.maxContainerBytes, MAX_CONTAINER)) fail('SIZE_LIMIT', 'Container exceeds byte budget');
   return { payloadBytes: PAYLOAD, manifestBytes: manifest.length, containerBytes, minimumResidentSignalBytes: PAYLOAD + containerBytes };
 }
-export function encodeResult(input: BatchExportInput, context: ExportContext, limits: ImportLimits = {}): Uint8Array {
+function prepareEncoding(input: BatchExportInput, context: Pick<ExportContext, 'sourceCommit'>, limits: ImportLimits) {
   const estimate = estimateExport(input, context, limits);
+  // Capture metadata and samples synchronously, before invoking either hash adapter.
+  const manifest = makeManifest(input, context, '0'.repeat(64));
   const bytes = new Uint8Array(estimate.containerBytes), view = new DataView(bytes.buffer);
   const payloadStart = estimate.containerBytes - PAYLOAD;
   for (const descriptor of channels()) {
     const signal = input.result.signals[descriptor.signal][descriptor.index];
     for (let n = 0; n < N; n++) view.setFloat32(payloadStart + descriptor.payloadOffset + n * 4, signal[n], true);
   }
-  const manifest = jsonBytes(makeManifest(input, context, hash(context.sha256(bytes.subarray(payloadStart)))), limit(limits.maxManifestBytes, MAX_JSON));
-  bytes.set(encoder.encode(MAGIC)); view.setUint32(8, manifest.length, true); view.setUint32(12, PAYLOAD, true); bytes.set(manifest, HEADER);
+  return { bytes, manifest, payloadStart, estimate, limits };
+}
+function finishEncoding(prepared: ReturnType<typeof prepareEncoding>, digest: string): Uint8Array {
+  const { bytes, manifest, estimate, limits } = prepared;
+  manifest.integrity.sha256 = hash(digest);
+  const metadata = jsonBytes(manifest, limit(limits.maxManifestBytes, MAX_JSON));
+  equal(metadata.length, estimate.manifestBytes, 'captured manifest length');
+  const view = new DataView(bytes.buffer);
+  bytes.set(encoder.encode(MAGIC)); view.setUint32(8, metadata.length, true); view.setUint32(12, PAYLOAD, true); bytes.set(metadata, HEADER);
   return bytes;
 }
-export function decodeResult(bytes: Uint8Array, sha256: Sha256, limits: ImportLimits = {}): DecodedResult {
+export function encodeResult(input: BatchExportInput, context: ExportContext, limits: ImportLimits = {}): Uint8Array {
+  const prepared = prepareEncoding(input, context, limits);
+  return finishEncoding(prepared, context.sha256(prepared.bytes.subarray(prepared.payloadStart)));
+}
+/** Compatible with a caller's Web Crypto adapter; the input is captured before the first await. */
+export async function encodeResultAsync(input: BatchExportInput, context: AsyncExportContext, limits: ImportLimits = {}): Promise<Uint8Array> {
+  const prepared = prepareEncoding(input, context, { ...limits });
+  return finishEncoding(prepared, await context.sha256(prepared.bytes.subarray(prepared.payloadStart)));
+}
+function containerHeader(bytes: Uint8Array, limits: ImportLimits) {
   if (!(bytes instanceof Uint8Array)) fail('INVALID_FORMAT', 'Expected container bytes');
   if (bytes.length > limit(limits.maxContainerBytes, MAX_CONTAINER)) fail('SIZE_LIMIT', 'Container exceeds byte budget');
   if (bytes.length < HEADER || Array.from(MAGIC).some((char, i) => bytes[i] !== char.charCodeAt(0))) fail('INVALID_FORMAT', 'Invalid container header');
@@ -248,6 +268,10 @@ export function decodeResult(bytes: Uint8Array, sha256: Sha256, limits: ImportLi
   if (m > limit(limits.maxManifestBytes, MAX_JSON)) fail('SIZE_LIMIT', 'Manifest exceeds byte budget');
   if (m === 0 || p !== PAYLOAD || payloadStart + p !== bytes.length) fail('INVALID_FORMAT', 'Invalid container lengths');
   for (let i = HEADER + m; i < payloadStart; i++) if (bytes[i] !== 0) fail('INVALID_FORMAT', 'Nonzero alignment padding');
+  return { view, m, p, payloadStart };
+}
+function inspectResult(bytes: Uint8Array, limits: ImportLimits) {
+  const { view, m, p, payloadStart } = containerHeader(bytes, limits);
   const record = object(parse(bytes.subarray(HEADER, HEADER + m)));
   if (record.format !== 'rnc-result-v1') fail('UNSUPPORTED_VERSION', 'Unknown result format');
   keys(record, ['format', 'modelSchema', 'modelIdentity', 'sourceCommit', 'config', 'normalizedConfig', 'normalization', 'run', 'provenance', 'channels', 'rawMetrics', 'integrity']);
@@ -259,9 +283,14 @@ export function decodeResult(bytes: Uint8Array, sha256: Sha256, limits: ImportLi
   equal(record.provenance, 'synthetic-teaching-signals', 'provenance'); validateChannels(record.channels);
   const metrics = rawMetrics(record.rawMetrics), integrity = keys(record.integrity, ['payloadBytes', 'sha256']);
   equal(integrity.payloadBytes, p, 'payload bytes');
-  if (hash(integrity.sha256) !== hash(sha256(bytes.subarray(payloadStart)))) fail('INTEGRITY_MISMATCH', 'Payload SHA-256 mismatch');
+  const expectedHash = hash(integrity.sha256);
   // Scan before allocating any output channel, including a hash-correct malicious payload.
   for (let offset = payloadStart; offset < bytes.length; offset += 4) if (!Number.isFinite(view.getFloat32(offset, true))) fail('INVALID_DATA', 'Nonfinite signal sample');
+  return { bytes, view, payloadStart, expectedHash, record, ids, run, metrics };
+}
+function restoreResult(inspected: ReturnType<typeof inspectResult>, digest: string): DecodedResult {
+  const { view, payloadStart, expectedHash, record, ids, run, metrics } = inspected;
+  if (expectedHash !== hash(digest)) fail('INTEGRITY_MISMATCH', 'Payload SHA-256 mismatch');
   const collected: Record<typeof KINDS[number], Float32Array[]> = { x: [], u: [], d: [], a: [], e: [] };
   for (const descriptor of channels()) {
     const signal = new Float32Array(N);
@@ -274,6 +303,18 @@ export function decodeResult(bytes: Uint8Array, sha256: Sha256, limits: ImportLi
   return { result, manifest: { ...record, ...ids } as unknown as Manifest, modelSupported,
     verifiedSteady: modelSupported ? checkMetrics(result) : null };
 }
+export function decodeResult(bytes: Uint8Array, sha256: Sha256, limits: ImportLimits = {}): DecodedResult {
+  const inspected = inspectResult(bytes, limits);
+  return restoreResult(inspected, sha256(bytes.subarray(inspected.payloadStart)));
+}
+/** Detached bounded copy prevents caller mutation/transfer while hashing from changing imported data. */
+export async function decodeResultAsync(bytes: Uint8Array, sha256: AsyncSha256, limits: ImportLimits = {}): Promise<DecodedResult> {
+  const budgets = { ...limits };
+  containerHeader(bytes, budgets); // Check size and declared bounds before the copy.
+  const snapshot = Uint8Array.from(bytes); // Also copies Node Buffer subclasses instead of sharing Buffer.slice().
+  const inspected = inspectResult(snapshot, budgets);
+  return restoreResult(inspected, await sha256(snapshot.subarray(inspected.payloadStart)));
+}
 function validateRecipe(value: unknown): Recipe {
   const record = object(value);
   if (record.format !== 'rnc-recipe-v1') fail('UNSUPPORTED_VERSION', 'Unknown recipe format');
@@ -282,7 +323,7 @@ function validateRecipe(value: unknown): Recipe {
   return { ...ids, format: 'rnc-recipe-v1', mode: 'batch', originSample: 0,
     originalRunId: text(record.originalRunId, 'original run id'), source: source(record.source), requestedSampleCount: N };
 }
-export function encodeRecipe(input: BatchRecipeInput, context: ExportContext, limits: ImportLimits = {}): string {
+export function encodeRecipe(input: BatchRecipeInput, context: Pick<ExportContext, 'sourceCommit'>, limits: ImportLimits = {}): string {
   batch(input); keys(input, ['mode', 'originSample', 'config', 'originalRunId', 'source']);
   const recipe = validateRecipe({ ...makeIdentity(input.config, context), format: 'rnc-recipe-v1', mode: input.mode, originSample: input.originSample,
     originalRunId: input.originalRunId, source: input.source, requestedSampleCount: N });

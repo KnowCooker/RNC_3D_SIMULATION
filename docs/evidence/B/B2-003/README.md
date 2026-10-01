@@ -2,6 +2,8 @@
 
 最新进度（2026-10-01）：设计 #44 已合并；B1-001 #48 的五算例数值证据解除 demo-v2 依赖。已续作 [demo-v2 结果导出/配方复算 API 批次](demo-api/README.md)，[PR #51](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/51)。lab-v3/实时状态/UI/设备验收仍独立待办；下方 9 月 29 日内容保留设计交付时点。
 
+#51 现已合并 `c2b0f43`；继续 [异步哈希 API 与生产浏览器 Worker 验证](async-api/README.md)，[PR #52](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/52)，新增接口/20项浏览器验证、90/90 B组及180/180全仓通过；A1产品接入与lab-v3尚未实现。
+
 用户角色B2；Identity-Source: user-declared；执行者Codex；2026-09-29。
 任务分支`b/b2-003-export-design`；基线`842bec8197a61df9d849e60e86504292de7846d0`；[PR #44](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/44)。
 

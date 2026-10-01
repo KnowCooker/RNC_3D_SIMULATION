@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { webcrypto } from 'node:crypto';
 import { DEFAULT_CONFIG } from '../../src/shared/defaults';
 import { decodeFixture } from '../../src/shared/fixture';
 import { steadyMetrics } from '../../src/team-b/analysis';
-import { DEMO_MODEL, ExportError, encodeResult, decodeResult, encodeRecipe, decodeRecipe, recomputeRecipe, estimateExport,
+import { DEMO_MODEL, ExportError, encodeResult, decodeResult, encodeResultAsync, decodeResultAsync, encodeRecipe, decodeRecipe, recomputeRecipe, estimateExport,
   type BatchExportInput, type Recipe } from '../../src/team-b/export';
 import { auditExportCase, batchInput, context, sha256 } from './export-audit';
 import { numericCases } from './engine-numeric-audit';
@@ -29,6 +30,61 @@ function mutate(change: (value: ReturnType<typeof manifest>) => void, input = ba
 }
 const makeRecipe = () => decodeRecipe(encodeRecipe({ mode: 'batch', originSample: 0, config: DEFAULT_CONFIG,
   originalRunId: 'old', source: 'reference-replay' }, context));
+
+const cryptoSha = async (bytes: Uint8Array) => Buffer.from(await webcrypto.subtle.digest('SHA-256', Uint8Array.from(bytes))).toString('hex');
+function gatedHash() {
+  let release!: (value: string) => void;
+  let captured!: Uint8Array;
+  return { sha256: (bytes: Uint8Array) => { captured = Uint8Array.from(bytes); return new Promise<string>(resolve => { release = resolve; }); },
+    release: () => release(sha256(captured)) };
+}
+test('B2-003 async: Web Crypto produces the same container and detached data as sync API', async () => {
+  const bytes = await encodeResultAsync(batchInput(fixture), { ...context, sha256: cryptoSha });
+  assert.deepEqual(bytes, base);
+  const restored = await decodeResultAsync(bytes, cryptoSha);
+  assert.deepEqual(restored.result, decodeResult(base, sha256).result);
+  assert.notEqual(restored.result.signals.x[0].buffer, bytes.buffer);
+});
+test('B2-003 async: encoding snapshots config, run identity, samples and budgets before awaiting', async () => {
+  const result = structuredClone(fixture), expected = encodeResult(batchInput(result), context), gate = gatedHash();
+  const budget = { maxManifestBytes: 65536 }, ctx = { ...context, sha256: gate.sha256 };
+  const pending = encodeResultAsync(batchInput(result), ctx, budget);
+  result.signals.x[0].fill(42); result.config.seed = 29; result.runId = 'changed'; result.metrics.aggregateReductionDb = NaN;
+  ctx.sourceCommit = '0'.repeat(40); budget.maxManifestBytes = 1;
+  gate.release(); assert.deepEqual(await pending, expected);
+});
+test('B2-003 async: decode owns a snapshot across Buffer mutation, offset views and transfer', async () => {
+  for (const transfer of [false, true]) {
+    const wrapped = new Uint8Array(base.length + 12); wrapped.set(base, 6);
+    const bytes = transfer ? wrapped.subarray(6, 6 + base.length) : Buffer.from(wrapped.buffer, 6, base.length);
+    const gate = gatedHash(), budget = { maxContainerBytes: base.length };
+    const pending = decodeResultAsync(bytes, gate.sha256, budget);
+    budget.maxContainerBytes = 1;
+    if (transfer) structuredClone(wrapped, { transfer: [wrapped.buffer] });
+    else bytes.fill(0);
+    gate.release(); assert.deepEqual((await pending).result, decodeResult(base, sha256).result);
+  }
+});
+test('B2-003 async: hash rejections and invalid digests propagate without a partial result', async () => {
+  const sentinel = new Error('hash adapter failed');
+  const failure = async () => { throw sentinel; };
+  await assert.rejects(encodeResultAsync(batchInput(fixture), { ...context, sha256: failure }), error => error === sentinel);
+  await assert.rejects(decodeResultAsync(base, failure), error => error === sentinel);
+  for (const digest of ['not-a-hash', '0'.repeat(64)]) {
+    await assert.rejects(decodeResultAsync(base, async () => digest), error => error instanceof ExportError);
+  }
+  await assert.rejects(encodeResultAsync(batchInput(fixture), { ...context, sha256: async () => 'bad' }), error => error instanceof ExportError && error.code === 'INVALID_DATA');
+});
+test('B2-003 async: malformed, nonfinite and over-budget inputs reject before invoking crypto', async () => {
+  let calls = 0; const adapter = async (bytes: Uint8Array) => { calls++; return cryptoSha(bytes); };
+  await assert.rejects(encodeResultAsync(batchInput(fixture), { ...context, sha256: adapter }, { maxContainerBytes: 1 }), error => error instanceof ExportError && error.code === 'SIZE_LIMIT');
+  await assert.rejects(decodeResultAsync(base, adapter, { maxContainerBytes: base.length - 1 }), error => error instanceof ExportError && error.code === 'SIZE_LIMIT');
+  await assert.rejects(decodeResultAsync(base.subarray(0, 15), adapter), error => error instanceof ExportError && error.code === 'INVALID_FORMAT');
+  await assert.rejects(decodeResultAsync(mutate(m => { m.channels[1].payloadOffset = 0; }), adapter), error => error instanceof ExportError && error.code === 'INVALID_DATA');
+  const bad = base.slice(); new DataView(bad.buffer).setFloat32(bad.length - 4, Infinity, true);
+  await assert.rejects(decodeResultAsync(bad, adapter), error => error instanceof ExportError && error.code === 'INVALID_DATA');
+  assert.equal(calls, 0);
+});
 
 for (const spec of numericCases) test(`B2-003: ${spec.name} binary roundtrip, recipe recompute and Python oracle`, () => { auditExportCase(spec); });
 
