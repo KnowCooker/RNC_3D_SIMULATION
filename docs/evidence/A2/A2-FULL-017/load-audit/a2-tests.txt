@@ -1,0 +1,137 @@
+Already up to date
+Done in 344ms using pnpm v11.19.0
+TAP version 13
+# Subtest: asset shell modes isolate shared interior materials and restore original ownership once
+ok 1 - asset shell modes isolate shared interior materials and restore original ownership once
+  ---
+  duration_ms: 5.5612
+  ...
+# Subtest: authored asset sections follow actual moving meshes without inventing solid caps or changing coordinates
+ok 2 - authored asset sections follow actual moving meshes without inventing solid caps or changing coordinates
+  ---
+  duration_ms: 4.8893
+  ...
+# Subtest: asset picking skips hidden ancestors and discarded section surfaces, and selection bounds follow disassembly
+ok 3 - asset picking skips hidden ancestors and discarded section surfaces, and selection bounds follow disassembly
+  ---
+  duration_ms: 5.1172
+  ...
+# Subtest: selection excludes hidden descendants and follows ancestor transforms without a section
+ok 4 - selection excludes hidden descendants and follows ancestor transforms without a section
+  ---
+  duration_ms: 1.0603
+  ...
+# Subtest: selection is restricted to retained section bounds and disappears when fully clipped
+ok 5 - selection is restricted to retained section bounds and disappears when fully clipped
+  ---
+  duration_ms: 3.0952
+  ...
+# Subtest: actual ICE asset keeps all 74127 triangles and 30 groups through inspection, disassembly and full restoration
+ok 6 - actual ICE asset keeps all 74127 triangles and 30 groups through inspection, disassembly and full restoration
+  ---
+  duration_ms: 123.1544
+  ...
+# Subtest: three slice meshes use the original 280 queried positions, including their fixed physical planes
+ok 7 - three slice meshes use the original 280 queried positions, including their fixed physical planes
+  ---
+  duration_ms: 2.158
+  ...
+# Subtest: a reordered, truncated or non-finite B field frame cannot color the old locations
+ok 8 - a reordered, truncated or non-finite B field frame cannot color the old locations
+  ---
+  duration_ms: 0.5403
+  ...
+# Subtest: moving each sampled plane requests its physical position and refuses the previous field frame
+ok 9 - moving each sampled plane requests its physical position and refuses the previous field frame
+  ---
+  duration_ms: 2.3838
+  ...
+# Subtest: 12 coincident projections remain separate and inside the narrow supported viewer
+ok 10 - 12 coincident projections remain separate and inside the narrow supported viewer
+  ---
+  duration_ms: 2.6488
+  ...
+# Subtest: four source illustrations can share a narrow view with all 12 hardware labels
+ok 11 - four source illustrations can share a narrow view with all 12 hardware labels
+  ---
+  duration_ms: 2.2316
+  ...
+# Subtest: labels at viewport edges and densely grouped hardware remain clickable
+ok 12 - labels at viewport edges and densely grouped hardware remain clickable
+  ---
+  duration_ms: 6.929
+  ...
+# Subtest: lab labels stay on the side rails at full-page size, leaving the vehicle clear
+ok 13 - lab labels stay on the side rails at full-page size, leaving the vehicle clear
+  ---
+  duration_ms: 0.7718
+  ...
+# Subtest: lab side rails remain separate and clickable in a narrow 360 px viewer
+ok 14 - lab side rails remain separate and clickable in a narrow 360 px viewer
+  ---
+  duration_ms: 0.6257
+  ...
+# Subtest: featured structures exist in each generated architecture and explain its actual drive path
+ok 15 - featured structures exist in each generated architecture and explain its actual drive path
+  ---
+  duration_ms: 202.0828
+  ...
+# Subtest: true mesh-plane sections preserve area, plane position and outward normal after transforms
+ok 16 - true mesh-plane sections preserve area, plane position and outward normal after transforms
+  ---
+  duration_ms: 5.2996
+  ...
+# Subtest: section through exact edges is closed; tangencies and existing coplanar faces are not duplicated
+ok 17 - section through exact edges is closed; tangencies and existing coplanar faces are not duplicated
+  ---
+  duration_ms: 0.7798
+  ...
+# Subtest: ring sections keep their holes and disconnected islands; open surfaces never get a solid cap
+ok 18 - ring sections keep their holes and disconnected islands; open surfaces never get a solid cap
+  ---
+  duration_ms: 24.9695
+  ...
+# Subtest: section display updates from exploded geometry, respects ancestor visibility and material opacity
+ok 19 - section display updates from exploded geometry, respects ancestor visibility and material opacity
+  ---
+  duration_ms: 4.3284
+  ...
+# Subtest: bundled showroom SUV is the attributed, offline CC BY asset within the geometry budget
+ok 20 - bundled showroom SUV is the attributed, offline CC BY asset within the geometry budget
+  ---
+  duration_ms: 4.5165
+  ...
+# Subtest: BEV showroom keeps the original attribution and bundles a decodable offline model
+ok 21 - BEV showroom keeps the original attribution and bundles a decodable offline model
+  ---
+  duration_ms: 5.2311
+  ...
+# Subtest: four drivetrains preserve their physical differences and five-seat cabin
+ok 22 - four drivetrains preserve their physical differences and five-seat cabin
+  ---
+  duration_ms: 196.7341
+  ...
+# Subtest: vehicle geometry is finite and every owned GPU resource is disposed once
+ok 23 - vehicle geometry is finite and every owned GPU resource is disposed once
+  ---
+  duration_ms: 135.7656
+  ...
+# Subtest: the BEV and EREV battery enclosure remains directly visible from the underbody
+ok 24 - the BEV and EREV battery enclosure remains directly visible from the underbody
+  ---
+  duration_ms: 82.9793
+  ...
+# Subtest: the closed side sill hides the floor and battery at door level on all four vehicles
+ok 25 - the closed side sill hides the floor and battery at door level on all four vehicles
+  ---
+  duration_ms: 107.3215
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1087.9175

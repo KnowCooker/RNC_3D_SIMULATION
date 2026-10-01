@@ -294,6 +294,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   host.append(showroomToggle, showroomPanel, showroomAssemblyPanel);
   function leaveShowroom() {
     ++showroomRequest;
+    showroomToggle.removeAttribute('title');
     if (!showroomActive) {
       showroomToggle.disabled = false; showroomToggle.textContent = '写实外观';
       return;
@@ -320,6 +321,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     const request = ++showroomRequest;
     const vehicle = config?.vehicle ?? 'ice';
     const wantedAssetId = vehicle === 'bev' ? 'tesla-model-y' : 'range-rover';
+    showroomToggle.removeAttribute('title');
     showroomToggle.disabled = true; showroomToggle.textContent = '加载外观…';
     try {
       if (showroomModel && showroomModel.assetId !== wantedAssetId) {
