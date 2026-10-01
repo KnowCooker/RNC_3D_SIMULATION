@@ -282,3 +282,9 @@ B1/B2串行共用文件，确认前任已停止并保存工作后，继续我负
 - 下一步：提交推送本批、核对 PR 最新 head/CI/冲突并转可审查；本批结束停止写入，不自动合并。维护者审查 #51；B1/指定集成者核定 lab-v3 版本和素材身份，B2 再按同一任务接续。B2-004 仍待完整 003 及汇总设备条件，不提前签收。
 
 **2026-10-01 发布回填**：Role: B2；Identity-Source: user-declared；执行者 Codex。实现及全部验证证据提交 `d6d4603` 已推送 `hgyong:b/b2-003-export-api`；[PR #51](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/51)已转可审查，正文重写为实际 demo-v2 API 范围。推送前 fetch 确认 main 仍 `67387f6`，差异限本任务 B 文件与日志，提交钩子/证据源码哈希/diff检查通过。最新 PR head、可合并性及云端 CI 正在按最终提交核对，未声称通过、未合并 main。下方/上方“待提交推送”为此前时点；当前本批写入结束，待维护者审查，完整003的lab/UI/设备待办保持。
+
+### 2026-10-01 / B2 / B2-003 / 异步哈希与浏览器 Worker 验收接班
+
+Role: B2；Identity-Source: user-declared；执行者 Codex。用户授权继续工作；main `c2b0f43abff449e25a87eb3dba35ce188ff1057f` 已合并 #51，上一 demo 批次云端 verify 成功（36812481040）。开放 PR 仅 A2 #30，B1 最近交接仍停止写入，无 B 重复占用。新分支 `b/b2-003-async-export` 从 main 建立，工作区干净。
+
+本批只认领 B 导出接口的异步 SHA-256 适配及真实浏览器 Worker 验证，保留同步 API/格式/数值行为。等待哈希期间输入变化或失效不能改变保存的样本/身份；预算在复制或调用哈希前核对，异步拒绝可传达。本批范围 B export、B 测试/说明/证据、B/根记录，不改 A/shared/integration/配置/冻结 fixture，不代写页面。lab-v3 与实时状态仍待协调。先推送认领/草稿 PR、复查重复，再修改功能；当前功能和本批新验收未开始。
