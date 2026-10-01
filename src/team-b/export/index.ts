@@ -3,13 +3,12 @@ import { DEFAULT_CONFIG } from '../../shared/defaults';
 import { calculateSync, validateConfig } from '../engine/core';
 import { meanPower, steadyMetrics } from '../analysis';
 import { DEMO_MODEL } from './model';
+import { ExportError, type ExportErrorCode } from './errors';
 export { DEMO_MODEL } from './model';
-
-export type ExportErrorCode = 'INVALID_FORMAT' | 'UNSUPPORTED_VERSION' | 'INVALID_DATA' | 'SIZE_LIMIT'
-  | 'INTEGRITY_MISMATCH' | 'MODEL_MISMATCH' | 'UNSUPPORTED_MODE';
-export class ExportError extends Error {
-  constructor(public readonly code: ExportErrorCode, message: string) { super(message); this.name = 'ExportError'; }
-}
+export { ExportError, type ExportErrorCode } from './errors';
+export { encodeLabRecipe, decodeLabRecipe, recomputeLabRecipeAsync, LAB_RECORDING_ASSET,
+  type LabRecipe, type LabRecipeInput, type LabRecomputeContext, type LabRecipeLimits } from './lab-recipe';
+export { LAB_RECIPE_MODEL } from './lab-model';
 /** Trusted caller supplies SHA-256; this module performs no I/O or environment-specific crypto. */
 export type Sha256 = (bytes: Uint8Array) => string;
 export type AsyncSha256 = (bytes: Uint8Array) => Promise<string>;

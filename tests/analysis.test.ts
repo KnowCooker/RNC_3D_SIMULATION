@@ -8,6 +8,7 @@ import { defaultLabConfig, type LabResult } from '../src/shared/lab-contracts';
 import { analyzeLab } from '../src/team-b/lab';
 // Export verification uses the existing B analysis test entry; no common script changes.
 import './helpers/export-tests';
+import './helpers/lab-recipe-tests';
 
 const result = decodeFixture(JSON.parse(readFileSync(new URL('../fixtures/reference/golden_browser_fixture.json', import.meta.url), 'utf8')));
 test('Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak', () => {
