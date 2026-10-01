@@ -17,7 +17,7 @@ export interface ReferenceSensor { id: string; name: string; position: Vec3; /**
 export const TEACHING_LAYOUT_ID = 'teaching-fixed-v1';
 export interface LabConfig {
   schemaVersion: 'lab-v3';
-  /** Missing in legacy lab-v3 runs means TEACHING_LAYOUT_ID. Other layouts need verified geometry and B paths first. */
+  /** Missing in legacy lab-v3 runs means TEACHING_LAYOUT_ID. Registered P7+ uses the same layout in geometry and B paths. */
   layoutId?: string;
   /** Omitted in saved runs: retain the original shaped-random source. */
   sourceMode?: 'recorded-noise' | 'shaped-noise';
@@ -109,9 +109,13 @@ export const SOURCE_POSITIONS: Four<Vec3> = [[1, 0.1, 1.45], [-1, 0.1, 1.45], [1
 export function labLayoutId(config: Pick<LabConfig, 'layoutId'>): string {
   return config.layoutId === undefined ? TEACHING_LAYOUT_ID : config.layoutId;
 }
-/** Guard the current fixed-coordinate engine until A2 anchors and B paths share a new layout ID. */
-export function supportedLabLayoutId(config: Pick<LabConfig, 'layoutId'>): typeof TEACHING_LAYOUT_ID {
+/** Reject unknown layouts and unsupported powertrains before computing any paths. */
+export function supportedLabLayoutId(config: Pick<LabConfig, 'layoutId'> & Partial<Pick<LabConfig, 'vehicle'>>): string {
   const id = labLayoutId(config);
+  if (id === P7_LAYOUT_ID) {
+    if (config.vehicle !== undefined && config.vehicle !== 'bev') throw new Error('P7+ 当前布局仅支持纯电后驱版本');
+    return id;
+  }
   if (id !== TEACHING_LAYOUT_ID) throw new Error(`物理布局 ${String(id)} 尚未接入声学路径和声场，不能运行实验`);
   return TEACHING_LAYOUT_ID;
 }
@@ -129,4 +133,27 @@ export function defaultLabConfig(): LabConfig {
     speedKph: 60, roadRoughness: 1, treadRoughness: 1, pressureKpa: 240, temperatureC: 20,
     references: SOURCE_POSITIONS.map(([x, , z], i) => ({ id: `ref-${i + 1}`, name: `REF ${['FL', 'FR', 'RL', 'RR'][i]}`, position: [x * 0.85, 0.67, z] })),
     speakerEnabled: [true, true, true, true] };
+}
+
+/** Photo-dimension-constrained P7+ BEV experimental layout. Not OEM measured acoustic data.
+ * +X left, +Y up, +Z forward; wheelbase 3 m. All positions are assembled metres. */
+export const P7_LAYOUT_ID = 'xpeng-p7plus-bev-v1';
+export interface LabLayout {
+  microphones: Four<Vec3>; speakers: Four<Vec3>; sources: Four<Vec3>;
+  floor: number; roof: number;
+}
+const P7_LAYOUT: LabLayout = {
+  microphones: [[.465,1.20,.20],[-.465,1.20,.20],[.49,1.19,-1.0],[-.49,1.19,-1.0]],
+  speakers: [[.84,.72,.58],[-.84,.72,.58],[.85,.72,-.65],[-.85,.72,-.65]],
+  sources: [[.831,.10,1.5],[-.831,.10,1.5],[.831,.10,-1.5],[-.831,.10,-1.5]],
+  floor: .405, roof: 1.43,
+};
+export function labLayout(config: Pick<LabConfig,'layoutId'> & Partial<Pick<LabConfig,'vehicle'>>): LabLayout {
+  const id = supportedLabLayoutId(config);
+  return id === P7_LAYOUT_ID ? P7_LAYOUT : { microphones: MIC_POSITIONS, speakers: SPEAKER_POSITIONS, sources: SOURCE_POSITIONS, floor: .55, roof: 1.9 };
+}
+export function defaultP7Config(): LabConfig {
+  return { ...defaultLabConfig(), layoutId: P7_LAYOUT_ID, vehicle: 'bev', references: P7_LAYOUT.sources.map(([x,,z],i) => ({
+    id: `ref-${i+1}`, name: `REF ${['FL','FR','RL','RR'][i]}`, position: [x*.82,.59,z], mountPart: `suspension-${i<2?1:-1}`,
+  })) };
 }

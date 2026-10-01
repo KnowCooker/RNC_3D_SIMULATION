@@ -1,10 +1,12 @@
 import * as THREE from 'three';
+import { createChampagneGallery } from './champagne-gallery';
 
-export type StageMode = 'road' | 'workshop';
+export type StageMode = 'road' | 'workshop' | 'gallery';
 export type RoadSurface = 'smooth' | 'coarse' | 'gravel';
 
 /** Geometry-only environments; the vehicle and acoustic scene stay at the same origin. */
 export function createSceneStage(scene: THREE.Scene) {
+  const gallery = createChampagneGallery(); scene.add(gallery.group);
   const road = new THREE.Group(); road.name = 'rnc-road-stage'; scene.add(road);
   const workshop = new THREE.Group(); workshop.name = 'rnc-workshop-stage'; scene.add(workshop);
   const roadFloor = new THREE.Group(); roadFloor.name = 'road-floor'; road.add(roadFloor);
@@ -155,11 +157,12 @@ export function createSceneStage(scene: THREE.Scene) {
     const signMaterial = new THREE.MeshBasicMaterial({ map: signTexture }); materials.add(signMaterial);
     add(workshop, new THREE.PlaneGeometry(5.2, 0.72), signMaterial, [-1.8, 2.42, -6.94]);
   }
-  for (const x of [-0.95, 0.95]) box(workshopFloor, [0.31, 0.07, 5.8], [x, 0.045, 0], iron);
+  const lift = new THREE.Group(), liftRails = new THREE.Group(); workshop.add(lift); workshopFloor.add(liftRails);
+  for (const x of [-0.95, 0.95]) box(liftRails, [0.31, 0.07, 5.8], [x, 0.045, 0], iron);
   for (const x of [-2.65, 2.65]) {
-    box(workshop, [0.42, 2.1, 0.42], [x, 1.05, -1.55], yellow);
-    box(workshop, [0.60, 0.10, 0.60], [x, 0.03, -1.55], black);
-    box(workshop, [1.65, 0.08, 0.18], [x * 0.64, 0.49, -1.55], yellow);
+    box(lift, [0.42, 2.1, 0.42], [x, 1.05, -1.55], yellow);
+    box(lift, [0.60, 0.10, 0.60], [x, 0.03, -1.55], black);
+    box(lift, [1.65, 0.08, 0.18], [x * 0.64, 0.49, -1.55], yellow);
   }
   const bayOutline = mat('#e8c263', 0.6);
   for (const x of [-3.2, 3.2]) box(workshopFloor, [0.035, 0.008, 7.3], [x, -0.028, 0], bayOutline);
@@ -174,21 +177,25 @@ export function createSceneStage(scene: THREE.Scene) {
   }
 
   let mode: StageMode = 'road';
-  function setMode(value: StageMode) { mode = value; road.visible = value === 'road'; workshop.visible = value === 'workshop'; }
+  function setMode(value: StageMode) { mode = value; road.visible = value === 'road'; workshop.visible = value === 'workshop'; gallery.group.visible = value === 'gallery'; }
   setMode(mode);
   return {
-    road, workshop,
+    road, workshop, gallery,
     get mode() { return mode; },
     get roadSurface() { return roadSurface; },
     setMode,
+    // Branded display vehicles have different wheelbases and explosion envelopes.
+    // Use an unobstructed inspection bay instead of misrepresenting lift contact.
+    setClearBay(value: boolean) { lift.visible = liftRails.visible = !value; },
     // Camera presentation only: preserve stage and car transforms.
-    setUnderfloorView(value: boolean) { roadFloor.visible = workshopFloor.visible = !value; },
+    setUnderfloorView(value: boolean) { roadFloor.visible = workshopFloor.visible = gallery.floor.visible = !value; },
     setRoadSurface,
     update(time: number, speedKph: number) {
       posts.position.z = -(time * speedKph / 3.6) % 4;
       if (roadMaterial.map) roadMaterial.map.offset.y = (time * speedKph / 3.6 / 160 * 36) % 1;
     },
     dispose() {
+      gallery.dispose();
       scene.remove(road, workshop);
       for (const geometry of geometries) geometry.dispose();
       for (const material of materials) material.dispose();

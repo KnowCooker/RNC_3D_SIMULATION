@@ -1,4 +1,4 @@
-import { MIC_POSITIONS, SOURCE_POSITIONS, SPEAKER_POSITIONS, type LabConfig, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
+import { labLayout, P7_LAYOUT_ID, type LabConfig, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
 import { RECORDED_PROFILE } from './recorded-profile';
 import { TEACHING_PRESSURE_GAIN } from './pressure-calibration';
 
@@ -29,7 +29,8 @@ function fractionalPath(components: { delay: number; gain: number }[], shape: nu
 function acousticPath(config: LabConfig, source: Vec3, point: Vec3, gain: number, extraDelay: number, secondary: boolean): SparsePath {
   const profile = VEHICLE_ACOUSTICS[config.vehicle], fs = config.sampleRateHz, c = soundSpeed(config.temperatureC);
   // Image sources give a floor and roof early reflection; this is not FEM/BEM or a measured cabin.
-  const positions: Vec3[] = [source, [source[0], 1.1 - source[1], source[2]], [source[0], 2 * profile.roof - source[1], source[2]]];
+  const layout = labLayout(config), roof = config.layoutId === P7_LAYOUT_ID ? layout.roof : profile.roof;
+  const positions: Vec3[] = [source, [source[0], 2 * layout.floor - source[1], source[2]], [source[0], 2 * roof - source[1], source[2]]];
   const relative = [1, profile.reflection, profile.reflection * 0.6];
   return fractionalPath(positions.map((position, i) => {
     const r = distance(position, point);
@@ -38,7 +39,7 @@ function acousticPath(config: LabConfig, source: Vec3, point: Vec3, gain: number
 }
 
 export function geometricPrimaryPath(config: LabConfig, sourceIndex: number, point: Vec3): SparsePath {
-  const wheel = SOURCE_POSITIONS[sourceIndex], profile = VEHICLE_ACOUSTICS[config.vehicle];
+  const wheel = labLayout(config).sources[sourceIndex], profile = VEHICLE_ACOUSTICS[config.vehicle];
   // Wheel excitation reaches the floor through the suspension/body, which then radiates into the cabin.
   const radiator: Vec3 = [wheel[0] * 0.72, 0.58, wheel[2] * 0.85];
   return acousticPath(config, radiator, point, 0.065 * profile.primary, profile.bodyDelay, false);
@@ -49,10 +50,11 @@ export function primaryPath(config: LabConfig, sourceIndex: number, point: Vec3)
     // A local dominant equivalent path preserves each recorded seat's spectrum,
     // while a 5% coupling floor retains every source at every spatial point.
     // This fitted teaching spatial envelope is not measured radiation directivity.
-    const wheel = SOURCE_POSITIONS[sourceIndex], anchor = MIC_POSITIONS[sourceIndex];
+    const wheel = labLayout(config).sources[sourceIndex], anchor = labLayout(config).microphones[sourceIndex];
     const profile = VEHICLE_ACOUSTICS[config.vehicle];
     const radiator: Vec3 = [wheel[0] * .72, .58, wheel[2] * .85];
-    const positions: Vec3[] = [radiator, [radiator[0], 1.1-radiator[1], radiator[2]], [radiator[0], 2*profile.roof-radiator[1], radiator[2]]];
+    const layout = labLayout(config), roof = config.layoutId === P7_LAYOUT_ID ? layout.roof : profile.roof;
+    const positions: Vec3[] = [radiator, [radiator[0], 2*layout.floor-radiator[1], radiator[2]], [radiator[0], 2*roof-radiator[1], radiator[2]]];
     const locality = .05 + .95 * Math.exp(-(((point[0]-anchor[0])/.4)**2 + ((point[2]-anchor[2])/.6)**2));
     const scale = RECORDED_NOISE_PRESSURE_GAIN * 10 ** ((config.levelOffsetDb ?? 0) / 20);
     const bins = new Map<number, number>();
@@ -91,11 +93,11 @@ export function primaryPath(config: LabConfig, sourceIndex: number, point: Vec3)
 export const RECORDED_NOISE_PRESSURE_GAIN = 4.3619057736237865;
 
 export function secondaryPath(config: LabConfig, speakerIndex: number, point: Vec3): SparsePath {
-  return acousticPath(config, SPEAKER_POSITIONS[speakerIndex], point, 0.28, 1, true);
+  return acousticPath(config, labLayout(config).speakers[speakerIndex], point, 0.28, 1, true);
 }
 
 export function referencePath(config: LabConfig, sourceIndex: number, point: Vec3): SparsePath {
-  const r = distance(SOURCE_POSITIONS[sourceIndex], point);
+  const r = distance(labLayout(config).sources[sourceIndex], point);
   // Effective early structural arrival and spatial coupling; adding/moving a reference changes real input coherence.
   return fractionalPath([{ delay: r / 900 * config.sampleRateHz,
     gain: Math.exp(-r * r / 2.5) / (0.35 + r) }], [0.85, 0.15]);

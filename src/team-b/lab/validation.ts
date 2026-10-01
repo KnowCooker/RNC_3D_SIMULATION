@@ -1,7 +1,8 @@
-import { labDurationLimit, type LabConfig } from '../../shared/lab-contracts';
+import { labDurationLimit, supportedLabLayoutId, type LabConfig } from '../../shared/lab-contracts';
 
 export function validateLabConfig(config: LabConfig, mode: 'batch' | 'live' = 'batch'): void {
   if (!config || config.schemaVersion !== 'lab-v3') throw new Error('需要 lab-v3 配置');
+  supportedLabLayoutId(config);
   if (config.sourceMode !== undefined && !['recorded-noise', 'shaped-noise'].includes(config.sourceMode)) throw new Error('声源类型不受支持');
   if (!['ice', 'bev', 'hev', 'erev'].includes(config.vehicle)) throw new Error('车型不受支持');
   if (config.sampleRateHz !== 2000 || ![0, 2].includes(config.adaptationStartsSeconds)) throw new Error('当前采样率为2000Hz；学习从0s开始，兼容旧配置2s');
