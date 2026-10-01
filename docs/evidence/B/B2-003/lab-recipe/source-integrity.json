@@ -55,12 +55,12 @@
     "comparison.json": "604e454ac7c03974bd39ac62beb6541483bf44d7e2c162a2cc110152a500a581",
     "browser-report.json": "dd80faab273c8b24a2b5b9fad5200779f6c9ec4721174eee2864781f022a09fc",
     "browser-console.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
-    "typecheck.txt": "5a3973f79ed9becd5f23c4feff467513814de7ea381d75a4d2e339aa8b8edca9",
-    "analysis-test.txt": "f989f5d6f9655698feea8848ed5b36db016fa1d1d6f0cca71d81a3998d8b1fd9",
-    "test-b.txt": "8e4ef31719b4d92cbcfe3015391f980a765195bece1da02b113bf97bb202ed09",
-    "check.txt": "18e86ae17708d89086b1dfe49aa08a2549374dbde8740402b24b94dc2c85d633",
-    "audit-run.txt": "92af61ec6d4bcfafae0933fd46db972ab2bd1fc3eaa553bc0033214fa9d67d28",
-    "browser-build.txt": "9b003b390b0c63ff321b4e78dd01b29ae1cd9f05563982e64cb217ae76627c0c"
+    "typecheck.txt": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+    "analysis-test.txt": "b0e2948091f4e95af7001979a4c8316ae4de49522408379daa6534149fab1e18",
+    "test-b.txt": "1a2613964bd77cdf4bec6502bc2426cd2a7a593bc55a2501beff92ee2edddba6",
+    "check.txt": "51d15f4fa4179d4d7436b0c40807adc328ead153191a42eb25fd88fdde590948",
+    "audit-run.txt": "9341180d82032cf5db80592510d174a775af3bc6b6545593429a13ce40a65fa5",
+    "browser-build.txt": "238351bb9ad5f9928d5c14e6d31d2816c75a066f17753dc2c3ef56b2672b6ca2"
   },
   "frozenFixtures": {
     "fixtures/reference/verification.json": "7cc90b0fb8f529bccc1d844a78d55378f501e86a9a6e26ad01c29ca441f98d90",
@@ -75,5 +75,6 @@
   "frozenFixturesUnchanged": true,
   "browserErrors": [],
   "browserPeakMemoryMeasured": false,
-  "productIntegrationTested": false
+  "productIntegrationTested": false,
+  "reportHashEncoding": "utf8-lf"
 }
