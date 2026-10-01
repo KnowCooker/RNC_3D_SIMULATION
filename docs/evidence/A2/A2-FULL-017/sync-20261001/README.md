@@ -27,3 +27,7 @@ Role: A2；Task: A2-FULL-017；Identity-Source: user-declared；执行者 Codex 
 ## 下一步
 
 推送现有A2分支并核对PR #30；保留草稿和历史GLB取消问题。完整同车资产/安装布局、B按布局计算、最终设备与交付仍按最新云境香槟实施计划继续；本批不认领或实现这些新功能。
+
+## 发布核对
+
+合并提交 `a9894522be9cfcc01be05ad85ab48511e2d52b17` 已推送，远端A2与本地SHA一致；本地main已仅快进至云端`67387f6`。[PR #30](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/30)正文已更新，状态open/draft、mergeable=true；查询时两项verify运行中，后继文档提交以最新CI为准。未合并云端main。
