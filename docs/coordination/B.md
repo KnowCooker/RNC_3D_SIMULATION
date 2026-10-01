@@ -337,3 +337,5 @@ Role: B2；Identity-Source: user-declared；执行者Codex。用户已合并#53�
 目标A1：独立完整结果文件流程使用B export入口，与现有案例摘要分开。由integration/可信构建注入真实源码commit、SHA/已知录音字节和Worker；不在B模块读取文件。导入保持原source/runId和只读状态，检查modelSupported/layoutSupported/verifiedMetrics及每项valid/reason；rawMetricsMatch=false明确隔离自报摘要，NaN/静音/短前缀不可变成假收益。未知版本不自动运行当前声场；显式配方复算创建新runId，实录缺失直接报错，不回退随机源。
 
 验收条件：demo与四lab车型/两源/1～8参考的文件下载/只读导入与显式复算、发散状态展示/禁止续算、坏文件或超预算不改当前实验，任务失败/取消/重复导入身份隔离；记录产品Worker/转移所有权和实际峰值内存/目标设备/第二机。模块用法见src/team-b/export/README.md。此请求未修改/批准共管接口、未给其他会话发消息，不代表A1已接班或通过验收。
+
+**2026-10-01 / B2 / B2-003 lab结果发布回填**：Role: B2；Identity-Source: user-declared；执行者Codex。实现/测试/证据e1c1a5e30093541d949996dacbf1910243962159已推送hgyong:b/b2-003-lab-result，[PR#54](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/54)已转可审查，正文更新实际范围/验证/未验项。推送前main仍33fbddc，开放仅#54/#30，提交钩子/差异检查通过。最终专项60/60、B117/117、全仓207/207与生产Worker15/15通过；5秒指标窗及999点warming-up已复验，最终29案例报告保留先前本地输出后重跑生成，源码/报告采用UTF-8/LF哈希与Git一致。当前已远端同步、待审未合并；旧“待提交推送”为历史时点，最新交接head/云端CI/可合并性以PR最终核对为准，尚未声称通过。本批结束停止写入，不自动合并main；维护者审查后由A1按B页请求接正式产品文件/Worker流程，设备/内存/实验隔离和B1布局审查仍待验，完整003未签收，004未认领。
