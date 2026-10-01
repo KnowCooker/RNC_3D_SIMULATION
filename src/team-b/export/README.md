@@ -1,6 +1,6 @@
-# demo-v2 结果与配方 API
+# demo-v2 结果及 demo-v2 / lab-v3 配方 API
 
-本模块只支持从样本 0 开始的完整 demo-v2 批量结果，固定 2000 Hz、32000 点、x/u/d/a/e 各四路。同步与异步结果 API 使用相同格式；lab-v3、发散前缀、实时快照和状态续算均未实现。无 DOM、文件读写、网络或 A/integration 依赖，不修改引擎公式或共享契约。
+结果文件支持从样本 0 开始的完整 demo-v2 批量结果，固定 2000 Hz、32000 点、x/u/d/a/e 各四路。同步与异步结果 API 使用相同格式。另提供 lab-v3 教学布局的批量配方复算，保留发散有限前缀；lab 完整结果容器、实时快照和状态续算尚未实现。无 DOM、文件读写、网络或 A/integration 依赖，不修改引擎公式或共享契约。
 
 ```ts
 import {
@@ -52,4 +52,34 @@ const restored = await decodeResultAsync(file, asyncSha256);
 
 容器硬上限 64 MiB，manifest/配方分别 64 KiB；调用方可以进一步降低预算，不能提高硬上限。导入先验证头部、实际长度、预算、通道、哈希及全部样本有限性，再分配输出通道。非零 byteOffset 的输入视图按自身范围读取。截断、尾随字节、非零填充、无效 UTF-8、未知格式、重复/错位通道、额外配置字段、异常指标或来源、坏哈希、过量及非有限数据均抛出 `ExportError`；哈希仅用于完整性检查，不认证来源。
 
-验收及复现见 [B2-003 demo API 证据](../../../docs/evidence/B/B2-003/demo-api/README.md)及上述异步证据。A1 后续负责独立文件流程、错误展示、实验身份隔离、产品 Worker 接入和峰值内存验收；lab-v3 仍需 B1/指定集成者核定布局、素材及版本清单后接续同一任务。
+验收及复现见 [B2-003 demo API 证据](../../../docs/evidence/B/B2-003/demo-api/README.md)及上述异步证据。A1 后续负责独立文件流程、错误展示、实验身份隔离、产品 Worker 接入和峰值内存验收。
+
+## lab-v3 教学批量配方
+
+```ts
+import { encodeLabRecipe, decodeLabRecipe, recomputeLabRecipeAsync } from './index';
+const json = encodeLabRecipe({
+  mode: 'batch', originSample: 0, config: labConfig,
+  originalRunId: labRunId, source: 'computed-browser',
+}, { sourceCommit: buildCommit });
+const recipe = decodeLabRecipe(json); // 只读解析，不加载素材或启动计算。
+const repeated = await recomputeLabRecipeAsync(recipe, {
+  runId: newRunId, sha256: asyncSha256,
+  // 调用方负责选择/读取已知素材；这里只返回原始 RNQ1 全文件字节。
+  resolveAsset: async descriptor => suppliedRecordingBytes,
+  limits: { maxRecipeBytes: 16 * 1024, maxSignalBytes: 32 * 1024 * 1024 },
+});
+// repeated.status 可为 diverged，result.sampleCount 是实际有限前缀。
+```
+
+`rnc-recipe-v1` 内的 `modelSchema: lab-v3` 与 demo 分开；demo 入口仍拒 lab。原配置逐字段保存，`lab-legacy-defaults-v1` 规范化副本明确历史缺省：未提供 `sourceMode` 为 shaped-noise、`layoutId` 为 teaching-fixed-v1、`levelOffsetDb` 为 0。不会使用页面当前的录音默认值覆盖旧配置。两份配置、时长/样本数、稳定参考 ID/名称/坐标/安装点、四路扬声器开关、车型/算法/路况参数、原运行身份和来源必须一致有效；不接受额外脚本/URL字段。
+
+当前只复算 `teaching-fixed-v1`。`LAB_RECIPE_MODEL` 登记 UTF-8/LF 源码哈希，包括共享配置/坐标、lab 引擎/源/路径/实录读取/计权/指标及依赖；测试核对这些文件。未知模型或布局的同结构配方可供检查，但复算独立拒绝，且在请求素材之前拒绝；不依赖引擎对未知布局的默认行为。源码 commit 是调用方声明的来源，模型哈希用于支持版本核对，均不认证发布者。
+
+录音配方必须匹配 `LAB_RECORDING_ASSET`：RNQ1 全文件 1280016 字节 SHA-256，2000 Hz / 80000 点，源通道顺序 49/53/51/55，同步余弦交叠读取版本、79600 点周期/400 点交叠及统一源增益。原始 V 未标定，生成源为相对幅度，不能称实车 Pa 校准。调用方必须提供素材和异步 SHA-256，完整字节校验通过后使用现有读取器；缺素材、错长度、坏哈希或不支持的身份均拒绝，绝不替换为随机源。shaped-noise 不需要素材或哈希函数。
+
+复算从零执行现有 `calculateLab`，必须使用新 runId，返回原 ID 的独立关联及 computed-browser 来源。配置、身份、预算在首个 await 前复制；素材返回后立即保存独立字节副本再等待哈希，调用方后续修改或转移原 buffer 不影响本次结果。哈希适配器不得改写内部副本，拒绝原样传播。返回 diverged 时保留既有 `divergence`/有限信号/指标，不补零、不冒充完成、不恢复实时状态。
+
+JSON 硬上限 64 KiB；信号储存预算硬上限 64 MiB，按 `(20 + 参考数) × 请求点数 × 4` 检查，可降低。另沿用引擎现有配置/内存时长限制。这个预算只计算返回 Float32 信号，不含路径、权重、临时数组、录音或容器副本，不能作为浏览器峰值证明；计算建议由调用方放在 Worker，异步素材加载不代表计算循环会自动让出线程。
+
+本批证据见 [lab 配方验收](../../../docs/evidence/B/B2-003/lab-recipe/README.md)。这是已合并教学模型的确定性复算验收，不替代 B1 正式布局审查或数值正确性独立对照。lab 完整结果序列化、A1 正式文件流程/Worker/取消、设备内存/性能和第二机仍独立待办，完整 B2-003 尚未签收。
