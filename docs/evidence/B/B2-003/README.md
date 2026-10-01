@@ -1,5 +1,7 @@
 # B2-003 导出设计准备证据
 
+最新进度（2026-10-01）：设计 #44 已合并；B1-001 #48 的五算例数值证据解除 demo-v2 依赖。已续作 [demo-v2 结果导出/配方复算 API 批次](demo-api/README.md)，[PR #51](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/51)。lab-v3/实时状态/UI/设备验收仍独立待办；下方 9 月 29 日内容保留设计交付时点。
+
 用户角色B2；Identity-Source: user-declared；执行者Codex；2026-09-29。
 任务分支`b/b2-003-export-design`；基线`842bec8197a61df9d849e60e86504292de7846d0`；[PR #44](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/44)。
 

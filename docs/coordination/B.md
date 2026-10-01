@@ -188,7 +188,7 @@ Role: B1；Identity-Source: local-config；执行者Codex；基线6a5a71b加本�
 | --- | --- | --- | --- |
 | B2-001 | 已合并 | 合成源/路径及复现说明：[证据](../evidence/B/B2-001/README.md)；[PR #29](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/29)，合并`8724b09` | 原B需求第2/3/6节；不替代lab-v3或设备验收 |
 | B2-002 | 已合并 | 指标与频谱边界及非有限测量修复；专项12/12、B组54/54、合入新main后全仓116/116，最终CI成功；[PR #33](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/33)，合并`6a5a71b`；[证据](../evidence/B/B2-002/README.md) | 原B需求第3节；analyzeAt契约保持；不替代设备验收 |
-| B2-003 | 阻塞（设计已交付待审；实现待B1-001） | [设计与字节核算](../evidence/B/B2-003/README.md)、[PR #44](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/44)；正式要求仍为无DOM兼容API、配置/模型/路径/seed/runId/来源/单位/顺序/样本数/指标导出及结果还原/配方复算一致性，禁止单独归一化信号。设计不等于API实现或整项完成 | B1-001尚待完整逐样本证据；B2-002已满足；API交给A1接UI，B组不代写页面 |
+| B2-003 | demo-v2 API 已实现待合并（#51）；lab-v3 待协调 | 设计 #44 已合并 `83ee77a`；B1-001 #48 已合并 `fa805e2`。无 DOM 结果往返/配方复算与五工况 320 万样本逐位验收通过，B 85/85、全仓 175/175；[证据](../evidence/B/B2-003/demo-api/README.md)。保留来源/模型/单位/通道/无效值，不单独归一化；lab-v3/UI/设备仍待办，不宣称整项完成 | B1-001、B2-002已满足；无 shared/integration 修改；API供A1后续接UI |
 | B2-004 | 待认领 | 数据适配与最终报告：核对RunResult维度、时标、来源及分析/导出接口；整理B01～B08矩阵、固定配置、运行方法、代码SHA、真实验证、待测项与A1联调请求；协助第二台Windows离线复现。Worker/common修改须先协调，不能凭A组旧证据声称新引擎通过 | B2-001～003；汇总B1结果；设备条件不可用单列待测 |
 
 B2-003是当前A1等待的跨组导出接口。B2可以先核对设计与格式；涉及共享契约变更必须与A1+B1协调。B1主责完整数值正确性，B2主责数据和报告整理，避免两人重复维护两套算法或两套指标公式。
@@ -264,3 +264,21 @@ B1/B2串行共用文件，确认前任已停止并保存工作后，继续我负
 **2026-09-30 / B1 / B1-002、003 发布准备**：Role: B1，Identity-Source: local-config，执行者Codex。用户明确要求推送PR。已核对当前运行/测试文件SHA与final-integrity记录一致、冻结8文件未变；69/69 B组、159/159全仓证据有效。远端API确认main新增A1 #49至b209262，开放PR仅A2 #30。先提交保存本批，再合入最新main复验，避免覆盖A1内容。范围仍为002/003及必要合入交接；下一步推送并创建PR，不合并main。
 
 **2026-09-30 / B1 / B1-002、003 已发布 PR #50，合入最新 main**：Role: B1，Identity-Source: local-config，执行者Codex。实现dc9628fa800221b4645862e4f5d2091d8132a323已推送origin/b/b1-coordination，[PR #50](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/50)已创建为可审查、未合并。已无冲突合入main b209262（A1 #49设计素材/文档）；相对实现提交，src/tests/依赖/冻结fixture无变化。测试源码哈希及8个冻结文件再次核对一致，69/69 B组、159/159全仓和构建证据保持适用；合入后另跑类型/目录边界通过，无需重复相同数值测试。此次合并提交回填发布状态，最新SHA/CI以PR head为准；此前未提交/上传描述为历史。本批结束停止写入，下一步评审合并及B1-004/布局接口后续任务，不自动合并PR。
+
+## B2-003 API 接班（2026-10-01）
+
+- Role: B2；Identity-Source: user-declared；执行者 Codex，延续固定 B2 会话。用户授权“是否能继续B2任务，可以就继续”。基线原仓库 main `67387f68c6a6c1d9ad0826794f61ebde74aa649c`；分支 `b/b2-003-export-api`。工作区原先干净；开放 PR 仅 A2 #30，B1 #50 最新交接明确结束停止写入。
+- 核对合并事实：设计 #44 已合并 `83ee77a`，B1-001 #48 已合并 `fa805e2`，B1-002/003 #50 已合并 `67387f6`。五算例 100 路/320 万样本独立 Python 对照已进入 main；本批不修改 B1 历史或接管其布局审查。
+- 本批认领 demo-v2 导出 API：结果二进制往返、配置配方从零复算、模型身份、通道单位、来源、指标无效值及严格坏输入验证。仅 `src/team-b/export/**`、B 组已有测试入口/必要帮助文件、B 说明/证据、本页和根记录；不改共享契约、integration、A 源码、根配置或冻结 fixture。
+- 先推送认领并建立草稿 PR，再改功能。lab-v3 布局/素材版本及实时状态仍待独立协调，首批明确拒绝 lab/live；A1 后续接 UI。当前未开始功能修改/验收，认领远端发布待完成。
+
+### 2026-10-01 / B2 / B2-003 / demo-v2 API 批次完成
+
+- Role: B2；Identity-Source: user-declared；执行者 Codex。认领 `fd6404c`、原仓库草稿 [PR #51](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/51) 已发布，复查仅 #51/#30；之后实现功能。分支 `hgyong:b/b2-003-export-api`，基线 `67387f6`。
+- 变更：B export 模块提供结果编码/解码/字节估算、配方编码/解码/显式复算及本地模型源码哈希清单；B 测试挂入现有 analysis 入口，补说明与 [demo API 证据](../evidence/B/B2-003/demo-api/README.md)。原引擎公式、shared/integration、A、根配置和冻结 fixture 未改。
+- 实际验证：专项 28/28（新增导出 16 项）；`pnpm test:b` 85/85；最终 `pnpm check` 175/175、类型/边界/生产构建全部通过，既有大块提示保留。五工况各 640000 值，往返与复算分别共 320 万样本逐位一致；复算对独立 B1 Python 最大相对 RMS 1.1416e-14、最大绝对误差 2.8422e-14、最大指标差 9.2589e-9 dB，8 个冻结文件未变。逐通道哈希、输入不变、独立数组、坏输入和模式边界均有证据；未测浏览器/设备。
+- API 边界：只接受完整 demo-v2 batch；固定单位/通道/时间、来源/runId/配置/模型、非有限原指标和测量无效原因均保留。未知模型结果只读、无已验证指标，未知模型配方拒复算。新 runId 不冒充原运行。同步 SHA-256 由调用方注入，异步浏览器适配/Worker 接入仍需协调。
+- 当前状态：demo-v2 阶段已验证、待提交推送/合并，不标整项完成；lab-v3 的布局/实录素材版本、动态参考、发散前缀、实时状态、A1 文件 UI/取消/内存与第二机尚未完成。跨组影响仅后续 API 请求，本批不改共享接口或页面。
+- 下一步：提交推送本批、核对 PR 最新 head/CI/冲突并转可审查；本批结束停止写入，不自动合并。维护者审查 #51；B1/指定集成者核定 lab-v3 版本和素材身份，B2 再按同一任务接续。B2-004 仍待完整 003 及汇总设备条件，不提前签收。
+
+**2026-10-01 发布回填**：Role: B2；Identity-Source: user-declared；执行者 Codex。实现及全部验证证据提交 `d6d4603` 已推送 `hgyong:b/b2-003-export-api`；[PR #51](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/51)已转可审查，正文重写为实际 demo-v2 API 范围。推送前 fetch 确认 main 仍 `67387f6`，差异限本任务 B 文件与日志，提交钩子/证据源码哈希/diff检查通过。最新 PR head、可合并性及云端 CI 正在按最终提交核对，未声称通过、未合并 main。下方/上方“待提交推送”为此前时点；当前本批写入结束，待维护者审查，完整003的lab/UI/设备待办保持。
