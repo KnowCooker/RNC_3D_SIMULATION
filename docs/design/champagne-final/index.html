@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>云境香槟 · 页面与交互定稿</title><link rel="icon" href="data:,"><link rel="stylesheet" href="styles.css"></head>
+<body><header class="review-bar"><div><strong>云境香槟 <span class="badge">已选定视觉方向</span></strong><small>页面与交互原型 · 固定效果图 + 控件状态演示</small></div><nav id="page-nav" aria-label="页面导航"></nav><div class="review-tools"><label><input id="annotations" type="checkbox">交互标注</label><button data-action="components">组件与状态</button><a href="UI-INTERACTION-SPEC.md" target="_blank">设计规格 ↗</a></div></header>
+<main><section class="artboard" id="artboard" aria-label="产品页面效果图"><img id="screen" width="1672" height="941" alt=""><div id="hotspots"></div></section>
+<div class="caption"><span id="page-caption"></span><a id="original" href="" target="_blank">查看原图 ↗</a></div>
+<section class="workbench"><article class="glass"><div class="eyebrow">INTERACTION STATE</div><h2>当前交互状态</h2><p class="subtle">浮层与控件可操作；背景三维画面和图中读数为固定设计示例，不随参数实时重算。</p><div id="state-summary" class="state-summary"></div><div class="button-row"><button data-action="scene">场景与工况</button><button data-action="field-controls">声场观察</button><button data-action="structure-controls">结构操作</button><button data-action="run" class="primary">演示运行状态</button><button data-action="reset">重置原型</button></div></article>
+<article class="glass"><div class="eyebrow">PAGE BEHAVIOR</div><h2 id="page-purpose"></h2><ol id="page-behavior"></ol><p><a href="screens/01-overview-approved.png" target="_blank">用户批准的首页母版 ↗</a></p></article></section>
+<section class="screen-list glass"><h2>四页定稿总览</h2><div id="screen-list"></div></section>
+<footer>2026-09-30 · E-FINAL-1.0 · A1 / Codex · <a href="README.md" target="_blank">交付说明</a> · <a href="design-tokens.json" target="_blank">样式变量</a> · <a href="PROMPTS.json" target="_blank">内置 image_gen 提示词</a></footer></main>
+<dialog id="drawer" aria-labelledby="drawer-title"><header><div><div class="eyebrow">云境香槟 / 交互设计</div><h2 id="drawer-title"></h2></div><button data-action="close" aria-label="关闭浮层">×</button></header><div id="drawer-body"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div><script src="prototype.js"></script></body></html>

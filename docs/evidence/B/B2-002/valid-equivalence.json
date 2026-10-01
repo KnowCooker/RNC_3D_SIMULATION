@@ -1,0 +1,12 @@
+{
+  "role": "B2",
+  "task": "B2-002",
+  "identitySource": "user-declared",
+  "executor": "Codex",
+  "baseline": "3d81ebc84c5b79c561917d86bdea30b2517d6374",
+  "comparedFrames": 200,
+  "comparison": "deep strict equality: RMS, reduction, PSD bins and metadata",
+  "validFixtureFramesUnchanged": true,
+  "steadyMetricsUnchanged": true,
+  "nonnegativeSplUnchanged": true
+}

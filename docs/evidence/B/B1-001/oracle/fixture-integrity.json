@@ -1,0 +1,23 @@
+{
+  "before": {
+    "fixtures/reference/decoder_check.json": "0b4c0f72a358f6d8561d702a0c5df6b5d5c2a0a92470033f71ba97b8c81c49a0",
+    "fixtures/reference/driver_primary.wav": "602b6fde9c1d81e73ad6fad2be91978f2dbe6e4da54f7c90c159a38493905eb7",
+    "fixtures/reference/driver_residual.wav": "4cada47b49b8a27f6c9d0309ac0473dd03baac455fde6287d48876dc993d04e8",
+    "fixtures/reference/golden_4x4x4.npz": "50c27ec884aaf7c8562b40de0dfe94089536102eabb57b7554ecf1f756caf8b6",
+    "fixtures/reference/golden_browser_fixture.json": "a84793dd6134347c06bf4729fcd3cfec672f06688d6a2c4cab4e9ae31481fde2",
+    "fixtures/reference/initial_256_samples.csv": "72898a5ee3484f7025a990ca525ca1dd9f6dbea47ffeb68abd79c3ac7c47b260",
+    "fixtures/reference/reference_mimo.py": "e368d0090dfb56e72eb0317d6dfaf9e34535b162d8f97022bc8f83aab88a9817",
+    "fixtures/reference/verification.json": "7cc90b0fb8f529bccc1d844a78d55378f501e86a9a6e26ad01c29ca441f98d90"
+  },
+  "after": {
+    "fixtures/reference/decoder_check.json": "0b4c0f72a358f6d8561d702a0c5df6b5d5c2a0a92470033f71ba97b8c81c49a0",
+    "fixtures/reference/driver_primary.wav": "602b6fde9c1d81e73ad6fad2be91978f2dbe6e4da54f7c90c159a38493905eb7",
+    "fixtures/reference/driver_residual.wav": "4cada47b49b8a27f6c9d0309ac0473dd03baac455fde6287d48876dc993d04e8",
+    "fixtures/reference/golden_4x4x4.npz": "50c27ec884aaf7c8562b40de0dfe94089536102eabb57b7554ecf1f756caf8b6",
+    "fixtures/reference/golden_browser_fixture.json": "a84793dd6134347c06bf4729fcd3cfec672f06688d6a2c4cab4e9ae31481fde2",
+    "fixtures/reference/initial_256_samples.csv": "72898a5ee3484f7025a990ca525ca1dd9f6dbea47ffeb68abd79c3ac7c47b260",
+    "fixtures/reference/reference_mimo.py": "e368d0090dfb56e72eb0317d6dfaf9e34535b162d8f97022bc8f83aab88a9817",
+    "fixtures/reference/verification.json": "7cc90b0fb8f529bccc1d844a78d55378f501e86a9a6e26ad01c29ca441f98d90"
+  },
+  "unchanged": true
+}

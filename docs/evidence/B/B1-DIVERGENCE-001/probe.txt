@@ -1,0 +1,43 @@
+Captured from the actual probe.ts tool output on 2026-09-28.
+[
+  {
+    "stepSize": 0.5,
+    "count": 8000,
+    "peak": 234.03541564941406,
+    "batchCount": 8000,
+    "diverged": false,
+    "finite": true
+  },
+  {
+    "stepSize": 2,
+    "count": 2909,
+    "peak": 3.2231314585017366e+38,
+    "batchCount": 2909,
+    "diverged": true,
+    "finite": true
+  },
+  {
+    "stepSize": 10,
+    "count": 950,
+    "peak": 3.113419848473664e+38,
+    "batchCount": 950,
+    "diverged": true,
+    "finite": true
+  },
+  {
+    "stepSize": 100,
+    "count": 364,
+    "peak": 2.9073102049054518e+38,
+    "batchCount": 364,
+    "diverged": true,
+    "finite": true
+  },
+  {
+    "stepSize": 1e+308,
+    "count": 0,
+    "peak": 0,
+    "batchCount": 0,
+    "diverged": true,
+    "finite": true
+  }
+]

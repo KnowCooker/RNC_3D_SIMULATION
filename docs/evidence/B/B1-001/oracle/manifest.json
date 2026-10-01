@@ -1,0 +1,240 @@
+{
+  "schema": "b1-numeric-oracle-v1",
+  "role": "B1",
+  "task": "B1-001",
+  "identitySource": "local-config",
+  "executor": "Codex",
+  "date": "2026-09-30",
+  "codeBaseline": "83ee77af207742ab88d03c2e353d6a13960a6006",
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "referenceSha256": "e368d0090dfb56e72eb0317d6dfaf9e34535b162d8f97022bc8f83aab88a9817",
+  "format": "gzip of IEEE754 Float32 little-endian; signal, channel, sample",
+  "signals": [
+    "x",
+    "u",
+    "d",
+    "a",
+    "e"
+  ],
+  "channels": [
+    "fl",
+    "fr",
+    "rl",
+    "rr"
+  ],
+  "sampleCount": 32000,
+  "thresholds": {
+    "relativeRms": 0.001,
+    "nearZeroRms": 1e-12,
+    "nearZeroMaxAbs": 1e-06,
+    "metricDb": 0.2
+  },
+  "cases": [
+    {
+      "name": "default",
+      "seed": 11,
+      "taps": 64,
+      "stepSize": 0.08,
+      "file": "default.f32.gz",
+      "rawBytes": 2560000,
+      "rawSha256": "3a2b74ed1129f2eeb1e7c5482896c527af4141433b2c0527a9e5ae888a0581c1",
+      "gzipSha256": "c44a3fb19e767dac87cd4cc362dc59978b4979766ab1df6c0b66c6675c36bbe3",
+      "pythonFloat64RepeatExact": true,
+      "report": {
+        "seed": 11,
+        "taps": 64,
+        "mu": 0.08,
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "measurementWindowSeconds": [
+          12,
+          16
+        ],
+        "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+        "reductionDbByMic": [
+          28.899678154145345,
+          28.711028743240902,
+          28.96180209538674,
+          28.816193285886573
+        ],
+        "aggregateReductionDb": 28.847918337250782,
+        "maxAbsControlDrive": 1.1247848541369885,
+        "maxAbsPressurePa": 0.1587409041615212,
+        "superpositionMaxAbsErrorPa": 6.938893903907228e-18,
+        "secondaryNonzeroCrossPaths": 12,
+        "limitations": [
+          "Synthetic controllable FIR paths, not measured vehicle acoustics",
+          "Python elapsed time does not benchmark browser rendering or JavaScript",
+          "Controller has 16 filters; all 16 secondary paths are included"
+        ]
+      },
+      "pythonComputeSeconds": 0.6146612000011373
+    },
+    {
+      "name": "seed29",
+      "seed": 29,
+      "taps": 64,
+      "stepSize": 0.08,
+      "file": "seed29.f32.gz",
+      "rawBytes": 2560000,
+      "rawSha256": "f3fb734b17dc58a037b0f949996045bf3bb8853b44f198bd0a715c56eca6c192",
+      "gzipSha256": "c13eda5c9700868e535834968e6280ced908851c1d6ab0d18f9ab474a6e960f2",
+      "pythonFloat64RepeatExact": true,
+      "report": {
+        "seed": 29,
+        "taps": 64,
+        "mu": 0.08,
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "measurementWindowSeconds": [
+          12,
+          16
+        ],
+        "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+        "reductionDbByMic": [
+          28.646455369270193,
+          28.715209033733625,
+          28.396953000028283,
+          28.725540904397526
+        ],
+        "aggregateReductionDb": 28.62181239153316,
+        "maxAbsControlDrive": 1.117962081479206,
+        "maxAbsPressurePa": 0.14693419745522382,
+        "superpositionMaxAbsErrorPa": 6.938893903907228e-18,
+        "secondaryNonzeroCrossPaths": 12,
+        "limitations": [
+          "Synthetic controllable FIR paths, not measured vehicle acoustics",
+          "Python elapsed time does not benchmark browser rendering or JavaScript",
+          "Controller has 16 filters; all 16 secondary paths are included"
+        ]
+      },
+      "pythonComputeSeconds": 0.643949999997858
+    },
+    {
+      "name": "seed47",
+      "seed": 47,
+      "taps": 64,
+      "stepSize": 0.08,
+      "file": "seed47.f32.gz",
+      "rawBytes": 2560000,
+      "rawSha256": "d4f21612c8b502115859b713864bbd8ff49948d36c0dda2d675d9dd9a3d2907a",
+      "gzipSha256": "6a67c88377f53dfb343f8daa37431515ed950c2f1664e1d94b537f616219215f",
+      "pythonFloat64RepeatExact": true,
+      "report": {
+        "seed": 47,
+        "taps": 64,
+        "mu": 0.08,
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "measurementWindowSeconds": [
+          12,
+          16
+        ],
+        "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+        "reductionDbByMic": [
+          28.66980769151744,
+          28.83278352272205,
+          28.658626516475593,
+          29.010857474210564
+        ],
+        "aggregateReductionDb": 28.791749643821323,
+        "maxAbsControlDrive": 1.029550353762588,
+        "maxAbsPressurePa": 0.13856395317313058,
+        "superpositionMaxAbsErrorPa": 6.938893903907228e-18,
+        "secondaryNonzeroCrossPaths": 12,
+        "limitations": [
+          "Synthetic controllable FIR paths, not measured vehicle acoustics",
+          "Python elapsed time does not benchmark browser rendering or JavaScript",
+          "Controller has 16 filters; all 16 secondary paths are included"
+        ]
+      },
+      "pythonComputeSeconds": 0.6103849999926751
+    },
+    {
+      "name": "taps32",
+      "seed": 11,
+      "taps": 32,
+      "stepSize": 0.08,
+      "file": "taps32.f32.gz",
+      "rawBytes": 2560000,
+      "rawSha256": "7414b774130017d75ffb84b89852e5b1e943655074f271e27deafa724b5b8c1d",
+      "gzipSha256": "cde3ae9dbf3be23ea9f344a99608cd88cbc89208e505e46441b5733a3c30f64a",
+      "pythonFloat64RepeatExact": true,
+      "report": {
+        "seed": 11,
+        "taps": 32,
+        "mu": 0.08,
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "measurementWindowSeconds": [
+          12,
+          16
+        ],
+        "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+        "reductionDbByMic": [
+          28.984393097994413,
+          28.995616758824646,
+          29.15718819246416,
+          29.032896162130733
+        ],
+        "aggregateReductionDb": 29.041613983993877,
+        "maxAbsControlDrive": 1.1198691393984928,
+        "maxAbsPressurePa": 0.1587409041615212,
+        "superpositionMaxAbsErrorPa": 6.938893903907228e-18,
+        "secondaryNonzeroCrossPaths": 12,
+        "limitations": [
+          "Synthetic controllable FIR paths, not measured vehicle acoustics",
+          "Python elapsed time does not benchmark browser rendering or JavaScript",
+          "Controller has 16 filters; all 16 secondary paths are included"
+        ]
+      },
+      "pythonComputeSeconds": 0.5727388999948744
+    },
+    {
+      "name": "mu0",
+      "seed": 11,
+      "taps": 64,
+      "stepSize": 0,
+      "file": "mu0.f32.gz",
+      "rawBytes": 2560000,
+      "rawSha256": "5d2243346c541e7c5b91c0c381db98637d6dcb25f80391e53b2ff580c823e7f8",
+      "gzipSha256": "c4cced84c6e370bbf73fa06cde32bc050ff4f249e4a3976a2636b36b3bbf710f",
+      "pythonFloat64RepeatExact": true,
+      "report": {
+        "seed": 11,
+        "taps": 64,
+        "mu": 0,
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "measurementWindowSeconds": [
+          12,
+          16
+        ],
+        "measurement": "unweighted full sampled band RMS for this band-shaped fixture",
+        "reductionDbByMic": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "aggregateReductionDb": 0.0,
+        "maxAbsControlDrive": 0.0,
+        "maxAbsPressurePa": 0.1587409041615212,
+        "superpositionMaxAbsErrorPa": 0.0,
+        "secondaryNonzeroCrossPaths": 12,
+        "limitations": [
+          "Synthetic controllable FIR paths, not measured vehicle acoustics",
+          "Python elapsed time does not benchmark browser rendering or JavaScript",
+          "Controller has 16 filters; all 16 secondary paths are included"
+        ]
+      },
+      "pythonComputeSeconds": 0.6084132999967551
+    }
+  ]
+}

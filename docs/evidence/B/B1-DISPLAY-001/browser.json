@@ -1,0 +1,156 @@
+{
+  "url": "http://127.0.0.1:4173/",
+  "finalLiveElapsedSeconds": 179.72,
+  "finalLiveBufferUnderruns": 0,
+  "displayMenuCheck": {
+    "error": true,
+    "legends": [
+      [
+        "wave",
+        "原声 d · FRE FR"
+      ],
+      [
+        "spectrum",
+        "E FR"
+      ],
+      [
+        "convergence",
+        "原声 d残差 e"
+      ]
+    ],
+    "run": "纯电 SUV · 实时 4×4×4 · 02647e83",
+    "sizes": [
+      {
+        "canvas": 220,
+        "h": 332,
+        "w": 719
+      },
+      {
+        "canvas": 220,
+        "h": 332,
+        "w": 719
+      },
+      {
+        "canvas": 220,
+        "h": 332,
+        "w": 719
+      }
+    ],
+    "status": "实时运行 · 83.7 s · 缓冲 1.30 s · 共同安全增益 0.120 · 补缓冲 0 次",
+    "time": "累计 01:23.70",
+    "weights": [
+      "Z",
+      "A"
+    ]
+  },
+  "convergenceDisplayCheck": {
+    "legends": [
+      "原声 d · FRE FR",
+      "原声 d · FRE FR",
+      "残差 e"
+    ],
+    "time": "累计 01:23.73",
+    "weights": [
+      "A",
+      "Z"
+    ]
+  },
+  "wideDisplayCheck": {
+    "cards": [
+      {
+        "height": 332,
+        "left": 28.80000114440918,
+        "top": 529.9125366210938,
+        "width": 446
+      },
+      {
+        "height": 332,
+        "left": 488.5249938964844,
+        "top": 529.9125366210938,
+        "width": 446
+      },
+      {
+        "height": 332,
+        "left": 948.2625122070312,
+        "top": 529.9125366210938,
+        "width": 446
+      }
+    ],
+    "overflow": false,
+    "viewport": 1440
+  },
+  "replayDisplayCheck": {
+    "spectrumLegend": "原声 d · FRE FR",
+    "status": "实验就绪 · 278 ms · 末4秒线性总改善 14.2 dB（教学模型）；四座位d/e共用试听衰减 0.074",
+    "time": "00:20.00 / 00:20.00",
+    "waveLegend": "E FR",
+    "waveX": [
+      "0",
+      "5"
+    ]
+  },
+  "finalInvalidCheck": {
+    "error": "横轴需满足 0 ≤ 下限 < 上限 ≤ 1000。",
+    "hidden": false,
+    "time": "00:20.00 / 00:20.00",
+    "value": "600"
+  },
+  "convergenceManualCheck": {
+    "legends": [
+      "E FR",
+      "原声 d · FRE FR",
+      "残差 e"
+    ],
+    "settings": [
+      {
+        "kind": "wave",
+        "original": false,
+        "x": [
+          "0",
+          "5"
+        ],
+        "y": [
+          "-0.5",
+          "0.5"
+        ]
+      },
+      {
+        "kind": "spectrum",
+        "original": true,
+        "x": [
+          "200",
+          "300"
+        ],
+        "y": [
+          "20",
+          "60"
+        ]
+      },
+      {
+        "kind": "convergence",
+        "original": false,
+        "x": [
+          "0",
+          "60"
+        ],
+        "y": [
+          "50",
+          "85"
+        ]
+      }
+    ],
+    "time": "00:20.00 / 00:20.00",
+    "weights": [
+      "A",
+      "Z"
+    ]
+  },
+  "fieldWeightCheck": {
+    "chartWeights": [
+      "A",
+      "A"
+    ],
+    "field": "30—80 dB，固定色标；0.5秒RMS"
+  },
+  "consoleErrors": []
+}

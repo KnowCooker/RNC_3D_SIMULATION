@@ -1,0 +1,7 @@
+$ pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build
+$ tsc --noEmit
+tests/analysis.test.ts(131,32): error TS2322: Type 'Record<SignalKind, Four<Float32Array<ArrayBufferLike>>>' is not assignable to type '{ x: Float32Array<ArrayBufferLike>[]; u: Four<Float32Array<ArrayBufferLike>>; d: Four<Float32Array<ArrayBufferLike>>; a: Four<...>; e: Four<...>; }'.
+  Types of property 'x' are incompatible.
+    The type 'Four<Float32Array<ArrayBufferLike>>' is 'readonly' and cannot be assigned to the mutable type 'Float32Array<ArrayBufferLike>[]'.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.

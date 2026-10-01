@@ -1,0 +1,12 @@
+✔ B1-002: unchanged core in test harness matches normal production entry sample-for-sample (512.8214ms)
+✔ B1-002: asymmetric matrices and independent recurrence detect sign/index/cross-path/timing faults (3178.471ms)
+✔ B1-002: every one of 16 output/reference controller routes contributes with the correct update (1137.5981ms)
+✔ B1-002: modifying future x/d cannot change any past output (425.2365ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6053.0476

@@ -45,3 +45,16 @@
 .rnc-signal-flow a{color:#91dbc8;text-underline-offset:3px}
 @container(max-width:650px){.rnc-signal-flow .sf-diagram{display:none}.rnc-signal-flow .sf-compact-flow{display:block}.rnc-signal-flow .sf-channels{grid-template-columns:1fr}.rnc-signal-flow .sf-channel-q,.rnc-signal-flow .sf-channel-x{grid-column:auto}}
 @container(max-width:360px){.rnc-signal-flow .sf-channel-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.rnc-signal-flow h3{font-size:15px}}
+
+.rnc-signal-flow .sf-inspector{margin-top:18px;padding:16px;border:1px solid #527787;border-radius:8px;background:#10222f}
+.rnc-signal-flow .sf-inspector-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.rnc-signal-flow .sf-explanation{border:0;background:none;padding:0}
+.rnc-signal-flow .sf-analysis-controls,.rnc-signal-flow .sf-path-controls{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0;align-items:center}
+.rnc-signal-flow .sf-analysis-controls label,.rnc-signal-flow .sf-path-controls label{display:flex;gap:8px;align-items:center}
+.rnc-signal-flow .sf-clock{color:#a4bdc9;font:12px monospace}
+.rnc-signal-flow .sf-analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.rnc-signal-flow .sf-analysis-grid article{min-width:0;padding:12px;border:1px solid #345467;border-radius:6px}
+.rnc-signal-flow .sf-analysis-grid canvas{width:100%;height:220px;display:block}
+.rnc-signal-flow .sf-analysis-grid h4{margin:0 0 8px;font-size:12px}
+.rnc-signal-flow .sf-channels{grid-template-columns:1fr}
+@container(max-width:650px){.rnc-signal-flow .sf-diagram{display:block;overflow-x:auto}.rnc-signal-flow .sf-diagram svg{min-width:720px}.rnc-signal-flow .sf-analysis-grid{grid-template-columns:1fr}.rnc-signal-flow .sf-inspector{padding:10px}}

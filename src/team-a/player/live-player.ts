@@ -28,12 +28,14 @@ export class StreamingAudioResampler {
   private minima: { index: number; ceiling: number; safe: number }[] = [];
   private head = 0;
   private gain = 1;
+  private finished = false;
 
   get safetyGain() { return this.gain; }
   get latencySeconds() { return 8 / INPUT_RATE + LOOKAHEAD / AUDIO_RATE; }
   get retainedSamples() { return 8 * (32 + LOOKAHEAD + 1) + this.minima.length - this.head; }
 
   push(channels: readonly Float32Array[]): AudioSegment | null {
+    if (this.finished) throw new Error('试听样本流已结束');
     if (channels.length !== 8 || channels.some(channel => channel.length !== channels[0].length)) throw new Error('试听需要等长的八路 d/e');
     const output: number[][] = Array.from({ length: 8 }, () => []);
     const startSample = this.emitted;
@@ -66,7 +68,7 @@ export class StreamingAudioResampler {
           const readyPeak = ready.reduce((value, sampleValue) => Math.max(value, Math.abs(sampleValue)), 0);
           const minimum = this.minima[this.head];
           this.gain = Math.min(this.gain, readyPeak > 0.9 ? 0.9 / readyPeak : 1, minimum.safe + (minimum.index - n) / LOOKAHEAD);
-          for (let channel = 0; channel < 8; channel++) output[channel].push(ready[channel] * this.gain);
+          for (let channel = 0; channel < 8; channel++) output[channel].push(Math.max(-0.9, Math.min(0.9, ready[channel] * this.gain)));
           this.emitted++;
         }
         this.rawCount++;
@@ -75,11 +77,19 @@ export class StreamingAudioResampler {
     }
     return this.emitted === startSample ? null : { startSample, channels: output.map(values => Float32Array.from(values)) };
   }
+
+  /** Pad only the physical end of the run, releasing the real 24 ms lookahead tail. */
+  finish(): AudioSegment | null {
+    if (this.finished) return null;
+    const output = this.received ? this.push(Array.from({ length: 8 }, () => new Float32Array(8 + LOOKAHEAD / UP))) : null;
+    this.finished = true;
+    return output;
+  }
 }
 
 type Segment = AudioSegment & { buffer?: AudioBuffer; epoch?: number };
 type Source = { node: AudioBufferSourceNode; end: number; transport: GainNode };
-export type LivePlayerStatus = 'idle' | 'starting' | 'buffering' | 'playing' | 'paused' | 'disposed';
+export type LivePlayerStatus = 'idle' | 'starting' | 'buffering' | 'playing' | 'paused' | 'ended' | 'disposed';
 
 /** Bounded streaming transport. Simulation time advances only over actual scheduled samples. */
 export class LivePlayer {
@@ -108,6 +118,7 @@ export class LivePlayer {
   private generation = 0;
   private pendingStart: Promise<void> | null = null;
   private underrunCount = 0;
+  private finished = false;
 
   /** Remains true while buffering, so a producer can refill after an underrun. */
   get playing() { return this.enabled; }
@@ -118,9 +129,11 @@ export class LivePlayer {
   get queuedSeconds() { return this.bufferedUntil - this.currentTime; }
   get safetyGain() { return this.stream.safetyGain; }
   get underruns() { this.refresh(); return this.underrunCount; }
+  get ended() { this.refresh(); return this.finished && this.position >= this.published / AUDIO_RATE; }
   get status(): LivePlayerStatus {
     this.refresh();
     if (this.disposed) return 'disposed';
+    if (this.ended) return 'ended';
     if (this.starting) return 'starting';
     if (this.enabled) return this.anchor ? 'playing' : 'buffering';
     return this.runId === null ? 'idle' : 'paused';
@@ -128,6 +141,7 @@ export class LivePlayer {
 
   start(): Promise<void> {
     if (this.disposed) return Promise.reject(new Error('实时播放器已释放'));
+    if (this.ended) return Promise.resolve();
     if (this.pendingStart) return this.pendingStart;
     if (this.enabled) return Promise.resolve();
     const generation = ++this.generation;
@@ -160,6 +174,7 @@ export class LivePlayer {
 
   enqueue(chunk: LabChunk) {
     if (this.disposed) throw new Error('实时播放器已释放');
+    if (this.finished) throw new Error('实时实验已结束，请先 reset');
     this.validate(chunk);
     if ((this.received + chunk.sampleCount) / INPUT_RATE - this.currentTime > MAX_QUEUED_SECONDS + 1e-9) throw new Error('实时音频前瞻超过 2 秒，请等待播放消费后再补块');
     const output = this.stream.push([...chunk.signals.d, ...chunk.signals.e]);
@@ -169,6 +184,19 @@ export class LivePlayer {
       this.published = output.startSample + output.channels[0].length;
       this.segments.push(output);
     }
+    try { this.pump(); }
+    catch (error) { this.pause(); throw error; }
+  }
+
+  /** Stop accepting chunks and let the scheduled audio drain naturally to its exact end. */
+  finish() {
+    if (this.finished) return;
+    const tail = this.stream.finish();
+    if (tail) {
+      this.published = tail.startSample + tail.channels[0].length;
+      this.segments.push(tail);
+    }
+    this.finished = true;
     try { this.pump(); }
     catch (error) { this.pause(); throw error; }
   }
@@ -198,7 +226,7 @@ export class LivePlayer {
     this.pause();
     this.segments = []; this.stream = new StreamingAudioResampler();
     this.position = this.received = this.published = this.references = this.underrunCount = 0;
-    this.runId = null;
+    this.runId = null; this.finished = false;
   }
 
   dispose() {
@@ -255,7 +283,9 @@ export class LivePlayer {
     if (this.anchor && this.enabled) {
       this.position = Math.min(this.anchor.end, this.anchor.simulationTime + Math.max(0, now - this.anchor.contextTime));
       if (this.position >= this.anchor.end && now >= this.anchor.contextTime + this.anchor.end - this.anchor.simulationTime) {
-        this.anchor = null; this.underrunCount++;
+        this.anchor = null;
+        if (this.finished && this.position >= this.published / AUDIO_RATE) this.enabled = false;
+        else this.underrunCount++;
       }
     }
     while (this.segments.length && this.segmentEnd(this.segments[0]) <= this.position + 1e-10) this.segments.shift();
@@ -297,6 +327,11 @@ export class LivePlayer {
       try { node.start(when, begin - segment.startSample / AUDIO_RATE); }
       catch (error) { node.disconnect(); throw error; }
       this.sources.add(source); segment.epoch = this.epoch; this.anchor.end = end;
+    }
+    if (this.finished) {
+      const end = this.anchor.contextTime + this.anchor.end - this.anchor.simulationTime;
+      this.transport!.gain.setValueAtTime(1, Math.max(this.context.currentTime, end - FADE_SECONDS));
+      this.transport!.gain.linearRampToValueAtTime(0, end);
     }
   }
 

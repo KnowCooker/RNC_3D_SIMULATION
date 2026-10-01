@@ -1,7 +1,8 @@
 import { labDurationLimit, type LabConfig } from '../../shared/lab-contracts';
 
-export function validateLabConfig(config: LabConfig): void {
+export function validateLabConfig(config: LabConfig, mode: 'batch' | 'live' = 'batch'): void {
   if (!config || config.schemaVersion !== 'lab-v3') throw new Error('需要 lab-v3 配置');
+  if (config.sourceMode !== undefined && !['recorded-noise', 'shaped-noise'].includes(config.sourceMode)) throw new Error('声源类型不受支持');
   if (!['ice', 'bev', 'hev', 'erev'].includes(config.vehicle)) throw new Error('车型不受支持');
   if (config.sampleRateHz !== 2000 || ![0, 2].includes(config.adaptationStartsSeconds)) throw new Error('当前采样率为2000Hz；学习从0s开始，兼容旧配置2s');
   const range = (value: number, min: number, max: number, label: string) => {
@@ -11,7 +12,7 @@ export function validateLabConfig(config: LabConfig): void {
   if (!Number.isInteger(config.seed)) throw new Error('种子必须为整数');
   range(config.taps, 16, 128, '阶数');
   if (!Number.isInteger(config.taps)) throw new Error('阶数必须为整数');
-  range(config.stepSize, 0, 0.5, '归一化步长');
+  if (!Number.isFinite(config.stepSize) || config.stepSize < 0) throw new Error('归一化步长必须为不小于0的有限数值');
   range(config.speedKph, 0, 130, '车速');
   range(config.roadRoughness, 0.1, 3, '路面粗糙度');
   range(config.treadRoughness, 0.1, 3, '胎面粗糙度');
@@ -29,6 +30,6 @@ export function validateLabConfig(config: LabConfig): void {
     range(reference.position[2], -2.6, 2.6, '传感器纵向位置');
   }
   if (!Array.isArray(config.speakerEnabled) || config.speakerEnabled.length !== 4 || !config.speakerEnabled.every(v => typeof v === 'boolean')) throw new Error('需要四个扬声器开关');
-  if (!Number.isInteger(config.durationSeconds) || config.durationSeconds < 1 || config.durationSeconds > labDurationLimit(config)) throw new Error(`预计算时长须为1～${labDurationLimit(config)}秒整数（当前配置内存预算）`);
+  if (mode === 'batch' && (!Number.isInteger(config.durationSeconds) || config.durationSeconds < 1 || config.durationSeconds > labDurationLimit(config))) throw new Error(`预计算时长须为1～${labDurationLimit(config)}秒整数（当前配置内存预算）`);
   range(config.levelOffsetDb ?? 0, -12, 12, '教学声压修正dB');
 }

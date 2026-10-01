@@ -1,0 +1,30 @@
+✖ B1-003: invalid shapes, every missing/fixed field and nonfinite values return structured config errors (3.3551ms)
+✔ B1-003: all 12 legal configurations have finite isolated Float32 channels and exact zero-step identities (1672.8906ms)
+✔ B1-003: nonfinite data, short arrays, drive failure and Float32 overflow never return partial success (1062.7912ms)
+✔ B1-003: a failed call preserves prior results and cannot poison the next run (664.2702ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4170.9802
+
+✖ failing tests:
+
+test at tests\helpers\engine-failure-tests.ts:1:309
+✖ B1-003: invalid shapes, every missing/fixed field and nonfinite values return structured config errors (3.3551ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: array-with-config-properties: expected structured INVALID_CONFIG
+      at auditInvalidConfigs (C:\Users\18730\Documents\Codex\2026-09-23\gen-j\outputs\RNC两周演示版计划_v2\RNC_3D_SIMULATION\tests\helpers\engine-failure-audit.ts:33:12)
+      at TestContext.<anonymous> (C:\Users\18730\Documents\Codex\2026-09-23\gen-j\outputs\RNC两周演示版计划_v2\RNC_3D_SIMULATION\tests\helpers\engine-failure-tests.ts:9:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

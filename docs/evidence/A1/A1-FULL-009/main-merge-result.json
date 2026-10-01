@@ -1,0 +1,26 @@
+{
+  "role": "A1",
+  "executor": "Codex on behalf of A1",
+  "identitySource": "user-declared",
+  "task": "A1-FULL-009",
+  "baseMain": "bb07dd7716c94b190f5654b5d4f2823d3e09f32c",
+  "browser": "headed Chromium via playwright-cli",
+  "viewport": { "desktop": [1600, 900], "mobile": [360, 800] },
+  "initial": { "mode": "live", "sourceMode": "recorded-noise", "roadRoughness": 0.6 },
+  "liveRuns": [
+    { "roadRoughness": 1.2, "firstQ1Rms": 2.244180393822381, "sampleCount": 400 },
+    { "roadRoughness": 2.2, "firstQ1Rms": 3.0386346139914457, "sampleCount": 400 },
+    { "roadRoughness": 0.9, "firstQ1Rms": 1.9435172268252738, "sampleCount": 400 }
+  ],
+  "gravelToCoarseRmsRatio": 1.3540063991094393,
+  "replay": { "sourceMode": "recorded-noise", "roadRoughness": 0.9, "durationSeconds": 10, "ready": true },
+  "oldExperimentInvalidated": true,
+  "oldFieldInvalidated": true,
+  "desktopControlsToggle": true,
+  "mobileControlsToggle": true,
+  "mobileHorizontalOverflow": false,
+  "pageErrors": [],
+  "externalAppRequests": [],
+  "unrelatedBrowserConsole": ["Local favicon.ico returned 404"],
+  "checks": { "typecheck": true, "boundaries": true, "testsPassed": 100, "build": true }
+}

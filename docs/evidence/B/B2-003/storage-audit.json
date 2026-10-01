@@ -1,0 +1,45 @@
+{
+  "role": "B2",
+  "executor": "Codex",
+  "task": "B2-003",
+  "baseline": "842bec8197a61df9d849e60e86504292de7846d0",
+  "scope": "Design byte-strategy experiment; no product codec, no peak memory or independent numerical acceptance",
+  "measured": [
+    {
+      "name": "demo-v2/default/16s",
+      "totalScalarSamples": 640000,
+      "payloadBytes": 2560000,
+      "jsonArrayUtf8Bytes": 12737577,
+      "base64Characters": 3413336,
+      "inputPlusEncodedPayloadLowerBoundBytes": 5120000,
+      "finiteFloat32Roundtrip": "bit-identical"
+    },
+    {
+      "name": "lab-v3/default/shaped-noise/16s/4refs",
+      "totalScalarSamples": 768000,
+      "payloadBytes": 3072000,
+      "jsonArrayUtf8Bytes": 15404293,
+      "base64Characters": 4096000,
+      "inputPlusEncodedPayloadLowerBoundBytes": 6144000,
+      "finiteFloat32Roundtrip": "bit-identical"
+    },
+    {
+      "name": "Float32 edge values",
+      "totalScalarSamples": 5,
+      "payloadBytes": 20,
+      "jsonArrayUtf8Bytes": 84,
+      "base64Characters": 28,
+      "inputPlusEncodedPayloadLowerBoundBytes": 40,
+      "finiteFloat32Roundtrip": "bit-identical"
+    }
+  ],
+  "estimatedOnly": {
+    "name": "lab-v3/90s/8refs",
+    "payloadBytes": 20160000
+  },
+  "recording": {
+    "path": "src/team-b/lab/data/recorded-primary.f32",
+    "bytes": 1280016,
+    "sha256": "c3bcc4ffcea96268032403eb01a0743f822701d6958bebc979752f93283d421a"
+  }
+}

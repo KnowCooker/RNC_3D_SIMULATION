@@ -1,0 +1,14 @@
+{
+  "environment": "Windows Chromium via Playwright CLI, Vite http://127.0.0.1:5173/",
+  "pageErrors": [],
+  "replay": {
+    "run": "纯电 SUV · 布局 teaching-fixed-v1 · 4×4×4 · 7f9a38bd",
+    "field": "教学布局声场截至 10.00 s · 写实外观不投影",
+    "time": "10"
+  },
+  "live": {
+    "run": "纯电 SUV · 布局 teaching-fixed-v1 · 实时 4×4×4 · 6595e620",
+    "field": "教学布局声场截至 2.03 s · 写实外观不投影",
+    "status": "实时运行 · 2.2 s · 缓冲 1.25 s · 共同安全增益 0.097 · 补缓冲 0 次"
+  }
+}

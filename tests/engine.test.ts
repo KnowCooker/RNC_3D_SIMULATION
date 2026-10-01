@@ -7,6 +7,25 @@ import { createData, createPaths, convolve, uniform } from '../src/team-b/engine
 import { DEFAULT_CONFIG } from '../src/shared/defaults';
 import { decodeFixture } from '../src/shared/fixture';
 import type { RunConfig } from '../src/shared/contracts';
+import { auditNumericCase, compareChannel, numericCases } from './helpers/engine-numeric-audit';
+import './helpers/engine-timing-tests';
+import './helpers/engine-failure-tests';
+
+for (const spec of numericCases) test(`B1-001: ${spec.name} all 640000 samples and metrics match independent Python; exact repeat`, () => {
+  auditNumericCase(spec);
+});
+
+test('B1-001: comparison rejects sign, time shift, zeroed output, NaN and near-zero overflow', () => {
+  const reference = Float32Array.of(0, 0.02, -0.03, 0.01);
+  for (const bad of [reference.map(v => -v), Float32Array.of(0, 0, 0.02, -0.03),
+    new Float32Array(4), Float32Array.of(0, NaN, -0.03, 0.01)]) {
+    assert.throws(() => compareChannel(bad, reference, 'negative control'));
+  }
+  assert.throws(() => compareChannel(Float32Array.of(1e-5, 0), new Float32Array(2), 'zero reference'));
+  assert.throws(() => compareChannel(new Float32Array(0), new Float32Array(0), 'empty'));
+  const zero = compareChannel(new Float32Array(2), new Float32Array(2), 'zero');
+  assert.equal(zero.relativeRms, null); assert.equal(zero.passed, true);
+});
 
 const fixture = decodeFixture(JSON.parse(readFileSync(new URL('../fixtures/reference/golden_browser_fixture.json', import.meta.url), 'utf8')));
 const reports = JSON.parse(readFileSync(new URL('../fixtures/reference/verification.json', import.meta.url), 'utf8')).cases;

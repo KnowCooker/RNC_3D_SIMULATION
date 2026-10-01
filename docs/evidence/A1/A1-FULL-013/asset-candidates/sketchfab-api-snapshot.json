@@ -1,0 +1,46 @@
+[
+  {
+    "uid": "51c9dbcbfb924acaba71871d2789aeb6",
+    "name": "High-Poly 3D Model of Modern Game & Render Ready",
+    "author": "muhamedbiri111",
+    "license": "CC Attribution",
+    "downloadable": true,
+    "triangles": 250383,
+    "materials": 1,
+    "animations": 0,
+    "description": "Bring realism and style to your projects with this high-quality 3D model of a modern electric SUV. Designed with attention to detail, this model features a sleek aerodynamic body, full interior and exterior geometry, and photo-realistic PBR materials. Ideal for visualizations, animations, automotive design, and games.\n\nKey Features:\n\t•\tClean, optimized topology\n\t•\tFully detailed interior & exterior\n\t•\t4K PBR textures (Base Color, Roughness, Metalness, Normal, AO)\n\t•\tRealistic materials: metal body, glass, rubber, leather\n\t•\tGame-ready and render-ready formats\n\t•\tIncludes .FBX, .OBJ, .GLTF/.GLB, and native .BLEND file\n\t•\tScaled to real-world units (meters)\n\nPerfect For:\n✔️ Car commercials\n✔️ Games & simulators\n✔️ VR/AR environments\n✔️ Concept presentations\n✔️ Architectural or urban scenes"
+  },
+  {
+    "uid": "e4e909bda4ea4656b1980786c2e935d6",
+    "name": "Ford Escape Hybrid",
+    "author": "David_Holiday",
+    "license": "CC Attribution",
+    "downloadable": true,
+    "triangles": 40852,
+    "materials": 27,
+    "animations": 0,
+    "description": "***Ford Escape Hybrid ***"
+  },
+  {
+    "uid": "0203b32240124b228168de2e89a2f4f2",
+    "name": "Li Auto L7",
+    "author": "Quoreder",
+    "license": "CC Attribution-NonCommercial",
+    "downloadable": true,
+    "triangles": 149945,
+    "materials": 19,
+    "animations": 0,
+    "description": ""
+  },
+  {
+    "uid": "de74fe4e98004c92b1103947597d1b53",
+    "name": "2021 Toyota RAV4 Hybrid",
+    "author": "tonielpro520",
+    "license": "CC Attribution",
+    "downloadable": true,
+    "triangles": 172455,
+    "materials": 16,
+    "animations": 0,
+    "description": "2021 Toyota RAV4 Hybrid\n![](https://www.rochestertoyota.com/blogs/2756/wp-content/uploads/2021/09/download-31.png)\nFree\nREUPLOAD"
+  }
+]

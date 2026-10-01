@@ -97,7 +97,7 @@ test('one and eight references and disabled output actually change controller di
   for (const run of [one, eight]) for (const channels of Object.values(run.signals)) for (const channel of channels) assert.ok(channel.every(Number.isFinite));
 });
 
-test('recording-shaped sources handle high energy at default step and reject unstable high-step runs explicitly', () => {
+test('recording-shaped sources retain high finite values and return the valid prefix on overflow', () => {
   const highConfig = { ...config, taps: 128, speedKph: 130, roadRoughness: 3, treadRoughness: 3, pressureKpa: 320, temperatureC: 50 };
   const colocatedConfig = { ...config,
     references: Array.from({ length: 8 }, (_, i) => ({ id: `same-${i}`, name: `同位 ${i}`, position: [0, 0.8, 0] as Vec3 })) };
@@ -106,7 +106,11 @@ test('recording-shaped sources handle high energy at default step and reject uns
   for (const run of [high, colocated]) for (const channels of Object.values(run.signals)) for (const channel of channels) assert.ok(channel.every(Number.isFinite));
   // The former broad source was stable here; recorded low-frequency coloration
   // narrows that operating envelope. Do not clamp u or change the FxLMS formula.
-  for (const cfg of [highConfig, colocatedConfig]) assert.throws(() => calculateLab({ ...cfg, stepSize: 0.5 }, 'unstable'), /数值不稳定/);
+  for (const cfg of [highConfig, colocatedConfig]) {
+    const divergent=calculateLab({ ...cfg, stepSize: 100 }, 'unstable');
+    assert.ok(divergent.divergence); assert.equal(divergent.sampleCount,divergent.divergence.sample);
+    for(const channels of Object.values(divergent.signals)) for(const channel of channels) assert.ok(channel.every(Number.isFinite));
+  }
   for (const run of [high, colocated]) for (let m = 0; m < 4; m++) {
     const measured = 10 * Math.log10(power(run.signals.d[m]) / power(run.signals.e[m]));
     assert.ok(Math.abs(run.metrics.reductionDbByMic[m] - measured) < 1e-10, 'report actual signed gain without forcing improvement');
@@ -178,7 +182,7 @@ test('q selection analyzes each actual wheel source independently of reference l
   const changed = calculateLab({ ...config, references: [{ id: 'centre', name: 'Centre only', position: [0, 0.8, 0] }] }, 'changed-layout');
   for (let source = 0; source < 4; source++) {
     const analysis = analyzeLab(changed, 6, { signal: 'q', channel: source });
-    assert.deepEqual(analysis.waveform, changed.sources[source].slice(11600, 12000));
+    assert.deepEqual(analysis.waveform, changed.sources[source].slice(2000, 12000));
     assert.deepEqual(analysis.spectrum, analyzeLab(result, 6, { signal: 'q', channel: source }).spectrum);
     assert.equal(analysis.unit, 'm/s²（等效轮端激励）');
     assert.ok(analysis.spectrum && analysis.spectrum.some(value => value > 0));

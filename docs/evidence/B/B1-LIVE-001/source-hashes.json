@@ -1,0 +1,30 @@
+[
+  {
+    "path": "src/shared/lab-contracts.ts",
+    "sha256": "3d5f3731c8c8137521d992762f77086b816964d31c822a28595e6b1c9722abd7"
+  },
+  {
+    "path": "src/team-a/lab/index.ts",
+    "sha256": "4d0a68769586872735f0f13fd51740bb1196175a7698545af47903fa8864c421"
+  },
+  {
+    "path": "src/team-a/lab/plots.ts",
+    "sha256": "9e2a0dddf8e9f94aa643c34d6327f891a949745f37484b84d0c05a99e93f6edd"
+  },
+  {
+    "path": "src/team-a/player/live-player.ts",
+    "sha256": "67cd657e921d363ca4d0ce0ab4c60fa37f27ce0d65d9df1bbbef20a499a482d6"
+  },
+  {
+    "path": "src/team-b/lab/stream.ts",
+    "sha256": "f0b3dbd049c71f2f70ab6f7351c01d515c124653fa857bcc1246ffb16dffb470"
+  },
+  {
+    "path": "src/team-b/lab/validation.ts",
+    "sha256": "db586433e7267d201d9bf2bebab1a4a0ec8f3c40d9717ede65552044aa1a1c90"
+  },
+  {
+    "path": "src/integration/lab.worker.ts",
+    "sha256": "887d4ab1198188bb9f215c820fbb33c4f9ef9ae34e7294876b970dcab2ffe086"
+  }
+]
