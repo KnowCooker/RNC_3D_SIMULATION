@@ -1,0 +1,1228 @@
+{
+  "role": "B2",
+  "task": "B2-004",
+  "identitySource": "user-declared",
+  "executor": "Codex",
+  "date": "2026-10-01",
+  "phase": "report-preparation",
+  "baseline": "93ed882861e07f23a604cb446fe6dce391f892c7",
+  "checkoutHead": "ef311386ac6fd0e4c61b3191d824221a5c10a141",
+  "auditSourceSha256": "70682ce7a6cee8ce18c46f4ac76d5cc4eed04b712ea349019a44d12ffda9931f",
+  "auditSourceHashEncoding": "utf8-lf",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "evidence": [
+    {
+      "pr": 48,
+      "commit": "fa805e2da2ec16ce7e17a087b202ec3380a48ba2",
+      "report": "B1-001/comparison.json",
+      "path": "docs/evidence/B/B1-001/comparison.json",
+      "sha256": "180e9a80dbb180e608e5da7e04cc1569b56dfcc1533173b505ba97c402f1bce9",
+      "hashEncoding": "utf8-lf"
+    },
+    {
+      "pr": 50,
+      "commit": "67387f68c6a6c1d9ad0826794f61ebde74aa649c",
+      "report": "B1-002/result.json",
+      "path": "docs/evidence/B/B1-002/result.json",
+      "sha256": "0fce234f66c28c43c9b2ff73f2ef16275bd961310dee63838b843494e5be1355",
+      "hashEncoding": "utf8-lf"
+    },
+    {
+      "pr": 50,
+      "commit": "67387f68c6a6c1d9ad0826794f61ebde74aa649c",
+      "report": "B1-003/result.json",
+      "path": "docs/evidence/B/B1-003/result.json",
+      "sha256": "24fbc8b412e7aba0d74f935807f9fc201d9967a82d67e0f0a813e1271e66f17d",
+      "hashEncoding": "utf8-lf"
+    },
+    {
+      "pr": 51,
+      "commit": "c2b0f43abff449e25a87eb3dba35ce188ff1057f",
+      "report": "B2-003/demo-api/audit.json",
+      "path": "docs/evidence/B/B2-003/demo-api/audit.json",
+      "sha256": "823d83fe9950f1ca87318b9ddbb14b6a72e6371409a1c3e2b68af90023ade68a",
+      "hashEncoding": "utf8-lf"
+    },
+    {
+      "pr": 52,
+      "commit": "181952687d6fb303e540e9f1b3981d228b52e744",
+      "report": "B2-003/async-api/browser-result.json",
+      "path": "docs/evidence/B/B2-003/async-api/browser-result.json",
+      "sha256": "f37abeccc646804f9c9010bce70ba69fd9e8bef4cb004861a09c20b39ce8a215",
+      "hashEncoding": "utf8-lf"
+    },
+    {
+      "pr": 53,
+      "commit": "33fbddca6b605b521f38a4bcfee7dc828f43fc04",
+      "report": "B2-003/lab-recipe/comparison.json",
+      "path": "docs/evidence/B/B2-003/lab-recipe/comparison.json",
+      "sha256": "604e454ac7c03974bd39ac62beb6541483bf44d7e2c162a2cc110152a500a581",
+      "hashEncoding": "utf8-lf"
+    },
+    {
+      "pr": 54,
+      "commit": "93ed882861e07f23a604cb446fe6dce391f892c7",
+      "report": "B2-003/lab-result/comparison.json",
+      "path": "docs/evidence/B/B2-003/lab-result/comparison.json",
+      "sha256": "b002abff44843397af9fc7e6a024fbc6a72c6d797ef38a3deffd8a2c0a77e9c7",
+      "hashEncoding": "utf8-lf"
+    },
+    {
+      "pr": 54,
+      "commit": "93ed882861e07f23a604cb446fe6dce391f892c7",
+      "report": "B2-003/lab-result/browser-report.json",
+      "path": "docs/evidence/B/B2-003/lab-result/browser-report.json",
+      "sha256": "b904964202c18b625ee2e580ceff3b9e992d3af1fc91f6ea2e55b0402b91533c",
+      "hashEncoding": "utf8-lf"
+    }
+  ],
+  "savedEvidenceSummary": {
+    "demoOracleSamples": 3200000,
+    "detectedMutations": 11,
+    "invalidConfigurations": 128,
+    "validConfigurations": 12,
+    "injectedNumericFaults": 7,
+    "labRecipeCases": 25,
+    "labResultCases": 29,
+    "historicalLabWorkerChecks": 15,
+    "historicalBrowserRerunThisBatch": false
+  },
+  "numericalModels": [
+    {
+      "id": "demo-v2-fxlms-export-1",
+      "hashEncoding": "utf8-lf",
+      "files": {
+        "src/team-b/engine/core.ts": "5f1186ba0601f5a6cb0dd253a216a2b4a991a37de0930e58f3c7d293f119ed65",
+        "src/team-b/engine/data.ts": "fd5312226e52ae83c3d4973fcaa91c1e4782f649164c9106d8b7cc6b175088e5",
+        "src/team-b/analysis/index.ts": "bd63edf588a10572b75dbbfc6e22b58799cfa543692ba219ad380bb31f301969",
+        "src/shared/contracts.ts": "77137200b54ee105b59f7ce615e79c5b4a79de8949e1b897a4576b93db450055",
+        "src/shared/defaults.ts": "16af69da31103f18f0df28e9c91b6ae37de5e2d4c5ac344c441abf0f968b4073"
+      }
+    },
+    {
+      "id": "lab-v3-teaching-batch-recipe-1",
+      "hashEncoding": "utf8-lf",
+      "files": {
+        "src/shared/contracts.ts": "77137200b54ee105b59f7ce615e79c5b4a79de8949e1b897a4576b93db450055",
+        "src/shared/lab-contracts.ts": "4cddd97edd7716a3ce63e22eff16118f93ea14bb630d9b21f5aa03d45fb280b5",
+        "src/team-b/analysis/index.ts": "bd63edf588a10572b75dbbfc6e22b58799cfa543692ba219ad380bb31f301969",
+        "src/team-b/engine/data.ts": "fd5312226e52ae83c3d4973fcaa91c1e4782f649164c9106d8b7cc6b175088e5",
+        "src/team-b/lab/a-weighting-fir.ts": "ec041bcf592429c12d11f76aaf51ba02fd6afd58905397b3d2a4d9dba7c87bcb",
+        "src/team-b/lab/divergence.ts": "4ec36d0f8f5bfad806c7ac9c7bd910b61e369676a60fe1e6da59008bff4a8330",
+        "src/team-b/lab/index.ts": "cc3d6e37d1c921f2d98979a19caa1ca9c2701da6e46dcefe0b05acd76d98229e",
+        "src/team-b/lab/nfxlms.ts": "60a45b8e2e7ced2f3fe14541df43b9a19c342fc973eb627d314ca73646a06b6a",
+        "src/team-b/lab/path-analysis.ts": "8d9a95b6510dc6140c7497de3158c01d02cc22df210cbd1f5357e28261d64dee",
+        "src/team-b/lab/paths.ts": "6d8dc6b8897370362be744d1ef278154947373ab96c2b736a57764685bd620d7",
+        "src/team-b/lab/pressure-calibration.ts": "2bfb1f789d7a7bcfe52be81d2737c498e3996e9fa4733bcf2d85ba4d766cef3c",
+        "src/team-b/lab/recorded-noise.ts": "d19643aad467c2b5a0607093c51c1e51fd9ad484ef0522edd9bfbbf91b7d8e9c",
+        "src/team-b/lab/recorded-profile.ts": "3ad543e0c822a39133325a14b450ce15e1a9b9ba93ce4d4ad867630b4ed4e961",
+        "src/team-b/lab/sources.ts": "b848446ce7a4f61e3826f6ee196adcc9bb91e3f46604b9bee3c6a47f29d7ddd4",
+        "src/team-b/lab/stream.ts": "2c0daca4b125b2f916ad1943abc489ef924f3e536dbf07df85672aa7f81892bb",
+        "src/team-b/lab/validation.ts": "bcfa2f069c1aa70dcc90910a3be02fb836e1201cd2316fcfe24f38f2973f2555",
+        "src/team-b/lab/weighting.ts": "83dcdede9e22ba10988dd0e727d2a6b1478c7396dcead979fb6daca14152af64"
+      }
+    }
+  ],
+  "sourceHashes": {
+    "src/team-b/export/index.ts": "fc2aabb90ceb6845f03dd693096ba0e4de5106a068aaf708bd00f6ee35d81cc1",
+    "src/team-b/export/lab-result.ts": "9d7e9f3396dd0dcb6698ec930a503c75c7bea8924959f0ce48da69f134798775",
+    "src/team-b/export/lab-recipe.ts": "6a22db05be4ea6513e099288c0ddebeb76a0193422d3474c95adc18e5348e51b",
+    "src/team-b/export/lab-model.ts": "46afd72f14cf348257b58a959fec03b57c28ad479dbe6866267ac3a8343036cf",
+    "src/team-b/export/errors.ts": "78726c85303dff22bbf86cac5257dcc9275453b1caf862ebc9b9f12a749f8398",
+    "src/team-b/export/model.ts": "dd1e60a33c2e36787916f2e69b70a13eb44e81fc7fa72bd251d857948ac92d34",
+    "tests/analysis.test.ts": "94b9f7c8425436d760a4e7a0c961352aa107c108f0287551f9579ab483a2dfd4",
+    "tests/helpers/lab-result-tests.ts": "720d78a23514a69c34953d83b2240f89fcd00156d89a4723f745dcd094874cb1",
+    "tests/helpers/lab-result-audit.ts": "d1e2f124397f26df8c34613f07b3e7dbf455c78c9870b979d7799324b320ce60",
+    "tests/helpers/lab-recipe-audit.ts": "f0fdfd19b11347ce2ee21dc8fc580d938fcd7ce6ca57986c09007d52b729956a",
+    "docs/evidence/B/B2-003/lab-result/run-audit.ts": "613f62b0a15cfb2aa0551583e2333992735a2da7389c3d4b447eac2684368269",
+    "docs/evidence/B/B2-003/lab-result/browser-worker.ts": "5de323bb880474342e53b60a5fb3c1e8ce24f644b66ca23653daa64cb23acbf1",
+    "docs/evidence/B/B2-003/lab-result/browser.html": "2d7d959a51245fdbb67712df3a40154036519ea5b24460ff05027953a506275d",
+    "docs/evidence/B/B2-003/lab-result/vite-audit.config.ts": "e8b8cd7c7d9fa3fe8bb22e5e5115525a33052da3b4ab9579ede4a08b2b342700"
+  },
+  "recording": {
+    "id": "recorded-primary-rnq1-v1",
+    "sha256": "c3bcc4ffcea96268032403eb01a0743f822701d6958bebc979752f93283d421a",
+    "bytes": 1280016,
+    "sampleRateHz": 2000,
+    "samplesPerChannel": 80000,
+    "channelOrder": [
+      49,
+      53,
+      51,
+      55
+    ],
+    "periodSamples": 79600,
+    "crossfadeSamples": 400,
+    "readerVersion": "synchronized-cosine-overlap-v1",
+    "sourceGain": 2.7035289248832903,
+    "rawUnit": "uncalibrated-V",
+    "generatedUnit": "relative-amplitude"
+  },
+  "frozenFixtures": {
+    "fixtures/reference/verification.json": "7cc90b0fb8f529bccc1d844a78d55378f501e86a9a6e26ad01c29ca441f98d90",
+    "fixtures/reference/initial_256_samples.csv": "72898a5ee3484f7025a990ca525ca1dd9f6dbea47ffeb68abd79c3ac7c47b260",
+    "fixtures/reference/golden_4x4x4.npz": "50c27ec884aaf7c8562b40de0dfe94089536102eabb57b7554ecf1f756caf8b6",
+    "fixtures/reference/golden_browser_fixture.json": "a84793dd6134347c06bf4729fcd3cfec672f06688d6a2c4cab4e9ae31481fde2",
+    "fixtures/reference/decoder_check.json": "0b4c0f72a358f6d8561d702a0c5df6b5d5c2a0a92470033f71ba97b8c81c49a0",
+    "fixtures/reference/reference_mimo.py": "e368d0090dfb56e72eb0317d6dfaf9e34535b162d8f97022bc8f83aab88a9817",
+    "fixtures/reference/driver_residual.wav": "4cada47b49b8a27f6c9d0309ac0473dd03baac455fde6287d48876dc993d04e8",
+    "fixtures/reference/driver_primary.wav": "602b6fde9c1d81e73ad6fad2be91978f2dbe6e4da54f7c90c159a38493905eb7"
+  },
+  "frozenFixturesUnchanged": true,
+  "demo": [
+    {
+      "config": {
+        "schemaVersion": "demo-v2",
+        "vehicleId": "teaching-bev-rwd",
+        "pathProfileId": "synthetic-4x4x4-v1",
+        "algorithm": "fxlms",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "road": "asphalt",
+        "speedKph": 60,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08
+      },
+      "source": "computed-browser",
+      "sampleCount": 32000,
+      "channels": 20,
+      "payloadBytes": 2560000,
+      "containerBytes": 2564260,
+      "endSecondsExclusive": 16,
+      "lastSampleSeconds": 15.9995,
+      "maxSuperpositionError": 1.234002411365509e-8,
+      "roundTripExact": true,
+      "importedAnalysisExact": true,
+      "analysis": [
+        {
+          "requestedEndSampleExclusive": 0,
+          "endSampleExclusive": 0,
+          "valid": false,
+          "reason": "warming-up",
+          "spectrumBins": null
+        },
+        {
+          "requestedEndSampleExclusive": 999,
+          "endSampleExclusive": 999,
+          "valid": false,
+          "reason": "warming-up",
+          "spectrumBins": null
+        },
+        {
+          "requestedEndSampleExclusive": 1000,
+          "endSampleExclusive": 1000,
+          "valid": true,
+          "reason": "ok",
+          "spectrumBins": null
+        },
+        {
+          "requestedEndSampleExclusive": 1024,
+          "endSampleExclusive": 1024,
+          "valid": true,
+          "reason": "ok",
+          "spectrumBins": 513
+        },
+        {
+          "requestedEndSampleExclusive": 32000,
+          "endSampleExclusive": 32000,
+          "valid": true,
+          "reason": "ok",
+          "spectrumBins": 513
+        },
+        {
+          "requestedEndSampleExclusive": 32001,
+          "endSampleExclusive": 32000,
+          "valid": true,
+          "reason": "ok",
+          "spectrumBins": 513
+        }
+      ]
+    },
+    {
+      "config": {
+        "schemaVersion": "demo-v2",
+        "vehicleId": "teaching-bev-rwd",
+        "pathProfileId": "synthetic-4x4x4-v1",
+        "algorithm": "fxlms",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "road": "asphalt",
+        "speedKph": 60,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0
+      },
+      "source": "computed-browser",
+      "sampleCount": 32000,
+      "channels": 20,
+      "payloadBytes": 2560000,
+      "containerBytes": 2564168,
+      "endSecondsExclusive": 16,
+      "lastSampleSeconds": 15.9995,
+      "maxSuperpositionError": 0,
+      "roundTripExact": true,
+      "importedAnalysisExact": true,
+      "analysis": [
+        {
+          "requestedEndSampleExclusive": 0,
+          "endSampleExclusive": 0,
+          "valid": false,
+          "reason": "warming-up",
+          "spectrumBins": null
+        },
+        {
+          "requestedEndSampleExclusive": 999,
+          "endSampleExclusive": 999,
+          "valid": false,
+          "reason": "warming-up",
+          "spectrumBins": null
+        },
+        {
+          "requestedEndSampleExclusive": 1000,
+          "endSampleExclusive": 1000,
+          "valid": true,
+          "reason": "ok",
+          "spectrumBins": null
+        },
+        {
+          "requestedEndSampleExclusive": 1024,
+          "endSampleExclusive": 1024,
+          "valid": true,
+          "reason": "ok",
+          "spectrumBins": 513
+        },
+        {
+          "requestedEndSampleExclusive": 32000,
+          "endSampleExclusive": 32000,
+          "valid": true,
+          "reason": "ok",
+          "spectrumBins": 513
+        },
+        {
+          "requestedEndSampleExclusive": 32001,
+          "endSampleExclusive": 32000,
+          "valid": true,
+          "reason": "ok",
+          "spectrumBins": 513
+        }
+      ]
+    }
+  ],
+  "lab": [
+    {
+      "name": "shaped-1",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 2,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 32,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "stable-0",
+            "name": "Sensor 0",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ],
+            "mountPart": "rear-subframe"
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise",
+        "levelOffsetDb": 3
+      },
+      "source": "computed-browser",
+      "requestedSamples": 4000,
+      "actualSamples": 4000,
+      "status": "completed",
+      "time": {
+        "startSeconds": 0,
+        "endSeconds": 2,
+        "lastSampleSeconds": 1.9995,
+        "interval": "half-open"
+      },
+      "channels": [
+        {
+          "signal": "q",
+          "index": 0,
+          "stableId": "q:fl",
+          "unit": "m/s2-equivalent-wheel-excitation",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "q",
+          "index": 1,
+          "stableId": "q:fr",
+          "unit": "m/s2-equivalent-wheel-excitation",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "q",
+          "index": 2,
+          "stableId": "q:rl",
+          "unit": "m/s2-equivalent-wheel-excitation",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "q",
+          "index": 3,
+          "stableId": "q:rr",
+          "unit": "m/s2-equivalent-wheel-excitation",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 0,
+          "stableId": "x:stable-0",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "u",
+          "index": 0,
+          "stableId": "u:fl",
+          "unit": "drive",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "u",
+          "index": 1,
+          "stableId": "u:fr",
+          "unit": "drive",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "u",
+          "index": 2,
+          "stableId": "u:rl",
+          "unit": "drive",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "u",
+          "index": 3,
+          "stableId": "u:rr",
+          "unit": "drive",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "d",
+          "index": 0,
+          "stableId": "d:fl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "d",
+          "index": 1,
+          "stableId": "d:fr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "d",
+          "index": 2,
+          "stableId": "d:rl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "d",
+          "index": 3,
+          "stableId": "d:rr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "a",
+          "index": 0,
+          "stableId": "a:fl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "a",
+          "index": 1,
+          "stableId": "a:fr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "a",
+          "index": 2,
+          "stableId": "a:rl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "a",
+          "index": 3,
+          "stableId": "a:rr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "e",
+          "index": 0,
+          "stableId": "e:fl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "e",
+          "index": 1,
+          "stableId": "e:fr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "e",
+          "index": 2,
+          "stableId": "e:rl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "e",
+          "index": 3,
+          "stableId": "e:rr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        }
+      ],
+      "payloadBytes": 336000,
+      "containerBytes": 342420,
+      "rawMetricsMatch": true,
+      "roundTripExact": true,
+      "importedAnalysisExact": true,
+      "analysis": [
+        {
+          "requestedTime": 0,
+          "time": 0,
+          "valid": false,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 0.4995,
+          "time": 0.4995,
+          "valid": false,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 0.5,
+          "time": 0.5,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 2,
+          "time": 2,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": 513
+        },
+        {
+          "requestedTime": 2,
+          "time": 2,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": 513
+        }
+      ]
+    },
+    {
+      "name": "recorded-8",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "ice",
+        "sampleRateHz": 2000,
+        "durationSeconds": 2,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 32,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "stable-0",
+            "name": "Sensor 0",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ],
+            "mountPart": "rear-subframe"
+          },
+          {
+            "id": "stable-1",
+            "name": "Sensor 1",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ],
+            "mountPart": "front-subframe"
+          },
+          {
+            "id": "stable-2",
+            "name": "Sensor 2",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ],
+            "mountPart": "rear-subframe"
+          },
+          {
+            "id": "stable-3",
+            "name": "Sensor 3",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ],
+            "mountPart": "front-subframe"
+          },
+          {
+            "id": "stable-4",
+            "name": "Sensor 4",
+            "position": [
+              0.765,
+              0.67,
+              1.45
+            ],
+            "mountPart": "rear-subframe"
+          },
+          {
+            "id": "stable-5",
+            "name": "Sensor 5",
+            "position": [
+              -0.765,
+              0.67,
+              1.45
+            ],
+            "mountPart": "front-subframe"
+          },
+          {
+            "id": "stable-6",
+            "name": "Sensor 6",
+            "position": [
+              0.765,
+              0.67,
+              -1.45
+            ],
+            "mountPart": "rear-subframe"
+          },
+          {
+            "id": "stable-7",
+            "name": "Sensor 7",
+            "position": [
+              -0.765,
+              0.67,
+              -1.45
+            ],
+            "mountPart": "front-subframe"
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "recorded-noise",
+        "levelOffsetDb": 3
+      },
+      "source": "computed-browser",
+      "requestedSamples": 4000,
+      "actualSamples": 4000,
+      "status": "completed",
+      "time": {
+        "startSeconds": 0,
+        "endSeconds": 2,
+        "lastSampleSeconds": 1.9995,
+        "interval": "half-open"
+      },
+      "channels": [
+        {
+          "signal": "q",
+          "index": 0,
+          "stableId": "q:fl",
+          "unit": "relative-amplitude",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "q",
+          "index": 1,
+          "stableId": "q:fr",
+          "unit": "relative-amplitude",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "q",
+          "index": 2,
+          "stableId": "q:rl",
+          "unit": "relative-amplitude",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "q",
+          "index": 3,
+          "stableId": "q:rr",
+          "unit": "relative-amplitude",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 0,
+          "stableId": "x:stable-0",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 1,
+          "stableId": "x:stable-1",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 2,
+          "stableId": "x:stable-2",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 3,
+          "stableId": "x:stable-3",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 4,
+          "stableId": "x:stable-4",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 5,
+          "stableId": "x:stable-5",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 6,
+          "stableId": "x:stable-6",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "x",
+          "index": 7,
+          "stableId": "x:stable-7",
+          "unit": "m/s2",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "u",
+          "index": 0,
+          "stableId": "u:fl",
+          "unit": "drive",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "u",
+          "index": 1,
+          "stableId": "u:fr",
+          "unit": "drive",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "u",
+          "index": 2,
+          "stableId": "u:rl",
+          "unit": "drive",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "u",
+          "index": 3,
+          "stableId": "u:rr",
+          "unit": "drive",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "d",
+          "index": 0,
+          "stableId": "d:fl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "d",
+          "index": 1,
+          "stableId": "d:fr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "d",
+          "index": 2,
+          "stableId": "d:rl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "d",
+          "index": 3,
+          "stableId": "d:rr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "a",
+          "index": 0,
+          "stableId": "a:fl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "a",
+          "index": 1,
+          "stableId": "a:fr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "a",
+          "index": 2,
+          "stableId": "a:rl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "a",
+          "index": 3,
+          "stableId": "a:rr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "e",
+          "index": 0,
+          "stableId": "e:fl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "e",
+          "index": 1,
+          "stableId": "e:fr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "e",
+          "index": 2,
+          "stableId": "e:rl",
+          "unit": "Pa",
+          "sampleCount": 4000
+        },
+        {
+          "signal": "e",
+          "index": 3,
+          "stableId": "e:rr",
+          "unit": "Pa",
+          "sampleCount": 4000
+        }
+      ],
+      "payloadBytes": 448000,
+      "containerBytes": 456940,
+      "rawMetricsMatch": true,
+      "roundTripExact": true,
+      "importedAnalysisExact": true,
+      "analysis": [
+        {
+          "requestedTime": 0,
+          "time": 0,
+          "valid": false,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 0.4995,
+          "time": 0.4995,
+          "valid": false,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 0.5,
+          "time": 0.5,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 2,
+          "time": 2,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": 513
+        },
+        {
+          "requestedTime": 2,
+          "time": 2,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": 513
+        }
+      ]
+    },
+    {
+      "name": "diverged-4",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 3,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 2,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "source": "computed-browser",
+      "requestedSamples": 6000,
+      "actualSamples": 2909,
+      "status": "diverged",
+      "time": {
+        "startSeconds": 0,
+        "endSeconds": 1.4545,
+        "lastSampleSeconds": 1.454,
+        "interval": "half-open"
+      },
+      "channels": [
+        {
+          "signal": "q",
+          "index": 0,
+          "stableId": "q:fl",
+          "unit": "m/s2-equivalent-wheel-excitation",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "q",
+          "index": 1,
+          "stableId": "q:fr",
+          "unit": "m/s2-equivalent-wheel-excitation",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "q",
+          "index": 2,
+          "stableId": "q:rl",
+          "unit": "m/s2-equivalent-wheel-excitation",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "q",
+          "index": 3,
+          "stableId": "q:rr",
+          "unit": "m/s2-equivalent-wheel-excitation",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "x",
+          "index": 0,
+          "stableId": "x:ref-1",
+          "unit": "m/s2",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "x",
+          "index": 1,
+          "stableId": "x:ref-2",
+          "unit": "m/s2",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "x",
+          "index": 2,
+          "stableId": "x:ref-3",
+          "unit": "m/s2",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "x",
+          "index": 3,
+          "stableId": "x:ref-4",
+          "unit": "m/s2",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "u",
+          "index": 0,
+          "stableId": "u:fl",
+          "unit": "drive",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "u",
+          "index": 1,
+          "stableId": "u:fr",
+          "unit": "drive",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "u",
+          "index": 2,
+          "stableId": "u:rl",
+          "unit": "drive",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "u",
+          "index": 3,
+          "stableId": "u:rr",
+          "unit": "drive",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "d",
+          "index": 0,
+          "stableId": "d:fl",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "d",
+          "index": 1,
+          "stableId": "d:fr",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "d",
+          "index": 2,
+          "stableId": "d:rl",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "d",
+          "index": 3,
+          "stableId": "d:rr",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "a",
+          "index": 0,
+          "stableId": "a:fl",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "a",
+          "index": 1,
+          "stableId": "a:fr",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "a",
+          "index": 2,
+          "stableId": "a:rl",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "a",
+          "index": 3,
+          "stableId": "a:rr",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "e",
+          "index": 0,
+          "stableId": "e:fl",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "e",
+          "index": 1,
+          "stableId": "e:fr",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "e",
+          "index": 2,
+          "stableId": "e:rl",
+          "unit": "Pa",
+          "sampleCount": 2909
+        },
+        {
+          "signal": "e",
+          "index": 3,
+          "stableId": "e:rr",
+          "unit": "Pa",
+          "sampleCount": 2909
+        }
+      ],
+      "payloadBytes": 279264,
+      "containerBytes": 286452,
+      "rawMetricsMatch": true,
+      "roundTripExact": true,
+      "importedAnalysisExact": true,
+      "analysis": [
+        {
+          "requestedTime": 0,
+          "time": 0,
+          "valid": false,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 0.4995,
+          "time": 0.4995,
+          "valid": false,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 0.5,
+          "time": 0.5,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": null
+        },
+        {
+          "requestedTime": 1.4545,
+          "time": 1.4545,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": 513
+        },
+        {
+          "requestedTime": 3,
+          "time": 1.4545,
+          "valid": true,
+          "levelWeighting": "Z",
+          "spectrumWeighting": "Z",
+          "spectrumBins": 513
+        }
+      ]
+    }
+  ],
+  "newRoundtripValues": 1545816,
+  "pending": [
+    "A1 product file/Worker/cancel/experiment-isolation",
+    "B1 new-layout review",
+    "target-device performance",
+    "actual browser peak memory",
+    "second Windows physical offline reproduction",
+    "final B2-003/B2-004 acceptance"
+  ]
+}
