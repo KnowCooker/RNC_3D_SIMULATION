@@ -1,6 +1,6 @@
 # A2-P7-004 · P7+ 精细化与同车声场
 
-> 发布更新（2026-10-01）：用户已明确授权提交当前版本至 GitHub。提交前重新运行完整检查 185/185 通过，见 `publish-check.log`；以下“仅本地”描述是开发验收时的历史状态。发布结果以根开发记录与 A2 交接顶部为准。
+> 发布更新（2026-10-01）：用户已明确授权提交当前版本至 GitHub。提交前重新运行完整检查 185/185 通过，见 `publish-check.log`；以下“仅本地”描述是开发验收时的历史状态。代码提交 `8f2d80ee5db5d86714170f4edd13114bd5ed717b` 已推送，远端哈希一致；[草稿 PR #56](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/56) 依赖 #30，尚未合并 main。发布交接以根开发记录与 A2 交接顶部为准。
 
 2026-10-01。Role:A2；Identity-Source:user-declared；实际执行者Codex代A2。
 分支`a/a2-xpeng-reconstruction`，基线`4c097d47dc1d8d3d511cfa6a801059373d867e0c`。用户明确禁止未经指令上传：没有新增提交SHA、没有推送/更新PR，远端认领未生效。仅本地，GitHub尚未同步。
