@@ -299,3 +299,11 @@ Role: B2；Identity-Source: user-declared；执行者 Codex。用户授权继续
 - 下一步：提交推送并核对#52最终head/CI/冲突，转可审查；本批结束停止写入，不自动合并。维护者审查后由A1接入、B1核定lab-v3门槛，B2按串行接续。
 
 **2026-10-01 / B2 / B2-003 异步发布回填**：Role: B2；Identity-Source: user-declared；执行者 Codex。实现/测试/证据 `7a99315` 已推送 `hgyong:b/b2-003-async-export`，[PR #52](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/52)已转可审查并更新真实范围/验证/未验项。推送前fetch确认main仍`c2b0f43`，提交钩子/差异和证据版本核对通过。本批现在已远端同步、待审/未合并，原“待提交推送”是历史时点；最终交接提交与最新云端CI以PR head为准，尚未声称通过。180/180全仓、90/90 B组和生产Worker20/20证据已上传；lab/UI/内存/设备待办保持，本批停止写入，下一步维护者审查及接口协调，不自动合并。
+
+### 2026-10-01 / B2 / B2-003 / lab-v3 批量配方接班认领
+
+Role: B2；Identity-Source: user-declared；执行者 Codex。用户继续授权；main `181952687d6fb303e540e9f1b3981d228b52e744` 已合并#52，最新开放仅A2#30，B1最新交接停止写入，无B重复任务。新分支 `b/b2-003-lab-recipe` 从main建立。
+
+本批认领B本地lab-v3批量配方编码/严格解码/从零复算：沿用已经合并的teaching-fixed-v1、现有引擎与实录素材，入口独立校验布局/模型/素材身份，保留原配置及明确缺省，不更换算法、不宣称B1已批准写实布局。两类源、四车型、动态参考、开关/发散与坏输入复验；复算采用新runId，拒实时续算。范围仅B export、B测试/说明/证据、B/根记录；无shared/integration/A/根配置/冻结fixture变化。lab完整结果容器和产品UI仍待后续，独立B配方接口不需要改共管契约；跨组布局审查仍由B1执行。
+
+先发布认领和草稿PR，复查重复后改功能。当前本批尚未修改功能或执行新验收，远端认领待发布。
