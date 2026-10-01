@@ -1,6 +1,6 @@
-# demo-v2 结果及 demo-v2 / lab-v3 配方 API
+# demo-v2 / lab-v3 结果及配方 API
 
-结果文件支持从样本 0 开始的完整 demo-v2 批量结果，固定 2000 Hz、32000 点、x/u/d/a/e 各四路。同步与异步结果 API 使用相同格式。另提供 lab-v3 教学布局的批量配方复算，保留发散有限前缀；lab 完整结果容器、实时快照和状态续算尚未实现。无 DOM、文件读写、网络或 A/integration 依赖，不修改引擎公式或共享契约。
+结果文件支持从样本 0 开始的完整 demo-v2 批量结果，固定 2000 Hz、32000 点、x/u/d/a/e 各四路。另提供 lab-v3 教学批量结果及明确发散前缀、批量配方从零复算；lab 和 demo 使用独立入口，同步与异步各自兼容。实时快照和状态续算尚未实现。无 DOM、文件读写、网络或 A/integration 依赖，不修改引擎公式或共享契约。
 
 ```ts
 import {
@@ -82,4 +82,27 @@ const repeated = await recomputeLabRecipeAsync(recipe, {
 
 JSON 硬上限 64 KiB；信号储存预算硬上限 64 MiB，按 `(20 + 参考数) × 请求点数 × 4` 检查，可降低。另沿用引擎现有配置/内存时长限制。这个预算只计算返回 Float32 信号，不含路径、权重、临时数组、录音或容器副本，不能作为浏览器峰值证明；计算建议由调用方放在 Worker，异步素材加载不代表计算循环会自动让出线程。
 
-本批证据见 [lab 配方验收](../../../docs/evidence/B/B2-003/lab-recipe/README.md)。这是已合并教学模型的确定性复算验收，不替代 B1 正式布局审查或数值正确性独立对照。lab 完整结果序列化、A1 正式文件流程/Worker/取消、设备内存/性能和第二机仍独立待办，完整 B2-003 尚未签收。
+配方证据见 [lab 配方验收](../../../docs/evidence/B/B2-003/lab-recipe/README.md)。这是已合并教学模型的确定性复算验收，不替代 B1 正式布局审查或数值正确性独立对照。A1 正式文件流程/Worker/取消、设备内存/性能和第二机仍独立待办，完整 B2-003 尚未签收。
+
+## lab-v3 结果文件
+
+```ts
+import { estimateLabExport, encodeLabResultAsync, decodeLabResultAsync } from './index';
+const batch = { mode: 'batch' as const, originSample: 0 as const,
+  result: labResult, source: 'computed-browser' as const }; // 来源由调用方显式声明。
+const estimate = estimateLabExport(batch, { sourceCommit: buildCommit });
+const bytes = await encodeLabResultAsync(batch, { sourceCommit: buildCommit, sha256: asyncSha256 });
+const imported = await decodeLabResultAsync(bytes, asyncSha256);
+// 必须检查 modelSupported / layoutSupported / verifiedMetrics，再决定只读展示方式。
+// imported.source 保留来源，result.runId 保留原ID，导入本身不计算或改当前实验。
+```
+
+同步对应 `encodeLabResult` / `decodeLabResult`。格式仍为RNCRSLT1，但manifest.modelSchema=lab-v3，内含已验证的lab配方身份、run/time/channels/rawMetrics/integrity。两类版本入口互相拒绝，不自动猜测或转为demo。通道按q/x/u/d/a/e顺序；q/u/d/a/e各4路按FL/FR/RL/RR，x按原参考数组及稳定ID。q的录音模式单位为relative-amplitude，合成模式为m/s2-equivalent-wheel-excitation；x=m/s2、u=drive、d/a/e=教学Pa。录音原始未标定V及读取规则记在配方asset，不能把生成q称为实测声压。所有样本有限Float32小端逐位保存，含负零/次正规数/有限极值；不缩放或改单位。
+
+请求点数是时长×2000；completed必须等于请求点数且无发散，diverged必须是更短有限前缀且divergence.sample等于实际N。半开时间[0,N/2000)，最后样本(N-1)/2000，N=0时最后时间null。导出/导入不补齐数组；快照包装、非零起点、无发散的不完整结果均拒绝。计算耗时原样保留，不用于判定确定性。
+
+原始lab指标窗口是末尾最多8000点/Z，保留历史底限规则返回的0及NaN/±Infinity/负零标签。导入已知模型/布局后使用B meanPower核对该规则；verifiedMetrics为每点及合功率给有效值/原因，并给rawMetricsMatch。空前缀、不足既有LAB_WINDOW_SAMPLES=1000点（0.5秒）的前缀、低功率/零分母、非有限原指标和自报不一致分别为empty-window/warming-up/below-floor/nonfinite/raw-mismatch，不得展示为0dB收益；有声μ0的0dB可有效。自报不一致指标保留为诊断原值、有效值为null，不能用其覆盖已验证摘要。未知模型或布局仍可严格只读查看，verifiedMetrics=null；禁止送入当前引擎、声场或自动播放，显式配方复算独立拒绝不支持身份。
+
+容器64MiB/manifest64KiB硬上限可降低。解码先检查实际/声明边界、模式/配置/元信息/通道及有限性，SHA通过后才分配输出通道。异步解码先做有界容器副本，等待期间原视图或Buffer被修改/转移不影响结果；异步编码先捕获身份/指标及所有样本。信任的SHA适配器不可改内部字节，拒绝原样传播。估算编码下界为原信号+输出文件；异步解码下界为输入容器+副本容器+输出信号，均不能当作峰值内存。读文件/素材/Worker/取消/下载及实验隔离由调用方负责。
+
+验收和真实浏览器证据见 [lab 结果验收](../../../docs/evidence/B/B2-003/lab-result/README.md)。当前B的demo/lab结果和批量配方接口已提供；完整003的A1产品集成与设备门槛仍待验收，不据此宣称最终交付。

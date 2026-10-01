@@ -1,0 +1,10 @@
+{
+  "destination": "test-results/B2-003-lab-result-final/comparison.json",
+  "caseCount": 29,
+  "samplesPerSyncOrAsyncRoundtrip": 2789816,
+  "divergence": {
+    "sample": 2909,
+    "message": "已经发散：样本 2909 出现数值溢出或非有限值，已自动暂停，无法继续此实验；请调整步长后重新开始。"
+  },
+  "frozenFixturesUnchanged": true
+}
