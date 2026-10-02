@@ -1,0 +1,23 @@
+{
+  "basis": "git-normalized LF UTF-8 source bytes",
+  "files": {
+    "src/shared/lab-contracts.ts": "b1a0af463bbe9b3a2dbcacb800bc42cd5597f6ebfa8bdfd73bc08c11000d2d2a",
+    "src/team-a/lab/champagne-shell.ts": "6a3da58e3fe409258bd37f0fad419c22c6bd29e153657e549433b4d790883350",
+    "src/team-a/lab/index.ts": "3e8438c3f29a098cc810790f94ec08919a3b010ad28f94667b841a74f1c686fa",
+    "src/team-a/viewer/champagne-gallery.ts": "ea2c4c2ad6114a2d75e8603926408a1043e4835e4141c0d78f4b6b016807f44c",
+    "src/team-a/viewer/driving-road.ts": "12a4962e45d3cccd70632c789e18c22429387c32a09f6c21b7be8e7b5f1b2c80",
+    "src/team-a/viewer/driving-route.ts": "65afe54657e7d47683475403d3c1deaff98384cf2f9c28b0210759908073a04c",
+    "src/team-a/viewer/driving-state.ts": "984e7ad888925c8a97796d5362ccdf3a62dd30e6142b147d582f4dbb797601c3",
+    "src/team-a/viewer/driving-view.ts": "14bf6a0f2474dbef7e671c07c9b21f624196d47f0f58542c91368e8a2ce3b8e7",
+    "src/team-a/viewer/field-display.ts": "2ca24e4d87ca911baf5d1b4ee4064b8c52571f03cdc37efc2106a17ae1a78bf1",
+    "src/team-a/viewer/lab-viewer.ts": "f95ff41de6e7e185f68fe2fad9ceb8104de929b980865c3335ef52dcdc8d669f",
+    "src/team-a/viewer/p7plus-model.ts": "5fc993742d988c536e1ceed12ce51d19ff5533ff2f694403d91d3ea35769afd0",
+    "src/team-a/viewer/scenic-terrain.ts": "5f07944de905756de7ee03861448adf20e737862ac64d134d21f6044de4b6222",
+    "src/team-a/viewer/wheel-motion.ts": "0afda3cbcbcdc7c68627b95a4f4c1c75edc56cff7d0353de4a7fee26e2183e06",
+    "src/team-a/viewer/xpeng-model.ts": "b93826fc0aefe672bce4bd9a0a9af682890288f2045d7b4da1d7b6a911441485",
+    "src/team-b/lab/paths.ts": "1157c7d1aca7685c074949f831a5f9f1593db6ff28bd51e4b7503b08c3321c52",
+    "tests/a2-driving.test.ts": "64c824095364354128c38ed6436c792ec6b1ac299abfef9cb09565241fc2ead2",
+    "tests/a2-p7plus.test.ts": "581e634e8f79e7b1a9b121f3386a91a9a47a45f4760ad4ae3b01d1b3acf29959",
+    "tests/a2-xpeng-acoustics.test.ts": "dae898e181c4e2b597fe3c6314ee4becf0ba43a100a72354b49430d0ee6432a3"
+  }
+}

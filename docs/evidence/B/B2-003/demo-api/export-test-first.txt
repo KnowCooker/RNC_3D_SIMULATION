@@ -1,0 +1,36 @@
+✔ B2-003: default binary roundtrip, recipe recompute and Python oracle (360.1932ms)
+✔ B2-003: seed29 binary roundtrip, recipe recompute and Python oracle (356.7722ms)
+✔ B2-003: seed47 binary roundtrip, recipe recompute and Python oracle (357.4784ms)
+✔ B2-003: taps32 binary roundtrip, recipe recompute and Python oracle (272.3933ms)
+✔ B2-003: mu0 binary roundtrip, recipe recompute and Python oracle (232.434ms)
+✔ B2-003: registered source hashes match the numerical implementation (0.9819ms)
+✔ B2-003: preserve reference identity, little-endian edge bits and offset views (172.839ms)
+✔ B2-003: silent and zero-denominator metrics retain nonfinite tags and unavailable measurements (59.3864ms)
+✔ B2-003: genuine zero/negative reductions and tagged negative zero stay distinct from silence (37.8966ms)
+✔ B2-003: malformed/truncated headers, overflow lengths, trailing bytes and padding are rejected (7.5519ms)
+✔ B2-003: schema, channel mapping, units, metadata, normalized config and metrics are validated (23.5845ms)
+✔ B2-003: integrity mismatch and hash-correct nonfinite payload cannot import (16.0777ms)
+✔ B2-003: budgets refuse before hashing/large output and count UTF-8 bytes (7.8214ms)
+✔ B2-003: unknown numerical models are read-only; recipe recompute revalidates identity and fresh id (7.9893ms)
+✔ B2-003: recipes reject extra scripts/URLs/arrays, bad text/config and different schemas (0.5854ms)
+✔ B2-003: live snapshots, partial results, bad dimensions and invalid samples are not batches (15.2218ms)
+✔ Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak (7.0367ms)
+✔ B2-002: RMS uses exactly the trailing 1000 samples, including first and final windows (4.6716ms)
+✔ B2-002: same-window reduction preserves negative gains and aggregates powers before dB (3.3559ms)
+✔ B2-002: silence and near-floor pressure never report valid zero-dB benefit (8.2763ms)
+✔ B2-002: non-finite pressure is unavailable, never a valid analysis frame (7.8583ms)
+✔ B2-002: power rejects invalid ranges and PSD clamps finite sample cursors to actual data (1.0477ms)
+✔ B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples (1.0404ms)
+✔ B2-002: non-finite PSD cursors cannot trap a caller in an unbounded loop (162.4303ms)
+✔ B2-002: shared PSD preserves lab pressure weighting and vibration/drive/source units (4.8394ms)
+✔ B2-002: asymmetric signal Welch bins match direct DFT, 50% overlap and incomplete-tail handling (82.7656ms)
+✔ B2-002: DC and Nyquist are not doubled; PSD scales as signal-unit squared per Hz (7.7507ms)
+✔ analysis warming-up, window boundary, channel identity and pressure calibration (0.6613ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2995.3043

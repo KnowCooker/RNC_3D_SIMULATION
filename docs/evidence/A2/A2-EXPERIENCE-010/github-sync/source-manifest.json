@@ -1,0 +1,31 @@
+{
+  "encoding": "UTF-8 with CRLF normalized to LF; portable Git content hash",
+  "files": {
+    "src/team-a/lab/case-compare.ts": "6761105e57dd454f15c817226b809430e032e3db9884b792f0f55ac49ec1165a",
+    "src/team-a/lab/case-evidence.ts": "14f4fa4d7982ab57740d912d72ffc307c19b8b73e4c5a54e7424fd7cfa78004e",
+    "src/team-a/lab/case-review.ts": "b31250a987cc0656a3f47ecefbf049abdd24ce9535cc994e7df047d048c05d09",
+    "src/team-a/lab/champagne-shell.ts": "d20bedac6242de94502007042099b5a1c490559aea22279e5cf514ceff07c236",
+    "src/team-a/lab/champagne.css": "97178e29e59b730b80bd30780be28132702f45b0a81381f1e24ff7c42e34c7dd",
+    "src/team-a/lab/guide-state.ts": "420e36223117bb29492f61620a1096843a3df08d94063d7b8e43b5c4408b2379",
+    "src/team-a/lab/index.ts": "e1604f7d32371362692ccc5bd4175e534519fd50395e5ed08790ccab3e9dfbda",
+    "src/team-a/viewer/champagne-gallery.ts": "86080e771441f4562b7c8f643a5bde4d82a31174ec62610c9debe281ffd9ddb6",
+    "src/team-a/viewer/driving-road.ts": "864dc8bf793cad363edda8760aed38b7fa1d5d6c6a93da3d2caecb057b730f3a",
+    "src/team-a/viewer/driving-route.ts": "346f44958ba47dfee32a97e763c3e4fc26db2ec1a4dcece4c6eac8559fc7f213",
+    "src/team-a/viewer/driving-view.ts": "5d809136668a9e2f7c2481600ad3a562519bdce2cf6f910504de5efcb8c91a7a",
+    "src/team-a/viewer/field-display-data.ts": "6f566d46cb71ba2a99d20fe98417cc1614d90536a03f063c2e49b304c9677feb",
+    "src/team-a/viewer/field-display.ts": "9c59b9ff82562e9460e7cc3d9032250d489d2254bf9c34ac24c34d2bdec8962a",
+    "src/team-a/viewer/field-slices.ts": "2094e80d700a9e74c85e46444a3a4d3a05ce9839f375934754cf3a8c036a0f62",
+    "src/team-a/viewer/lab-viewer.ts": "fde98351ab2a7bafe5622315c3791262ce76fd6821b9ce22b33a0cf7b9164339",
+    "src/team-a/viewer/scene-stage.ts": "9fad1e0007ea8e7daf679e3ec7695ae68707dca615eb601eecc15c542c751ac3",
+    "src/team-a/viewer/scenic-terrain.ts": "3b0ea63320e14d408b8965b25136d5b485d994c81b08bb18cc28f05b5251f9df",
+    "src/team-a/lab/field-query.ts": "ce9b8cc0a75b879e913b2b270900c7a01603bce775c3c8451a85a70c239a326c",
+    "src/team-a/viewer/environment-camera.ts": "316080ea6c86f13f5dc0893853d4aa9fdca5fc5f84cae3f10587cd989fa971f2",
+    "src/team-a/viewer/field-grid.ts": "e1cda3060e3e639f9c89bca8cafd31f0b5333153ce46ec20185c5a30898ed7f7",
+    "src/team-a/viewer/landscape-height.ts": "0b522d4b71f41ec3d09f99fa1c9af0058001d65fab52e4fd02c04b88e7f2b560",
+    "src/team-a/viewer/panorama-sky.ts": "5a57da3dc3624f54d84281c2ea40ade3e01c4cb79fd6d8c189acfbf419227cd3",
+    "tests/a2-champagne-acceptance.test.ts": "568d1696e4453bcfca2dc8a06a3d0432cd18d05d28faabdc9fda526809ea975f",
+    "tests/a2-dense-volume.test.ts": "d2c2efb1eaf1112d90e7973de5e8c29f24f7e9a737b1cd2b8082a56f915dd838",
+    "tests/a2-environment-stability.test.ts": "55dc45f49cce017b15562d4c7aef348fead371f9b0b98a6b3f5a11e386fa8a41",
+    "tests/a2-field-query.test.ts": "2a3ae543c484957d6923ad6e6304084351ddb22a37a4d281774b81f5b649acbe"
+  }
+}

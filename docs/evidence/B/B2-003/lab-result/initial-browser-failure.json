@@ -1,0 +1,10 @@
+{
+  "ok": false,
+  "error": "Error: ice/shaped-noise: exact q/x/u/d/a/e, metadata and verified metrics",
+  "tests": [
+    { "name": "Real Worker Web Crypto verifies original RNQ1 recording", "passed": true },
+    { "name": "ice/shaped-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": false }
+  ],
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+  "secureContext": true
+}

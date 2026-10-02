@@ -41,6 +41,27 @@ test('wheel spin preserves its axle and semantic attachment, keeping the brake c
   const initial=caliper.position.clone(),motion=createWheelMotion(wheel,center,.37);
   motion.setDistance(2);wheel.updateMatrixWorld(true);
   assert.ok(tyre.getWorldPosition(new THREE.Vector3()).distanceTo(center)<1e-10);assert.ok(caliper.position.equals(initial));assert.equal(caliper.parent,wheel);assert.deepEqual(wheel.position.toArray(),[0,0,0]);
+  motion.setSteering(.24);motion.setDistance(12);wheel.updateMatrixWorld(true);
+  assert.ok(tyre.getWorldPosition(new THREE.Vector3()).distanceTo(center)<1e-10);
+  const turned=initial.clone().sub(center).applyAxisAngle(new THREE.Vector3(0,1,0),.24).add(center);
+  assert.ok(caliper.position.distanceTo(turned)<1e-10);motion.setSteering(0);assert.ok(caliper.position.distanceTo(initial)<1e-10);
   motion.setDistance(0);assert.equal(motion.pivot.rotation.x,0);
   tyre.geometry.dispose();(tyre.material as THREE.Material).dispose();
+});
+
+
+test('curved graded route preserves arc length, periodic seams and reversible vehicle coordinates',async()=>{
+  const {sampleDrivingRoute,routePoint,routePeriodMetres}=await import('../src/team-a/viewer/driving-route');
+  let minGrade=Infinity,maxGrade=-Infinity,minHeading=Infinity,maxHeading=-Infinity;
+  for(let d=-200;d<2600;d+=3.7){
+    const a=sampleDrivingRoute(d),b=sampleDrivingRoute(d+.1);
+    assert.ok(Math.abs(a.position.distanceTo(b.position)-.1)<.00002);
+    minGrade=Math.min(minGrade,a.grade);maxGrade=Math.max(maxGrade,a.grade);
+    minHeading=Math.min(minHeading,Math.atan2(a.tangent.x,a.tangent.z));maxHeading=Math.max(maxHeading,Math.atan2(a.tangent.x,a.tangent.z));
+    const local=routePoint(d,.8,.35).sub(a.position).applyQuaternion(a.rotation.clone().invert());
+    assert.ok(local.distanceTo(new THREE.Vector3(.8,.35,0))<1e-10);
+  }
+  assert.ok(minGrade<-.05&&maxGrade>.05);assert.ok(maxHeading-minHeading>.7);
+  for(const d of [0,routePeriodMetres,-routePeriodMetres])assert.ok(sampleDrivingRoute(d-.001).position.distanceTo(sampleDrivingRoute(d+.001).position)<.00201);
+  assert.deepEqual(sampleDrivingRoute(145).position.toArray(),sampleDrivingRoute(145).position.toArray());
 });

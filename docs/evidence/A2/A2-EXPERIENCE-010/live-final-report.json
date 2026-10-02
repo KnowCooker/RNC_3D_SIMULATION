@@ -1,0 +1,254 @@
+{
+  "checks": [
+    {
+      "name": "p7plus previous result cleared",
+      "pass": true
+    },
+    {
+      "name": "p7plus inspect stays driving",
+      "pass": true
+    },
+    {
+      "name": "p7plus clock advances during inspection",
+      "pass": true
+    },
+    {
+      "name": "p7plus live field advances",
+      "pass": true
+    },
+    {
+      "name": "p7plus layout remains paired",
+      "pass": true
+    },
+    {
+      "name": "p7plus grade and curve evolve",
+      "pass": true
+    },
+    {
+      "name": "p7plus pause freezes world",
+      "pass": true
+    },
+    {
+      "name": "p7plus seat marker matches",
+      "pass": true
+    },
+    {
+      "name": "p7plus view change preserves paused time",
+      "pass": true
+    },
+    {
+      "name": "p7plus stop clears field",
+      "pass": true
+    },
+    {
+      "name": "x9 previous result cleared",
+      "pass": true
+    },
+    {
+      "name": "x9 inspect stays driving",
+      "pass": true
+    },
+    {
+      "name": "x9 clock advances during inspection",
+      "pass": true
+    },
+    {
+      "name": "x9 live field advances",
+      "pass": true
+    },
+    {
+      "name": "x9 layout remains paired",
+      "pass": true
+    },
+    {
+      "name": "x9 grade and curve evolve",
+      "pass": true
+    },
+    {
+      "name": "x9 pause freezes world",
+      "pass": true
+    },
+    {
+      "name": "x9 seat marker matches",
+      "pass": true
+    },
+    {
+      "name": "x9 view change preserves paused time",
+      "pass": true
+    },
+    {
+      "name": "x9 stop clears field",
+      "pass": true
+    },
+    {
+      "name": "l03 previous result cleared",
+      "pass": true
+    },
+    {
+      "name": "l03 inspect stays driving",
+      "pass": true
+    },
+    {
+      "name": "l03 clock advances during inspection",
+      "pass": true
+    },
+    {
+      "name": "l03 live field advances",
+      "pass": true
+    },
+    {
+      "name": "l03 layout remains paired",
+      "pass": true
+    },
+    {
+      "name": "l03 grade and curve evolve",
+      "pass": true
+    },
+    {
+      "name": "l03 pause freezes world",
+      "pass": true
+    },
+    {
+      "name": "l03 seat marker matches",
+      "pass": true
+    },
+    {
+      "name": "l03 view change preserves paused time",
+      "pass": true
+    },
+    {
+      "name": "l03 stop clears field",
+      "pass": true
+    },
+    {
+      "name": "m03 previous result cleared",
+      "pass": true
+    },
+    {
+      "name": "m03 inspect stays driving",
+      "pass": true
+    },
+    {
+      "name": "m03 clock advances during inspection",
+      "pass": true
+    },
+    {
+      "name": "m03 live field advances",
+      "pass": true
+    },
+    {
+      "name": "m03 layout remains paired",
+      "pass": true
+    },
+    {
+      "name": "m03 grade and curve evolve",
+      "pass": true
+    },
+    {
+      "name": "m03 pause freezes world",
+      "pass": true
+    },
+    {
+      "name": "m03 seat marker matches",
+      "pass": true
+    },
+    {
+      "name": "m03 view change preserves paused time",
+      "pass": true
+    },
+    {
+      "name": "m03 stop clears field",
+      "pass": true
+    },
+    {
+      "name": "gx previous result cleared",
+      "pass": true
+    },
+    {
+      "name": "gx inspect stays driving",
+      "pass": true
+    },
+    {
+      "name": "gx clock advances during inspection",
+      "pass": true
+    },
+    {
+      "name": "gx live field advances",
+      "pass": true
+    },
+    {
+      "name": "gx layout remains paired",
+      "pass": true
+    },
+    {
+      "name": "gx grade and curve evolve",
+      "pass": true
+    },
+    {
+      "name": "gx pause freezes world",
+      "pass": true
+    },
+    {
+      "name": "gx seat marker matches",
+      "pass": true
+    },
+    {
+      "name": "gx view change preserves paused time",
+      "pass": true
+    },
+    {
+      "name": "gx stop clears field",
+      "pass": true
+    },
+    {
+      "name": "p7plus disassembly works",
+      "pass": true
+    },
+    {
+      "name": "p7plus assembly restored",
+      "pass": true
+    },
+    {
+      "name": "x9 disassembly works",
+      "pass": true
+    },
+    {
+      "name": "x9 assembly restored",
+      "pass": true
+    },
+    {
+      "name": "l03 disassembly works",
+      "pass": true
+    },
+    {
+      "name": "l03 assembly restored",
+      "pass": true
+    },
+    {
+      "name": "m03 disassembly works",
+      "pass": true
+    },
+    {
+      "name": "m03 assembly restored",
+      "pass": true
+    },
+    {
+      "name": "gx disassembly works",
+      "pass": true
+    },
+    {
+      "name": "gx assembly restored",
+      "pass": true
+    },
+    {
+      "name": "no JS/Shader errors",
+      "pass": true
+    },
+    {
+      "name": "no failed resources",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "failures": []
+}

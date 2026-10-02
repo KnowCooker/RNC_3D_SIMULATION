@@ -1,0 +1,9 @@
+{
+  "destination": "test-results/B2-004-final/audit.json",
+  "evidenceBindings": 8,
+  "demoCases": 2,
+  "labCases": 3,
+  "newRoundtripValues": 1545816,
+  "frozenFixturesUnchanged": true,
+  "phase": "report-preparation"
+}

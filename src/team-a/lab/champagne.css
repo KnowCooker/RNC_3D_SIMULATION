@@ -25,7 +25,7 @@ body:has(.cp-app) { margin:0; background:#f6f1e9; }
 .cp-app button:hover:not(:disabled) { background:#f6e5c9; }
 .cp-app button:active:not(:disabled) { transform:translateY(1px); }
 .cp-app button:disabled { opacity:.45; cursor:not-allowed; }
-.cp-app :is(button,input,select,summary,a):focus-visible { outline:3px solid #8d6438; outline-offset:3px; }
+.cp-app :is(button,input,select,textarea,summary,a):focus-visible { outline:3px solid #8d6438; outline-offset:3px; }
 .cp-app a { color:#795332; }
 .cp-app input[type=range],.cp-app input[type=checkbox] { accent-color:#a77948; }
 .cp-app h1,.cp-app h2,.cp-app h3,.cp-app p { color:inherit; }
@@ -48,11 +48,11 @@ body:has(.cp-app) { margin:0; background:#f6f1e9; }
 .cp-hero h1 { font:clamp(28px,2.7vw,48px)/1.35 "Noto Serif SC","SimSun",serif; letter-spacing:.1em; margin:12px 0 8px; font-weight:500; text-shadow:0 1px 12px #fff7e7; }
 .cp-hero p { font-size:15px; letter-spacing:.24em; margin:0; color:#6c5c4a; }
 .cp-glass { background:var(--cp-glass); border:1px solid #ffffffe0; border-radius:26px; box-shadow:0 12px 38px #67492514,inset 0 1px 0 #fff7; backdrop-filter:blur(22px); }
-.cp-mode-rail { position:absolute; top:210px; left:26px; padding:8px; display:grid; gap:4px; border:1px solid #ffffffe0; background:#ece2d485; backdrop-filter:blur(18px); border-radius:25px; width:80px; box-shadow:0 10px 30px #5a422221; }
+.cp-mode-rail { position:absolute; top:150px; left:26px; padding:8px; display:grid; gap:4px; border:1px solid #ffffffe0; background:#ece2d485; backdrop-filter:blur(18px); border-radius:25px; width:80px; box-shadow:0 10px 30px #5a422221; }
 .cp-mode-rail button { border:0; border-radius:17px; background:transparent; padding:12px 5px; display:grid; gap:7px; justify-items:center; font-size:12px; }
 .cp-mode-rail svg { width:27px; height:27px; }
 .cp-mode-rail button[aria-pressed=true] { background:linear-gradient(135deg,#fffdf1,#edd4ad); box-shadow:0 2px 14px #c5955670,inset 0 0 0 1px #fff; }
-.cp-asset { position:absolute; left:7%; top:170px; display:flex; align-items:center; gap:12px; font-size:11px; }
+.cp-asset { position:absolute; left:7%; top:145px; display:flex; align-items:center; gap:12px; font-size:11px; }
 .cp-asset label { display:flex; gap:8px; align-items:center; }
 .cp-asset select { padding:8px 30px 8px 10px; border-color:#fff9; background:#f5eddfbd; font-size:12px; }
 .cp-asset-note { color:#776650; }
@@ -265,11 +265,11 @@ body:has(.cp-app) { margin:0; background:#f6f1e9; }
 @media(min-width:1001px) {
  .cp-stage {min-height:690px}
  .cp-field-card {right:1.6%;top:26px;width:34%;max-width:740px;padding:clamp(20px,1.8vw,34px)}
- .cp-summary-cards {left:32%;right:1.6%;bottom:140px;gap:18px}
+ .cp-summary-cards {left:32%;right:1.6%;bottom:150px;gap:18px}
  .cp-app .cp-summary {height:clamp(180px,22vh,250px);padding:22px}
  .cp-field-panel {width:35%;max-width:850px;right:1.6%}
  .cp-mode-rail {left:1.8%}
- .cp-hero {left:7%;top:44px}
+ .cp-hero {left:7%;top:16px}
  .cp-app .cp-hero h1 {font-size:clamp(32px,2.8vw,60px)}
  .cp-model-preview {height:clamp(130px,15vh,260px)}
 }
@@ -335,6 +335,7 @@ body:has(.cp-app) { margin:0; background:#f6f1e9; }
  .cp-field-card {top:12px;min-height:405px}
  .cp-model-preview {height:clamp(170px,19vh,265px)}
  .cp-summary-cards {left:32.4%;gap:14px}
+ .cp-app .cp-summary{height:225px}
  .cp-app .cp-summary>span {font-size:18px}
  .cp-app .cp-summary>small {font-size:14px}
  .cp-environments {bottom:25px}
@@ -408,3 +409,12 @@ body:has(.cp-app) { margin:0; background:#f6f1e9; }
 @media(max-width:1000px){.lab-driving-location{left:auto;right:16px;bottom:18px;width:105px;padding:8px}.lab-driving-location canvas{width:88px;height:132px}.lab-driving-location span{font-size:9px}.lab-driving-location small{display:none}.cp-drive-modes label{margin-left:0}.lab-driving-views{grid-template-columns:repeat(3,1fr)}}
 
 .cp-app:has(#lab-viewer[data-driving-eye]:not([data-driving-eye=""])) .cp-work-title{padding:14px 18px;border-radius:16px;background:#fff5e1c9;backdrop-filter:blur(12px)}
+
+/* Acceptance controls use semantic status and an explicit recovery action. */
+.cp-environment-status{position:absolute;left:7%;bottom:146px;padding:9px 13px;border-radius:14px;background:#fff8edeb;box-shadow:0 5px 20px #39291915;font-size:13px;max-width:340px;display:flex;align-items:center;gap:12px}
+.cp-environment-status button{font-size:13px;white-space:nowrap}
+.lab-comparison-purpose{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:600;margin:18px 0 8px}
+.lab-comparison-policy{font-size:14px;line-height:1.7;padding:12px 16px;border-left:3px solid var(--cp-accent);background:#fffaf08c;border-radius:0 12px 12px 0}
+@media(max-width:1000px){.cp-environment-status{top:425px;bottom:auto;left:19px;right:19px;max-width:none}.lab-comparison-purpose select{max-width:100%}}
+
+@media(max-width:1000px){.cp-app[data-page=field] .cp-work-title{background:#fff7e3e3;border-radius:9px;backdrop-filter:blur(12px);box-shadow:0 0 0 7px #fff7e3a8;max-width:calc(100% - 48px)}}

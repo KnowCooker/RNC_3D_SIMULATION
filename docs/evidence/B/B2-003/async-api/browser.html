@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>B2 异步导出 Worker 验证</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:32px auto;padding:0 16px;background:#f6f8fa}pre{white-space:pre-wrap;word-break:break-word}h1{font-size:24px}</style>
+<h1>B2-003 异步导出与 Web Crypto</h1><p id="status">正在独立 Worker 中核对五工况与异步数据快照……</p><pre id="report"></pre>
+<script type="module">
+const worker = new Worker(new URL('./browser-worker.ts', import.meta.url), { type: 'module' });
+worker.onmessage = ({ data }) => {
+  document.querySelector('#status').textContent = data.ok ? '通过：浏览器 Worker 验证完成' : '失败：请查看原始报告';
+  document.querySelector('#report').textContent = JSON.stringify({ ...data, userAgent: navigator.userAgent, secureContext: isSecureContext }, null, 2);
+  worker.terminate();
+};
+worker.onerror = event => {
+  document.querySelector('#status').textContent = '失败：Worker 错误';
+  document.querySelector('#report').textContent = JSON.stringify({ ok: false, error: event.message });
+  worker.terminate();
+};
+worker.postMessage('run');
+</script></html>
