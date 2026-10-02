@@ -1,0 +1,80 @@
+{
+  "sizes": {
+    "native": [
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432
+    ],
+    "three": [
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432,
+      5918432
+    ]
+  },
+  "failures": [
+    {
+      "phase": "three",
+      "url": "http://127.0.0.1:5197/assets/lakes_2k-Cp9fVIm5.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "three",
+      "url": "http://127.0.0.1:5197/assets/lakes_2k-Cp9fVIm5.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "three",
+      "url": "http://127.0.0.1:5197/assets/lakes_2k-Cp9fVIm5.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "three",
+      "url": "http://127.0.0.1:5197/assets/lakes_2k-Cp9fVIm5.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "three",
+      "url": "http://127.0.0.1:5197/assets/lakes_2k-Cp9fVIm5.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "three",
+      "url": "http://127.0.0.1:5197/assets/lakes_2k-Cp9fVIm5.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "three",
+      "url": "http://127.0.0.1:5197/assets/lakes_2k-Cp9fVIm5.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "three",
+      "url": "http://127.0.0.1:5197/assets/lakes_2k-Cp9fVIm5.hdr",
+      "error": "net::ERR_ABORTED"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import { finiteSignal, finiteWeight, LabDivergenceError } from './divergence';
 import type { Four } from '../../shared/contracts';
-import { LAB_LIVE_LIMIT_SECONDS, MIC_POSITIONS, type LabChunk, type LabConfig, type LabLiveSnapshot, type LabResult, type LabRncChange } from '../../shared/lab-contracts';
+import { LAB_LIVE_LIMIT_SECONDS, labLayout, type LabChunk, type LabConfig, type LabLiveSnapshot, type LabResult, type LabRncChange } from '../../shared/lab-contracts';
 import { primaryPath, referencePath, secondaryPath, type SparsePath } from './paths';
 import { createSourceShape, sourceParameters } from './sources';
 import { validateLabConfig } from './validation';
@@ -25,8 +25,8 @@ export function createLabStream(input: LabConfig, runId: string, historySamples 
   const config = structuredClone(input), taps = config.taps, nReferences = config.references.length;
   const active = config.speakerEnabled.flatMap((enabled, i) => enabled ? [i] : []);
   const canAdapt = config.stepSize > 0 && active.length > 0;
-  const primary = MIC_POSITIONS.map(point => [0, 1, 2, 3].map(i => primaryPath(config, i, point)));
-  const secondary = MIC_POSITIONS.map(point => [0, 1, 2, 3].map(i => secondaryPath(config, i, point)));
+  const primary = labLayout(config).microphones.map(point => [0, 1, 2, 3].map(i => primaryPath(config, i, point)));
+  const secondary = labLayout(config).microphones.map(point => [0, 1, 2, 3].map(i => secondaryPath(config, i, point)));
   const references = config.references.map(reference => [0, 1, 2, 3].map(i => referencePath(config, i, reference.position)));
   for (const rows of [primary, secondary, references]) for (const row of rows) for (const path of row) {
     if (path.delays.some(delay => delay >= SHORT_CAPACITY)) throw new Error('路径超出流式短延迟容量');

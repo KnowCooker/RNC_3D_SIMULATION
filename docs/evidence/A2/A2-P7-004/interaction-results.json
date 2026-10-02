@@ -1,0 +1,26 @@
+{
+  "passed": 12,
+  "checks": [
+    "HiDPI 1920 screen renders at physical 3840 width",
+    "pointer drag rotates actual vehicle",
+    "wheel zoom changes actual vehicle",
+    "clicking rendered mesh selects a semantic P7 part",
+    "picked part can be detached",
+    "picked part can be reassembled",
+    "x9: actual XPeng model loaded",
+    "l03: actual XPeng model loaded",
+    "m03: actual XPeng model loaded",
+    "gx: actual XPeng model loaded",
+    "p7plus: actual XPeng model loaded",
+    "no runtime errors during switching and picking"
+  ],
+  "size": {
+    "width": 3840,
+    "height": 2004,
+    "cssWidth": 1920,
+    "cssHeight": 1002,
+    "dpr": 2
+  },
+  "picked": "hood",
+  "errors": []
+}

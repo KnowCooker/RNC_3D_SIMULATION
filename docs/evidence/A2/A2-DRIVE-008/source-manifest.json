@@ -1,0 +1,52 @@
+[
+  {
+    "path": "src/team-a/viewer/driving-road.ts",
+    "bytes": 12326,
+    "sha256": "918edca83c660404b6ccabd1ff872bbd4a38d7d9f9a540c8751eefbe8d63678e"
+  },
+  {
+    "path": "src/team-a/viewer/driving-state.ts",
+    "bytes": 1601,
+    "sha256": "1aad41c46842a5ac9ec80537eda00e74c9b6e5600f5eb0e3130288e8302fd376"
+  },
+  {
+    "path": "src/team-a/viewer/driving-view.ts",
+    "bytes": 8790,
+    "sha256": "02785dddde7c5b11a2b7927134d894c8816662a50495acf23a7db2649502b45e"
+  },
+  {
+    "path": "src/team-a/viewer/wheel-motion.ts",
+    "bytes": 675,
+    "sha256": "be626ea02b074265c418c468a6f79c1d0891f42b3e448a180a6567ddceeb680b"
+  },
+  {
+    "path": "src/team-a/viewer/scene-stage.ts",
+    "bytes": 6212,
+    "sha256": "da04b792865032be4215f12347f4b48dd8eb830320a3f53b6c328f4f519ebd16"
+  },
+  {
+    "path": "src/team-a/viewer/lab-viewer.ts",
+    "bytes": 84776,
+    "sha256": "ecce6b4c512806aab73b2a9abcc2e2c50928ce794989808cfe8740a69ebda3bb"
+  },
+  {
+    "path": "src/team-a/viewer/p7plus-model.ts",
+    "bytes": 38663,
+    "sha256": "b2071fd0524dfaf55a14cdd1f14d09a5867512e2ddb47a8dbe87bf139d246415"
+  },
+  {
+    "path": "src/team-a/lab/champagne-shell.ts",
+    "bytes": 27892,
+    "sha256": "00b523bf9c4322472248a3e7d09c570037702efc33425654b8e07df40834250f"
+  },
+  {
+    "path": "src/team-a/lab/champagne.css",
+    "bytes": 43348,
+    "sha256": "b46aa8ac511c9eccd2ba51e821a7298c8c6a3161e73c37914dfff26d7b0e083a"
+  },
+  {
+    "path": "tests/a2-driving.test.ts",
+    "bytes": 3264,
+    "sha256": "2d32a45e5672f21a0522fa51a62647e075616ac69f7c24ddcc345541a5f0fcfb"
+  }
+]

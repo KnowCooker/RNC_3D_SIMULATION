@@ -1,0 +1,31 @@
+{
+  "message": "AssertionError [ERR_ASSERTION]: no JS/WebGL errors or failed resources",
+  "checks": [
+    "initial load fetches only the selected HDR",
+    "rapid switching: late responses do not overwrite latest choice",
+    "coast: scene and theme agree",
+    "coast: vehicle and experiment conditions unchanged",
+    "mountain: scene and theme agree",
+    "mountain: vehicle and experiment conditions unchanged",
+    "desert: scene and theme agree",
+    "desert: vehicle and experiment conditions unchanged",
+    "snow: scene and theme agree",
+    "snow: vehicle and experiment conditions unchanged",
+    "声场实验: same loaded environment retained",
+    "结构与布置: same loaded environment retained",
+    "方案对比: same loaded environment retained",
+    "总览: same loaded environment retained",
+    "landscape and vehicle remain part of the rotatable live 3D scene",
+    "vehicle preview has actual transparent pixels",
+    "390px has no horizontal overflow",
+    "narrow viewport keeps 3D stage at the top",
+    "runtime resources are local: no external CDN request"
+  ],
+  "errors": [],
+  "failed": [
+    {
+      "url": "http://127.0.0.1:5197/assets/quarry_04_4k-BVgtWIql.hdr",
+      "error": "net::ERR_ABORTED"
+    }
+  ]
+}

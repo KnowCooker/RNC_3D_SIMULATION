@@ -1,0 +1,102 @@
+{
+  "status": "final source passed pnpm check 209/209; browser results in sibling directories",
+  "files": [
+    {
+      "path": "src/team-a/lab/champagne-shell.ts",
+      "sha256": "860c9570a35147c7a46a2e1a3e1cfe6eee5b3b711cdb4e8b69c995a7821e79f2"
+    },
+    {
+      "path": "src/team-a/lab/champagne.css",
+      "sha256": "b62c4fa13f2f98ef90396ae518f3e08375bdab12e97799ba82eaa3cc08e87b20"
+    },
+    {
+      "path": "src/team-a/viewer/camera-motion.ts",
+      "sha256": "21e1c47e46576cbc5b21145bed834a7abdf20fd3b499a6aebf9a637a601723b0"
+    },
+    {
+      "path": "src/team-a/viewer/champagne-gallery.ts",
+      "sha256": "07375b5e0b909dc35821c490cf73ea5f4eb1d5cccf81fe582964c3eb3da7e33b"
+    },
+    {
+      "path": "src/team-a/viewer/coachwork-surface.ts",
+      "sha256": "f5e38f5f48fe36d2c08ce2bbf3906f0ee3cf93a5f82e9f495caa56cedc32fb89"
+    },
+    {
+      "path": "src/team-a/viewer/driving-road.ts",
+      "sha256": "b276c401c7b13b39a5422797ca355686374724a4b0ffce149aab5f7a0df9332d"
+    },
+    {
+      "path": "src/team-a/viewer/driving-state.ts",
+      "sha256": "1aad41c46842a5ac9ec80537eda00e74c9b6e5600f5eb0e3130288e8302fd376"
+    },
+    {
+      "path": "src/team-a/viewer/driving-view.ts",
+      "sha256": "7c4377f568f89f97596688f71bf38b3df68f75b11a795bfafe01010fb901f3fb"
+    },
+    {
+      "path": "src/team-a/viewer/field-display-data.ts",
+      "sha256": "fc603a4e7013539609f3a850c1187e824b66e609b982e581dab1615667272fb9"
+    },
+    {
+      "path": "src/team-a/viewer/field-display.ts",
+      "sha256": "32ad5059834a766931f57ee9ee01002b9544202500700e0657da985135cf9437"
+    },
+    {
+      "path": "src/team-a/viewer/hdr-texture.ts",
+      "sha256": "99b0e9832e09ea32f429d26fda960337ecd3a05e9c719e8bac66d1f69398a789"
+    },
+    {
+      "path": "src/team-a/viewer/lab-viewer.ts",
+      "sha256": "7e0f6474efb02f344c23ce0e2ba29958bc2d47a70a32890b63b8bf85ec1337bc"
+    },
+    {
+      "path": "src/team-a/viewer/p7plus-model.ts",
+      "sha256": "86763b23d9cf2d82a9db686a700bb85e54669d1a865e93b278ddfedcc27a2511"
+    },
+    {
+      "path": "src/team-a/viewer/scene-stage.ts",
+      "sha256": "9c97eb27304dccea56bd5e8a5980e7a67a4d1433926af2acbca971bc4f2c24ee"
+    },
+    {
+      "path": "src/team-a/viewer/wheel-motion.ts",
+      "sha256": "be626ea02b074265c418c468a6f79c1d0891f42b3e448a180a6567ddceeb680b"
+    },
+    {
+      "path": "src/team-a/viewer/xpeng-catalog.ts",
+      "sha256": "e5ef94805773b0947529af5e13eb1054e924543b6238f158b854cfeeeffa4dfa"
+    },
+    {
+      "path": "src/team-a/viewer/xpeng-model.ts",
+      "sha256": "8db45f9cce30bf5b3fc9edee58df67d2e90a51714bc607461796100ecbbe9bfe"
+    },
+    {
+      "path": "src/team-a/viewer/xpeng-profiles.ts",
+      "sha256": "0d6802c6f78b193a406aeffe47e6a66b84eb81d9625e03f26ec13b93627638d8"
+    },
+    {
+      "path": "tests/a2-coachwork.test.ts",
+      "sha256": "966de7fb4de6b91dfad25a3f414c04f7b481f9881602d4d941cf65d6a5aca5d5"
+    },
+    {
+      "path": "tests/a2-driving.test.ts",
+      "sha256": "dad6d6c0a57595c29d58cc74f560165694fd154b0d29ae10fb95719414c78dde"
+    },
+    {
+      "path": "tests/a2-field-display.test.ts",
+      "sha256": "7574f6b2ff7441638787cd5a12903ba2e36e7a607d00a61b64ca20c9442bc8da"
+    },
+    {
+      "path": "tests/a2-p7plus.test.ts",
+      "sha256": "088324747cd7e4eae777a4e38c1cb0eb042c3966967d45cb4a233b42416e491b"
+    },
+    {
+      "path": "tests/a2-xpeng-detail.test.ts",
+      "sha256": "23e65d52e1643fe14a0c8de7c883e83d31f9c8157e8690c15a62824e5cfa705c"
+    },
+    {
+      "path": "tests/a2-xpeng-model.test.ts",
+      "sha256": "6176e3ae58f0e19760522887141cc6109e819581a53ac75343decf9d40055795"
+    }
+  ],
+  "hashBasis": "Git index bytes (repository normalized line endings)"
+}

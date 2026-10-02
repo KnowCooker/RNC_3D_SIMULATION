@@ -1,6 +1,6 @@
 import type { LabDivergence, LabPathAnalysis, LabPathSelection } from '../../shared/lab-contracts';
 import { ORDER } from '../../shared/contracts';
-import { defaultLabConfig, labDurationLimit, labLayoutId, supportedLabLayoutId, LAB_LIVE_LIMIT_SECONDS, LAB_WAVEFORM_SECONDS, VEHICLE_NAMES, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabLivePacket, type LabLiveSnapshot, type LabResult, type LabRncChange, type LabSelection, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
+import { defaultP7Config, labDurationLimit, labLayoutId, supportedLabLayoutId, LAB_LIVE_LIMIT_SECONDS, LAB_WAVEFORM_SECONDS, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabLivePacket, type LabLiveSnapshot, type LabResult, type LabRncChange, type LabSelection, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
 import { Player, prepareLabPlayback } from '../player';
 import { LivePlayer } from '../player/live-player';
 import { createLabViewer } from '../viewer/lab-viewer';
@@ -13,9 +13,8 @@ import { createSignalFlow } from './signal-flow';
 import { drawSignalComparison, plot, splFrame, splRange, visibleSplFrames, ORIGINAL_COLOR, RESULT_COLOR, type SplFrame } from './plots';
 import { bindPlotSettings, plotSettingsMarkup } from './plot-settings';
 import { fieldFrameMatchesPoints } from '../viewer/field-slices';
+import { createChampagneShell } from './champagne-shell';
 import './style.css';
-import './game-ui.css';
-import './cockpit-ui.css';
 
 export interface LabPorts {
   calculate(config: LabConfig, runId: string): Promise<LabResult>;
@@ -27,7 +26,7 @@ export interface LabPorts {
   analyzePath?(config: LabConfig, selection: LabPathSelection): LabPathAnalysis;
   analyze(result: LabResult, time: number, selection: LabSelection, options?: LabAnalysisOptions): LabAnalysis;
 }
-const types = ['ice', 'bev', 'hev', 'erev'] as const;
+const types = ['bev'] as const;
 const replayDurations = [10, 20, 30, 40, 50, 60, 70, 80, 90];
 const defaultReplayDuration = 20;
 const clockText = (seconds: number) => {
@@ -35,20 +34,15 @@ const clockText = (seconds: number) => {
   return `${Math.floor(ticks / 6000).toString().padStart(2, '0')}:${((ticks % 6000) / 100).toFixed(2).padStart(5, '0')}`;
 };
 const seatNames = ['左前座 · FL', '右前座 · FR', '左后座 · RL', '右后座 · RR'];
-const modelNotes: Record<VehicleKind, string> = {
-  ice: '发动机 → 变速箱 → 传动系统；油箱供油、排气后处理。',
-  bev: '底板动力电池 → 逆变器 → 电机/减速器；纯电驱轮。',
-  hev: '发动机与电机经功率分流机构协同驱动；独立小容量动力电池。',
-  erev: '发动机仅带动发电机；电池与发电机供电，由电机机械驱轮。',
-};
 export function mountLab(root: HTMLElement, ports: LabPorts) {
+  let presentation: ReturnType<typeof createChampagneShell> | undefined;
   root.className = 'lab-app';
   root.innerHTML = `
     <header class="lab-header"><div class="lab-brand-lockup"><span class="lab-brand-emblem" aria-hidden="true">R<span>/</span></span><div><span class="lab-eyebrow">RNC / IMMERSIVE ACOUSTIC LAB</span><h1>车辆声学实验室</h1></div></div><div class="lab-header-meta"><span class="lab-header-signal"><i aria-hidden="true"></i> 3D INTERACTIVE SYSTEM</span><span class="lab-badge">完整目标 · 开发中</span><a href="?legacy=1">两周基准版本 ↗</a></div></header>
     <div class="lab-disclosure"><span id="lab-source-disclosure">实录初级噪声驱动的四轮等效声源</span> · 基准：纯电 / 40 km/h / 粗糙路 · 合成空间路径 · <span id="lab-disclosure-mode">实时分块仿真 · 保留学习状态</span> · 实录为未校准V；图中Pa/SPL为教学尺度，非实测声压</div>
     <section class="lab-journey" aria-labelledby="lab-journey-title"><div class="lab-journey-intro"><span class="lab-stage-kicker">01 / ROAD TO QUIET</span><h2 id="lab-journey-title">让每一段旅程，都更安静。</h2><p>选一段路，沿当前教学车从路噪源头走到座舱声场，再用计算与试听检验主动降噪；写实车型声学配准仍在开发。</p><div class="lab-journey-actions" role="group" aria-label="探索实验台"><button type="button" data-lab-journey="scene">进入三维道路 <span aria-hidden="true">↗</span></button><button type="button" data-lab-journey="field">查看声场 <span aria-hidden="true">↗</span></button><button type="button" data-lab-journey="assembly">拆解与路径 <span aria-hidden="true">↗</span></button><button type="button" data-lab-journey="evidence">ANC 与证据 <span aria-hidden="true">↗</span></button></div></div><div class="lab-journey-road"><div class="lab-journey-road-heading"><strong>当前可切换的三维路面</strong><span id="lab-road-selection-status" role="status">平整沥青 · 声学参数已同步</span></div><div class="lab-road-preset-grid" role="group" aria-label="选择三维路面与声学粗糙度"><button type="button" data-lab-road-preset="smooth" aria-pressed="true"><span class="lab-road-art" aria-hidden="true"></span><strong>平整沥青</strong><small>声学粗糙度 0.6</small></button><button type="button" data-lab-road-preset="coarse" aria-pressed="false"><span class="lab-road-art" aria-hidden="true"></span><strong>粗糙沥青</strong><small>声学粗糙度 1.2</small></button><button type="button" data-lab-road-preset="gravel" aria-pressed="false"><span class="lab-road-art" aria-hidden="true"></span><strong>碎石路</strong><small>声学粗糙度 2.2</small></button></div><small class="lab-road-future">海岸、山地、沙漠、雪山四种完整三维环境为最终交付目标；当前切换的是已实现的路面材质与声学预设。</small></div></section>
     <main class="lab-main"><aside id="lab-controls" class="lab-controls"><button id="lab-controls-close" type="button">返回三维场景</button>
-      <h2>01 / 车辆与工况</h2><label>运行方式<select id="lab-mode"><option value="live" selected>实时连续仿真</option><option value="replay">计算后回放</option></select></label><p id="lab-mode-help"></p><label>声源素材<select id="lab-source-mode"><option value="recorded-noise" selected>实录初级噪声 · 四轮声源</option><option value="shaped-noise">随机噪声 · 实录谱形整形</option></select></label><p id="lab-source-help" class="lab-help"></p><label>动力类型<select id="lab-vehicle">${types.map(key => `<option value="${key}" ${key === 'bev' ? 'selected' : ''}>${VEHICLE_NAMES[key]}</option>`).join('')}</select></label><p id="lab-architecture"></p>
+      <h2>01 / 车辆与工况</h2><label>运行方式<select id="lab-mode"><option value="live" selected>实时连续仿真</option><option value="replay">计算后回放</option></select></label><p id="lab-mode-help"></p><label>声源素材<select id="lab-source-mode"><option value="recorded-noise" selected>实录初级噪声 · 四轮声源</option><option value="shaped-noise">随机噪声 · 实录谱形整形</option></select></label><p id="lab-source-help" class="lab-help"></p><label>实验车型<select id="lab-vehicle">${types.map(key => `<option value="${key}" ${key === 'bev' ? 'selected' : ''}>小鹏 P7+ · 2026 纯电后驱</option>`).join('')}</select></label><p id="lab-architecture"></p>
       <label>车速 / km/h<input id="lab-speed" type="range" min="10" max="130" step="5" value="60"><output id="lab-speed-value">60</output></label>
       <label>路面粗糙度 / 相对值<input id="lab-road" type="range" min="0.1" max="3" step="0.1" value="0.6"><output id="lab-road-value">0.6</output></label>
       <p id="lab-road-acoustic-note" class="lab-road-acoustic-note" role="status">平整沥青 · 声学粗糙度 0.6 已同步。</p>
@@ -60,15 +54,15 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       <label class="lab-check"><input id="lab-edit" type="checkbox">车辆改制：点击结构添加参考传感器</label><p class="lab-help">参考1–8个；右击标记可查看或移除。误差点固定。所有改制将要求重新计算。</p><div id="lab-references"></div><p id="lab-mount-warning" role="status" hidden></p>
       <fieldset><legend>车门扬声器</legend><div id="lab-speakers">${ORDER.map((name, i) => `<label class="lab-check"><input type="checkbox" data-speaker="${i}" checked>${name.toUpperCase()}</label>`).join('')}</div></fieldset>
       <button id="lab-calculate" class="lab-primary">启动 / 重启实时实验</button><button id="lab-cancel" disabled>结束实时实验</button><p id="lab-status" role="status">实时仿真已就绪，点击“启动 / 重启实时实验”开始计算与试听。</p>
-    </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">02 / VEHICLE & ACOUSTIC FIELD</span><h2><em>02</em> 车辆结构与三维声场</h2><p id="lab-current-config">纯电 SUV · 60 km/h · 平整沥青 · 实时连续仿真</p></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
-      <section id="lab-guide" class="lab-guide" aria-labelledby="lab-guide-title"><div class="lab-guide-top"><div><span class="lab-stage-kicker">EXPERIMENT MISSION / 可复核演示</span><h3 id="lab-guide-title">一条证据链看懂路噪控制</h3></div><button id="lab-guide-toggle" type="button" aria-expanded="false" aria-controls="lab-guide-content">开始引导</button></div><div id="lab-guide-content" hidden><ol id="lab-guide-steps" aria-label="引导进度"><li>基线 A</li><li>单变量 B</li><li>声场</li><li>公平试听</li><li>工程评审</li></ol><p id="lab-guide-state" role="status"></p><div class="lab-guide-actions"><button id="lab-guide-action" type="button"></button><button id="lab-guide-exit" type="button">退出引导</button></div><small>当前仅为固定教学声学布局；数值来自实际计算，写实车型尚未完成物理配准。</small></div></section>
-            <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；当前声学路径使用教学固定布局，尚未与写实车型配准。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div><details class="lab-case-evidence"><summary>工程评审卡 / 案例证据</summary><p>自动事实与限制由 A/B 数据计算；解释、行动和补测由工程师填写。导入仅供查看，不恢复实验或原始音频。</p><div id="lab-case-review-current" class="lab-review-facts" hidden></div><label>人工观察 · 看到什么<textarea id="lab-case-observation" maxlength="1000" rows="2" placeholder="例如：右后座残余声压升高。"></textarea></label><label>人工解释 · 可能原因<textarea id="lab-case-interpretation" maxlength="1000" rows="2" placeholder="这是待验证假设；多变量变化时不能单因子归因。"></textarea></label><label>临时行动 · 下一步怎么处理<textarea id="lab-case-decision" maxlength="1000" rows="2" placeholder="例如：先保留基线方案，补测后再决策。"></textarea></label><label>待补测事项<textarea id="lab-case-next-check" maxlength="1000" rows="2" placeholder="例如：保持车速不变，复测不同路面。"></textarea></label><div class="lab-case-actions"><button id="lab-case-export" type="button" disabled>导出当前 A/B 评审摘要</button><label class="lab-case-import">导入 JSON 复核<input id="lab-case-import" type="file" accept="application/json,.json"></label></div><p id="lab-case-evidence-state" role="status">导出需要当前页面中完成两次预计算实验。</p><div id="lab-case-imported" class="lab-case-results" hidden></div></details></section>
+    </aside><section class="lab-workspace"><div class="lab-view-heading"><div><span class="lab-stage-kicker">02 / VEHICLE & ACOUSTIC FIELD</span><h2><em>02</em> 车辆结构与三维声场</h2><p id="lab-current-config">小鹏 P7+ · 60 km/h · 平整沥青 · 实时连续仿真</p></div><span id="lab-run">尚无实验结果</span><button id="lab-controls-toggle" type="button" aria-controls="lab-controls" aria-expanded="true">收起控制台</button></div>
+      <section id="lab-guide" class="lab-guide" aria-labelledby="lab-guide-title"><div class="lab-guide-top"><div><span class="lab-stage-kicker">EXPERIMENT MISSION / 可复核演示</span><h3 id="lab-guide-title">一条证据链看懂路噪控制</h3></div><button id="lab-guide-toggle" type="button" aria-expanded="false" aria-controls="lab-guide-content">开始引导</button></div><div id="lab-guide-content" hidden><ol id="lab-guide-steps" aria-label="引导进度"><li>基线 A</li><li>单变量 B</li><li>声场</li><li>公平试听</li><li>工程评审</li></ol><p id="lab-guide-state" role="status"></p><div class="lab-guide-actions"><button id="lab-guide-action" type="button"></button><button id="lab-guide-exit" type="button">退出引导</button></div><small>P7+ 同车坐标实验；结果来自参数化传播模型，未作实车声学校准。</small></div></section>
+            <section id="lab-case" class="lab-case" aria-labelledby="lab-case-title"><div class="lab-case-intro"><span class="lab-stage-kicker">ENGINEERING QUESTION / 方案对比</span><h3 id="lab-case-title">改变一个条件后，后排会更安静吗？</h3><p>保存一次预计算实验作为基线 A，修改配置并重算候选 B。比较取两次实验末尾同一 0.5 秒窗、A 计权 0–1 kHz；当前声学路径使用 P7+ 同车坐标，传播系数为参数化估计。</p></div><div class="lab-case-actions"><button id="lab-case-save" type="button" disabled>保存当前实验为基线 A</button><button id="lab-case-clear" type="button" disabled>清除基线</button></div><p id="lab-case-state" class="lab-case-state" role="status">先切换到计算后回放，运行一次实验。</p><div id="lab-case-results" class="lab-case-results" hidden></div><details class="lab-case-evidence"><summary>工程评审卡 / 案例证据</summary><p>自动事实与限制由 A/B 数据计算；解释、行动和补测由工程师填写。导入仅供查看，不恢复实验或原始音频。</p><div id="lab-case-review-current" class="lab-review-facts" hidden></div><label>人工观察 · 看到什么<textarea id="lab-case-observation" maxlength="1000" rows="2" placeholder="例如：右后座残余声压升高。"></textarea></label><label>人工解释 · 可能原因<textarea id="lab-case-interpretation" maxlength="1000" rows="2" placeholder="这是待验证假设；多变量变化时不能单因子归因。"></textarea></label><label>临时行动 · 下一步怎么处理<textarea id="lab-case-decision" maxlength="1000" rows="2" placeholder="例如：先保留基线方案，补测后再决策。"></textarea></label><label>待补测事项<textarea id="lab-case-next-check" maxlength="1000" rows="2" placeholder="例如：保持车速不变，复测不同路面。"></textarea></label><div class="lab-case-actions"><button id="lab-case-export" type="button" disabled>导出当前 A/B 评审摘要</button><label class="lab-case-import">导入 JSON 复核<input id="lab-case-import" type="file" accept="application/json,.json"></label></div><p id="lab-case-evidence-state" role="status">导出需要当前页面中完成两次预计算实验。</p><div id="lab-case-imported" class="lab-case-results" hidden></div></details></section>
       <div id="lab-viewer"><span class="lab-view-help">左键旋转 · 滚轮缩放 · 右击硬件查看信号</span></div>
       <div class="lab-view-tools"><label>车身<select id="lab-body"><option value="transparent">透明</option><option value="solid">实体</option><option value="hidden">隐藏</option></select></label><button id="lab-explode" aria-pressed="false">分解动画</button><button id="lab-reset">复位</button><label>剖面<select id="lab-section"><option value="none">关闭</option><option value="x">纵剖 X</option><option value="y">水平 Y</option><option value="z">横剖 Z</option></select></label><label>剖面位置 / m<input id="lab-section-position" type="range" min="-2.5" max="2.5" step="0.05" value="0"></label></div>
       <div class="lab-view-tools"><label>声压场<select id="lab-field"><option value="off">关闭</option><option value="residual">残余 e / SPL</option><option value="primary">原始 d / SPL</option></select></label><label>声场 / 指标计权<select id="lab-field-weight"><option value="A">A 计权</option><option value="Z">Z（不计权）</option></select></label><label>场显示<select id="lab-field-slice"><option value="volume">三维采样体</option><option value="x">中央纵切片</option><option value="y">头部水平切片</option><option value="z">前排横切片</option></select></label><label>传播路径<select id="lab-paths"><option value="none">关闭</option><option value="primary">初级路径</option><option value="secondary">次级路径</option><option value="both">全部</option></select></label><label class="lab-check"><input id="lab-waves" type="checkbox">扬声器波前</label></div>
       <div class="lab-field-note"><span class="lab-colorbar"></span><span id="lab-field-scale">30—80 dBA，固定色标；0.5秒RMS</span><span id="lab-field-status">声场未开启</span></div>
       <section id="lab-field-evidence" class="lab-field-evidence" aria-label="空间采样点改善证据" hidden><div class="lab-field-evidence-heading"><strong>空间改善证据</strong><span id="lab-field-evidence-window"></span></div><div class="lab-field-evidence-bar" aria-hidden="true"><i id="lab-field-evidence-improved"></i><i id="lab-field-evidence-near"></i><i id="lab-field-evidence-worsened"></i></div><p id="lab-field-evidence-summary"></p><small>正值＝原声−残余，负值表示该点变吵；仅统计本帧有效采样点，比例不是车厢体积占比或实车结论。</small></section>
-      <p class="lab-help">空间场由四轮源和实际扬声器驱动经同一传播模型计算，只投影在教学车；写实外观尚未完成声学坐标配准，切换后图表仍属教学实验，不能解释为该写实车的声场。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。</p>
+      <p class="lab-help">空间场由四轮源和实际扬声器驱动经同一传播模型计算，投影在 P7+ 同车重建坐标；其他小鹏车型只供外观检视。结果是参数化仿真，不代表实车测量。爆炸只改变展示坐标；波前/路径动画为慢放示意，非实际声速。闭合实体按真实截面封口；薄面和开管仅显示截线。</p>
       <div class="lab-evidence-heading"><span class="lab-stage-kicker">03 / ANC CONTROL & EVIDENCE</span><h2>原声、残余声与改善证据</h2><p>四座位指标、时域、频谱和收敛均来自当前实验；选择同一座位和时间位置后，可切换原声与降噪后试听。</p></div><div id="lab-metrics" class="lab-metrics"></div><section class="lab-signals"><h2>04 / 信号流与控制机理</h2><div id="lab-flow"></div></section>
     </section></main>
     <section class="lab-plots">
@@ -88,7 +82,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   root.append($('case')); root.append(signalsPanel);
   const player = new Player(); player.setVolume(0.15);
   const livePlayer = new LivePlayer(); livePlayer.setVolume(0.15);
-  let config: LabConfig = { ...defaultLabConfig(), sourceMode: 'recorded-noise', durationSeconds: defaultReplayDuration }, result: LabResult | null = null, selected: LabSelection = { signal: 'e', channel: 0 };
+  let config: LabConfig = { ...defaultP7Config(), sourceMode: 'recorded-noise', durationSeconds: defaultReplayDuration }, result: LabResult | null = null, selected: LabSelection = { signal: 'e', channel: 0 };
   let caseBaseline: CaseSnapshot | null = null;
   let guideActive = false, guideFieldRunId = '', guideHeardOriginal = false, guideHeardResidual = false;
   let guideExpectedAudition: 'd' | 'e' | null = null, guideListenStart = 0, guideListenSeat = -1, lastGuideAt = 0;
@@ -121,6 +115,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     catch { return null; }
   }
   function renderCase() {
+    presentation?.updateCases(caseBaseline, candidateCase());
     const state = $('case-state'), output = $('case-results');
     const reviewOutput = $('case-review-current'); reviewOutput.replaceChildren(); reviewOutput.hidden = true;
     const save = $<HTMLButtonElement>('case-save'), clear = $<HTMLButtonElement>('case-clear');
@@ -340,7 +335,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   }
   function renderConfigLine() {
     const road = visualRoad && visualRoad.roughness === config.roadRoughness ? visualRoad.name : `手动声学粗糙度 ${config.roadRoughness.toFixed(1)}`;
-    $('current-config').textContent = `${VEHICLE_NAMES[config.vehicle]} · ${config.speedKph} km/h · ${road} · ${realtime ? '实时连续仿真' : `${config.durationSeconds}秒预计算回放`}`;
+    $('current-config').textContent = `小鹏 P7+ · ${config.speedKph} km/h · ${road} · ${realtime ? '实时连续仿真' : `${config.durationSeconds}秒预计算回放`}`;
   }
   const transport = () => liveSession ? livePlayer : player;
   const displayTime = () => halted ? halted.sample/config.sampleRateHz : transport().currentTime;
@@ -348,6 +343,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   const mountIssues = () => (viewer as typeof viewer & { getMountIssues?: () => { sensorId: string; mountPart: string }[] }).getMountIssues?.() ?? [];
   function select(value: LabSelection) {
     flow.openSignal(value.signal, value.channel);
+    presentation?.showSignal();
     $('context').hidden = true;
     $('flow').scrollIntoView({block:'start',behavior:'smooth'});
     drawInspector();
@@ -382,7 +378,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   function refreshConfig() {
     const recorded = config.sourceMode === 'recorded-noise';
     $('source-disclosure').textContent = recorded ? '实录初级噪声驱动的四轮等效声源' : '实录频谱驱动的随机合成信号';
-    $('source-help').textContent = recorded ? '四路耳旁原声分别放置在四轮位置，按同一时钟平滑循环40秒素材。初级路径保留空间传播，不重复叠加振动转噪声的谱形。' : '独立随机激励经实录参考谱形整形，再经初级路径生成车内噪声。每次继续生成新样本。';
+    $('source-help').textContent = recorded ? '通用参考录音，非 P7+ 实车采集。四路耳旁原声作为四轮等效声源，按同一时钟平滑循环40秒素材。初级路径保留空间传播，不重复叠加振动转噪声的谱形。' : '独立随机激励经实录参考谱形整形，再经初级路径生成车内噪声。每次继续生成新样本。';
     $('parameters-help').textContent = recorded ? '实录基准为40 km/h粗糙路。速度/粗糙度仅缩放幅值，温度改变幅值与传播；保持录音原频率，胎压在此模式不参与计算。参考x由等效声源合成，未使用实录振动。' : '实录频谱基准为40 km/h粗糙路，粗糙度1代表该相对基准。车速/粗糙度缩放能量，胎压/温度伸缩谱形，均为教学外推；保留实录低频，不加入固定纯音。';
     $<HTMLInputElement>('pressure').disabled = recorded;
     flow.setSourceMode(recorded);
@@ -400,10 +396,10 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     $('replay').textContent = realtime ? '重新开始' : '重播';
     refreshRncControl();
     $<HTMLInputElement>('seek').max = String(config.durationSeconds);
-    $('calibration-help').textContent = recorded ? '实录基准：纯电、40 km/h、粗糙路，副驾驶200–300 Hz平均谱峰约48 dBA/Hz（参考20 μPa）。瞬时谱随素材波动；单点幅度匹配，非完整实车标定。' : '随机模式保留40 km/h粗糙路、四座平均约60 dBA的教学尺度。';
+    $('calibration-help').textContent = recorded ? '历史教学布局的素材基准：纯电、40 km/h、粗糙路，副驾驶200–300 Hz平均谱峰约48 dBA/Hz（参考20 μPa）。瞬时谱随素材波动；单点幅度匹配，非完整实车标定。' : '随机模式保留40 km/h粗糙路、四座平均约60 dBA的教学尺度。';
     $('duration-help').textContent = limit === 90 ? `可选10–90秒，每10秒一档。${recorded ? '超过素材长度时平滑循环，学习状态连续。' : '超过录音长度时连续合成新样本。'}` : `当前参考通道配置可选10–${limit}秒；较长档位超出内存预算，已禁用。`;
     $('disclosure-mode').textContent = realtime ? '实时分块仿真 · 保留学习状态' : `${config.durationSeconds}秒预计算回放`;
-    $('architecture').textContent = modelNotes[config.vehicle]; viewer.setConfig(config);
+    $('architecture').textContent = 'P7+ 2026 纯电后驱 · 前双叉臂 / 后五连杆 · 地板液冷电池 · 参数化声学，非实车标定'; viewer.setConfig(config);
     renderConfigLine();
     const issues = mountIssues();
     $('mount-warning').hidden = issues.length === 0;
@@ -439,6 +435,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     $('field-evidence-summary').textContent = `${evidence.valid}/${evidence.sampled} 有效采样点：改善 ${evidence.improved} · 接近持平 ${evidence.nearZero} · 变差 ${evidence.worsened}；改善量中位数 ${signed(evidence.medianDb)} dB，范围 ${signed(evidence.lowestDb)}～${signed(evidence.highestDb)} dB。`;
   }
   function clearExperiment() {
+    presentation?.clear();
     halted = null; result = null; liveSession = false; livePullPending = false; liveSnapshot = null; backgroundPaused = false; livePlayer.reset();
     guideHeardOriginal = false; guideHeardResidual = false; guideExpectedAudition = null; guideListenSeat = -1;
     liveRncPending = false; liveRncChange = null; liveRncError = ''; liveAudibleRnc = liveRncEnabled;
@@ -514,6 +511,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     }
     drawSpl(time);
     $('metrics').innerHTML = ORDER.map((corner, i) => `<div><strong>${corner.toUpperCase()}</strong><b>${analysis.reductionDb[i] === null ? unavailable : analysis.reductionDb[i]!.toFixed(1) + ' dB'}</b><small>${analysis.primarySpl[i]?.toFixed(1) ?? '—'} → ${analysis.residualSpl[i]?.toFixed(1) ?? '—'} ${levelUnit()}</small></div>`).join('');
+    presentation?.update(analysis, original, Number($<HTMLSelectElement>('seat').value), levelUnit(), result.runId, config.sampleRateHz, offset);
   }
   async function calculate() {
     if (mountIssues().length) { $('status').textContent = '请先修正缺失的传感器安装部件。'; return; }
@@ -535,7 +533,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       player.setComparison(ORDER[Number($<HTMLSelectElement>('seat').value)], audition);
       curves = { A: [], Z: [] };
       for (let frame = 5; frame <= result.sampleCount / config.sampleRateHz * 10; frame++) { const time = frame / 10; for (const weighting of ['A','Z'] as const) curves[weighting].push(splFrame(time, ports.analyze(result, time, selected, { levelWeighting: weighting, levelsOnly: true }))); }
-      $('run').textContent = `${VEHICLE_NAMES[result.config.vehicle]} · 布局 ${labLayoutId(result.config)} · ${result.config.references.length}×4×4 · ${result.runId.slice(0, 8)}`;
+      $('run').textContent = `小鹏 P7+ · 布局 ${labLayoutId(result.config)} · ${result.config.references.length}×4×4 · ${result.runId.slice(0, 8)}`;
       $('status').textContent = `实验就绪 · ${result.computeMilliseconds.toFixed(0)} ms · 末${Math.min(4, config.durationSeconds)}秒线性总改善 ${result.metrics.aggregateReductionDb.toFixed(1)} dB（教学模型）；四座位d/e共用试听衰减 ${audioGain.toFixed(3)}`;
       for (const name of ['play', 'replay', 'seek']) $<HTMLButtonElement>(name).disabled = false;
       if (halted) stopDiverged(halted);
@@ -557,7 +555,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       if (document.hidden) { livePlayer.pause(); backgroundPaused = true; }
       liveSession = true;
       livePlayer.setComparison(ORDER[Number($<HTMLSelectElement>('seat').value)], 'e');
-      $('run').textContent = `${VEHICLE_NAMES[config.vehicle]} · 布局 ${labLayoutId(config)} · 实时 ${config.references.length}×4×4 · ${id.slice(0, 8)}`;
+      $('run').textContent = `小鹏 P7+ · 布局 ${labLayoutId(config)} · 实时 ${config.references.length}×4×4 · ${id.slice(0, 8)}`;
       for (const name of ['play', 'replay']) $<HTMLButtonElement>(name).disabled = false;
       await pumpLive();
     } catch (error) {
@@ -676,7 +674,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   };
   $('body').onchange = () => viewer.setBody($<HTMLSelectElement>('body').value);
   $('explode').onclick = () => { exploded = !exploded; viewer.setExploded(exploded); $('explode').setAttribute('aria-pressed', String(exploded)); };
-  $('reset').onclick = () => { viewer.reset(); exploded = false; $('explode').setAttribute('aria-pressed', 'false'); };
+  $('reset').onclick = () => { viewer.reset(); exploded = false; $('explode').setAttribute('aria-pressed', 'false'); $<HTMLSelectElement>('body').value = 'solid'; $<HTMLSelectElement>('section').value = 'none'; };
   function section() {
     const points = viewer.fieldPoints;
     viewer.setSection($<HTMLSelectElement>('section').value, Number($<HTMLInputElement>('section-position').value));
@@ -794,7 +792,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
         viewer.updateField(frame);
         showFieldEvidence(frame);
         if (isFieldAtComparisonWindow(frame, $<HTMLSelectElement>('field').value, result.sampleCount, result.config.sampleRateHz)) guideFieldRunId = result.runId;
-        $('field-status').textContent = frame.valid ? `教学布局声场截至 ${frame.time.toFixed(2)} s · 写实外观不投影`
+        $('field-status').textContent = frame.valid ? `P7+ 同车声场截至 ${frame.time.toFixed(2)} s · 参数化仿真`
           : frame.time < 0.5 ? '声场准备中，需要0.5秒数据' : '当前工况声压低于计算底限（如停车），无有效声场';
       }).catch(error => {
         if (token !== generation || epoch !== fieldEpoch) return;
@@ -809,6 +807,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   };
   document.addEventListener('visibilitychange', visibility);
   // Audio startup requires the user's gesture. Loading the page only prepares live controls.
-  refreshConfig(); clearPlots(); renderCase(); requestAnimationFrame(tick);
-  return () => { disposed = true; ++generation; ++fieldEpoch; liveSession = false; livePullPending = false; document.removeEventListener('visibilitychange', visibility); narrowViewport.removeEventListener('change', onNarrowViewport); player.pause(); livePlayer.dispose(); ports.cancel(); viewer.dispose(); flow.dispose(); root.replaceChildren(); };
+  refreshConfig(); clearPlots(); renderCase();
+  presentation = createChampagneShell(root, viewer, () => { if(result) draw(); else clearPlots(); });
+  requestAnimationFrame(tick);
+  return () => { disposed = true; presentation?.dispose(); ++generation; ++fieldEpoch; liveSession = false; livePullPending = false; document.removeEventListener('visibilitychange', visibility); narrowViewport.removeEventListener('change', onNarrowViewport); player.pause(); livePlayer.dispose(); ports.cancel(); viewer.dispose(); flow.dispose(); root.replaceChildren(); };
 }

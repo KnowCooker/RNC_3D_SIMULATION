@@ -1,0 +1,58 @@
+{
+  "passed": 25,
+  "checks": [
+    "continuous volume retains all 280 real queried points",
+    "absolute display starts on documented standard scale",
+    "signed improvement uses exact same frame and zero-centered scale",
+    "improvement detail strengthens contrast while retaining zero and both signs",
+    "primary shares the locked range with residual",
+    "residual never independently normalizes its colors",
+    "display-only controls preserve experiment identity and common clock",
+    "paused sampled values remain stable",
+    "opacity control does not advance or recompute acoustic time",
+    "x: continuous slice changes without resetting the camera",
+    "y: continuous slice changes without resetting the camera",
+    "z: continuous slice changes without resetting the camera",
+    "clicking the actual slice reads a nearest real sample with both channels",
+    "manual orbit cancels the camera transition",
+    "rapid page changes settle on the latest destination",
+    "1366px: no horizontal overflow",
+    "1366px: field display controls remain reachable",
+    "740px: no horizontal overflow",
+    "740px: field display controls remain reachable",
+    "390px: no horizontal overflow",
+    "390px: field display controls remain reachable",
+    "reduced-motion preference uses immediate camera placement",
+    "reduced-motion preference disables panel and dialog animation",
+    "manual trilinear fallback runs without float-linear texture filtering",
+    "no JavaScript, shader or failed-resource errors in field interactions"
+  ],
+  "initial": {
+    "quantity": "residual",
+    "time": "9",
+    "range": "30,80",
+    "rendering": "volume",
+    "sampleCount": "280",
+    "mode": "residual"
+  },
+  "difference": {
+    "quantity": "reduction",
+    "time": "9",
+    "range": "-10,10",
+    "rendering": "volume",
+    "sampleCount": "280",
+    "mode": "residual"
+  },
+  "detailed": {
+    "quantity": "reduction",
+    "time": "9",
+    "range": "-6,6",
+    "rendering": "volume",
+    "sampleCount": "280",
+    "mode": "residual"
+  },
+  "shared": "55,70",
+  "probe": "同窗改善 d − e · 车内声场\n9.00 s / 采样范围 -3.8–5.4 dB\n-6 dB\n6 dB\n\n蓝绿为改善 · 红色为变差；最大改善 5.4 dB · (-0.48, 1.28, -1.08) m\n\n探针 #187 · 原声 63.1 / 残余 63.3 dBA · 改善 -0.2 dB · (0.24, 1.13, -0.56) m\n\n同窗改善分布\n恢复标准色标\n俯视座舱\n不透明度\n280 点空间插值 · 当前帧；增强后锁定同一色标，原声与残余共用。",
+  "errors": [],
+  "failures": []
+}
