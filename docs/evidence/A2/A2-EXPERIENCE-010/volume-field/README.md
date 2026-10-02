@@ -1,5 +1,7 @@
 # 车内密集三维声场与行驶更新
 
+> 2026-10-02 发布更新：本目录成果已随 `a80d53a` 同步至 GitHub 草稿 PR #57；详见[同步回执](../github-sync/README.md)。以下历史验证结果及未完成项保持原样。
+
 2026-10-02 · Role: A2 · Task: A2-EXPERIENCE-010 · Identity-Source: user-declared · Executor: Codex代A2。
 
 用户本轮要求：车内从切片为主改成三维体场，提高采样点与颜色区分度，行驶中观察RNC开关和不同路面的真实变化，并提高刷新流畅度。沿用interactive-3d-atlas技能、现有任务分支和草稿PR57。

@@ -1,5 +1,7 @@
 # A2 环境连续性与相机净空验收
 
+> 2026-10-02 发布更新：本目录成果已随 `a80d53a` 同步至 GitHub 草稿 PR #57；详见[同步回执](../github-sync/README.md)。以下历史验证结果及未完成项保持原样。
+
 2026-10-02 · Role: A2 · Task: A2-EXPERIENCE-010 · Identity-Source: user-declared · Executor: Codex 代 A2。
 
 本轮范围为用户要求的远景渐入、天空稳定、自然山体与手动旋转避穿模。使用 interactive-3d-atlas 技能；只修改 A2 viewer 和自有测试，不修改 B 计算、integration、冻结基准或既有数值容差。
