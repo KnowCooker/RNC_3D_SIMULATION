@@ -5,7 +5,7 @@ import { createXPengModel } from '../src/team-a/viewer/xpeng-model';
 
 test('P7+ canopy, liftback glazing and rear bumper are separately owned assemblies', () => {
   const model = createXPengModel('p7plus');
-  assert.equal(model.group.userData.revision, 'p7plus-photo-v3');
+  assert.equal(model.group.userData.revision, 'p7plus-photo-v5');
   const hatch = new THREE.Box3().setFromObject(model.group.getObjectByName('tailgate')!);
   const bumper = new THREE.Box3().setFromObject(model.group.getObjectByName('bumper-rear')!);
   assert.ok(hatch.max.y > 1.4, 'Rear windscreen belongs to the liftback');

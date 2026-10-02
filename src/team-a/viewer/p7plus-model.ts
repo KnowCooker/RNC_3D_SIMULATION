@@ -1,3 +1,4 @@
+import { coachworkSurface } from './coachwork-surface';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { createAssetInspection } from './asset-inspection';
@@ -28,18 +29,19 @@ export const p7Surface = {
 
 /** Dedicated P7+ exterior. Other XPeng factories deliberately remain untouched. */
 export function createP7PlusModel(): ShowroomModel {
-  const group = new THREE.Group(); group.name = 'xpeng-p7plus'; group.userData.revision = 'p7plus-photo-v3';
+  const group = new THREE.Group(); group.name = 'xpeng-p7plus'; group.userData.revision = 'p7plus-photo-v5';
   const parts: { id: string; name: string; object: THREE.Group; offset: THREE.Vector3 }[] = [];
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), shell: THREE.Mesh[] = [];
   function material(color: string, roughness: number, metalness = 0) {
     const m = new THREE.MeshPhysicalMaterial({ color, roughness, metalness, side: THREE.DoubleSide }); materials.add(m); return m;
   }
-  const paint = material('#b8bdc2', .25, .7); paint.clearcoat = 1; paint.clearcoatRoughness = .14;
+  const paint = material('#b8bdc2', .28, .42); paint.clearcoat = 1; paint.clearcoatRoughness = .20;
   const gloss = material('#11161c', .22, .34), rubber = material('#141619', .92), metal = material('#b5bdc5', .24, .9);
   const gunmetal = material('#3c4349', .42, .8), lining = material('#252c35', .9);
-  const glass = material('#0b1721', .22, .08); glass.transparent = true; glass.opacity = .97; glass.depthWrite = false;
-  glass.envMapIntensity = .24;
-  const lens = material('#4c6373', .16, .8), leather = material('#c2b6a2', .68), leatherDark = material('#736a60', .79);
+  const glass = material('#0b1721', .13, .02); glass.transparent = true; glass.opacity = .97; glass.depthWrite = false;
+  glass.envMapIntensity = .7; glass.name = 'p7-window-glass';
+  const lampHousing=material('#080c11',.40,.09);lampHousing.envMapIntensity=.20;
+  const lens = material('#17222b', .12, .55), leather = material('#c2b6a2', .68), leatherDark = material('#736a60', .79);
   const ivory = material('#c9c7ba', .65), display = material('#18252f', .24, .22), stitch = material('#879099', .9);
   const led = material('#d9f5ff', .23); led.emissive.set('#b9e3f0'); led.emissiveIntensity = 1.15;
   const tail = material('#d22329', .24); tail.emissive.set('#ed101c'); tail.emissiveIntensity = .85;
@@ -57,10 +59,7 @@ export function createP7PlusModel(): ShowroomModel {
     return mesh(parent, new RoundedBoxGeometry(...size, 5, Math.min(radius, ...size.map(v => v / 2))), mat, pos, outer);
   }
   function surface(parent: THREE.Group, fn: (u: number, v: number) => V, mat: THREE.Material, outer = false, nu = 64, nv = 16) {
-    const positions: number[] = [], indices: number[] = [];
-    for (let i = 0; i <= nu; i++) for (let j = 0; j <= nv; j++) positions.push(...fn(i / nu, j / nv));
-    for (let i = 0; i < nu; i++) for (let j = 0; j < nv; j++) { const a = i * (nv + 1) + j, b = a + nv + 1; indices.push(a, b, a + 1, b, b + 1, a + 1); }
-    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3)); g.setIndex(indices); g.computeVertexNormals(); return mesh(parent, g, mat, [0, 0, 0], outer);
+    return mesh(parent, coachworkSurface(fn, nu, nv), mat, [0, 0, 0], outer);
   }
   function tube(parent: THREE.Group, points: V[], radius: number, mat: THREE.Material, outer = false, closed = false) {
     return mesh(parent, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p)), closed, 'centripetal'), Math.max(16, points.length * 3), radius, 8, closed), mat, [0, 0, 0], outer);
@@ -101,6 +100,7 @@ export function createP7PlusModel(): ShowroomModel {
   const rear = part('tailgate', 'P7+ 掀背后风挡 / 尾门 / 尾灯总成', [0, .45, -1.1]);
   for (const [za, zb, mat] of [[-2.31, -.85, glass], [-.85, .50, gloss], [.50, 1.39, glass]] as [number, number, THREE.Material][]) surface(za === -2.31 ? rear : roof, (u, v) => canopyPoint(lerp(za, zb, u), v * 2 - 1), mat, true, 60, 32);
   surface(roof, (u, v) => { const p = canopyPoint(lerp(-.77, .435, u), (v * 2 - 1) * .92); p[1] += .002; return p; }, glass, true);
+  surface(roof,(u,v)=>{const z=lerp(1.20,1.42,u),t=v*2-1;return [t*.805,lerp(p7Surface.roof(1.20)-.027*t*t,p7Surface.hood(1.42)+.002,u),z];},gloss,true,24,24);
   for (const side of [-1, 1]) {
     tube(roof, Array.from({ length: 80 }, (_, i): V => { const p = canopyEdge(lerp(-2.31, 1.39, i / 79)); return [p[0] * side, p[1], p[2]]; }), .016, gloss, true);
     // Windshield wipers and cowl sit below the windscreen edge.
@@ -116,7 +116,7 @@ export function createP7PlusModel(): ShowroomModel {
       // Turn the arch skin inwards; visible wells are dark, not open paper-thin cutouts.
       surface(panel, (u, v) => { const z = zAt(u), y = lower(z); return [side * (sideX(z, y) - v * .065), y - v * .012, z]; }, paint, true, 80, 3);
       if (zb > -2.31 && za < 1.39) {
-        const a = Math.max(za + .004, -2.305), b = Math.min(zb - .004, 1.39);
+        const a = Math.max(za + .004, -1.73), b = Math.min(zb - .004, 1.39);
         surface(panel, (u, v) => { const z = lerp(a, b, u), edge = canopyEdge(z), baseY = Math.max(belt(z), p7Surface.shoulder(z)); return [side * lerp(sideX(z, baseY), edge[0], v), lerp(baseY + .008, Math.max(baseY + .01, edge[1] - .005), v), z]; }, glass, true, 48, 12);
         tube(panel, Array.from({ length: 40 }, (_, i): V => { const z = lerp(a, b, i / 39), y = Math.max(belt(z), p7Surface.shoulder(z)); return [side * sideX(z, y), y + .006, z]; }), .008, gloss, true);
         // Upper shoulder rolls inwards to the window belt.
@@ -132,6 +132,8 @@ export function createP7PlusModel(): ShowroomModel {
           box(panel, [.055, .055, .42], [side * .795, .79, (a + b) / 2], leather, .023);
         }
       }
+      if(key!=='fender')surface(panel,(u,v)=>{const z=zAt(u),y0=p7Surface.shoulder(z),y1=Math.max(belt(z),y0)+.008;return [side*sideX(z,lerp(y0,y1,v)),lerp(y0,y1,v),z];},paint,true,80,8);
+      if(key==='quarter')surface(panel,(u,v)=>{const z=lerp(za+.003,-1.734,u),edge=canopyEdge(z),baseY=Math.max(belt(z),p7Surface.shoulder(z));return [side*lerp(sideX(z,baseY),edge[0],v),lerp(baseY+.008,Math.max(baseY+.01,edge[1]),v),z];},paint,true,64,24);
       if (key === 'fender') {
         // Explicit wing-to-bonnet patch preserves raised fender crowns.
         surface(panel, (u, v) => { const inner = hoodPoint(u, side), z = inner[2], y = p7Surface.shoulder(z); return [lerp(inner[0] + side * .004, side * sideX(z, y), v), lerp(inner[1], y, v) + .025 * Math.sin(v * Math.PI), z]; }, paint, true, 64, 14);
@@ -154,30 +156,42 @@ export function createP7PlusModel(): ShowroomModel {
   }
   // Front bumper is a rounded wraparound surface, not a planar box.
   const nose = part('bumper-front', 'P7+ 2026 星翼灯 / 分体前灯 / 双段格栅', [0, .15, 1.15]);
-  const noseZ = (x: number, y: number) => { const t = Math.abs(x) / sideX(2.22, y); return 2.22 + .313 * Math.sqrt(Math.max(0, 1 - t ** 4)) - .085 * Math.pow(THREE.MathUtils.clamp((.43 - y) / .22, 0, 1), 2) * (1 - t) ** 2; };
+  const noseZ = (x: number, y: number) => { const t = Math.abs(x) / sideX(2.22, y); return 2.22 + .313 * Math.sqrt(Math.max(0, 1 - t ** 3.3)) - .025*((y-.53)/.37)**2*(1-t*t) - .10 * Math.pow(THREE.MathUtils.clamp((.43 - y) / .22, 0, 1), 2) * (1 - t) ** 2 - .016 * Math.exp(-Math.pow((y - .69) / .075,2)) * (1 - t * t) - .022*THREE.MathUtils.smoothstep(Math.abs(x),.58,.64)*(1-THREE.MathUtils.smoothstep(Math.abs(x),.88,.93))*THREE.MathUtils.smoothstep(y,.545,.585)*(1-THREE.MathUtils.smoothstep(y,.66,.70)); };
   const noseTopWidth = sideX(2.22, .872);
   const noseY = (x: number) => .756 + .116 * Math.pow(Math.abs(x) / noseTopWidth, 2.5);
   surface(nose, (u, v) => { const t = u * 2 - 1, y = lerp(.205, noseY(t * noseTopWidth), v), x = t * sideX(2.22, y); return [x, y, noseZ(x, y)]; }, paint, true, 100, 28);
   surface(nose, (u, v) => { const t = u * 2 - 1, h = hoodPoint(1, t), x = lerp(h[0], t * noseTopWidth, v), y = lerp(h[1] - .003, noseY(t * noseTopWidth), v); return [x, y, lerp(h[2] + .004, noseZ(x, y), v)]; }, paint, true, 80, 12);
   const drlPath = Array.from({ length: 70 }, (_, i): V => { const x = lerp(-.87, .87, i / 69), y = noseY(x) - .021; return [x, y, noseZ(x, y) + .006]; });
-  tube(nose, drlPath, .016, gloss, true); tube(nose, drlPath.map(([x, y, z]): V => [x, y - .003, z + .017]), .0055, led, true);
-  const frontPatch = (x0: number, x1: number, y0: number, y1: number, m: THREE.Material, skew = 0) => surface(nose, (u, v) => { const x = lerp(x0, x1, u), y = lerp(y0, y1, v) + skew * u; return [x, y, noseZ(x, y) + .021]; }, m, true, 24, 10);
+  tube(nose, drlPath, .018, gloss, true); tube(nose, drlPath.map(([x, y, z]): V => [x, y - .006, z + .017]), .0065, led, true);
+  const frontPatch = (x0: number, x1: number, y0: number, y1: number, m: THREE.Material, skew = 0) => surface(nose, (u, v) => { const x = lerp(x0, x1, u), y = lerp(y0, y1, v) + skew * u; return [x, y, noseZ(x, y) + (m===lining?.027:m===gunmetal?.029:.021)]; }, m, true, 24, 10);
   for (const side of [-1, 1]) {
     // Tapered separate headlight pockets below the continuous upper light.
-    const coords: V[] = [[side * .595, .654, 0], [side * .924, .685, 0], [side * .914, .525, 0], [side * .625, .545, 0]];
-    surface(nose, (u, v) => { const x = side * lerp(lerp(.625, .595, v), lerp(.914, .924, v), u), y = lerp(lerp(.545, .525, u), lerp(.654, .685, u), v); return [x, y, noseZ(x, y) + .012]; }, gloss, true, 28, 10);
-    const pocketEdge = coords.flatMap((a, index) => Array.from({ length: 8 }, (_, j): V => { const b = coords[(index + 1) % coords.length], x = lerp(a[0], b[0], j / 8), y = lerp(a[1], b[1], j / 8); return [x, y, noseZ(x, y) + .014]; }));
-    tube(nose, pocketEdge, .004, gunmetal, true, true);
-    tube(nose, [[side * .632, .556, noseZ(side * .632, .556) + .021], [side * .77, .55, noseZ(side * .77, .55) + .022], [side * .908, .541, noseZ(side * .908, .541) + .021]], .006, led, true);
-    for (let i = 0; i < 3; i++) { const x = side * (.673 + i * .092), y = .615 + i * .006; frontPatch(x - .032, x + .032, y - .015, y + .017, lens); }
-    frontPatch(side * .19, side * .85, .236, .402, gloss, -.009);
-    for (let j = 0; j < 3; j++) frontPatch(side * .22, side * .60, .248 + j * .039, .254 + j * .039, gunmetal);
-    for (const x of [side * .61, side * .83]) tube(nose, [[x, .242, noseZ(x, .242) + .01], [x * .97, .404, noseZ(x * .97, .404) + .012]], .015, gloss, true);
+    // Rounded, swept trapezoids traced from official front/detail photos, not rectangular emissive blocks.
+    const outline = new THREE.CatmullRomCurve3([[.592,.662],[.76,.687],[.899,.697],[.921,.663],[.929,.55],[.90,.546],[.648,.567],[.62,.585]].map(([x,y])=>new THREE.Vector3(side*x,y,0)),true,'centripetal');
+    surface(nose,(u,v)=>{const p=outline.getPoint(u),x=lerp(side*.77,p.x,v),y=lerp(.62,p.y,v);return [x,y,noseZ(x,y)+.010+.002*v];},lampHousing,true,96,10).name='front-lamp-pocket';
+    const pocketEdge=outline.getPoints(96).map(p=>[p.x,p.y,noseZ(p.x,p.y)+.015] as V);
+    tube(nose,pocketEdge,.0035,gunmetal,true,true);
+    const guide:V[]=Array.from({length:36},(_,i)=>{const t=i/35,x=side*lerp(.639,.914,t),y=.579-.025*t+.011*Math.exp(-t*15);return [x,y,noseZ(x,y)+.020];});
+    tube(nose,guide,.0065,led,true);
+    for(let i=0;i<3;i++){
+      const x=side*(.664+i*.085),y=.637+i*.009;
+      frontPatch(x-.032,x+.032,y-.017,y+.017,gunmetal);
+      const optic=mesh(nose,new THREE.SphereGeometry(1,24,12),lens,[x,y,noseZ(x,y)+.026],true);optic.scale.set(.025,.013,.008);optic.name='headlamp-projector';
+      frontPatch(x-.021,x+.021,y+.008,y+.011,metal);
+    }
+    // Closed aero shutter, bevelled vertical vanes and bright lower lip, as in the 2026 fascia.
+    frontPatch(side*.115,side*.885,.240,.401,gloss,-.003);
+    frontPatch(side*.14,side*.60,.257,.382,lining);
+    for(const [a,b] of [[.14,.20],[.59,.67],[.84,.89]]) surface(nose,(u,v)=>{const x=side*lerp(a,b,u)+side*.028*(1-v),y=lerp(.24,.404,v);return [x,y,noseZ(x,y)+.016+.017*Math.sin(u*Math.PI)];},gloss,true,8,16);
+    tube(nose,Array.from({length:32},(_,i):V=>{const x=side*lerp(.14,.875,i/31),y=.238;return [x,y,noseZ(x,y)+.019];}),.012,metal,true);
     for (const x of [side * .43, side * .87]) {
       const sensor = mesh(nose, new THREE.CylinderGeometry(.009, .009, .004, 16), paint, [x, .469, noseZ(x, .469) + .006], true); sensor.rotation.x = Math.PI / 2;
     }
   }
   frontPatch(-.16, .16, .225, .396, gloss);
+  const frontCamera=mesh(nose,new THREE.SphereGeometry(.011,20,12),lens,[0,.642,noseZ(0,.642)+.011],true);frontCamera.name='front-camera';
+  box(nose,[.063,.070,.003],[.49,.518,noseZ(.49,.518)+.007],gunmetal,.016,true);
+  box(nose,[.059,.066,.003],[.49,.518,noseZ(.49,.518)+.009],paint,.014,true);
   tube(nose, Array.from({ length: 45 }, (_, i): V => { const x = lerp(-.88, .88, i / 44); return [x, .217, noseZ(x, .217) + .008]; }), .014, gunmetal, true);
   box(nose, [.405, .137, .014], [0, .46, 2.542], gloss, .008, true);
   // P7+ lettering is authored stroke geometry, not a redistributed photo texture.
@@ -186,13 +200,16 @@ export function createP7PlusModel(): ShowroomModel {
     [...text].forEach((char, i) => { for (const points of glyph[char] ?? []) tube(parent, points.map(([x, y]): V => [origin[0] + direction * (x + i * 1.32) * height, origin[1] + y * height, origin[2]]), height * .04, mat, true); });
   }
   lettering(nose, 'P7+', .046, [-.079, .45, 2.551], 1, ivory);
-  const rearZ = (x: number, y: number) => { const t = Math.abs(x) / sideX(-2.22, y), recess = .065 * Math.exp(-Math.pow(x / .34, 6) - Math.pow((y - .54) / .125, 4)); return -2.22 - .313 * Math.sqrt(Math.max(0, 1 - t ** 4)) + .055 * Math.pow(THREE.MathUtils.clamp((.5 - y) / .3, 0, 1), 2) * (1 - t) ** 2 + recess; };
+  const rearZ = (x: number, y: number) => { const t = Math.abs(x) / sideX(-2.22, y), recess = .070 * THREE.MathUtils.smoothstep(.38-Math.abs(x),0,.035) * THREE.MathUtils.smoothstep(y,.420,.452) * (1-THREE.MathUtils.smoothstep(y,.603,.635)); return -2.22 - .313 * Math.sqrt(Math.max(0, 1 - t ** 3.5)) + .075 * Math.pow(THREE.MathUtils.clamp((.5 - y) / .3, 0, 1), 2) * (1 - t) ** 2 + recess + .021*Math.exp(-Math.pow((y-.73)/.085,2))*(1-t*t); };
   const bumperRear = part('bumper-rear', 'P7+ 后保险杠 / 牌照凹槽 / 扩散器', [0, .08, -1.75]);
   surface(bumperRear, (u, v) => { const t = u * 2 - 1, y = lerp(.205, .638, v), x = t * sideX(-2.22, y); return [x, y, rearZ(x, y)]; }, paint, true, 88, 18);
   surface(rear, (u, v) => { const t = u * 2 - 1, y = lerp(.642, 1.065 - .027 * (1 - t * t), v), x = t * sideX(-2.22, y); return [x, y, rearZ(x, y)]; }, paint, true, 88, 18);
+  // Recessed seal backs the physical panel gap without joining the detachable assemblies.
+  surface(rear, (u, v) => { const y=lerp(.628,.652,v),x=(u*2-1)*sideX(-2.22,y); return [x,y,rearZ(x,y)+.006]; }, lining, true, 88, 4);
   surface(rear, (u, v) => { const t = u * 2 - 1, y = lerp(1.074, 1.038 + .027 * t * t, v), x = t * sideX(-2.22, y); return [x, y, lerp(-2.21, rearZ(x, y), v)]; }, paint, true, 60, 10);
   const rearBar = Array.from({ length: 65 }, (_, i): V => { const x = lerp(-.92, .92, i / 64), y = .867 - .013 * (1 - (x / .92) ** 2); return [x, y, rearZ(x, y) - .008]; });
-  tube(rear, rearBar, .019, gloss, true); tube(rear, rearBar.map(([x, y, z]): V => [x, y, z - .023]), .007, tail, true);
+  tube(rear, rearBar, .024, gloss, true); tube(rear, rearBar.map(([x, y, z]): V => [x, y+.003, z - .024]), .009, tail, true);
+  tube(rear,rearBar.map(([x,y,z]):V=>[x,y-.015,z-.020]),.003,gunmetal,true);
   for (const side of [-1, 1]) {
     const p: V[] = [[side * .77, .865, rearZ(side * .77, .865) - .014], [side * .91, 1.025, rearZ(side * .91, 1.025) - .012], [side * .925, .872, rearZ(side * .925, .872) - .01]];
     surface(rear, (u, v) => { const x = lerp(p[0][0], lerp(p[1][0], p[2][0], u), v), y = lerp(p[0][1], lerp(p[1][1], p[2][1], u), v); return [x, y, rearZ(x, y) - .014]; }, gloss, true, 16, 14);
@@ -202,15 +219,20 @@ export function createP7PlusModel(): ShowroomModel {
   surface(bumperRear, (u, v) => { const x = lerp(-.83, .83, u), y = lerp(.221, .34 + .032 * Math.abs(u * 2 - 1), v); return [x, y, rearZ(x, y) - .009]; }, gloss, true, 48, 6);
   for (const x of [-.6, -.32, .32, .6]) box(bumperRear, [.009, .049, .13], [x, .227, -2.38], gunmetal, .003, true);
   box(bumperRear, [.41, .135, .015], [0, .535, -2.487], gloss, .008, true); lettering(bumperRear, 'P7+', .046, [.079, .525, -2.497], -1, ivory);
-  lettering(rear, 'XPENG', .045, [.146, .926, -2.543], -1, gunmetal);
+  // Widely spaced letters conform to the tailgate curvature; no floating straight wordmark.
+  [...'XPENG'].forEach((char,i)=>{const x=.40-i*.20,y=.949;lettering(rear,char,.043,[x,y,rearZ(x-.018,y)-.006],-1,gunmetal);});
+  for(const side of [-1,1]) tube(rear,Array.from({length:35},(_,i):V=>{const y=lerp(.653,1.045,i/34),x=side*lerp(.75,.80,i/34);return [x,y,rearZ(x,y)-.003];}),.002,gloss,true);
+  box(rear,[.50,.019,.013],[0,.666,rearZ(0,.666)-.016],gloss,.007,true);
+  const rearCamera=mesh(rear,new THREE.SphereGeometry(.011,20,12),lens,[0,.670,rearZ(0,.670)-.025],true);rearCamera.name='rear-camera';
   const spoiler = part('spoiler', 'P7+ 悬浮双层尾翼', [0, .70, -.48]);
   for (const side of [-1, 1]) box(spoiler, [.054, .085, .19], [side * .73, 1.075, -2.22], gloss, .021, true);
-  surface(spoiler, (u, v) => { const x = (u * 2 - 1) * .90, z = lerp(-2.44, -2.18, v) + .12 * (x / .90) ** 2; return [x, 1.113 + .034 * Math.sin(v * Math.PI) - .023 * (x / .90) ** 2, z]; }, gloss, true, 64, 12);
+  surface(spoiler, (u, v) => { const x = (u * 2 - 1) * .90, z = lerp(-2.44, -2.18, v) + .12 * (x / .90) ** 2; return [x, 1.113 + .034 * Math.sin(v * Math.PI) - .023 * (x / .90) ** 2, z]; }, paint, true, 64, 12);
+  surface(spoiler,(u,v)=>{const x=(u*2-1)*.90;return [x,1.091-.021*(x/.90)**2,lerp(-2.44,-2.18,v)+.12*(x/.90)**2];},gloss,true,64,8);
   tube(spoiler, Array.from({ length: 40 }, (_, i): V => { const x = lerp(-.90, .90, i / 39); return [x, 1.114 - .023 * (x / .9) ** 2, -2.44 + .12 * (x / .9) ** 2]; }), .014, gloss, true);
 
   // 20-inch five split-spoke aero wheels from the official side/detail photography.
   for (const axle of [-1, 1]) for (const side of [-1, 1]) {
-    const x = side * .831, z = axle * axleZ, wheel = part(`wheel-${axle}-${side}`, `P7+ ${axle === 1 ? '前' : '后'}${side === 1 ? '左' : '右'}20英寸轮组`, [side * 1.5, 0, axle * .22]); wheel.userData.axleZ = z;
+    const x = side * .831, z = axle * axleZ, wheel = part(`wheel-${axle}-${side}`, `P7+ ${axle === 1 ? '前' : '后'}${side === 1 ? '左' : '右'}20英寸轮组`, [side * 1.5, 0, axle * .22]); wheel.userData.axleZ = z; wheel.userData.rollingCenter = [x, tireR, z]; wheel.userData.rollingRadius = tireR;
     const profile = [[.256, -.127], [.323, -.127], [.359, -.108], [tireR, -.079], [tireR, .079], [.359, .108], [.323, .127], [.256, .127], [.256, -.127]].map(([r, a]) => new THREE.Vector2(r, a));
     const tire = mesh(wheel, new THREE.LatheGeometry(profile, 80), rubber, [x, tireR, z]); tire.rotation.z = Math.PI / 2;
     for (const shift of [-.064, -.02, .02, .064]) { const ring = mesh(wheel, new THREE.TorusGeometry(tireR - .0025, .0015, 4, 80), lining, [x + shift, tireR, z]); ring.rotation.y = Math.PI / 2; }
@@ -220,16 +242,19 @@ export function createP7PlusModel(): ShowroomModel {
     const lip = mesh(wheel, new THREE.TorusGeometry(.249, .009, 8, 64), metal, [x + side * .128, tireR, z]); lip.rotation.y = Math.PI / 2;
     for (let i = 0; i < 5; i++) {
       const angle = i * Math.PI * 2 / 5;
-      for (const split of [-1, 1]) {
-        const outline = [[.058, -.020], [.225, split * .090 - .025], [.248, split * .065], [.119, .029], [.065, .030]];
-        polygon(wheel, outline.map(([r, tangent]): V => [x + side * .130, tireR + r * Math.cos(angle) - tangent * Math.sin(angle), z + r * Math.sin(angle) + tangent * Math.cos(angle)]), metal);
+      // Broad, machined five-arm aero face, rather than thin generic Y spokes.
+      const outline = [[.056,-.029],[.183,-.079],[.235,-.096],[.251,-.061],[.179,-.022],[.249,.038],[.236,.081],[.087,.033]];
+      polygon(wheel,outline.map(([r,t]):V=>[x+side*.132,tireR+r*Math.cos(angle)-t*Math.sin(angle),z+r*Math.sin(angle)+t*Math.cos(angle)]),metal);
+      for(let k=0;k<outline.length;k++){
+        const a=outline[k],b=outline[(k+1)%outline.length];
+        polygon(wheel,[[a[0],a[1],.132],[b[0],b[1],.132],[b[0],b[1],.118],[a[0],a[1],.118]].map(([r,t,depth]):V=>[x+side*depth,tireR+r*Math.cos(angle)-t*Math.sin(angle),z+r*Math.sin(angle)+t*Math.cos(angle)]),gunmetal);
       }
       const bolt = mesh(wheel, new THREE.CylinderGeometry(.009, .009, .006, 10), gloss, [x + side * .143, tireR + .047 * Math.cos(angle), z + .047 * Math.sin(angle)]); bolt.rotation.z = Math.PI / 2;
     }
     const hub = mesh(wheel, new THREE.CylinderGeometry(.062, .062, .025, 32), gunmetal, [x + side * .134, tireR, z]); hub.rotation.z = Math.PI / 2;
     tube(wheel, [[x + side * .15, tireR - .016, z - .023], [x + side * .15, tireR, z], [x + side * .15, tireR + .016, z + .023]], .003, metal);
     tube(wheel, [[x + side * .15, tireR + .016, z - .023], [x + side * .15, tireR, z], [x + side * .15, tireR - .016, z + .023]], .003, metal);
-    box(wheel, [.044, .135, .065], [x + side * .058, tireR + .01, z + .18], gunmetal, .02);
+    box(wheel, [.044, .135, .065], [x + side * .058, tireR + .01, z + .18], gunmetal, .02).name = 'brake-caliper';
   }
 
   const floor = part('platform', 'P7+ 乘员舱地板 / 门槛纵梁', [0, .04, -1.25]);
