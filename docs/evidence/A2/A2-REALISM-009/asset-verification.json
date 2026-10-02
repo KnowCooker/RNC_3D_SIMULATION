@@ -1,0 +1,32 @@
+[
+  {
+    "path": "src/team-a/viewer/assets/lakes_8k.jpg",
+    "bytes": 4742098,
+    "sha256Matches": true
+  },
+  {
+    "path": "src/team-a/viewer/assets/goegap_8k.jpg",
+    "bytes": 6050862,
+    "sha256Matches": true
+  },
+  {
+    "path": "src/team-a/viewer/assets/alps_field_8k.jpg",
+    "bytes": 53871215,
+    "sha256Matches": true
+  },
+  {
+    "path": "src/team-a/viewer/assets/lago_disola_8k.jpg",
+    "bytes": 50106035,
+    "sha256Matches": true
+  },
+  {
+    "path": "src/team-a/viewer/assets/lakes_2k.hdr",
+    "bytes": 5918432,
+    "sha256Matches": true
+  },
+  {
+    "path": "src/team-a/viewer/assets/goegap_2k.hdr",
+    "bytes": 5445362,
+    "sha256Matches": true
+  }
+]

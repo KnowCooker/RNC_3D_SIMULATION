@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-27T05:59:22.094Z",
+  "browser": "153.0.8010.54",
+  "checks": [],
+  "errors": [],
+  "intentionalHttpFailures": [
+    {
+      "asset": "stale ICE request",
+      "status": 503
+    }
+  ],
+  "afterStaleFailure": {
+    "disabled": false,
+    "text": "外观加载失败 · 重试"
+  },
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: stale failure cannot enable or replace current loading state\n    at check (file:///C:/Users/Jiang/Desktop/RNC_3D/RNC_3D_SIMULATION/docs/evidence/A2/A2-FULL-017/browser-lifecycle.mjs:10:41)\n    at file:///C:/Users/Jiang/Desktop/RNC_3D/RNC_3D_SIMULATION/docs/evidence/A2/A2-FULL-017/browser-lifecycle.mjs:27:3"
+}

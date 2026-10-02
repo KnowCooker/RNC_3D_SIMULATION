@@ -1,0 +1,25 @@
+{
+  "role": "A2",
+  "task": "A2-FULL-017",
+  "executor": "Codex on behalf of A2",
+  "identitySource": "user-declared",
+  "localParent": "819ab708e028cc48d78d167dbc3605e99b7b84d6",
+  "cloudMain": "67387f68c6a6c1d9ad0826794f61ebde74aa649c",
+  "preservation": {
+    "cloudRuntime": {
+      "matches": true,
+      "differences": []
+    },
+    "localViewer": {
+      "matches": true,
+      "differences": []
+    }
+  },
+  "bothDevelopmentLogsPreserved": true,
+  "files": {
+    "src/team-a/viewer/lab-viewer.ts": "fb2a29e8b86ffbc2e713246aa6b309ade1a0d6aa05434af19fd1b9aee77c57b1",
+    "src/team-a/lab/index.ts": "018b3a6516465feb0190fceb963768ff54328de6da3e27e66c4c976d58de902f",
+    "src/shared/lab-contracts.ts": "4cddd97edd7716a3ce63e22eff16118f93ea14bb630d9b21f5aa03d45fb280b5",
+    "dist/index.html": "4be0bdd14742191499395d143f3a19e8b273562e9ce846990149de505fdcacc2"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: no failed resources",
+  "checks": [
+    "coast: full background and HDR ready",
+    "coast: direction 1 changes real rendered panorama",
+    "coast: direction 2 changes real rendered panorama",
+    "coast: direction 3 changes real rendered panorama",
+    "coast: direction 4 changes real rendered panorama",
+    "coast: direction 5 changes real rendered panorama",
+    "coast: direction 6 changes real rendered panorama",
+    "coast: direction 7 changes real rendered panorama",
+    "mountain: full background and HDR ready",
+    "mountain: direction 1 changes real rendered panorama",
+    "mountain: direction 2 changes real rendered panorama",
+    "mountain: direction 3 changes real rendered panorama",
+    "mountain: direction 4 changes real rendered panorama",
+    "mountain: direction 5 changes real rendered panorama",
+    "mountain: direction 6 changes real rendered panorama",
+    "mountain: direction 7 changes real rendered panorama",
+    "desert: full background and HDR ready",
+    "desert: direction 1 changes real rendered panorama",
+    "desert: direction 2 changes real rendered panorama",
+    "desert: direction 3 changes real rendered panorama",
+    "desert: direction 4 changes real rendered panorama",
+    "desert: direction 5 changes real rendered panorama",
+    "desert: direction 6 changes real rendered panorama",
+    "desert: direction 7 changes real rendered panorama",
+    "snow: full background and HDR ready",
+    "snow: direction 1 changes real rendered panorama",
+    "snow: direction 2 changes real rendered panorama",
+    "snow: direction 3 changes real rendered panorama",
+    "snow: direction 4 changes real rendered panorama",
+    "snow: direction 5 changes real rendered panorama",
+    "snow: direction 6 changes real rendered panorama",
+    "snow: direction 7 changes real rendered panorama",
+    "coast: reload after texture eviction",
+    "mountain: reload after texture eviction",
+    "rapid changes finish on selected panorama",
+    "no JavaScript or shader errors"
+  ],
+  "errors": [],
+  "failures": [
+    {
+      "url": "http://127.0.0.1:5197/assets/alps_field_4k-DL9vOQ3t.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:5197/assets/goegap_2k-Jq4FxBej.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:5197/assets/lago_disola_4k-CMa_-4Rz.hdr",
+      "error": "net::ERR_ABORTED"
+    }
+  ]
+}

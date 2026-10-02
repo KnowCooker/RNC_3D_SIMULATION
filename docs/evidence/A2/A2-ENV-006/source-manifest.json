@@ -1,0 +1,18 @@
+[
+  {
+    "path": "src/team-a/viewer/champagne-gallery.ts",
+    "sha256": "27bba1674fa2d13c02e6221c318e5a066b947af0f3c79c02b64e49b7d315e00f"
+  },
+  {
+    "path": "src/team-a/viewer/lab-viewer.ts",
+    "sha256": "0c4cb5973d999e7e3bd50cb6e74718cea760bb51daabf64aa34bc9563fd9e25f"
+  },
+  {
+    "path": "src/team-a/lab/champagne-shell.ts",
+    "sha256": "0f68f91cc3e14e3946bbe3ea6fb3f4667842ea468daf48cbeb1aea8d29b91611"
+  },
+  {
+    "path": "src/team-a/lab/champagne.css",
+    "sha256": "25a1760e39f0eabbe3b532eb6b7233cde8373563217943987932fb24d42ae658"
+  }
+]

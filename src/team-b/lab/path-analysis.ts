@@ -1,4 +1,4 @@
-import { MIC_POSITIONS, type LabConfig, type LabPathAnalysis, type LabPathSelection } from '../../shared/lab-contracts';
+import { labLayout, type LabConfig, type LabPathAnalysis, type LabPathSelection } from '../../shared/lab-contracts';
 import { primaryPath, secondaryPath, type SparsePath } from './paths';
 
 /** Complex FIR response and its analytic derivative, not a finite-difference phase estimate. */
@@ -37,7 +37,7 @@ export function analyzeLabPath(config: LabConfig, selection: LabPathSelection): 
   if (!['H','S','Shat'].includes(selection.kind) || !Number.isInteger(selection.input) || selection.input<0 || selection.input>3
     || !Number.isInteger(selection.output) || selection.output<0 || selection.output>3) throw new RangeError('无效路径通道');
   // The present controller uses the same S for filtered-x (ideal identification).
-  const path = selection.kind === 'H' ? primaryPath(config,selection.input,MIC_POSITIONS[selection.output])
-    : secondaryPath(config,selection.input,MIC_POSITIONS[selection.output]);
+  const path = selection.kind === 'H' ? primaryPath(config,selection.input,labLayout(config).microphones[selection.output])
+    : secondaryPath(config,selection.input,labLayout(config).microphones[selection.output]);
   return analyzeSparsePath(path, config.sampleRateHz);
 }

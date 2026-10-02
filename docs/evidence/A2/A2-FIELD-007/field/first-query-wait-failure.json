@@ -1,0 +1,16 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: x: continuous slice changes without resetting the camera",
+  "checks": [
+    "continuous volume retains all 280 real queried points",
+    "absolute display starts on documented standard scale",
+    "signed improvement uses exact same frame and zero-centered scale",
+    "improvement detail strengthens contrast while retaining zero and both signs",
+    "primary shares the locked range with residual",
+    "residual never independently normalizes its colors",
+    "display-only controls preserve experiment identity and common clock",
+    "paused sampled values remain stable",
+    "opacity control does not advance or recompute acoustic time"
+  ],
+  "errors": [],
+  "failures": []
+}

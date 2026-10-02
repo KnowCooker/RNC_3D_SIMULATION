@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "four design navigation pages"
+  ],
+  "errors": [],
+  "failures": [],
+  "error": "AssertionError [ERR_ASSERTION]: P7+ preserved as initial display"
+}

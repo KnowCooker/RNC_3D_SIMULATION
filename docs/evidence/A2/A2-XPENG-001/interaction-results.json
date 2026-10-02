@@ -1,0 +1,15 @@
+{
+  "passed": 9,
+  "checks": [
+    "actual canvas raycast selects a semantic part",
+    "paint changes rendered pixels",
+    "section changes rendered geometry",
+    "automatic disassembly pauses",
+    "automatic reverse assembly completes",
+    "rapid switching retains latest model",
+    "wheel zoom changes rendered view",
+    "drag orbit changes rendered view",
+    "no runtime errors during direct interaction"
+  ],
+  "errors": []
+}

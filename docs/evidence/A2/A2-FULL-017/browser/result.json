@@ -1,0 +1,140 @@
+{
+  "source": "10ae34ba69ce560b0fcf4e5ede75bf3e4cfdc827",
+  "sourceChanges": "docs/coordination/A2.md                            |   4 +++\n docs/evidence/A2/A2-FULL-017/browser-check.mjs     |   7 ++--\n .../A2/A2-FULL-017/browser/all-detached.png        | Bin 404853 -> 404651 bytes\n docs/evidence/A2/A2-FULL-017/browser/assembled.png | Bin 333897 -> 333896 bytes\n docs/evidence/A2/A2-FULL-017/browser/bev-asset.png | Bin 236660 -> 236749 bytes\n .../evidence/A2/A2-FULL-017/browser/erev-asset.png | Bin 257231 -> 257223 bytes\n docs/evidence/A2/A2-FULL-017/browser/hev-asset.png | Bin 257240 -> 257203 bytes\n docs/evidence/A2/A2-FULL-017/browser/narrow.png    | Bin 99151 -> 100147 bytes\n .../A2/A2-FULL-017/browser/pointer-selection.png   | Bin 325036 -> 325274 bytes\n docs/evidence/A2/A2-FULL-017/browser/restored.png  | Bin 326216 -> 325926 bytes\n docs/evidence/A2/A2-FULL-017/browser/result.json   |  38 ++++++++++++---------\n .../A2/A2-FULL-017/browser/seat-detached.png       | Bin 331112 -> 331146 bytes\n docs/evidence/A2/A2-FULL-017/browser/section-x.png | Bin 275214 -> 275213 bytes\n .../A2/A2-FULL-017/browser/section-y-road.png      | Bin 225745 -> 225744 bytes\n docs/evidence/A2/A2-FULL-017/browser/section-y.png | Bin 277962 -> 277972 bytes\n .../A2/A2-FULL-017/browser/transparent.png         | Bin 345316 -> 345330 bytes\n src/team-a/viewer/viewer.css                       |   8 ++++-\n ...274\\200\\345\\217\\221\\350\\256\\260\\345\\275\\225.md\" |   4 +++\n 18 files changed, 42 insertions(+), 19 deletions(-)",
+  "browser": "153.0.8010.54",
+  "baseURL": "http://127.0.0.1:5184/",
+  "date": "2026-09-27T13:57:29.384Z",
+  "headless": true,
+  "checks": [
+    "30 asset groups plus unselected option",
+    "physical markers absent in unmatched asset mode",
+    "same asset after section x",
+    "underfloor explanation matches section x",
+    "same asset after section y",
+    "underfloor explanation matches section y",
+    "same asset after section z",
+    "underfloor explanation matches section z",
+    "selected seat detached",
+    "detached seat preserved across stages",
+    "reset restores body, section and selection",
+    "host body control stays on same asset",
+    "host section control stays on same asset",
+    "host explode controls all 30 groups on same asset",
+    "reset clears all detached groups",
+    "actual canvas hit selects an asset part",
+    "narrow inspection controls operable",
+    "no document horizontal overflow",
+    "teaching markers restored",
+    "bev does not expose unverified ICE inspection",
+    "hev does not expose unverified ICE inspection",
+    "erev does not expose unverified ICE inspection",
+    "ice teaching Y section supports underfloor inspection",
+    "ice teaching view restores floor presentation",
+    "bev teaching Y section supports underfloor inspection",
+    "bev teaching view restores floor presentation",
+    "hev teaching Y section supports underfloor inspection",
+    "hev teaching view restores floor presentation",
+    "erev teaching Y section supports underfloor inspection",
+    "erev teaching view restores floor presentation",
+    "no browser exceptions",
+    "no failed resource requests",
+    "no external runtime requests"
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "externalRequests": [],
+  "assets": [
+    {
+      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5184/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
+      "status": 200,
+      "phase": "bev"
+    },
+    {
+      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "status": 200,
+      "phase": "hev"
+    }
+  ],
+  "assetRequests": [
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "type": "fetch",
+      "time": 1790517450612
+    },
+    {
+      "event": "requestfinished",
+      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "type": "fetch",
+      "time": 1790517450662
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:5184/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
+      "type": "fetch",
+      "phase": "bev",
+      "time": 1790517459276
+    },
+    {
+      "event": "requestfinished",
+      "url": "http://127.0.0.1:5184/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
+      "type": "fetch",
+      "phase": "bev",
+      "time": 1790517459360
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "type": "fetch",
+      "phase": "hev",
+      "time": 1790517460010
+    },
+    {
+      "event": "requestfinished",
+      "url": "http://127.0.0.1:5184/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "type": "fetch",
+      "phase": "hev",
+      "time": 1790517460072
+    }
+  ],
+  "graphics": {
+    "width": 1268,
+    "height": 618,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Ti (0x00002D04) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "pickedPart": "hood",
+  "narrowStatus": "已拆 1 / 30 个原资产几何总成",
+  "narrowSelection": "hood",
+  "phase": "erev",
+  "passed": true,
+  "buildSha256": {
+    "index.html": "405211948976bdc4bf433a597e7fd64b32554ba47afb57ea727a2a1ae427293f",
+    "assets/contracts-nWp9BSjY.js": "826899d2bbdc9958bfa5fcaa2b1df627ac1cc8dfa54f1de5caeadfc7db967f64",
+    "assets/engine.worker-DAEd859z.js": "ca755abb6a017f5401f174c6f859e68c54366bfcc2d301da7607330c6b4850f9",
+    "assets/index-B4u1257H.css": "bb4bac8cb719c68ebc9d8f74f4507d35429c6e80521e18d8c2f6e86c1128e245",
+    "assets/index-CJP2PWEf.js": "3739cb32dbf7a069628e73b06c430a3847c143049419a2f9baed600f84b3fb47",
+    "assets/index-D6rKcB8k.js": "33fd595f955521e613197c672f81c0a762b43348ac14eb6f026aa65cb5eacde7",
+    "assets/index-dftJ8TDE.js": "aacb8c3b3b03e41d77129435feeb75aae09b35bc7e6cedaf0857fb925e45d6bd",
+    "assets/index-Di_b5R-_.css": "66c70f92e4e5eec72295b48d16cd57db47c57e1aac9ee14ddee2b3f884b0eba8",
+    "assets/index-DvOokgvP.js": "4df4cb02def7e182adac1c34ecf6530c7cfc460b94e57070a9f54efa1c221d13",
+    "assets/index-T7UGU3Lx.js": "fa751d06741c417f800847145b5bd6fb58e25550920671f022b0bbcb54e936da",
+    "assets/lab-contracts-BxOkIKIk.js": "4625630fca1301a1593fbb094b2ec3a14d05288c27cf21137bc97d04ddfc66e2",
+    "assets/lab-engine-DZ8ofE5k.js": "394135df4e9662ae49f4e2f01f2987b3c7534ab320fdd5ce8d6e379e1848081a",
+    "assets/lab.worker-mXy9UZ55.js": "9f9bd5d9ddcd6767e53c31fe2fd214c5c351aaac59ee0b3368f2c0c2ed801f10",
+    "assets/preload-helper-PPVm8Dsz.js": "d3b90f5fc0ceb63a5f10ebfdb8ab7b39bf9da47ba642d152c27dda2f987fe421",
+    "assets/range-rover-sport-svr-4ykCwhl8.glb": "8da77f899401e9a04dd7624df350a3b1a99b154d721a905ea8154a894a95e904",
+    "assets/showroom-model-YbW51k7O.js": "53bc42ae62cd796b346fa59b0f60a4bdb5ccb21111ac86e51901608f45a6ca37",
+    "assets/tesla-model-y.meshopt-DxsAdN_g.glb": "9cea26e8c89ba30af890cfa47a4dda2a0f66eca3b52ca16bd9fc4b22ab0eaa59",
+    "assets/viewer-Crt6eMbq.js": "9e8a75a0437cf1d3d58fb4ca9b9b8d1e519d7c98f6e8918b8fbb691cd1947e0d",
+    "assets/viewer-fVf3wK00.css": "f5158b1c6f9c7c1088c8a53bf820030205e4f59bbe43962131c7302fd99a2ca9"
+  },
+  "sourceFileSha256": {
+    "src/team-a/viewer/lab-viewer.ts": "a46569bb15cd1859f5fd285333f2c56cb900893aaed37ed56eb3cb2bc9ec37a3",
+    "src/team-a/viewer/scene-stage.ts": "ddeb98c581a682dc55ce0154f1537e384dcf40d2f22f5c8872e9c3b90ea7095e",
+    "src/team-a/viewer/viewer.css": "675c61ef8b417549da8d4dba32745a7eaacfa8872c16f75ed1db60d79e60abe2"
+  }
+}

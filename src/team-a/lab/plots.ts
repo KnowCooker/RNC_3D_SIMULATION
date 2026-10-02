@@ -1,8 +1,8 @@
 import { LAB_WAVEFORM_SECONDS, type LabAnalysis } from '../../shared/lab-contracts';
 import type { PlotSettings } from './plot-settings';
 
-export const ORIGINAL_COLOR = '#a7b5c8';
-export const RESULT_COLOR = '#73e4bc';
+export const ORIGINAL_COLOR = '#bc5f4d';
+export const RESULT_COLOR = '#477eaa';
 export interface PlotSeries { x: number[]; values: (number | null)[]; color: string; secondary?: boolean }
 export interface SplFrame { time: number; primary: (number | null)[]; residual: (number | null)[] }
 export function splFrame(time: number, analysis: LabAnalysis): SplFrame {
@@ -34,10 +34,10 @@ export function plot(canvas: HTMLCanvasElement, series: PlotSeries[], options: {
   const ctx = canvas.getContext('2d')!; ctx.scale(ratio, ratio);
   const left = 54, top = 26, w = Math.max(1, width - left - (options.right ? 62 : 18)), h = Math.max(1, height - top - 48);
   ctx.font = '11px ui-monospace, monospace'; ctx.lineWidth = 1;
-  const grid = (x1: number, y1: number, x2: number, y2: number) => { ctx.strokeStyle = '#304357'; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); };
+  const grid = (x1: number, y1: number, x2: number, y2: number) => { ctx.strokeStyle = '#d6c9b7'; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); };
   for (let i = 0; i <= 4; i++) {
     const y = top + h * i / 4; grid(left,y,left+w,y);
-    ctx.fillStyle = '#bfd0e2'; ctx.textAlign = 'right'; ctx.fillText(tick(options.y[1] - (options.y[1] - options.y[0]) * i / 4), left - 8,y+4);
+    ctx.fillStyle = '#786852'; ctx.textAlign = 'right'; ctx.fillText(tick(options.y[1] - (options.y[1] - options.y[0]) * i / 4), left - 8,y+4);
     if (options.right) {
       ctx.textAlign = 'left'; ctx.fillStyle = ORIGINAL_COLOR;
       ctx.fillText(tick(options.right.range[1] - (options.right.range[1] - options.right.range[0]) * i / 4), left+w+7,y+4);
@@ -49,12 +49,12 @@ export function plot(canvas: HTMLCanvasElement, series: PlotSeries[], options: {
   const steps = w < 260 ? 2 : 4;
   for (let i = 0; i <= steps; i++) {
     const x = left + w * i / steps; grid(x,top,x,top+h);
-    ctx.fillStyle = '#bfd0e2'; ctx.textAlign = i === 0 ? 'left' : i === steps ? 'right' : 'center';
+    ctx.fillStyle = '#786852'; ctx.textAlign = i === 0 ? 'left' : i === steps ? 'right' : 'center';
     ctx.fillText(tick(log ? 10 ** (lo + (hi-lo)*i/steps) : lo + (hi-lo)*i/steps),x,top+h+18);
   }
-  ctx.textAlign = 'left'; ctx.fillStyle = '#bfd0e2'; ctx.fillText(options.yLabel,left,13);
+  ctx.textAlign = 'left'; ctx.fillStyle = '#786852'; ctx.fillText(options.yLabel,left,13);
   if (options.right) { ctx.textAlign = 'right'; ctx.fillStyle = ORIGINAL_COLOR; ctx.fillText(options.right.label,left+w,13); }
-  ctx.textAlign = 'center'; ctx.fillStyle = '#bfd0e2'; ctx.fillText(options.xLabel,left+w/2,height-4);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#786852'; ctx.fillText(options.xLabel,left+w/2,height-4);
   ctx.save(); ctx.beginPath(); ctx.rect(left,top,w,h); ctx.clip();
   for (const line of series) {
     const range = line.secondary && options.right ? options.right.range : options.y;
@@ -71,7 +71,7 @@ export function plot(canvas: HTMLCanvasElement, series: PlotSeries[], options: {
   }
   ctx.restore();
   if (!series.some(line => line.values.some((v,i) => finite(v) && line.x[i] >= options.x[0] && line.x[i] <= options.x[1]))) {
-    ctx.fillStyle = '#93a8c0'; ctx.textAlign = 'center'; ctx.fillText(options.empty ?? '等待有效数据',left+w/2,top+h/2);
+    ctx.fillStyle = '#8b775e'; ctx.textAlign = 'center'; ctx.fillText(options.empty ?? '等待有效数据',left+w/2,top+h/2);
   }
   ctx.textAlign = 'left';
 }

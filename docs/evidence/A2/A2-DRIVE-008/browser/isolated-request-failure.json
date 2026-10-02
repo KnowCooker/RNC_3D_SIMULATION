@@ -1,0 +1,58 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: no runtime, shader or resource errors",
+  "checks": [
+    "experiment enters the actual road stage with the P7+ model",
+    "paused road, scenery, car and wheels remain pixel-stable",
+    "seeking changes actual rendered road and scenery",
+    "backward seek reconstructs exactly the same road, wheel phase and geometry",
+    "playback advances real travel distance",
+    "pause freezes the same experiment travel distance",
+    "god view is a real camera pose",
+    "fl: overview marker and camera use the same physical eye",
+    "fl: correct semantic seat highlighted",
+    "fl: graph and audition seat follow the observation seat",
+    "fl: viewing position does not restart or move the experiment",
+    "fr: overview marker and camera use the same physical eye",
+    "fr: correct semantic seat highlighted",
+    "fr: graph and audition seat follow the observation seat",
+    "fr: viewing position does not restart or move the experiment",
+    "rl: overview marker and camera use the same physical eye",
+    "rl: correct semantic seat highlighted",
+    "rl: graph and audition seat follow the observation seat",
+    "rl: viewing position does not restart or move the experiment",
+    "rr: overview marker and camera use the same physical eye",
+    "rr: correct semantic seat highlighted",
+    "rr: graph and audition seat follow the observation seat",
+    "rr: viewing position does not restart or move the experiment",
+    "look-around turns the direction while keeping the eye fixed",
+    "look-around changes real cabin and window pixels",
+    "exterior view clears the cabin position overlay",
+    "road driving retains a selectable actual acoustic overlay",
+    "static continuous field inspection stays available",
+    "mountain: environment change preserves road and experiment",
+    "desert: environment change preserves road and experiment",
+    "snow: environment change preserves road and experiment",
+    "coast: environment change preserves road and experiment",
+    "gravel visual and acoustic preset match",
+    "manual acoustic roughness selects the matching visual surface class",
+    "1366px: no horizontal overflow",
+    "1366px: cabin locator remains visible",
+    "740px: no horizontal overflow",
+    "740px: cabin locator remains visible",
+    "390px: no horizontal overflow",
+    "390px: cabin locator remains visible",
+    "live Worker clock drives the road",
+    "live pause also freezes travel"
+  ],
+  "errors": [],
+  "failures": [
+    {
+      "url": "http://127.0.0.1:5197/assets/alps_field_4k-DL9vOQ3t.hdr",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:5197/assets/qwantani_sunset_4k-D0g2gD-X.hdr",
+      "error": "net::ERR_ABORTED"
+    }
+  ]
+}

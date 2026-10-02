@@ -1,0 +1,794 @@
+{
+  "role": "A2",
+  "executor": "Codex",
+  "task": "A2-FULL-017",
+  "identitySource": "user-declared",
+  "source": "d8e27178ca634c75e17448a2bb98fd1f1a7f85f7",
+  "date": "2026-09-27T14:16:04.163Z",
+  "browser": "153.0.8010.54",
+  "url": "http://127.0.0.1:5186/",
+  "checks": [
+    "normal-0-ice correct asset",
+    "normal-0-ice teaching markers restored",
+    "normal-0-bev correct asset",
+    "normal-0-bev teaching markers restored",
+    "normal-0-hev correct asset",
+    "normal-0-hev teaching markers restored",
+    "normal-0-erev correct asset",
+    "normal-0-erev teaching markers restored",
+    "normal-1-ice correct asset",
+    "normal-1-ice teaching markers restored",
+    "normal-1-bev correct asset",
+    "normal-1-bev teaching markers restored",
+    "normal-1-hev correct asset",
+    "normal-1-hev teaching markers restored",
+    "normal-1-erev correct asset",
+    "normal-1-erev teaching markers restored",
+    "normal-2-ice correct asset",
+    "normal-2-ice teaching markers restored",
+    "normal-2-bev correct asset",
+    "normal-2-bev teaching markers restored",
+    "normal-2-hev correct asset",
+    "normal-2-hev teaching markers restored",
+    "normal-2-erev correct asset",
+    "normal-2-erev teaching markers restored",
+    "normal-3-ice correct asset",
+    "normal-3-ice teaching markers restored",
+    "normal-3-bev correct asset",
+    "normal-3-bev teaching markers restored",
+    "normal-3-hev correct asset",
+    "normal-3-hev teaching markers restored",
+    "normal-3-erev correct asset",
+    "normal-3-erev teaching markers restored",
+    "normal switching has no failed requests",
+    "all normal GLB requests finished",
+    "current network failure permits explicit retry",
+    "failed load keeps teaching model",
+    "retry succeeds with correct asset"
+  ],
+  "requests": [
+    {
+      "id": "31632.20",
+      "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "phase": "normal-0-ice",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17650.427135,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:05 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17650.461325,
+      "encodedDataLength": 5726543
+    },
+    {
+      "id": "31632.43",
+      "url": "http://127.0.0.1:5186/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
+      "phase": "normal-0-bev",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17651.649199,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:06 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17651.722445,
+      "encodedDataLength": 10353851
+    },
+    {
+      "id": "31632.46",
+      "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "phase": "normal-0-hev",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17652.284869,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:07 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17652.312376,
+      "encodedDataLength": 5726543
+    },
+    {
+      "id": "31632.69",
+      "url": "http://127.0.0.1:5186/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
+      "phase": "normal-1-bev",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17653.109119,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:08 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17653.163212,
+      "encodedDataLength": 10353851
+    },
+    {
+      "id": "31632.72",
+      "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "phase": "normal-1-hev",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17653.459924,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:08 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17653.491707,
+      "encodedDataLength": 5726543
+    },
+    {
+      "id": "31632.95",
+      "url": "http://127.0.0.1:5186/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
+      "phase": "normal-2-bev",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17654.154616,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:09 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17654.197032,
+      "encodedDataLength": 10353851
+    },
+    {
+      "id": "31632.98",
+      "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "phase": "normal-2-hev",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17654.534606,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:09 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17654.566339,
+      "encodedDataLength": 5726543
+    },
+    {
+      "id": "31632.121",
+      "url": "http://127.0.0.1:5186/assets/tesla-model-y.meshopt-DxsAdN_g.glb",
+      "phase": "normal-3-bev",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17655.294727,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:10 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17655.35583,
+      "encodedDataLength": 10353851
+    },
+    {
+      "id": "31632.124",
+      "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "phase": "normal-3-hev",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17655.664494,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:10 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17655.697801,
+      "encodedDataLength": 5726543
+    },
+    {
+      "id": "31632.165",
+      "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "phase": "intentional-network-failure",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17656.485225,
+      "failed": 17656.489347,
+      "errorText": "net::ERR_FAILED",
+      "canceled": false
+    },
+    {
+      "id": "31632.166",
+      "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "phase": "retry",
+      "type": "Fetch",
+      "initiator": {
+        "type": "script",
+        "stack": {
+          "callFrames": [
+            {
+              "functionName": "load",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 90356
+            },
+            {
+              "functionName": "load",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 3123
+            },
+            {
+              "functionName": "",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89159
+            },
+            {
+              "functionName": "loadAsync",
+              "scriptId": "10",
+              "url": "http://127.0.0.1:5186/assets/viewer-Crt6eMbq.js",
+              "lineNumber": 43,
+              "columnNumber": 89131
+            },
+            {
+              "functionName": "ct",
+              "scriptId": "44",
+              "url": "http://127.0.0.1:5186/assets/showroom-model-YbW51k7O.js",
+              "lineNumber": 0,
+              "columnNumber": 73637
+            },
+            {
+              "functionName": "No.M.onclick",
+              "scriptId": "9",
+              "url": "http://127.0.0.1:5186/assets/index-dftJ8TDE.js",
+              "lineNumber": 1,
+              "columnNumber": 63901
+            }
+          ]
+        }
+      },
+      "start": 17656.539074,
+      "status": 200,
+      "headers": {
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-store",
+        "Keep-Alive": "timeout=5",
+        "Date": "Sun, 27 Sep 2026 14:16:11 GMT",
+        "Content-Type": "application/octet-stream",
+        "Connection": "keep-alive"
+      },
+      "finished": 17656.571092,
+      "encodedDataLength": 5726543
+    }
+  ],
+  "errors": [],
+  "failures": [
+    {
+      "phase": "intentional-network-failure",
+      "url": "http://127.0.0.1:5186/assets/range-rover-sport-svr-4ykCwhl8.glb",
+      "error": {
+        "errorText": "net::ERR_FAILED"
+      }
+    }
+  ],
+  "phase": "retry",
+  "retryTitle": "Failed to fetch",
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: successful retry clears obsolete error tooltip\n    at check (file:///C:/Users/Jiang/Desktop/RNC_3D/RNC_3D_SIMULATION/docs/evidence/A2/A2-FULL-017/browser-load-audit.mjs:16:41)\n    at file:///C:/Users/Jiang/Desktop/RNC_3D/RNC_3D_SIMULATION/docs/evidence/A2/A2-FULL-017/browser-load-audit.mjs:71:3"
+}

@@ -4,6 +4,7 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import type { VehicleKind } from '../../shared/lab-contracts';
 import { splitFourWheelMesh, wheelCorners, type WheelCorner } from './wheel-geometry';
 import { splitInteriorSeatIslands } from './interior-geometry';
+import { createAssetInspection } from './asset-inspection';
 
 // Offline assets. Their exterior groups are not RNC geometry or physical anchors.
 const assets = {
@@ -32,6 +33,9 @@ export interface ShowroomModel {
   source: string;
   group: THREE.Group;
   parts: { id: string; name: string }[];
+  inspection: ReturnType<typeof createAssetInspection>;
+  partForObject(object: THREE.Object3D): string | null;
+  selectPart(id: string | null): void;
   setPartProgress(id: string, progress: number): void;
   setPaint(color: string): void;
   dispose(): void;
@@ -52,8 +56,13 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
   const gltf = await loader.loadAsync(asset.url);
+  return createShowroomModel(vehicle, gltf.scene);
+}
+
+/** Assemble the decoded source scene; kept separate so real asset geometry can be checked without WebGL. */
+export function createShowroomModel(vehicle: VehicleKind, exterior: THREE.Group): ShowroomModel {
+  const asset = vehicle === 'bev' ? assets.bev : assets.ice;
   const group = new THREE.Group();
-  const exterior = gltf.scene;
   const bounds = new THREE.Box3().setFromObject(exterior);
   const size = bounds.getSize(new THREE.Vector3());
   const center = bounds.getCenter(new THREE.Vector3());
@@ -203,20 +212,48 @@ export async function loadShowroomModel(vehicle: VehicleKind): Promise<ShowroomM
     }
   });
   for (const geometry of replacedGeometries) geometries.add(geometry);
+  const interiorIds = new Set(['engine-bay', 'steering-wheel', 'seat-front-left', 'seat-front-right', 'seat-rear-bench', 'interior', 'chassis-shell', 'exhaust']);
+  const shellMeshes: THREE.Mesh[] = [];
+  for (const [id, part] of partPivots) {
+    if (interiorIds.has(id) || id.startsWith('wheel-')) continue;
+    part.pivot.traverse(object => { if (object instanceof THREE.Mesh) shellMeshes.push(object); });
+  }
+  const inspection = createAssetInspection(group, shellMeshes);
+  const partIds = new Map([...partPivots].map(([id, part]) => [part.pivot, id]));
+  let disposed = false;
   return {
     assetId: asset.id,
     title: asset.title,
     credit: asset.credit,
     source: asset.source,
     group,
+    inspection,
+    partForObject(object) {
+      for (let current: THREE.Object3D | null = object; current && current !== group; current = current.parent) {
+        const id = partIds.get(current as THREE.Group); if (id) return id;
+      }
+      return null;
+    },
+    selectPart(id) { inspection.select(id ? partPivots.get(id)?.pivot ?? null : null); },
     parts: partSpecs.map(({ id, name }) => ({ id, name })),
     setPartProgress(id: string, progress: number) {
       const part = partPivots.get(id);
       if (!part) return;
       part.pivot.position.copy(part.origin).addScaledVector(part.offset, THREE.MathUtils.clamp(progress, 0, 1) * 1.6);
     },
-    setPaint(color: string) { for (const paint of paints) paint.color.set(color); },
+    setPaint(color: string) {
+      for (const paint of paints) paint.color.set(color);
+      // Inspection owns shell material copies; recolour those as well.
+      group.traverse(object => {
+        if (!(object instanceof THREE.Mesh)) return;
+        for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+          if (material.name === asset.paint && material instanceof THREE.MeshStandardMaterial) material.color.set(color);
+        }
+      });
+    },
     dispose() {
+      if (disposed) return; disposed = true;
+      inspection.dispose();
       group.remove(exterior);
       for (const geometry of geometries) geometry.dispose();
       for (const material of materials) material.dispose();
