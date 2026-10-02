@@ -29,10 +29,11 @@ export function createDrivingView(host: HTMLElement, scene: THREE.Scene, camera:
   function cabinGlass(inside:boolean){hooks.model()?.group.traverse(o=>{const material=(o as THREE.Mesh).material;if(!material)return;for(const m of Array.isArray(material)?material:[material])if(m.name==='p7-window-glass'||m.name==='xpeng-window-glass'){m.opacity=inside?.12:.97;}});}
   function focusView() {
     const inside = isCabinView(view); controls.enabled = !inside; controls.enablePan = !inside;
-    controls.minDistance = inside ? .05 : 3; controls.maxDistance = 50; controls.maxPolarAngle = inside ? Math.PI : Math.PI * .49;
+    controls.minDistance = inside ? .05 : 3; controls.maxDistance = 20; controls.maxPolarAngle = inside ? Math.PI : Math.PI * .49;
     camera.near = inside ? .025 : .08;
     if (isCabinView(view)) hooks.focus(cabinViews()[view].eye, drivingLook(cabinViews()[view].eye, yaw, pitch), 76);
     else if (view === 'overhead') hooks.focus(host.clientWidth<1000?[.01,13,-3]:[-2,13,-3],host.clientWidth<1000?[0,.4,0]:[-2,.4,0],48);
+    else if (overlay) hooks.focus(host.clientWidth<1000?[-5.2,4.9,-7]:[-4.1,3.5,-5.1],host.clientWidth<1000?[0,.9,0]:[-.85,.9,0],48);
     else hooks.focus(host.clientWidth<1000?[-5,3.2,-7.2]:[-5.3,3.2,-7.5],host.clientWidth<1000?[0,.7,.5]:[-1.5,.7,.5],48);
     hooks.body(inside || !overlay);if(inside)cabinGlass(true);
     card.hidden = !inside;
@@ -42,7 +43,7 @@ export function createDrivingView(host: HTMLElement, scene: THREE.Scene, camera:
     host.dataset.drivingOverlay=String(overlay);host.dataset.drivingView = view;host.dispatchEvent(new CustomEvent('driving-view-change',{bubbles:true,detail:{view,channel:['fl','fr','rl','rr'].includes(view)?['fl','fr','rl','rr'].indexOf(view):null}})); host.dataset.drivingEye = isCabinView(view) ? cabinViews()[view].eye.join(',') : ''; mapDirty = true; baseDirty = true;
   }
   buttons.forEach(b=>b.onclick=()=>{ hooks.road(); view=b.dataset.view as DrivingView; yaw=0; pitch=-.025; hooks.assemble(); focusView(); });
-  panel.querySelector<HTMLButtonElement>('[data-drive-analysis]')!.onclick=()=>{overlay=true;view='overhead';hooks.inspect();panel.querySelector('[data-drive-overlay]')!.setAttribute('aria-pressed','true');focusView();};
+  panel.querySelector<HTMLButtonElement>('[data-drive-analysis]')!.onclick=()=>{overlay=true;view='orbit';hooks.inspect();panel.querySelector('[data-drive-overlay]')!.setAttribute('aria-pressed','true');focusView();};
   panel.querySelector<HTMLButtonElement>('[data-drive-overlay]')!.onclick=()=>{overlay=!overlay;host.dataset.drivingOverlay=String(overlay);panel.querySelector('[data-drive-overlay]')!.setAttribute('aria-pressed',String(overlay));hooks.body(!overlay);};
   let pointer: { id: number; x: number; y: number } | null = null;
   const down=(e:PointerEvent)=>{if(enabled&&isCabinView(view)&&e.button===0){pointer={id:e.pointerId,x:e.clientX,y:e.clientY};renderer.domElement.setPointerCapture(e.pointerId);}};
@@ -72,7 +73,7 @@ export function createDrivingView(host: HTMLElement, scene: THREE.Scene, camera:
   return {panel,
     clearOverlay(){overlay=false;host.dataset.drivingOverlay='false';panel.querySelector('[data-drive-overlay]')!.setAttribute('aria-pressed','false');if(enabled)hooks.body(true);},
     get cabin(){return enabled&&isCabinView(view);},get fieldVisible(){return !enabled||(!isCabinView(view)&&overlay);},
-    enable(value:boolean){const changed=enabled!==value;enabled=value;panel.hidden=!value;if(value){hooks.assemble();if(changed)focusView();}else{if(changed)cabinGlass(false);card.hidden=true;controls.enabled=true;controls.enablePan=true;controls.minDistance=3;controls.maxDistance=24;controls.maxPolarAngle=Math.PI*.84;camera.near=.08;host.dataset.drivingView='';host.dataset.drivingEye='';}},
+    enable(value:boolean){const changed=enabled!==value;enabled=value;panel.hidden=!value;if(value){hooks.assemble();if(changed)focusView();}else{if(changed)cabinGlass(false);card.hidden=true;controls.enabled=true;controls.enablePan=true;controls.minDistance=3;controls.maxDistance=20;controls.maxPolarAngle=Math.PI*.84;camera.near=.08;host.dataset.drivingView='';host.dataset.drivingEye='';}},
     focus:focusView,
     update(time:number,speed:number,ready:boolean,failed:boolean,grade=0){if(!enabled)return;const id=hooks.model()?.assetId??'';if(id!==modelId){modelId=id;const third=id==='xpeng-x9'||id==='xpeng-gx';buttons.forEach(b=>{b.hidden=['tl','tr'].includes(b.dataset.view!)&&!third;const v=b.dataset.view as DrivingView;if(isCabinView(v))b.textContent=cabinViews()[v].label;});if(!third&&['tl','tr'].includes(view))view='fl';focusView();}host.dataset.travelDistance=travelDistance(time,speed).toFixed(3);host.dataset.roadReady=String(ready);panel.querySelector('.lab-driving-status')!.textContent=`${speed.toFixed(0)} km/h · ${(travelDistance(time,speed)/1000).toFixed(2)} km · ${time.toFixed(2)} s · ${grade>=0?'上坡':'下坡'} ${Math.abs(grade*100).toFixed(1)}%${failed?' · 实景纹理加载失败，使用基础材质':ready?'':' · 正在加载高清环境'}`;if(mapDirty&&isCabinView(view))drawMap();if(isCabinView(view))cabinGlass(true);},
     dispose(){panel.remove();card.remove();renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);},

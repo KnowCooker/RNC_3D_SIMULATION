@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>B2 lab 结果 Worker 验证</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:32px auto;padding:0 16px;background:#f6f8fa}pre{white-space:pre-wrap;word-break:break-word}h1{font-size:24px}</style>
+<h1>B2-003 lab-v3 完整结果往返与 Web Crypto</h1><p id="status">正在独立 Worker 中验证……</p><pre id="report"></pre>
+<script type="module">
+const worker = new Worker(new URL('./browser-worker.ts', import.meta.url), { type: 'module' });
+const finish = data => {
+  document.querySelector('#status').textContent = data.ok ? '通过：浏览器 Worker 验证完成' : '失败：查看报告';
+  document.querySelector('#report').textContent = JSON.stringify({ ...data, userAgent: navigator.userAgent, secureContext: isSecureContext }, null, 2);
+  worker.terminate();
+};
+worker.onmessage = ({ data }) => finish(data);
+worker.onerror = event => finish({ ok: false, error: event.message });
+try {
+  const response = await fetch(new URL('../../../../../src/team-b/lab/data/recorded-primary.f32', import.meta.url));
+  if (!response.ok) throw new Error(`Asset HTTP ${response.status}`);
+  const bytes = await response.arrayBuffer(); worker.postMessage(bytes, [bytes]);
+} catch (error) { finish({ ok: false, error: String(error) }); }
+</script></html>

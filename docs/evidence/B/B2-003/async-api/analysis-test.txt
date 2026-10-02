@@ -1,0 +1,41 @@
+✔ B2-003 async: Web Crypto produces the same container and detached data as sync API (34.5699ms)
+✔ B2-003 async: encoding snapshots config, run identity, samples and budgets before awaiting (20.9181ms)
+✔ B2-003 async: decode owns a snapshot across Buffer mutation, offset views and transfer (29.2068ms)
+✔ B2-003 async: hash rejections and invalid digests propagate without a partial result (21.211ms)
+✔ B2-003 async: malformed, nonfinite and over-budget inputs reject before invoking crypto (7.505ms)
+✔ B2-003: default binary roundtrip, recipe recompute and Python oracle (378.7803ms)
+✔ B2-003: seed29 binary roundtrip, recipe recompute and Python oracle (375.2725ms)
+✔ B2-003: seed47 binary roundtrip, recipe recompute and Python oracle (379.7315ms)
+✔ B2-003: taps32 binary roundtrip, recipe recompute and Python oracle (288.5802ms)
+✔ B2-003: mu0 binary roundtrip, recipe recompute and Python oracle (245.1716ms)
+✔ B2-003: registered source hashes match the numerical implementation (0.9692ms)
+✔ B2-003: preserve reference identity, little-endian edge bits and offset views (146.5706ms)
+✔ B2-003: silent and zero-denominator metrics retain nonfinite tags and unavailable measurements (51.4393ms)
+✔ B2-003: genuine zero/negative reductions and tagged negative zero stay distinct from silence (47.7937ms)
+✔ B2-003: malformed/truncated headers, overflow lengths, trailing bytes and padding are rejected (6.5044ms)
+✔ B2-003: schema, channel mapping, units, metadata, normalized config and metrics are validated (28.0359ms)
+✔ B2-003: integrity mismatch and hash-correct nonfinite payload cannot import (12.4281ms)
+✔ B2-003: budgets refuse before hashing/large output and count UTF-8 bytes (7.3519ms)
+✔ B2-003: unknown numerical models are read-only; recipe recompute revalidates identity and fresh id (6.8992ms)
+✔ B2-003: recipes reject extra scripts/URLs/arrays, bad text/config and different schemas (0.654ms)
+✔ B2-003: live snapshots, partial results, bad dimensions and invalid samples are not batches (15.564ms)
+✔ Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak (3.6164ms)
+✔ B2-002: RMS uses exactly the trailing 1000 samples, including first and final windows (4.2188ms)
+✔ B2-002: same-window reduction preserves negative gains and aggregates powers before dB (2.7693ms)
+✔ B2-002: silence and near-floor pressure never report valid zero-dB benefit (8.0595ms)
+✔ B2-002: non-finite pressure is unavailable, never a valid analysis frame (9.0214ms)
+✔ B2-002: power rejects invalid ranges and PSD clamps finite sample cursors to actual data (1.1862ms)
+✔ B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples (1.6065ms)
+✔ B2-002: non-finite PSD cursors cannot trap a caller in an unbounded loop (164.2326ms)
+✔ B2-002: shared PSD preserves lab pressure weighting and vibration/drive/source units (8.2728ms)
+✔ B2-002: asymmetric signal Welch bins match direct DFT, 50% overlap and incomplete-tail handling (83.3958ms)
+✔ B2-002: DC and Nyquist are not doubled; PSD scales as signal-unit squared per Hz (8.1985ms)
+✔ analysis warming-up, window boundary, channel identity and pressure calibration (0.6923ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3086.0027

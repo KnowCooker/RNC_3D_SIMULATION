@@ -3,6 +3,12 @@ import * as THREE from 'three';
 // Authored scenic route, not a measured road. Arc-length parameterisation keeps
 // tyre travel, world motion and the experiment clock in the same metre scale.
 const period = 2048, steps = 8192, du = period / steps;
+export function routeAtWorldZ(z: number) {
+  const a = z * Math.PI * 2 / period, k = Math.PI * 2 / period;
+  return { x: 38 * Math.sin(3 * a + .4) + 16 * Math.sin(7 * a),
+    y: 8 * Math.sin(2 * a) + 3 * Math.sin(5 * a + .6),
+    dx: k * (114 * Math.cos(3 * a + .4) + 112 * Math.cos(7 * a)) };
+}
 function center(u: number) {
   const a = u * Math.PI * 2 / period;
   return new THREE.Vector3(38 * Math.sin(3 * a + .4) + 16 * Math.sin(7 * a), 8 * Math.sin(2 * a) + 3 * Math.sin(5 * a + .6), u);

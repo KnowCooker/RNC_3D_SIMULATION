@@ -11,7 +11,12 @@ export interface CaseSnapshot {
   reductionDb: Four<number | null>;
 }
 
+export type ComparisonMode = 'control' | 'scenario';
+export type ComparisonPolicy = ComparisonMode | 'legacy';
+export const comparisonLabel = (mode: ComparisonPolicy) => mode === 'control' ? '控制方案比较' : mode === 'scenario' ? '场景结果并列' : '历史摘要比较';
+
 export interface CaseComparison {
+  mode: ComparisonPolicy;
   comparable: boolean;
   conditions: string[];
   changes: string[];
@@ -37,23 +42,25 @@ export function captureCase(result: LabResult, analysis: LabAnalysis): CaseSnaps
   };
 }
 
-export function compareCases(base: CaseSnapshot, candidate: CaseSnapshot): CaseComparison {
+export function compareCases(base: CaseSnapshot, candidate: CaseSnapshot, mode: ComparisonPolicy = 'legacy'): CaseComparison {
   const a = base.config, b = candidate.config;
-  const conditions: string[] = [];
+  const conditions: string[] = [], changes: string[] = [];
+  const scenario = mode === 'scenario';
   const check = (matches: boolean, label: string) => { if (!matches) conditions.push(label); };
   check(a.schemaVersion === b.schemaVersion && a.sampleRateHz === b.sampleRateHz, '计算协议/采样率');
   let supported = false; try { supported = supportedLabLayoutId(a) === supportedLabLayoutId(b); } catch { /* Foreign recipe remains read-only. */ }
   check(labLayoutId(a) === labLayoutId(b) && supported, '物理布局身份');
   check(a.vehicle === b.vehicle, '车型');
-  check((a.sourceMode ?? 'shaped-noise') === (b.sourceMode ?? 'shaped-noise'), '声源素材');
-  check(a.seed === b.seed, '声源种子');
   check(a.durationSeconds === b.durationSeconds && a.sampleRateHz * base.windowEndSeconds === b.sampleRateHz * candidate.windowEndSeconds, '采样时长/末尾时间窗');
-  check(a.adaptationStartsSeconds === b.adaptationStartsSeconds, '学习起点');
-  check(a.speedKph === b.speedKph, '车速');
-  check(a.treadRoughness === b.treadRoughness && a.pressureKpa === b.pressureKpa && a.temperatureC === b.temperatureC, '轮胎/环境工况');
-  check((a.levelOffsetDb ?? 0) === (b.levelOffsetDb ?? 0), '教学声压修正');
+  const environment = (matches: boolean, label: string) => { if (!matches) { if (scenario) changes.push(label); else conditions.push(label); } };
+  environment((a.sourceMode ?? 'shaped-noise') === (b.sourceMode ?? 'shaped-noise'), '声源素材');
+  environment(a.seed === b.seed, '声源种子');
+  environment(a.adaptationStartsSeconds === b.adaptationStartsSeconds, '学习起点');
+  environment(a.speedKph === b.speedKph, '车速');
+  environment(a.treadRoughness === b.treadRoughness && a.pressureKpa === b.pressureKpa && a.temperatureC === b.temperatureC, '轮胎/环境工况');
+  environment((a.levelOffsetDb ?? 0) === (b.levelOffsetDb ?? 0), '教学声压修正');
+  if (mode === 'control') check(a.roadRoughness === b.roadRoughness, '路面粗糙度');
 
-  const changes: string[] = [];
   if (a.roadRoughness !== b.roadRoughness) changes.push(`路面粗糙度 ${a.roadRoughness.toFixed(1)} → ${b.roadRoughness.toFixed(1)}`);
   if (a.taps !== b.taps) changes.push(`系数数 ${a.taps} → ${b.taps}`);
   if (a.stepSize !== b.stepSize) changes.push(`步长 ${a.stepSize} → ${b.stepSize}`);
@@ -61,9 +68,9 @@ export function compareCases(base: CaseSnapshot, candidate: CaseSnapshot): CaseC
   if (JSON.stringify(a.references) !== JSON.stringify(b.references)) changes.push('参考传感器布置');
   if (JSON.stringify(a.speakerEnabled) !== JSON.stringify(b.speakerEnabled)) changes.push('扬声器启禁');
   const delta = (left: Four<number | null>, right: Four<number | null>): Four<number | null> =>
-    four(left, (value, i) => conditions.length || value === null || right[i] === null ? null : right[i]! - value);
+    four(left, (value, i) => conditions.length || value === null || right[i] === null || !Number.isFinite(value) || !Number.isFinite(right[i]) ? null : right[i]! - value);
   return {
-    comparable: conditions.length === 0,
+    mode, comparable: conditions.length === 0,
     conditions,
     changes,
     primaryDeltaDb: delta(base.primarySpl, candidate.primarySpl),

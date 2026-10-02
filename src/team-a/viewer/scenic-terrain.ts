@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { galleryHeight } from './landscape-height';
 import type { GalleryEnvironment } from './champagne-gallery';
 
 /** Original procedural terrain surrounding the pavilion; the HDR is only the
@@ -13,7 +14,7 @@ export function createScenicTerrain() {
   let disposed=false,texture:THREE.Texture|null=null,environment:GalleryEnvironment|null=null;
   new THREE.TextureLoader().load(textureUrl,t=>{if(disposed){t.dispose();return;}texture=t;t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;groundMaterial.map=t;groundMaterial.bumpMap=t;groundMaterial.bumpScale=.18;groundMaterial.needsUpdate=true;rockMaterial.map=t;rockMaterial.bumpMap=t;rockMaterial.bumpScale=.32;rockMaterial.needsUpdate=true;});
   const terrain=new THREE.Mesh(new THREE.BufferGeometry(),groundMaterial);terrain.receiveShadow=true;group.add(terrain);
-  const waterG=new THREE.RingGeometry(28,160,192,12);waterG.rotateX(-Math.PI/2);
+  const waterG=new THREE.RingGeometry(28,510,192,12);waterG.rotateX(-Math.PI/2);
   const water=new THREE.Mesh(waterG,waterMaterial);water.position.y=-.45;group.add(water);
   const waveData=new Uint8Array(128*128*4);
   for(let y=0;y<128;y++)for(let x=0;x<128;x++){
@@ -29,7 +30,7 @@ export function createScenicTerrain() {
   const needleCanvas=document.createElement('canvas');needleCanvas.width=needleCanvas.height=128;const ctx=needleCanvas.getContext('2d')!;
   ctx.strokeStyle='#567b40';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(64,126);ctx.lineTo(64,4);ctx.stroke();
   for(let i=0;i<25;i++){const y=8+i*4.7,w=7+i*1.4;ctx.strokeStyle=i%2?'#90a878':'#516e3c';ctx.beginPath();ctx.moveTo(64,y+9);ctx.lineTo(64-w,y-3);ctx.moveTo(64,y+9);ctx.lineTo(64+w,y-3);ctx.stroke();}
-  const needles=new THREE.CanvasTexture(needleCanvas);needles.colorSpace=THREE.SRGBColorSpace;treeMaterial.map=needles;treeMaterial.alphaTest=.25;treeMaterial.side=THREE.DoubleSide;
+  const needles=new THREE.CanvasTexture(needleCanvas);needles.colorSpace=THREE.SRGBColorSpace;treeMaterial.map=needles;treeMaterial.alphaTest=.25;treeMaterial.alphaToCoverage=true;treeMaterial.side=THREE.DoubleSide;
   const tv:number[]=[],tu:number[]=[],ti:number[]=[];
   for(let layer=0;layer<10;layer++)for(let branch=0;branch<9;branch++)for(let cross=0;cross<2;cross++){
     const a=branch*Math.PI*2/9+layer*.83,h=.08+layer*.089,length=.38*(1-h),radial=new THREE.Vector3(Math.sin(a),.19,Math.cos(a));
@@ -40,13 +41,7 @@ export function createScenicTerrain() {
   const rocks=new THREE.InstancedMesh(rockG,rockMaterial,90),trees=new THREE.InstancedMesh(treeG,treeMaterial,200);
   for(const mesh of [rocks,trees]){mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);}
   const dummy=new THREE.Object3D();
-  function height(x:number,z:number,env:GalleryEnvironment){
-    const r=Math.hypot(x,z),edge=THREE.MathUtils.smoothstep(r,45,125);
-    const f=.5+.21*Math.sin(x*.014+z*.018)+.18*Math.sin(x*.033-z*.012)+.08*Math.sin(x*.073+z*.055)+.03*Math.sin(x*.181-z*.132);
-    const ridges=Math.pow(Math.max(0,1-Math.abs(2*f-1)),env==='desert'?2:3);
-    const scale=env==='coast'?22:env==='desert'?48:env==='snow'?165:115;
-    return -2.2+edge*(scale*ridges+Math.max(0,r-150)*.08)+(env==='desert'?2:0);
-  }
+  const height = galleryHeight;
   function setEnvironment(env:GalleryEnvironment){
     if(environment===env)return;environment=env;
     const positions:number[]=[],colours:number[]=[],uv:number[]=[],indices:number[]=[];
@@ -67,7 +62,7 @@ export function createScenicTerrain() {
     let seed=9741;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
     for(let i=0;i<90;i++){
       const a=random()*Math.PI*2,r=80+random()*270,x=Math.sin(a)*r,z=Math.cos(a)*r,y=height(x,z,env),s=.35+random()*1.5;
-      dummy.position.set(x,y+s*.15,z);dummy.rotation.set(random(),random()*6,random());dummy.scale.set(s,s*.65,s*.9);dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);
+      dummy.position.set(x,y+s*.15,z);dummy.rotation.set(random(),random()*6,random());dummy.scale.set(y<-.5?0:s,y<-.5?0:s*.65,y<-.5?0:s*.9);dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);
     }
     for(let i=0;i<200;i++){
       const a=random()*Math.PI*2,r=95+random()*250,x=Math.sin(a)*r,z=Math.cos(a)*r,y=height(x,z,env),h=5+random()*9;

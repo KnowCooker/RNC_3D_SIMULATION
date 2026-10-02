@@ -1,0 +1,32 @@
+{
+  "checks": [
+    {
+      "name": "load failure gives visible retry",
+      "pass": true
+    },
+    {
+      "name": "retry restores requested environment",
+      "pass": true
+    },
+    {
+      "name": "one WebGL context including previews",
+      "pass": true
+    },
+    {
+      "name": "no remote runtime assets",
+      "pass": true
+    },
+    {
+      "name": "local only runtime executes real field",
+      "pass": true
+    },
+    {
+      "name": "no JS exceptions",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "simulatedInternetBlocked": true,
+  "secondPhysicalMachine": false
+}

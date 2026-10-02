@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "role": "B2",
+  "task": "B2-003",
+  "identitySource": "user-declared",
+  "executor": "Codex",
+  "tests": [
+    { "name": "Real Worker Web Crypto verifies original RNQ1 recording", "passed": true },
+    { "name": "ice/shaped-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": true },
+    { "name": "ice/recorded-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": true },
+    { "name": "bev/shaped-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": true },
+    { "name": "bev/recorded-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": true },
+    { "name": "hev/shaped-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": true },
+    { "name": "hev/recorded-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": true },
+    { "name": "erev/shaped-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": true },
+    { "name": "erev/recorded-noise: exact q/x/u/d/a/e, metadata and verified metrics", "passed": true },
+    { "name": "Divergence stays a finite 2909-point prefix of requested 6000", "passed": true },
+    { "name": "Tagged invalid metrics survive and are never verified as gains", "passed": true },
+    { "name": "Async import survives transfer of caller container", "passed": true },
+    { "name": "Async encoder captures all source/reference samples and run config before wait", "passed": true },
+    { "name": "Modified finite payload is rejected by actual Web Crypto SHA", "passed": true },
+    { "name": "Budget rejects before copying/hashing result", "passed": true }
+  ],
+  "passed": 15,
+  "samplesCompared": 776000,
+  "divergence": { "requested": 6000, "actual": 2909 },
+  "peakMemoryMeasured": false,
+  "productIntegrationTested": false,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+  "secureContext": true
+}

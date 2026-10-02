@@ -1,0 +1,424 @@
+{
+  "checks": [
+    {
+      "name": "no simulated readout before running",
+      "pass": true
+    },
+    {
+      "name": "1672 overview no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1672,
+        "scroll": 1672,
+        "canvas": [
+          2508,
+          1672
+        ]
+      }
+    },
+    {
+      "name": "1672 overview native canvas",
+      "pass": true
+    },
+    {
+      "name": "1672 field no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1672,
+        "scroll": 1672,
+        "canvas": [
+          2508,
+          1672
+        ]
+      }
+    },
+    {
+      "name": "1672 field native canvas",
+      "pass": true
+    },
+    {
+      "name": "1672 structure no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1672,
+        "scroll": 1672,
+        "canvas": [
+          2508,
+          1672
+        ]
+      }
+    },
+    {
+      "name": "1672 structure native canvas",
+      "pass": true
+    },
+    {
+      "name": "1672 compare no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1672,
+        "scroll": 1672,
+        "canvas": [
+          2508,
+          1672
+        ]
+      }
+    },
+    {
+      "name": "1672 compare native canvas",
+      "pass": true
+    },
+    {
+      "name": "1440 overview no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1440,
+        "canvas": [
+          2160,
+          1440
+        ]
+      }
+    },
+    {
+      "name": "1440 overview native canvas",
+      "pass": true
+    },
+    {
+      "name": "1440 field no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1440,
+        "canvas": [
+          2160,
+          1440
+        ]
+      }
+    },
+    {
+      "name": "1440 field native canvas",
+      "pass": true
+    },
+    {
+      "name": "1440 structure no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1440,
+        "canvas": [
+          2160,
+          1440
+        ]
+      }
+    },
+    {
+      "name": "1440 structure native canvas",
+      "pass": true
+    },
+    {
+      "name": "1440 compare no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1440,
+        "canvas": [
+          2160,
+          1440
+        ]
+      }
+    },
+    {
+      "name": "1440 compare native canvas",
+      "pass": true
+    },
+    {
+      "name": "1920 overview no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1920,
+        "scroll": 1920,
+        "canvas": [
+          2880,
+          1920
+        ]
+      }
+    },
+    {
+      "name": "1920 overview native canvas",
+      "pass": true
+    },
+    {
+      "name": "1920 field no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1920,
+        "scroll": 1920,
+        "canvas": [
+          2880,
+          1920
+        ]
+      }
+    },
+    {
+      "name": "1920 field native canvas",
+      "pass": true
+    },
+    {
+      "name": "1920 structure no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1920,
+        "scroll": 1920,
+        "canvas": [
+          2880,
+          1920
+        ]
+      }
+    },
+    {
+      "name": "1920 structure native canvas",
+      "pass": true
+    },
+    {
+      "name": "1920 compare no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 1920,
+        "scroll": 1920,
+        "canvas": [
+          2880,
+          1920
+        ]
+      }
+    },
+    {
+      "name": "1920 compare native canvas",
+      "pass": true
+    },
+    {
+      "name": "390 overview no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 390,
+        "scroll": 390,
+        "canvas": [
+          585,
+          390
+        ]
+      }
+    },
+    {
+      "name": "390 overview native canvas",
+      "pass": true
+    },
+    {
+      "name": "390 field no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 390,
+        "scroll": 390,
+        "canvas": [
+          585,
+          390
+        ]
+      }
+    },
+    {
+      "name": "390 field native canvas",
+      "pass": true
+    },
+    {
+      "name": "390 structure no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 390,
+        "scroll": 390,
+        "canvas": [
+          585,
+          390
+        ]
+      }
+    },
+    {
+      "name": "390 structure native canvas",
+      "pass": true
+    },
+    {
+      "name": "390 compare no horizontal overflow",
+      "pass": true,
+      "detail": {
+        "width": 390,
+        "scroll": 390,
+        "canvas": [
+          585,
+          390
+        ]
+      }
+    },
+    {
+      "name": "390 compare native canvas",
+      "pass": true
+    },
+    {
+      "name": "field quantity preserved",
+      "pass": true
+    },
+    {
+      "name": "slice preserved",
+      "pass": true
+    },
+    {
+      "name": "run preserved across pages",
+      "pass": true
+    },
+    {
+      "name": "paused time preserved",
+      "pass": true
+    },
+    {
+      "name": "case uses X9 identity",
+      "pass": true
+    },
+    {
+      "name": "case labels actual half-second window",
+      "pass": true
+    },
+    {
+      "name": "parameter edit clears stale run",
+      "pass": true
+    },
+    {
+      "name": "controlled road mismatch blocks delta",
+      "pass": true
+    },
+    {
+      "name": "scenario differences visible",
+      "pass": true
+    },
+    {
+      "name": "scenario cannot imply ANC gain",
+      "pass": true
+    },
+    {
+      "name": "import does not alter run",
+      "pass": true
+    },
+    {
+      "name": "Escape closes dialog",
+      "pass": true
+    },
+    {
+      "name": "dialog returns keyboard focus",
+      "pass": true
+    },
+    {
+      "name": "reduced motion no active animation",
+      "pass": true
+    },
+    {
+      "name": "guide closes help and opens real work page",
+      "pass": true
+    },
+    {
+      "name": "road guide selects descriptive scenario mode",
+      "pass": true
+    },
+    {
+      "name": "p7plus/coast available",
+      "pass": true
+    },
+    {
+      "name": "p7plus/mountain available",
+      "pass": true
+    },
+    {
+      "name": "p7plus/desert available",
+      "pass": true
+    },
+    {
+      "name": "p7plus/snow available",
+      "pass": true
+    },
+    {
+      "name": "x9/coast available",
+      "pass": true
+    },
+    {
+      "name": "x9/mountain available",
+      "pass": true
+    },
+    {
+      "name": "x9/desert available",
+      "pass": true
+    },
+    {
+      "name": "x9/snow available",
+      "pass": true
+    },
+    {
+      "name": "l03/coast available",
+      "pass": true
+    },
+    {
+      "name": "l03/mountain available",
+      "pass": true
+    },
+    {
+      "name": "l03/desert available",
+      "pass": true
+    },
+    {
+      "name": "l03/snow available",
+      "pass": true
+    },
+    {
+      "name": "m03/coast available",
+      "pass": true
+    },
+    {
+      "name": "m03/mountain available",
+      "pass": true
+    },
+    {
+      "name": "m03/desert available",
+      "pass": true
+    },
+    {
+      "name": "m03/snow available",
+      "pass": true
+    },
+    {
+      "name": "gx/coast available",
+      "pass": true
+    },
+    {
+      "name": "gx/mountain available",
+      "pass": true
+    },
+    {
+      "name": "gx/desert available",
+      "pass": true
+    },
+    {
+      "name": "gx/snow available",
+      "pass": true
+    },
+    {
+      "name": "all 20 model/environment combinations checked",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "no resource failures",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "failures": []
+}

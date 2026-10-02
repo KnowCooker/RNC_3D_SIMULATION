@@ -1,5 +1,5 @@
 import { drawSignalComparison } from './plots';
-import type { LabAnalysis } from '../../shared/lab-contracts';
+import { registeredVehicleLayout, type LabAnalysis } from '../../shared/lab-contracts';
 import type { CaseSnapshot } from './case-compare';
 import type { createLabViewer } from '../viewer/lab-viewer';
 import type { XPengId } from '../viewer/xpeng-catalog';
@@ -40,7 +40,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
       <div class="cp-field-panel cp-glass"><div class="cp-card-heading"><h2>声场实验</h2><button class="cp-settings-button">工况设置</button></div><p class="cp-layout-notice"></p><button class="cp-teaching-button">切换 P7+ 实验车</button><div class="cp-run-actions"><button class="cp-run lab-primary">启动当前实验</button><button class="cp-stop">结束 / 取消</button></div><p class="cp-run-status" role="status"></p><div class="cp-field-tools"></div><div class="cp-readings"></div><div class="cp-charts"></div></div>
       <div class="cp-structure-tools cp-glass"><div class="cp-card-heading"><h2>结构与布置</h2><button class="cp-settings-button">编辑声学硬件</button></div><p>部件可点选、逐件拆装与复位。当前车型安装点随部件显示，计算始终使用回装坐标。</p><label class="cp-hardware-toggle"><input type="checkbox" aria-label="显示声学安装点">显示声学安装点</label><div class="cp-structure-controls"></div></div>
       <div class="cp-comparison cp-glass"><div class="cp-card-heading"><h2>方案对比</h2><button class="cp-settings-button">配置下一次实验</button></div><p class="cp-compare-intro">保存基线 A，改变一个设计因素，再与候选 B 比较。所有结论保留条件与时间窗。</p></div>
-      <div class="cp-bottom-bar"></div><div class="cp-footer-note">湖畔展厅 / <span>海岸</span> · 环境仅改变景物，路面参数独立设置</div>
+      <div class="cp-bottom-bar"></div><div class="cp-environment-status" role="status"><span></span><button type="button" hidden>重试环境</button></div><div class="cp-footer-note">湖畔展厅 / <span>海岸</span> · 环境仅改变景物，路面参数独立设置</div>
     </main>
     <dialog class="cp-dialog cp-settings" aria-labelledby="cp-settings-title"><header><div><small>EXPERIMENT SETUP</small><h2 id="cp-settings-title">车辆、工况与控制</h2></div><button data-close aria-label="关闭工况设置">×</button></header><div class="cp-dialog-content"></div></dialog>
     <dialog class="cp-dialog cp-help" aria-labelledby="cp-help-title"><header><h2 id="cp-help-title">数据来源与使用说明</h2><button data-close aria-label="关闭说明">×</button></header><div class="cp-dialog-content"></div></dialog>
@@ -86,12 +86,17 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   q('.cp-help .cp-dialog-content').append(retained);
   oldHeader.remove(); journey.remove(); originalMain.remove();
   let previewRun = '';
+  let rememberedField = 'residual', navigating = false;
+  const events = new AbortController();
   let page: Page = 'overview', hasAnalysis = false, lastAnalysis: LabAnalysis | null = null, lastOriginal: LabAnalysis | null = null, lastUnit = 'dBA', lastSeat = 0, lastRun = '', lastSampleRate = 2000, lastOffset = 0;
   q<HTMLInputElement>('[aria-label="显示声学安装点"]').onchange = event => viewer.setHardwareOverlay((event.target as HTMLInputElement).checked);
   const asset = q<HTMLSelectElement>('[aria-label="展示车辆"]');
   const announce = (message: string) => { q('.cp-announcement').textContent = message; };
+  let lastAssetState='';
   function syncAsset() {
     const teaching = viewer.acousticAvailable;
+    const state=`${viewer.displayAsset}/${teaching}/${hasAnalysis}/${asset.disabled}`;
+    if(state===lastAssetState)return;lastAssetState=state;
     if(!asset.disabled && viewer.displayAsset.startsWith('xpeng-')) asset.value = viewer.displayAsset.replace('xpeng-','');
     q('.cp-asset-note').textContent = teaching ? '同车声学实验 · 独立车型布局' : '照片参考重建 · 可旋转与拆解';
     q('.cp-layout-notice').textContent = teaching ? '当前车型坐标 · 四轮激励 / 四扬声器 / 前两排四座测点。调整工况后运行，查看空间声场。' : '正在匹配当前车型的声学布局。';
@@ -118,15 +123,20 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     motion.oncancel=()=>{uiAnimations.delete(motion);closingDialogs.delete(dialog);};
   }
   function navigate(next: Page) {
-    const changed=page!==next;uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();
+    const changed=page!==next;
+    if (!changed && navigated) return;
+    if(page==='field' && get<HTMLSelectElement>('field').value!=='off') rememberedField=get<HTMLSelectElement>('field').value;
+    navigating=true;
+    viewer.setPresentationView(next);
+    uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();
     if(next!=='field') {get<HTMLSelectElement>('field').value='off';get('field').dispatchEvent(new Event('change'));}
     if(next==='overview' && viewer.displayAsset.startsWith('xpeng-')) {get<HTMLSelectElement>('body').value='solid';get('body').dispatchEvent(new Event('change'));}
     page = next; shell.dataset.page = next; root.dataset.page = next;
     q('.cp-work-title h1').textContent = {overview:'',field:'探索更安静的旅程',structure:'结构与布置',compare:'方案对比与结论'}[next];
     shell.querySelectorAll<HTMLButtonElement>('.cp-header [data-page]').forEach(b=>b.setAttribute('aria-current',b.dataset.page===next?'page':'false'));
-    if(next==='field' && viewer.acousticAvailable) { get<HTMLSelectElement>('field').value='residual'; get('field').dispatchEvent(new Event('change')); }
+    if(next==='field' && viewer.acousticAvailable) { get<HTMLSelectElement>('field').value=rememberedField; get('field').dispatchEvent(new Event('change')); }
     if(next==='field') shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='field')));
-    viewer.setPresentationView(next); syncAsset(); requestAnimationFrame(redraw);
+    navigating=false; syncAsset(); requestAnimationFrame(redraw);
     if(changed&&navigated){const selectors=next==='overview'?['.cp-hero','.cp-field-card','.cp-summary-cards','.cp-environments']:next==='field'?['.cp-work-title','.cp-field-panel']:next==='structure'?['.cp-structure-tools']:['.cp-work-title','.cp-comparison'];selectors.forEach((selector,i)=>animatePanel(q(selector),false,i*25));}
     navigated=true;
   }
@@ -147,9 +157,9 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   q<HTMLButtonElement>('.cp-teaching-button').onclick=()=>{asset.value='p7plus';void chooseAsset();};
   q<HTMLButtonElement>('.cp-run').onclick=()=>get('calculate').click();
   q<HTMLButtonElement>('.cp-stop').onclick=()=>get('cancel').click();
-  const frameField = () => { if(page==='field') { shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='field'))); } };
-  get('field').addEventListener('change',frameField); get('field-slice').addEventListener('change',frameField);
-  get('reset').addEventListener('click',()=>{shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='solid')));viewer.setPresentationView(page);});
+  const frameField = () => { if(page==='field'&&!navigating) { rememberedField=get<HTMLSelectElement>('field').value; shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode===(rememberedField==='off'?'solid':'field')))); } };
+  get('field').addEventListener('change',frameField,{signal:events.signal}); get('field-slice').addEventListener('change',frameField,{signal:events.signal});
+  get('reset').addEventListener('click',()=>{shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='solid')));viewer.setPresentationView(page);},{signal:events.signal});
   shell.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(b=>b.onclick=()=>{
     const mode = b.dataset.mode!;
     if(mode==='field') { navigate('field'); if(viewer.acousticAvailable) {get<HTMLSelectElement>('field').value='residual';get('field').dispatchEvent(new Event('change'));} }
@@ -165,16 +175,17 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     announce(`已切换${b.lastElementChild!.textContent}三维景物，声学工况保持不变。`);
   });
   q<HTMLButtonElement>('[data-card="paths"]').onclick=()=>openDialog('.cp-paths-dialog');
-  q<HTMLButtonElement>('[data-card="structure"]').onclick=()=>navigate('structure');
+  q<HTMLButtonElement>('[data-card="structure"]').onclick=()=>{navigate('structure');q<HTMLInputElement>('[aria-label="显示声学安装点"]').checked=true;viewer.setHardwareOverlay(true);};
   q<HTMLButtonElement>('[data-card="spectrum"]').onclick=()=>{navigate('field');q('.cp-charts').scrollIntoView({block:'nearest'});};
   function updateLevels() {
-    const visible = hasAnalysis && viewer.acousticAvailable;
+    const visible = hasAnalysis && lastAnalysis?.valid === true && viewer.acousticAvailable;
     const values = lastAnalysis ? [lastAnalysis.primarySpl[lastSeat],lastAnalysis.residualSpl[lastSeat],lastAnalysis.reductionDb[lastSeat]] : [];
     ['primary','residual','reduction'].forEach((key,i)=>{q(`[data-level="${key}"]`).textContent=visible && values[i]!=null ? `${values[i]!.toFixed(1)} ${i===2?'dB':lastUnit}` : '—';});
-    q('.cp-data-note').textContent=visible ? `${['左前','右前','左后','右后'][lastSeat]}座 · ${lastUnit} · 教学尺度 · 实验 ${lastRun.slice(0,8)}` : '尚无当前车辆的有效声场 · 不显示示例读数';
+    q('.cp-data-note').textContent=visible ? `${['左前','右前','左后','右后'][lastSeat]}座 · ${lastUnit} · ${(Math.max(0,(lastAnalysis?.time??0)-.5)+lastOffset).toFixed(1)}–${((lastAnalysis?.time??0)+lastOffset).toFixed(1)} s · 实验 ${lastRun.slice(0,8)}` : '尚无当前车辆的有效声场 · 不显示示例读数';
     q('.cp-spectrum-empty').hidden=visible;
     const preview=q<HTMLCanvasElement>('.cp-spectrum-preview'), context=preview.getContext('2d')!;
-    preview.width=Math.max(1,preview.clientWidth*2);preview.height=Math.max(1,preview.clientHeight*2);
+    const width=Math.max(1,Math.round(preview.clientWidth*2)),height=Math.max(1,Math.round(preview.clientHeight*2));
+    if(preview.width!==width)preview.width=width;if(preview.height!==height)preview.height=height;
     if(visible && lastAnalysis && lastOriginal) drawSignalComparison(preview,lastAnalysis,lastOriginal,lastSampleRate,lastOffset,true,false);
     else context.clearRect(0,0,preview.width,preview.height);
   }
@@ -187,28 +198,36 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     q('.cp-run').textContent = get('calculate').textContent;
   }); observer.observe(get('status'),{childList:true,subtree:true,characterData:true});
   observer.observe(get('calculate'),{attributes:true,childList:true}); observer.observe(get('cancel'),{attributes:true});
+  const environmentStatus=q('.cp-environment-status'), retryEnvironment=environmentStatus.querySelector<HTMLButtonElement>('button')!;
+  retryEnvironment.onclick=()=>viewer.setEnvironment((get('viewer').dataset.environment??'coast') as GalleryEnvironment);
   const environmentObserver=new MutationObserver(()=>{
+    const failed=get('viewer').dataset.environmentFailed==='true', ready=!!get('viewer').dataset.environmentReady;
+    environmentStatus.hidden=ready&&!failed;retryEnvironment.hidden=!failed;
+    environmentStatus.querySelector('span')!.textContent=failed?'高清环境加载失败，当前使用基础景物。':'正在加载高清环境…';
+    q('.cp-environments').setAttribute('aria-busy',String(!ready&&!failed));
     const env=get('viewer').dataset.environment as GalleryEnvironment|undefined;if(env){driveModes.querySelector<HTMLSelectElement>('select')!.value=env;shell.querySelectorAll<HTMLButtonElement>('[data-env]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.env===env)));q('.cp-footer-note span').textContent=({coast:get('viewer').dataset.stage==='road'?'田野公路':'海岸',mountain:'山地',desert:'沙漠',snow:'雪山'})[env];}
     if(get('viewer').dataset.environmentReady){viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,hasAnalysis&&viewer.hasValidField);viewer.renderPreview(q<HTMLCanvasElement>('.cp-layout-preview'),true);}
-  });environmentObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-environment-ready','data-stage']});
+  });environmentObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-environment-ready','data-environment-failed','data-environment','data-stage']});
   q<HTMLButtonElement>('.cp-stop').disabled = true;
   q('.cp-run-status').textContent = get('status').textContent;
   viewer.setStage('gallery');
   if(location.hash==='#xpeng') asset.value='x9';
   navigate('overview'); void chooseAsset();
   return {
-    update(analysis: LabAnalysis, original: LabAnalysis, seat: number, unit: string, runId: string, sampleRate: number, offset: number) {hasAnalysis=true;lastAnalysis=analysis;lastOriginal=original;lastSeat=seat;lastUnit=unit;lastRun=runId;lastSampleRate=sampleRate;lastOffset=offset;syncAsset();if(analysis.valid && viewer.hasValidField && previewRun!==runId) {viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,true);previewRun=runId;}},
+    update(analysis: LabAnalysis, original: LabAnalysis, seat: number, unit: string, runId: string, sampleRate: number, offset: number) {hasAnalysis=true;lastAnalysis=analysis;lastOriginal=original;lastSeat=seat;lastUnit=unit;lastRun=runId;lastSampleRate=sampleRate;lastOffset=offset;syncAsset();updateLevels();if(analysis.valid && viewer.hasValidField && previewRun!==runId) {viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,true);previewRun=runId;}},
     clear() {hasAnalysis=false;lastAnalysis=null;previewRun='';syncAsset();viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'));},
     showSignal() { openDialog('.cp-paths-dialog'); },
+    showPage(next: Page) {shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());navigate(next);},
+    showSettings() {shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());openDialog('.cp-settings');},
     updateCases(base: CaseSnapshot | null, candidate: CaseSnapshot | null) {
       [base,candidate].forEach((value,index)=>{
         const card=caseCards.children[index] as HTMLElement;
-        card.querySelector('h3')!.textContent=value ? `末 ${value.windowEndSeconds.toFixed(1)} 秒 · 残余声压` : index ? '等待候选实验' : '等待保存基线';
+        card.querySelector('h3')!.textContent=value ? `${(value.windowEndSeconds-.5).toFixed(1)}–${value.windowEndSeconds.toFixed(1)} s · 残余声压` : index ? '等待候选实验' : '等待保存基线';
         const seats=card.querySelector('.cp-case-seats')!;seats.replaceChildren();
         if(value) value.residualSpl.forEach((level,i)=>{const item=document.createElement('div');const name=document.createElement('small');name.textContent=['左前','右前','左后','右后'][i];const number=document.createElement('strong');number.textContent=level===null?'—':`${level.toFixed(1)}`;item.append(name,number);seats.append(item);});
-        card.querySelector('article>small')!.textContent=value ? `dBA · P7+ 参数化布局 · ${value.config.speedKph} km/h · 实验 ${value.runId.slice(0,8)}` : index ? '调整一个设计因素后，重新计算。' : '运行一次预计算实验，再保存基线。';
+        card.querySelector('article>small')!.textContent=value ? `dBA · ${registeredVehicleLayout(value.config.layoutId)?.name ?? value.config.vehicle} · ${value.config.speedKph} km/h · 实验 ${value.runId.slice(0,8)}` : index ? '调整一个设计因素后，重新计算。' : '运行一次预计算实验，再保存基线。';
       });
     },
-    dispose() {get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
+    dispose() {events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
   };
 }

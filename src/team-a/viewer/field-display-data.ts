@@ -1,9 +1,10 @@
 import type { FieldFrame } from '../../shared/lab-contracts';
 
-export const fieldGrid = { x: 7, y: 5, z: 8 } as const;
+import { LEGACY_FIELD_GRID, gridForCount } from './field-grid';
+export const fieldGrid = LEGACY_FIELD_GRID;
 export type FieldQuantity = 'primary' | 'residual' | 'reduction';
-export const pressureColors = ['#2446ad', '#00a9db', '#31ce9c', '#f5d340', '#de453c'];
-export const reductionColors = ['#a91531', '#ea4930', '#d7ddda', '#009991', '#064ea0'];
+export const pressureColors = ['#293bbb', '#087ce5', '#00c9dc', '#36ca80', '#e1e646', '#ff9829', '#e72851'];
+export const reductionColors = ['#a41242', '#e73a45', '#f6a181', '#e5e8e4', '#73d9c6', '#079ac7', '#2549bd'];
 
 /** Display interpolation only. Texture values are mean-square ratios relative to 60 dB. */
 export function displayEnergy(db: number): number {
@@ -12,10 +13,11 @@ export function displayEnergy(db: number): number {
 }
 
 /** Reorder the worker's x/y/z grid to WebGL's x-fastest texture storage. */
-export function packFieldVolume(frame: FieldFrame, target = new Float32Array(7 * 5 * 8 * 2)): Float32Array {
-  if (frame.primarySpl.length !== 280 || frame.residualSpl.length !== 280 || target.length !== 560) throw Error('Incomplete field volume');
-  for (let x = 0; x < 7; x++) for (let y = 0; y < 5; y++) for (let z = 0; z < 8; z++) {
-    const sample = (x * 5 + y) * 8 + z, texel = ((z * 5 + y) * 7 + x) * 2;
+export function packFieldVolume(frame: FieldFrame, target = new Float32Array(frame.primarySpl.length * 2)): Float32Array {
+  const grid = gridForCount(frame.primarySpl.length);
+  if (frame.residualSpl.length !== frame.primarySpl.length || target.length !== frame.primarySpl.length * 2) throw Error('Incomplete field volume');
+  for (let x = 0; x < grid.x; x++) for (let y = 0; y < grid.y; y++) for (let z = 0; z < grid.z; z++) {
+    const sample = (x * grid.y + y) * grid.z + z, texel = ((z * grid.y + y) * grid.x + x) * 2;
     target[texel] = displayEnergy(frame.primarySpl[sample]);
     target[texel + 1] = displayEnergy(frame.residualSpl[sample]);
   }

@@ -1,0 +1,801 @@
+Already up to date
+Done in 364ms using pnpm v11.19.0
+
+   ╭──────────────────────────────────────────────╮
+   │                                              │
+   │     Update available! 11.19.0 → 12.8.1.      │
+   │     Changelog: https://pnpm.io/v/12.8.1      │
+   │   To update, run: corepack use pnpm@12.8.1   │
+   │                                              │
+   ╰──────────────────────────────────────────────╯
+
+TAP version 13
+# Subtest: one road change compares the same weighted window without keeping mutable config
+ok 1 - one road change compares the same weighted window without keeping mutable config
+  ---
+  duration_ms: 1.6982
+  ...
+# Subtest: changed operating conditions block numeric deltas even when values are present
+ok 2 - changed operating conditions block numeric deltas even when values are present
+  ---
+  duration_ms: 0.305
+  ...
+# Subtest: multiple configuration changes remain visible and missing seat values stay unavailable
+ok 3 - multiple configuration changes remain visible and missing seat values stay unavailable
+  ---
+  duration_ms: 0.5291
+  ...
+# Subtest: legacy teaching layout compares with explicit teaching ID but another layout suppresses deltas
+ok 4 - legacy teaching layout compares with explicit teaching ID but another layout suppresses deltas
+  ---
+  duration_ms: 0.3411
+  ...
+# Subtest: exported A/B summary survives JSON roundtrip and recomputes deltas
+ok 5 - exported A/B summary survives JSON roundtrip and recomputes deltas
+  ---
+  duration_ms: 3.4231
+  ...
+# Subtest: condition mismatch imports but suppresses unsupported deltas
+ok 6 - condition mismatch imports but suppresses unsupported deltas
+  ---
+  duration_ms: 1.561
+  ...
+# Subtest: rejects oversized, forged, malformed and nonfinite evidence
+ok 7 - rejects oversized, forged, malformed and nonfinite evidence
+  ---
+  duration_ms: 2.1109
+  ...
+# Subtest: foreign layouts remain readable but never acquire a numeric comparison
+ok 8 - foreign layouts remain readable but never acquire a numeric comparison
+  ---
+  duration_ms: 0.672
+  ...
+# Subtest: older rnc-case-v1 without layout identity imports as teaching layout
+ok 9 - older rnc-case-v1 without layout identity imports as teaching layout
+  ---
+  duration_ms: 0.4775
+  ...
+# Subtest: one-variable review reports measured direction without assigning cause or approval
+ok 10 - one-variable review reports measured direction without assigning cause or approval
+  ---
+  duration_ms: 2.0411
+  ...
+# Subtest: confounded or mismatched cases never receive a causal or numeric verdict
+ok 11 - confounded or mismatched cases never receive a causal or numeric verdict
+  ---
+  duration_ms: 0.542
+  ...
+# Subtest: an unregistered layout is labeled as file-reported evidence without a verdict
+ok 12 - an unregistered layout is labeled as file-reported evidence without a verdict
+  ---
+  duration_ms: 0.4419
+  ...
+# Subtest: new human fields roundtrip, legacy v1 imports blank, computed facts ignore human claims
+ok 13 - new human fields roundtrip, legacy v1 imports blank, computed facts ignore human claims
+  ---
+  duration_ms: 4.1572
+  ...
+# Subtest: A1: unavailable convergence values leave gaps rather than zero gain or connecting across missing data
+ok 14 - A1: unavailable convergence values leave gaps rather than zero gain or connecting across missing data
+  ---
+  duration_ms: 2.325
+  ...
+# Subtest: A1: original noise draws once in grey, residual compares against the same original channel
+ok 15 - A1: original noise draws once in grey, residual compares against the same original channel
+  ---
+  duration_ms: 0.6301
+  ...
+# Subtest: paired spatial evidence distinguishes quieter, louder and near-zero samples without claiming a volume mean
+ok 16 - paired spatial evidence distinguishes quieter, louder and near-zero samples without claiming a volume mean
+  ---
+  duration_ms: 1.9967
+  ...
+# Subtest: invalid, mismatched and nonfinite samples cannot produce a stale or invented spatial verdict
+ok 17 - invalid, mismatched and nonfinite samples cannot produce a stale or invented spatial verdict
+  ---
+  duration_ms: 0.3735
+  ...
+# Subtest: guide requires actual baseline and candidate runs before showing comparison evidence
+ok 18 - guide requires actual baseline and candidate runs before showing comparison evidence
+  ---
+  duration_ms: 2.2554
+  ...
+# Subtest: changed operating condition or multiple edits block the guided verdict
+ok 19 - changed operating condition or multiple edits block the guided verdict
+  ---
+  duration_ms: 0.5497
+  ...
+# Subtest: invalid candidate and stale field never unlock listening
+ok 20 - invalid candidate and stale field never unlock listening
+  ---
+  duration_ms: 0.302
+  ...
+# Subtest: a candidate field unlocks guidance only at the comparison window end
+ok 21 - a candidate field unlocks guidance only at the comparison window end
+  ---
+  duration_ms: 0.2166
+  ...
+# Subtest: lab playback applies one gain to all eight signals, preserves d/e ratios and does not mutate physics
+ok 22 - lab playback applies one gain to all eight signals, preserves d/e ratios and does not mutate physics
+  ---
+  duration_ms: 31.9702
+  ...
+# Subtest: actual extreme valid lab experiment has no clipped samples after shared preparation
+ok 23 - actual extreme valid lab experiment has no clipped samples after shared preparation
+  ---
+  duration_ms: 1161.4164
+  ...
+# Subtest: sinc overshoot is covered by the strict bound; silence and low-level legacy gain remain unchanged
+ok 24 - sinc overshoot is covered by the strict bound; silence and low-level legacy gain remain unchanged
+  ---
+  duration_ms: 1.8747
+  ...
+# Subtest: live Worker cancellation rejects pending work and late old errors cannot kill the new run
+ok 25 - live Worker cancellation rejects pending work and late old errors cannot kill the new run
+  ---
+  duration_ms: 20.1751
+  ...
+# Subtest: field failure is recoverable but a processor failure rejects every pending query
+ok 26 - field failure is recoverable but a processor failure rejects every pending query
+  ---
+  duration_ms: 1.4484
+  ...
+# Subtest: start cancellation and foreign run identities fail explicitly; batch mode cannot produce live chunks
+ok 27 - start cancellation and foreign run identities fail explicitly; batch mode cannot produce live chunks
+  ---
+  duration_ms: 1.9386
+  ...
+# Subtest: live RNC control returns the exact sample boundary and a rejected switch preserves the running worker
+ok 28 - live RNC control returns the exact sample boundary and a rejected switch preserves the running worker
+  ---
+  duration_ms: 2.272
+  ...
+# Subtest: legacy layout is stamped and unimplemented layouts fail before replacing a running experiment
+ok 29 - legacy layout is stamped and unimplemented layouts fail before replacing a running experiment
+  ---
+  duration_ms: 1.9734
+  ...
+# Subtest: field frames without the active physical layout are rejected without killing the experiment
+ok 30 - field frames without the active physical layout are rejected without killing the experiment
+  ---
+  duration_ms: 2.3456
+  ...
+# Subtest: a field reply cannot substitute another time, weighting or sampling plane within the same run
+ok 31 - a field reply cannot substitute another time, weighting or sampling plane within the same run
+  ---
+  duration_ms: 1.4599
+  ...
+# Subtest: batch results and live packets cannot switch physical layout inside an accepted run
+ok 32 - batch results and live packets cannot switch physical layout inside an accepted run
+  ---
+  duration_ms: 1.1408
+  ...
+# Subtest: same-layout responses cannot substitute another vehicle or physical experiment configuration
+ok 33 - same-layout responses cannot substitute another vehicle or physical experiment configuration
+  ---
+  duration_ms: 1.3728
+  ...
+# Subtest: Worker replies without the active run identity cannot enter results or field views
+ok 34 - Worker replies without the active run identity cannot enter results or field views
+  ---
+  duration_ms: 0.9353
+  ...
+# Subtest: log frequency coordinates give equal spacing to equal ratios and omit DC
+ok 35 - log frequency coordinates give equal spacing to equal ratios and omit DC
+  ---
+  duration_ms: 2.0012
+  ...
+# Subtest: seat curves preserve full-run SPL history and missing values while excluding future frames
+ok 36 - seat curves preserve full-run SPL history and missing values while excluding future frames
+  ---
+  duration_ms: 1.3982
+  ...
+# Subtest: physical traces share Pa scale, show original and use absolute sample time after a live history wrap
+ok 37 - physical traces share Pa scale, show original and use absolute sample time after a live history wrap
+  ---
+  duration_ms: 1.0881
+  ...
+# Subtest: the initial waveform uses the same five-second scale as a full rolling window
+ok 38 - the initial waveform uses the same five-second scale as a full rolling window
+  ---
+  duration_ms: 0.7929
+  ...
+# Subtest: PSD comparisons use actual FFT bin positions and original selection is not drawn twice
+ok 39 - PSD comparisons use actual FFT bin positions and original selection is not drawn twice
+  ---
+  duration_ms: 0.669
+  ...
+# Subtest: first valid point is visible and null SPL gaps never create fake zero levels
+ok 40 - first valid point is visible and null SPL gaps never create fake zero levels
+  ---
+  duration_ms: 0.4701
+  ...
+# Subtest: acceleration and speaker drive never masquerade as pressure on a common axis
+ok 41 - acceleration and speaker drive never masquerade as pressure on a common axis
+  ---
+  duration_ms: 0.5243
+  ...
+# Subtest: manual plot bounds and hidden primary traces apply independently without changing samples
+ok 42 - manual plot bounds and hidden primary traces apply independently without changing samples
+  ---
+  duration_ms: 0.7714
+  ...
+# Subtest: divergent but finite Float32 pressure is bounded only in the audition copies
+ok 43 - divergent but finite Float32 pressure is bounded only in the audition copies
+  ---
+  duration_ms: 59.63
+  ...
+# Subtest: streaming sinc is independent of chunk partition and matches continuous interpolation before the real lookahead tail
+ok 44 - streaming sinc is independent of chunk partition and matches continuous interpolation before the real lookahead tail
+  ---
+  duration_ms: 235.0015
+  ...
+# Subtest: common lookahead safety envelope preserves all eight d/e ratios, bounds peaks and retains bounded memory
+ok 45 - common lookahead safety envelope preserves all eight d/e ratios, bounds peaks and retains bounded memory
+  ---
+  duration_ms: 1214.8557
+  ...
+# Subtest: finishing releases exactly the real lookahead tail, including a run shorter than that tail
+ok 46 - finishing releases exactly the real lookahead tail, including a run shorter than that tail
+  ---
+  duration_ms: 15.7053
+  ...
+# Subtest: live queue validates complete finite contiguous chunks without changing accepted state on rejection
+ok 47 - live queue validates complete finite contiguous chunks without changing accepted state on rejection
+  ---
+  duration_ms: 49.1459
+  ...
+# Subtest: one audio clock freezes on starvation and resumes at the missing sample instead of skipping wall time
+ok 48 - one audio clock freezes on starvation and resumes at the missing sample instead of skipping wall time
+  ---
+  duration_ms: 15.5562
+  ...
+# Subtest: queued chunks are gapless and all comparisons share one eight-channel buffer without a new clock on switching
+ok 49 - queued chunks are gapless and all comparisons share one eight-channel buffer without a new clock on switching
+  ---
+  duration_ms: 9.9003
+  ...
+# Subtest: pause preserves partly consumed audio and a cold allocation never advances the simulation clock
+ok 50 - pause preserves partly consumed audio and a cold allocation never advances the simulation clock
+  ---
+  duration_ms: 6.2796
+  ...
+# Subtest: async resume cannot revive pause/reset/dispose or clear a newer request, and failure is retryable
+ok 51 - async resume cannot revive pause/reset/dispose or clear a newer request, and failure is retryable
+  ---
+  duration_ms: 10.9889
+  ...
+# Subtest: continuous enqueue stays bounded for ten minutes and finishes exactly without a false underrun or restart
+ok 52 - continuous enqueue stays bounded for ten minutes and finishes exactly without a false underrun or restart
+  ---
+  duration_ms: 9011.8482
+  ...
+# Subtest: pause and resume while draining keeps the final samples and exact endpoint
+ok 53 - pause and resume while draining keeps the final samples and exact endpoint
+  ---
+  duration_ms: 16.7725
+  ...
+# Subtest: offline package verifier accepts the exact build and rejects changed, extra or missing files
+ok 54 - offline package verifier accepts the exact build and rejects changed, extra or missing files
+  ---
+  duration_ms: 1008.7721
+  ...
+# Subtest: A1: preparing first audio buffer does not skip the requested playback position
+ok 55 - A1: preparing first audio buffer does not skip the requested playback position
+  ---
+  duration_ms: 39.5514
+  ...
+# Subtest: A1: pause cancels pending audio resume; repeated play creates one start
+ok 56 - A1: pause cancels pending audio resume; repeated play creates one start
+  ---
+  duration_ms: 25.5302
+  ...
+# Subtest: A1: loading a new experiment cancels an earlier pending play
+ok 57 - A1: loading a new experiment cancels an earlier pending play
+  ---
+  duration_ms: 0.5853
+  ...
+# Subtest: A1: reaching the end stays stopped when seeking, including before ended is delivered
+ok 58 - A1: reaching the end stays stopped when seeking, including before ended is delivered
+  ---
+  duration_ms: 27.6095
+  ...
+# Subtest: A1: seeking to the end stops; replay starts only on explicit play
+ok 59 - A1: seeking to the end stops; replay starts only on explicit play
+  ---
+  duration_ms: 35.7083
+  ...
+# Subtest: A1: cold seat/mode switches prepare audio before fading, keep time and use the same gain
+ok 60 - A1: cold seat/mode switches prepare audio before fading, keep time and use the same gain
+  ---
+  duration_ms: 393.3078
+  ...
+# Subtest: A1: audio resume failure leaves a retryable paused player
+ok 61 - A1: audio resume failure leaves a retryable paused player
+  ---
+  duration_ms: 37.4422
+  ...
+# Subtest: A1: an obsolete resume cannot clear or start a newer play request
+ok 62 - A1: an obsolete resume cannot clear or start a newer play request
+  ---
+  duration_ms: 37.3769
+  ...
+# Subtest: A1: seeking while playing continues at the new position without a retired ended event stopping it
+ok 63 - A1: seeking while playing continues at the new position without a retired ended event stopping it
+  ---
+  duration_ms: 22.332
+  ...
+# Subtest: A1: a cold comparison prepared across the end never restarts the clip
+ok 64 - A1: a cold comparison prepared across the end never restarts the clip
+  ---
+  duration_ms: 49.0102
+  ...
+# Subtest: variable duration playback seeks past 16s, switches modes and stops exactly at each loaded clip end
+ok 65 - variable duration playback seeks past 16s, switches modes and stops exactly at each loaded clip end
+  ---
+  duration_ms: 137.4643
+  ...
+# Subtest: asset shell modes isolate shared interior materials and restore original ownership once
+ok 66 - asset shell modes isolate shared interior materials and restore original ownership once
+  ---
+  duration_ms: 11.6168
+  ...
+# Subtest: authored asset sections follow actual moving meshes without inventing solid caps or changing coordinates
+ok 67 - authored asset sections follow actual moving meshes without inventing solid caps or changing coordinates
+  ---
+  duration_ms: 15.0564
+  ...
+# Subtest: asset picking skips hidden ancestors and discarded section surfaces, and selection bounds follow disassembly
+ok 68 - asset picking skips hidden ancestors and discarded section surfaces, and selection bounds follow disassembly
+  ---
+  duration_ms: 7.7524
+  ...
+# Subtest: selection excludes hidden descendants and follows ancestor transforms without a section
+ok 69 - selection excludes hidden descendants and follows ancestor transforms without a section
+  ---
+  duration_ms: 2.9532
+  ...
+# Subtest: selection is restricted to retained section bounds and disappears when fully clipped
+ok 70 - selection is restricted to retained section bounds and disappears when fully clipped
+  ---
+  duration_ms: 4.0313
+  ...
+# Subtest: actual ICE asset keeps all 74127 triangles and 30 groups through inspection, disassembly and full restoration
+ok 71 - actual ICE asset keeps all 74127 triangles and 30 groups through inspection, disassembly and full restoration
+  ---
+  duration_ms: 233.328
+  ...
+# Subtest: CP controlled comparison blocks road/source/seed/operating changes; scenario states differences
+ok 72 - CP controlled comparison blocks road/source/seed/operating changes; scenario states differences
+  ---
+  duration_ms: 2.84
+  ...
+# Subtest: CP declared controller changes retain negative outcomes and do not change input snapshots
+ok 73 - CP declared controller changes retain negative outcomes and do not change input snapshots
+  ---
+  duration_ms: 0.4373
+  ...
+# Subtest: CP scenario cannot cross layout or absolute analysis window
+ok 74 - CP scenario cannot cross layout or absolute analysis window
+  ---
+  duration_ms: 0.4148
+  ...
+# Subtest: CP mode survives summary roundtrip; old summaries retain historical comparison meaning
+ok 75 - CP mode survives summary roundtrip; old summaries retain historical comparison meaning
+  ---
+  duration_ms: 3.0764
+  ...
+# Subtest: CP nonfinite external readings never become displayed delta
+ok 76 - CP nonfinite external readings never become displayed delta
+  ---
+  duration_ms: 0.3224
+  ...
+# Subtest: separate curved sheets have continuous boundary normals and finite UV coordinates
+ok 77 - separate curved sheets have continuous boundary normals and finite UV coordinates
+  ---
+  duration_ms: 11.805
+  ...
+# Subtest: rounded lamp apertures preserve the original silhouette bounds without repeated sharp corners
+ok 78 - rounded lamp apertures preserve the original silhouette bounds without repeated sharp corners
+  ---
+  duration_ms: 0.6234
+  ...
+# Subtest: P7 shoulder-to-window gap is closed by paint owned by the removable front door
+ok 79 - P7 shoulder-to-window gap is closed by paint owned by the removable front door
+  ---
+  duration_ms: 1356.703
+  ...
+# Subtest: dense grid queries 1989 distinct locations across the original spatial extent
+ok 80 - dense grid queries 1989 distinct locations across the original spatial extent
+  ---
+  duration_ms: 23.9649
+  ...
+# Subtest: dense texture retains the exact engine point order and paired channel energy
+ok 81 - dense texture retains the exact engine point order and paired channel energy
+  ---
+  duration_ms: 3.2307
+  ...
+# Subtest: volume mode contains no visible planar slices; explicit slices remain available
+ok 82 - volume mode contains no visible planar slices; explicit slices remain available
+  ---
+  duration_ms: 13.0289
+  ...
+# Subtest: temporal transition blends energy and a replacement starts at the displayed energy
+ok 83 - temporal transition blends energy and a replacement starts at the displayed energy
+  ---
+  duration_ms: 9.6128
+  ...
+# Subtest: rewind, weighting, layout and point changes never blend incompatible frames
+ok 84 - rewind, weighting, layout and point changes never blend incompatible frames
+  ---
+  duration_ms: 10.0698
+  ...
+# Subtest: driving distance uses the experiment clock, including pause and backward seek
+ok 85 - driving distance uses the experiment clock, including pause and backward seek
+  ---
+  duration_ms: 1.2066
+  ...
+# Subtest: road segments cover a continuous range and preserve world identity while passing the car
+ok 86 - road segments cover a continuous range and preserve world identity while passing the car
+  ---
+  duration_ms: 0.7628
+  ...
+# Subtest: four cabin eyes share P7 seat coordinates and are distinct from the microphones
+ok 87 - four cabin eyes share P7 seat coordinates and are distinct from the microphones
+  ---
+  duration_ms: 0.2788
+  ...
+# Subtest: cabin look rotates around the eye without translating it and clamps pitch
+ok 88 - cabin look rotates around the eye without translating it and clamps pitch
+  ---
+  duration_ms: 0.8605
+  ...
+# Subtest: wheel spin preserves its axle and semantic attachment, keeping the brake caliper stationary
+ok 89 - wheel spin preserves its axle and semantic attachment, keeping the brake caliper stationary
+  ---
+  duration_ms: 5.7837
+  ...
+# Subtest: curved graded route preserves arc length, periodic seams and reversible vehicle coordinates
+ok 90 - curved graded route preserves arc length, periodic seams and reversible vehicle coordinates
+  ---
+  duration_ms: 46.8279
+  ...
+# Subtest: volume texture keeps every queried point and both channels in WebGL storage order
+ok 91 - volume texture keeps every queried point and both channels in WebGL storage order
+  ---
+  duration_ms: 5.0377
+  ...
+# Subtest: spatial smoothing operates on mean-square energy, not a mean of dB or RGB
+ok 92 - spatial smoothing operates on mean-square energy, not a mean of dB or RGB
+  ---
+  duration_ms: 0.7497
+  ...
+# Subtest: improvement is the signed, same-point same-frame difference; worsening is retained
+ok 93 - improvement is the signed, same-point same-frame difference; worsening is retained
+  ---
+  duration_ms: 0.6968
+  ...
+# Subtest: detail range includes both channels and has a nonzero span even for a flat frame
+ok 94 - detail range includes both channels and has a nonzero span even for a flat frame
+  ---
+  duration_ms: 3.1253
+  ...
+# Subtest: improvement detail keeps zero centered and includes real worsening and improvement
+ok 95 - improvement detail keeps zero centered and includes real worsening and improvement
+  ---
+  duration_ms: 0.7334
+  ...
+# Subtest: camera moves around the car and reaches an exact endpoint without overshoot
+ok 96 - camera moves around the car and reaches an exact endpoint without overshoot
+  ---
+  duration_ms: 1.5652
+  ...
+# Subtest: manual input cancels motion; a rapid replacement starts at the currently visible pose
+ok 97 - manual input cancels motion; a rapid replacement starts at the currently visible pose
+  ---
+  duration_ms: 0.7367
+  ...
+# Subtest: dense queries yield in bounded batches and publish the original point order at one window
+ok 98 - dense queries yield in bounded batches and publish the original point order at one window
+  ---
+  duration_ms: 127.6415
+  ...
+# Subtest: a late query is cancelled before more chunks are submitted
+ok 99 - a late query is cancelled before more chunks are submitted
+  ---
+  duration_ms: 13.9983
+  ...
+# Subtest: different windows, weighting, positions and layout cannot be merged into one field
+ok 100 - different windows, weighting, positions and layout cannot be merged into one field
+  ---
+  duration_ms: 51.6363
+  ...
+# Subtest: an invalid warm-up grid stays invalid instead of becoming a coloured result
+ok 101 - an invalid warm-up grid stays invalid instead of becoming a coloured result
+  ---
+  duration_ms: 127.6777
+  ...
+# Subtest: three slice meshes use the original 280 queried positions, including their fixed physical planes
+ok 102 - three slice meshes use the original 280 queried positions, including their fixed physical planes
+  ---
+  duration_ms: 3.3164
+  ...
+# Subtest: a reordered, truncated or non-finite B field frame cannot color the old locations
+ok 103 - a reordered, truncated or non-finite B field frame cannot color the old locations
+  ---
+  duration_ms: 0.8281
+  ...
+# Subtest: moving each sampled plane requests its physical position and refuses the previous field frame
+ok 104 - moving each sampled plane requests its physical position and refuses the previous field frame
+  ---
+  duration_ms: 2.6685
+  ...
+# Subtest: 12 coincident projections remain separate and inside the narrow supported viewer
+ok 105 - 12 coincident projections remain separate and inside the narrow supported viewer
+  ---
+  duration_ms: 6.2556
+  ...
+# Subtest: four source illustrations can share a narrow view with all 12 hardware labels
+ok 106 - four source illustrations can share a narrow view with all 12 hardware labels
+  ---
+  duration_ms: 2.4247
+  ...
+# Subtest: labels at viewport edges and densely grouped hardware remain clickable
+ok 107 - labels at viewport edges and densely grouped hardware remain clickable
+  ---
+  duration_ms: 9.146
+  ...
+# Subtest: lab labels stay on the side rails at full-page size, leaving the vehicle clear
+ok 108 - lab labels stay on the side rails at full-page size, leaving the vehicle clear
+  ---
+  duration_ms: 0.9521
+  ...
+# Subtest: lab side rails remain separate and clickable in a narrow 360 px viewer
+ok 109 - lab side rails remain separate and clickable in a narrow 360 px viewer
+  ---
+  duration_ms: 0.4048
+  ...
+# Subtest: P7+ canopy, liftback glazing and rear bumper are separately owned assemblies
+ok 110 - P7+ canopy, liftback glazing and rear bumper are separately owned assemblies
+  ---
+  duration_ms: 1047.9247
+  ...
+# Subtest: P7+ hidden shell exposes actual seat picking, and clipping rejects the removed half
+ok 111 - P7+ hidden shell exposes actual seat picking, and clipping rejects the removed half
+  ---
+  duration_ms: 946.1585
+  ...
+# Subtest: P7+ intermediate explosion poses remain finite and return to identical world transforms
+ok 112 - P7+ intermediate explosion poses remain finite and return to identical world transforms
+  ---
+  duration_ms: 665.0019
+  ...
+# Subtest: P7+ paint and shell presentation preserve independent glass, tires and cabin materials
+ok 113 - P7+ paint and shell presentation preserve independent glass, tires and cabin materials
+  ---
+  duration_ms: 661.927
+  ...
+# Subtest: P7 detailed EV assemblies and acoustic diaphragms own their reversible geometry
+ok 114 - P7 detailed EV assemblies and acoustic diaphragms own their reversible geometry
+  ---
+  duration_ms: 620.8824
+  ...
+# Subtest: featured structures exist in each generated architecture and explain its actual drive path
+ok 115 - featured structures exist in each generated architecture and explain its actual drive path
+  ---
+  duration_ms: 411.6885
+  ...
+# Subtest: true mesh-plane sections preserve area, plane position and outward normal after transforms
+ok 116 - true mesh-plane sections preserve area, plane position and outward normal after transforms
+  ---
+  duration_ms: 10.9967
+  ...
+# Subtest: section through exact edges is closed; tangencies and existing coplanar faces are not duplicated
+ok 117 - section through exact edges is closed; tangencies and existing coplanar faces are not duplicated
+  ---
+  duration_ms: 1.7518
+  ...
+# Subtest: ring sections keep their holes and disconnected islands; open surfaces never get a solid cap
+ok 118 - ring sections keep their holes and disconnected islands; open surfaces never get a solid cap
+  ---
+  duration_ms: 42.7159
+  ...
+# Subtest: section display updates from exploded geometry, respects ancestor visibility and material opacity
+ok 119 - section display updates from exploded geometry, respects ancestor visibility and material opacity
+  ---
+  duration_ms: 5.3103
+  ...
+# Subtest: bundled showroom SUV is the attributed, offline CC BY asset within the geometry budget
+ok 120 - bundled showroom SUV is the attributed, offline CC BY asset within the geometry budget
+  ---
+  duration_ms: 7.6447
+  ...
+# Subtest: BEV showroom keeps the original attribution and bundles a decodable offline model
+ok 121 - BEV showroom keeps the original attribution and bundles a decodable offline model
+  ---
+  duration_ms: 8.4015
+  ...
+# Subtest: four drivetrains preserve their physical differences and five-seat cabin
+ok 122 - four drivetrains preserve their physical differences and five-seat cabin
+  ---
+  duration_ms: 378.03
+  ...
+# Subtest: vehicle geometry is finite and every owned GPU resource is disposed once
+ok 123 - vehicle geometry is finite and every owned GPU resource is disposed once
+  ---
+  duration_ms: 234.442
+  ...
+# Subtest: the BEV and EREV battery enclosure remains directly visible from the underbody
+ok 124 - the BEV and EREV battery enclosure remains directly visible from the underbody
+  ---
+  duration_ms: 138.6812
+  ...
+# Subtest: the closed side sill hides the floor and battery at door level on all four vehicles
+ok 125 - the closed side sill hides the floor and battery at door level on all four vehicles
+  ---
+  duration_ms: 184.6056
+  ...
+# Subtest: xpeng-p7plus: independent layout, full cross paths, both sources and live/batch/field agreement
+ok 126 - xpeng-p7plus: independent layout, full cross paths, both sources and live/batch/field agreement
+  ---
+  duration_ms: 396.5731
+  ...
+# Subtest: xpeng-p7plus: observer seats and acoustic attachment nodes exist in the actual detachable model
+ok 127 - xpeng-p7plus: observer seats and acoustic attachment nodes exist in the actual detachable model
+  ---
+  duration_ms: 850.974
+  ...
+# Subtest: xpeng-x9: independent layout, full cross paths, both sources and live/batch/field agreement
+ok 128 - xpeng-x9: independent layout, full cross paths, both sources and live/batch/field agreement
+  ---
+  duration_ms: 254.7864
+  ...
+# Subtest: xpeng-x9: observer seats and acoustic attachment nodes exist in the actual detachable model
+ok 129 - xpeng-x9: observer seats and acoustic attachment nodes exist in the actual detachable model
+  ---
+  duration_ms: 1154.9151
+  ...
+# Subtest: xpeng-l03: independent layout, full cross paths, both sources and live/batch/field agreement
+ok 130 - xpeng-l03: independent layout, full cross paths, both sources and live/batch/field agreement
+  ---
+  duration_ms: 260.66
+  ...
+# Subtest: xpeng-l03: observer seats and acoustic attachment nodes exist in the actual detachable model
+ok 131 - xpeng-l03: observer seats and acoustic attachment nodes exist in the actual detachable model
+  ---
+  duration_ms: 911.4044
+  ...
+# Subtest: xpeng-m03: independent layout, full cross paths, both sources and live/batch/field agreement
+ok 132 - xpeng-m03: independent layout, full cross paths, both sources and live/batch/field agreement
+  ---
+  duration_ms: 259.7713
+  ...
+# Subtest: xpeng-m03: observer seats and acoustic attachment nodes exist in the actual detachable model
+ok 133 - xpeng-m03: observer seats and acoustic attachment nodes exist in the actual detachable model
+  ---
+  duration_ms: 828.9632
+  ...
+# Subtest: xpeng-gx: independent layout, full cross paths, both sources and live/batch/field agreement
+ok 134 - xpeng-gx: independent layout, full cross paths, both sources and live/batch/field agreement
+  ---
+  duration_ms: 277.7744
+  ...
+# Subtest: xpeng-gx: observer seats and acoustic attachment nodes exist in the actual detachable model
+ok 135 - xpeng-gx: observer seats and acoustic attachment nodes exist in the actual detachable model
+  ---
+  duration_ms: 989.2156
+  ...
+# Subtest: x9: P7-level structural coverage and correctly separated battery layers
+ok 136 - x9: P7-level structural coverage and correctly separated battery layers
+  ---
+  duration_ms: 1405.1206
+  ...
+# Subtest: x9: interior ray picking and sampled disassembly restore world transforms
+ok 137 - x9: interior ray picking and sampled disassembly restore world transforms
+  ---
+  duration_ms: 1321.3085
+  ...
+# Subtest: l03: P7-level structural coverage and correctly separated battery layers
+ok 138 - l03: P7-level structural coverage and correctly separated battery layers
+  ---
+  duration_ms: 859.1797
+  ...
+# Subtest: l03: interior ray picking and sampled disassembly restore world transforms
+ok 139 - l03: interior ray picking and sampled disassembly restore world transforms
+  ---
+  duration_ms: 896.8704
+  ...
+# Subtest: m03: P7-level structural coverage and correctly separated battery layers
+ok 140 - m03: P7-level structural coverage and correctly separated battery layers
+  ---
+  duration_ms: 990.1213
+  ...
+# Subtest: m03: interior ray picking and sampled disassembly restore world transforms
+ok 141 - m03: interior ray picking and sampled disassembly restore world transforms
+  ---
+  duration_ms: 987.6886
+  ...
+# Subtest: gx: P7-level structural coverage and correctly separated battery layers
+ok 142 - gx: P7-level structural coverage and correctly separated battery layers
+  ---
+  duration_ms: 868.5333
+  ...
+# Subtest: gx: interior ray picking and sampled disassembly restore world transforms
+ok 143 - gx: interior ray picking and sampled disassembly restore world transforms
+  ---
+  duration_ms: 955.4029
+  ...
+# Subtest: Verified drivetrain and suspension differences survive shared construction helpers
+ok 144 - Verified drivetrain and suspension differences survive shared construction helpers
+  ---
+  duration_ms: 3159.1874
+  ...
+# Subtest: A2 XPeng x9: real proportions, semantic rows and finite geometry
+ok 145 - A2 XPeng x9: real proportions, semantic rows and finite geometry
+  ---
+  duration_ms: 1689.7871
+  ...
+# Subtest: A2 XPeng x9: explosion is reversible, clamped and above floor
+ok 146 - A2 XPeng x9: explosion is reversible, clamped and above floor
+  ---
+  duration_ms: 1315.6332
+  ...
+# Subtest: A2 XPeng p7plus: real proportions, semantic rows and finite geometry
+ok 147 - A2 XPeng p7plus: real proportions, semantic rows and finite geometry
+  ---
+  duration_ms: 885.5846
+  ...
+# Subtest: A2 XPeng p7plus: explosion is reversible, clamped and above floor
+ok 148 - A2 XPeng p7plus: explosion is reversible, clamped and above floor
+  ---
+  duration_ms: 780.9084
+  ...
+# Subtest: A2 XPeng l03: real proportions, semantic rows and finite geometry
+ok 149 - A2 XPeng l03: real proportions, semantic rows and finite geometry
+  ---
+  duration_ms: 998.7423
+  ...
+# Subtest: A2 XPeng l03: explosion is reversible, clamped and above floor
+ok 150 - A2 XPeng l03: explosion is reversible, clamped and above floor
+  ---
+  duration_ms: 828.6581
+  ...
+# Subtest: A2 XPeng m03: real proportions, semantic rows and finite geometry
+ok 151 - A2 XPeng m03: real proportions, semantic rows and finite geometry
+  ---
+  duration_ms: 1049.986
+  ...
+# Subtest: A2 XPeng m03: explosion is reversible, clamped and above floor
+ok 152 - A2 XPeng m03: explosion is reversible, clamped and above floor
+  ---
+  duration_ms: 912.9095
+  ...
+# Subtest: A2 XPeng gx: real proportions, semantic rows and finite geometry
+ok 153 - A2 XPeng gx: real proportions, semantic rows and finite geometry
+  ---
+  duration_ms: 1041.5345
+  ...
+# Subtest: A2 XPeng gx: explosion is reversible, clamped and above floor
+ok 154 - A2 XPeng gx: explosion is reversible, clamped and above floor
+  ---
+  duration_ms: 875.6926
+  ...
+# Subtest: A2 XPeng paint affects exterior clones only; resources dispose exactly once
+ok 155 - A2 XPeng paint affects exterior clones only; resources dispose exactly once
+  ---
+  duration_ms: 815.9757
+  ...
+# Subtest: audio paths use the same linear gain and sinc resampling
+ok 156 - audio paths use the same linear gain and sinc resampling
+  ---
+  duration_ms: 22.3677
+  ...
+1..156
+# tests 156
+# suites 0
+# pass 156
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13823.8994

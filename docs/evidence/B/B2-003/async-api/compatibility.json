@@ -1,0 +1,12 @@
+{
+  "role": "B2",
+  "task": "B2-003",
+  "identitySource": "user-declared",
+  "executor": "Codex",
+  "priorCommit": "c2b0f43abff449e25a87eb3dba35ce188ff1057f",
+  "priorSourceSha256": "fc5d9a3482907be77820e0c81073d4e5d1392e37477dc6cb526d7f09969e4793",
+  "containerBytes": 2564256,
+  "containerSha256": "76f530b4f8d3cf49a986531cb29635e870813eebdd1c783cd7dffe9e37fd06ee",
+  "byteCompatible": true,
+  "bothDirectionsReadable": true
+}

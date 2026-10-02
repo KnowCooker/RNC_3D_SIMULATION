@@ -1,6 +1,6 @@
 import type { Four } from '../../shared/contracts';
 import { TEACHING_LAYOUT_ID, type LabConfig, type ReferenceSensor } from '../../shared/lab-contracts';
-import { compareCases, type CaseComparison, type CaseSnapshot } from './case-compare';
+import { compareCases, type CaseComparison, type ComparisonPolicy, type CaseSnapshot } from './case-compare';
 
 export const CASE_EVIDENCE_FORMAT = 'rnc-case-v1';
 export const CASE_EVIDENCE_MAX_BYTES = 64 * 1024;
@@ -8,6 +8,7 @@ export const CASE_EVIDENCE_BOUNDARY = '教学仿真摘要：A计权、0–1 kHz�
 
 export interface CaseEvidence {
   format: typeof CASE_EVIDENCE_FORMAT;
+  comparisonMode?: ComparisonPolicy;
   createdAt: string;
   question: string;
   observation: string;
@@ -107,19 +108,21 @@ export function parseCaseEvidence(json: string): { evidence: CaseEvidence; compa
   if (raw.boundary !== CASE_EVIDENCE_BOUNDARY) throw new Error('案例来源边界不完整');
   const createdAt = string(raw.createdAt, '创建时间', 40);
   if (!Number.isFinite(Date.parse(createdAt))) throw new Error('案例创建时间无效');
+  if (raw.comparisonMode !== undefined && (typeof raw.comparisonMode !== 'string' || !['control','scenario','legacy'].includes(raw.comparisonMode))) throw new Error('案例比较模式不受支持');
   const baseline = snapshot(raw.baseline, 'A'), candidate = snapshot(raw.candidate, 'B');
   if (baseline.runId === candidate.runId) throw new Error('案例A/B实验ID相同');
   const evidence: CaseEvidence = { format: CASE_EVIDENCE_FORMAT, createdAt,
+    ...(raw.comparisonMode === undefined ? {} : {comparisonMode: raw.comparisonMode as ComparisonPolicy}),
     question: string(raw.question, '问题', 240), observation: string(raw.observation, '观察', 1000, true),
     interpretation: raw.interpretation === undefined ? '' : string(raw.interpretation, '人工解释', 1000, true),
     decision: raw.decision === undefined ? '' : string(raw.decision, '临时行动', 1000, true),
     nextCheck: string(raw.nextCheck, '后续核查', 1000, true), boundary: CASE_EVIDENCE_BOUNDARY,
     baseline, candidate };
-  return { evidence, comparison: compareCases(baseline, candidate) };
+  return { evidence, comparison: compareCases(baseline, candidate, evidence.comparisonMode ?? 'legacy') };
 }
 
-export function createCaseEvidence(baseline: CaseSnapshot, candidate: CaseSnapshot, observation: string, nextCheck: string, createdAt = new Date().toISOString(), interpretation = '', decision = ''): string {
-  const record: CaseEvidence = { format: CASE_EVIDENCE_FORMAT, createdAt, question: '改变一个条件后，后排会更安静吗？',
+export function createCaseEvidence(baseline: CaseSnapshot, candidate: CaseSnapshot, observation: string, nextCheck: string, createdAt = new Date().toISOString(), interpretation = '', decision = '', comparisonMode: ComparisonPolicy = 'legacy'): string {
+  const record: CaseEvidence = { format: CASE_EVIDENCE_FORMAT, createdAt, comparisonMode, question: '改变一个条件后，后排会更安静吗？',
     observation: observation.trim(), interpretation: interpretation.trim(), decision: decision.trim(), nextCheck: nextCheck.trim(), boundary: CASE_EVIDENCE_BOUNDARY,
     baseline: structuredClone(baseline), candidate: structuredClone(candidate) };
   const json = JSON.stringify(record, null, 2);

@@ -1,0 +1,74 @@
+{
+  "source": "docs\\evidence\\A2\\A2-EXPERIENCE-010\\champagne-audit\\endurance-report.json",
+  "hardware": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "cores": 16,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Ti (0x00002D04) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "canvas": [
+      2160,
+      1233
+    ],
+    "viewport": [
+      1440,
+      900
+    ],
+    "headless": true
+  },
+  "checks": [
+    {
+      "name": "at least 20 minute real wall session",
+      "pass": true
+    },
+    {
+      "name": "real 600 second cap observed",
+      "pass": true
+    },
+    {
+      "name": "restart starts a new run",
+      "pass": true
+    },
+    {
+      "name": "no page/resource errors",
+      "pass": true
+    }
+  ],
+  "wallSeconds": 1212.518,
+  "sampleCount": 40,
+  "distinctRuns": 2,
+  "observedMaxAudioUnderruns": 0,
+  "observedBufferRangeSeconds": [
+    0.63,
+    1.38
+  ],
+  "rafWindowMeanMsRange": [
+    13.700555555555551,
+    30.18349999999996
+  ],
+  "rafWindowMeanMsMedian": 29.02416666666668,
+  "rafWindowRateRangeHz": [
+    33.13068398297087,
+    72.98974088641988
+  ],
+  "rafWindowP95MsMax": 52.29999999993015,
+  "heapMiBRange": [
+    32.119224548339844,
+    67.19817352294922
+  ],
+  "heapMiBFirstLast": [
+    55.016300201416016,
+    38.84378433227539
+  ],
+  "heapMiBFirstLastFiveMedian": [
+    47.11940383911133,
+    55.62069320678711
+  ],
+  "pageErrors": [],
+  "resourceFailures": [],
+  "limits": [
+    "Headless Chrome on the reported GPU; not a target integrated-GPU signoff.",
+    "Every 30 seconds, RAF statistics cover the most recent 1800 frames. Windows overlap.",
+    "RAF scheduling is a frame-cadence proxy, not GPU render timing or exact whole-session FPS.",
+    "Heap samples include garbage collection; they do not prove absence of all memory leaks.",
+    "Software audio queue observations do not replace physical audio/video synchronization checks."
+  ]
+}
