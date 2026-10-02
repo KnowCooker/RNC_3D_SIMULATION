@@ -36,4 +36,4 @@
 
 五车前后包围、灯具、侧窗/车顶边界与实拍仍存在差异，详见model-source-audit.md。未取得匹配版本的原厂CAD、扫描或授权高精底模；候选页不等于已取得许可。内饰/隐藏机械仍有近似，不能替代维修、标定或有限元模型。目标核显/第二机、最终视觉验收继续保留待测。
 
-分支a/a2-xpeng-reconstruction，基线a88536a58d5f489cb245246d243dd0eb23b333e1；沿用[草稿PR #56](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/56)，当前准备提交推送。推送完成后补实际SHA与远端核对记录。预览http://127.0.0.1:5197/，已包含最新HDR修复。
+分支a/a2-xpeng-reconstruction，基线a88536a58d5f489cb245246d243dd0eb23b333e1；沿用[草稿PR #56](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/56)，已同步至GitHub，远端实查a7482348da222d58ac553015bfa98da5792f1bcd；原实现提交005b51f3dcc05eb0a5d3b51c45789eb8e4cad128保留。大包两次中断后分7批传输，再正常合并完全相同文件树的传输历史，无强推/改写。临时传输分支已删除；正式CI两个verify当前运行中，未预记通过。本次补记另清除008原失败日志两行尾随空白，保留原失败文字。预览http://127.0.0.1:5197/，已包含最新HDR修复。

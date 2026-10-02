@@ -371,11 +371,11 @@ not ok 73 - road segments cover a continuous range and preserve world identity w
   error: |-
     Expected values to be strictly equal:
     + actual - expected
-    
+
     + 47.900000000000006
     - 47.9
           ^
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: 47.9
