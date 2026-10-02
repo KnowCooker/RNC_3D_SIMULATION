@@ -35,3 +35,7 @@ Role: A2 · Identity-Source: user-declared · Executor: Codex 代 A2
 - [GX](https://www.xiaopeng.com/gx.html)：长车身三排、星环灯、宽尾灯及多辐轮。
 
 参考图片仅用于本地对照，未加入发布资源；现有环境素材归属见 viewer/assets 的来源记录。外观不足与高精资产审计承接 ../A2-REALISM-009/model-source-audit.md。
+
+## 发布交接
+
+实现提交 `7653e8c`，报告格式修正 `945021780b4b85ee20b8ba05248fb5803de994b3` 已同步至 `origin/a/a2-driving-experience`，GitHub PR #57 head 核对一致。当前分支包含全部本轮项目代码与资源；PR 保持草稿，未合并 main。账号 jiangchun526-cloud。云端 verify 在本记录时仍运行；本地全仓及浏览器通过不等同于云端 CI 通过。后续交接文档提交不改变验证源码。
