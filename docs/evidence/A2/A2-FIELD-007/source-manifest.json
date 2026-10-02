@@ -1,0 +1,16 @@
+{
+  "task": "A2-FIELD-007",
+  "role": "A2",
+  "executor": "Codex",
+  "base": "a88536a58d5f489cb245246d243dd0eb23b333e1",
+  "state": "local-uncommitted",
+  "files": {
+    "src/team-a/viewer/field-display-data.ts": "fc603a4e7013539609f3a850c1187e824b66e609b982e581dab1615667272fb9",
+    "src/team-a/viewer/field-display.ts": "5172ef234411856f549b75017fb6d353f8747982c9475ae7595bb166c9604994",
+    "src/team-a/viewer/camera-motion.ts": "21e1c47e46576cbc5b21145bed834a7abdf20fd3b499a6aebf9a637a601723b0",
+    "src/team-a/viewer/lab-viewer.ts": "b565c4433653ce0b802cccd56fecf8756535cccbcb9f82d8a1f4e0bb63453685",
+    "src/team-a/lab/champagne-shell.ts": "e62ecaee4dd7ff7a80dfc5ba1a362aaf18b9a6e2f293b35915dab3d70481b8b3",
+    "src/team-a/lab/champagne.css": "6ac68a2ccb01da7048b1c32c98f383600d0e92c1deb359ce0ff72a12ab0056d1",
+    "tests/a2-field-display.test.ts": "ebad81fcf9e8a5094158c11145d9ff7594f30f961641de5889020b84e908777c"
+  }
+}
