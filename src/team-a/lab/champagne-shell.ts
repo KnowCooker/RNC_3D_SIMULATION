@@ -18,6 +18,7 @@ const icon = (name: string) => `<svg viewBox="0 0 24 24" fill="none" stroke="cur
 /** Rehomes existing controls; one experiment, one viewer and one transport across pages. */
 export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeof createLabViewer>, redraw: () => void) {
   root.classList.add('cp-app');
+  root.dataset.environment='coast';
   const get = <T extends HTMLElement = HTMLElement>(id: string) => root.querySelector<T>(`#lab-${id}`)!;
   const element = (html: string) => { const template = document.createElement('template'); template.innerHTML = html; return template.content.firstElementChild as HTMLElement; };
   const originalMain = root.querySelector('.lab-main')!, oldHeader = root.querySelector('.lab-header')!, journey = root.querySelector('.lab-journey')!;
@@ -57,7 +58,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   sceneSettings.querySelector<HTMLSelectElement>('[aria-label="展示场景"]')!.onchange = event => viewer.setStage((event.target as HTMLSelectElement).value as 'gallery'|'road'|'workshop');
   sceneSettings.querySelector<HTMLSelectElement>('[aria-label="道路材质与声学预设"]')!.onchange = event => viewer.setRoadSurface((event.target as HTMLSelectElement).value as 'smooth'|'coarse'|'gravel');
   q('.cp-help .cp-dialog-content').append(root.querySelector('.lab-disclosure')!, get('guide'), root.querySelector('.lab-sources')!);
-  q('.cp-help .cp-dialog-content').append(element('<p class="cp-attribution">展厅湖畔环境：<a href="https://polyhaven.com/a/qwantani_sunset" target="_blank" rel="noreferrer">Qwantani Sunset</a>，摄影 Greg Zaal，处理 Jarod Guest / Poly Haven，<a href="https://polyhaven.com/license" target="_blank" rel="noreferrer">CC0</a>。素材已随本地构建打包；建筑和植被为原创三维几何。</p>'));
+  q('.cp-help .cp-dialog-content').append(element('<p class="cp-attribution">路旁地形：<a href="https://polyhaven.com/a/aerial_grass_rock" target="_blank" rel="noreferrer">Aerial Grass Rock</a>（Rob Tuytel，2K/CC0）。道路新增素材：<a href="https://polyhaven.com/a/small_rural_road" target="_blank" rel="noreferrer">Small Rural Road</a>（Andreas Mischok，8K实拍全景）、<a href="https://polyhaven.com/a/asphalt_02" target="_blank" rel="noreferrer">Asphalt 02</a>（Rob Tuytel）、<a href="https://polyhaven.com/a/gravel_floor" target="_blank" rel="noreferrer">Gravel Floor</a>（Matterfield / Jenelle van Heerden）；4K颜色/2K法线，均CC0。路旁为按里程生成的三维景物，非实测路线。四环境采用完整360°实拍全景：<a href="https://polyhaven.com/a/lakes" target="_blank" rel="noreferrer">Lakes</a>（Sergej Majboroda）、<a href="https://polyhaven.com/a/alps_field" target="_blank" rel="noreferrer">Alps Field</a>、<a href="https://polyhaven.com/a/lago_disola" target="_blank" rel="noreferrer">Lago d’Isola</a>（Andreas Mischok）、<a href="https://polyhaven.com/a/goegap" target="_blank" rel="noreferrer">Goegap</a>（Greg Zaal）。均为Poly Haven / <a href="https://polyhaven.com/license" target="_blank" rel="noreferrer">CC0</a>；背景原生8192×4096，配套2K或4K HDR负责光照与反射，全部本地打包、按需加载。展厅、植被为原创三维几何；菜单海岸/沙漠小图为早期AI创作预览，不是当前实拍全景。环境不代表实车测试地点。</p>'));
   q('.cp-paths-dialog .cp-dialog-content').append(root.querySelector('.lab-signals')!);
   q('.cp-comparison').append(get('case'));
   const caseCards = element('<div class="cp-case-pair"><article data-case="A"><span>方案 A / 基线</span><h3>等待保存基线</h3><div class="cp-case-seats"></div><small>运行一次预计算实验，再保存基线。</small></article><article data-case="B"><span>方案 B / 候选</span><h3>等待候选实验</h3><div class="cp-case-seats"></div><small>调整一个设计因素后，重新计算。</small></article></div>');
@@ -67,6 +68,17 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   const viewTools = [...originalMain.querySelectorAll<HTMLElement>('.lab-view-tools')];
   if(viewTools[0]) q('.cp-structure-controls').append(viewTools[0]);
   if(viewTools[1]) q('.cp-field-tools').append(viewTools[1]);
+  q('.cp-readings').prepend(get('viewer').querySelector('.lab-field-hud')!);
+  const driveModes=element('<div class="cp-drive-modes" aria-label="实验观察模式"><button data-stage="road">道路行驶</button><button data-stage="gallery">声场检视</button><label>行驶环境<select aria-label="行驶环境"><option value="coast">田野公路</option><option value="mountain">山地</option><option value="desert">沙漠</option><option value="snow">雪山</option></select></label></div>');
+  q('.cp-field-tools').before(driveModes,get('viewer').querySelector('.lab-driving-controls')!);
+  driveModes.querySelectorAll<HTMLButtonElement>('[data-stage]').forEach(b=>b.onclick=()=>viewer.setStage(b.dataset.stage as 'road'|'gallery'));
+  driveModes.querySelector<HTMLSelectElement>('select')!.onchange=e=>viewer.setEnvironment((e.target as HTMLSelectElement).value as GalleryEnvironment);
+  const driveObserver=new MutationObserver(()=>{const stage=get('viewer').dataset.stage;sceneSettings.querySelector<HTMLSelectElement>('[aria-label="道路材质与声学预设"]')!.value=get('viewer').dataset.roadSurface??'smooth';root.dataset.stage=stage??'';q('.cp-footer-note').firstChild!.textContent=stage==='road'?'仿真道路 / ':'湖畔展厅 / ';sceneSettings.querySelector<HTMLSelectElement>('[aria-label="展示场景"]')!.value=stage??'gallery';driveModes.querySelectorAll<HTMLButtonElement>('[data-stage]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.stage===stage)));});
+  const driveSeat=(e:Event)=>{const channel=(e as CustomEvent<{channel:number|null}>).detail.channel;if(channel!==null){get<HTMLSelectElement>('seat').value=String(channel);get('seat').dispatchEvent(new Event('change'));}};
+  get('viewer').addEventListener('driving-view-change',driveSeat);
+  driveObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-stage','data-road-surface']});
+
+  get<HTMLSelectElement>('field-slice').options[0].textContent='连续三维声场';
   q('.cp-charts').append(root.querySelector('.lab-plots')!);
   // Preserve hidden controls referenced by existing event closures without duplicate IDs.
   const retained = element('<div hidden></div>');
@@ -90,23 +102,42 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     q('.cp-field-empty').hidden = hasAnalysis && teaching;
     updateLevels();
   }
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const uiAnimations=new Set<Animation>();let navigated=false;
+  function animatePanel(el:HTMLElement,dialog=false,delay=0){
+    if(reduceMotion.matches||!el.getClientRects().length)return;
+    const motion=el.animate([{opacity:0,transform:dialog?'translateY(10px) scale(.985)':'translateY(10px)'},{opacity:1,transform:'none'}],{duration:dialog?220:260,delay,easing:'cubic-bezier(.22,.75,.25,1)',fill:'backwards'});
+    uiAnimations.add(motion);motion.onfinish=motion.oncancel=()=>uiAnimations.delete(motion);
+  }
+  const closingDialogs=new WeakSet<HTMLDialogElement>();
+  function closeDialog(dialog:HTMLDialogElement){
+    if(!dialog.open||closingDialogs.has(dialog))return;
+    if(reduceMotion.matches){dialog.close();return;}
+    closingDialogs.add(dialog);const motion=dialog.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateY(6px) scale(.99)'}],{duration:110,easing:'ease-out'});
+    uiAnimations.add(motion);motion.onfinish=()=>{uiAnimations.delete(motion);closingDialogs.delete(dialog);if(dialog.open)dialog.close();};
+    motion.oncancel=()=>{uiAnimations.delete(motion);closingDialogs.delete(dialog);};
+  }
   function navigate(next: Page) {
+    const changed=page!==next;uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();
     if(next!=='field') {get<HTMLSelectElement>('field').value='off';get('field').dispatchEvent(new Event('change'));}
     if(next==='overview' && viewer.displayAsset.startsWith('xpeng-')) {get<HTMLSelectElement>('body').value='solid';get('body').dispatchEvent(new Event('change'));}
     page = next; shell.dataset.page = next; root.dataset.page = next;
-    q('.cp-work-title h1').textContent = {overview:'',field:'看见声音，理解安静',structure:'从结构，理解每一处细节',compare:'让每一次选择，都有依据'}[next];
+    q('.cp-work-title h1').textContent = {overview:'',field:'探索更安静的旅程',structure:'结构与布置',compare:'方案对比与结论'}[next];
     shell.querySelectorAll<HTMLButtonElement>('.cp-header [data-page]').forEach(b=>b.setAttribute('aria-current',b.dataset.page===next?'page':'false'));
     if(next==='field' && viewer.displayAsset==='xpeng-p7plus') { get<HTMLSelectElement>('field').value='residual'; get('field').dispatchEvent(new Event('change')); }
     if(next==='field') shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='field')));
     viewer.setPresentationView(next); syncAsset(); requestAnimationFrame(redraw);
+    if(changed&&navigated){const selectors=next==='overview'?['.cp-hero','.cp-field-card','.cp-summary-cards','.cp-environments']:next==='field'?['.cp-work-title','.cp-field-panel']:next==='structure'?['.cp-structure-tools']:['.cp-work-title','.cp-comparison'];selectors.forEach((selector,i)=>animatePanel(q(selector),false,i*25));}
+    navigated=true;
   }
-  function openDialog(selector: string) { const dialog = q<HTMLDialogElement>(selector); if(!dialog.open) dialog.showModal(); requestAnimationFrame(redraw); }
+  function openDialog(selector: string) { const dialog = q<HTMLDialogElement>(selector); if(!dialog.open){dialog.showModal();animatePanel(dialog,true);}requestAnimationFrame(redraw); }
   shell.querySelectorAll<HTMLButtonElement>('.cp-header [data-page]').forEach(b=>b.onclick=()=>navigate(b.dataset.page as Page));
   shell.querySelectorAll<HTMLButtonElement>('[data-go]').forEach(b=>b.onclick=()=>navigate(b.dataset.go as Page));
   q<HTMLAnchorElement>('.cp-brand').onclick = e => { e.preventDefault(); navigate('overview'); };
   shell.querySelectorAll<HTMLButtonElement>('.cp-settings-button').forEach(b=>b.onclick=()=>openDialog('.cp-settings'));
   q<HTMLButtonElement>('.cp-more').onclick=()=>openDialog('.cp-help');
-  shell.querySelectorAll<HTMLButtonElement>('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog')!.close());
+  shell.querySelectorAll<HTMLButtonElement>('[data-close]').forEach(b=>b.onclick=()=>closeDialog(b.closest('dialog')!));
+  shell.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog=>dialog.addEventListener('cancel',event=>{event.preventDefault();closeDialog(dialog);}));
   const chooseAsset = async () => {
     asset.disabled = true;
     try { await viewer.showVehicle(asset.value as 'teaching' | XPengId); get('reset').click(); viewer.setStage('gallery'); viewer.setPresentationView(page); syncAsset(); viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview')); viewer.renderPreview(q<HTMLCanvasElement>('.cp-layout-preview'),true); }
@@ -116,7 +147,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   q<HTMLButtonElement>('.cp-teaching-button').onclick=()=>{asset.value='p7plus';void chooseAsset();};
   q<HTMLButtonElement>('.cp-run').onclick=()=>get('calculate').click();
   q<HTMLButtonElement>('.cp-stop').onclick=()=>get('cancel').click();
-  const frameField = () => { if(page==='field') { viewer.setPresentationView(page); shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='field'))); } };
+  const frameField = () => { if(page==='field') { shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='field'))); } };
   get('field').addEventListener('change',frameField); get('field-slice').addEventListener('change',frameField);
   get('reset').addEventListener('click',()=>{shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='solid')));viewer.setPresentationView(page);});
   shell.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(b=>b.onclick=()=>{
@@ -128,6 +159,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   });
   shell.querySelectorAll<HTMLButtonElement>('[data-env]').forEach(b=>b.onclick=()=>{
     viewer.setEnvironment(b.dataset.env as GalleryEnvironment);
+    root.dataset.environment=b.dataset.env!;
     shell.querySelectorAll('[data-env]').forEach(el=>el.setAttribute('aria-pressed',String(el===b)));
     q('.cp-footer-note span').textContent=b.lastElementChild!.textContent;
     announce(`已切换${b.lastElementChild!.textContent}三维景物，声学工况保持不变。`);
@@ -155,6 +187,10 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     q('.cp-run').textContent = get('calculate').textContent;
   }); observer.observe(get('status'),{childList:true,subtree:true,characterData:true});
   observer.observe(get('calculate'),{attributes:true,childList:true}); observer.observe(get('cancel'),{attributes:true});
+  const environmentObserver=new MutationObserver(()=>{
+    const env=get('viewer').dataset.environment as GalleryEnvironment|undefined;if(env){driveModes.querySelector<HTMLSelectElement>('select')!.value=env;shell.querySelectorAll<HTMLButtonElement>('[data-env]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.env===env)));q('.cp-footer-note span').textContent=({coast:get('viewer').dataset.stage==='road'?'田野公路':'海岸',mountain:'山地',desert:'沙漠',snow:'雪山'})[env];}
+    if(get('viewer').dataset.environmentReady){viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,hasAnalysis&&viewer.hasValidField);viewer.renderPreview(q<HTMLCanvasElement>('.cp-layout-preview'),true);}
+  });environmentObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-environment-ready','data-stage']});
   q<HTMLButtonElement>('.cp-stop').disabled = true;
   q('.cp-run-status').textContent = get('status').textContent;
   viewer.setStage('gallery');
@@ -173,6 +209,6 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
         card.querySelector('article>small')!.textContent=value ? `dBA · P7+ 参数化布局 · ${value.config.speedKph} km/h · 实验 ${value.runId.slice(0,8)}` : index ? '调整一个设计因素后，重新计算。' : '运行一次预计算实验，再保存基线。';
       });
     },
-    dispose() {observer.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
+    dispose() {get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
   };
 }
