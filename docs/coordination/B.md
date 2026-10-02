@@ -1,5 +1,13 @@
 # B1/B2 共同任务与串行交接
 
+**2026-10-02 / A2-EXPERIENCE-010 / 最终验证与发布准备**：Role:A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared；Executor:Codex代A2。最终源码pnpm check：220/220、类型/边界/构建通过；Chrome实时行驶与五车拆装62/62，四环境全周/道路/390至2560布局16/16，零JS/Shader/资源失败。28张截图、报告、复验脚本及18文件源码清单见docs/evidence/A2/A2-EXPERIENCE-010。五车独立布局、弯坡道路/转向、360景观、行驶中场检视已接通；用户明确授权的shared注册/B两处roof选择保持旧P7、16交叉路径与fixture。未达到官网实拍一模一样，参数仍非实车标定；视觉细节与授权高精几何是后续工作，不将功能通过冒充外观验收。下一步按既有上传授权提交推送至a/a2-driving-experience并更新草稿#57，不合并main；发布SHA与远端结果另记。
+
+**2026-10-02 / A2-EXPERIENCE-010 / 连续实时验证通过**：Chrome62项通过：五车实录连续运行、移动中检视不离开道路/时钟持续、声场持续更新、坡度和朝向演进、暂停与座位切换冻结距离、切车/停止清除旧场、五车逐件拆回装；零JS/Shader/资源失败。发现环境setter每帧重复重置全景角度，改为环境/纹理变化才更新，防止暂停后天空朝向漂移；检视/道路选中态按真实透视状态同步。最新景观/该修复待最终检查。Role:A2；Codex代A2；证据test-results/experience-refine/live/report.json。
+
+**2026-10-02 / A2-EXPERIENCE-010 / 全景立体地形与专项通过**：弧长修正后20项专项全部通过（五车两声源批量/流式逐样本、耳旁声场功率、16交叉路径、拆件/观察点、旧P7回归）。展厅新增完整360度原创程序地形、湖水、岩石、山脊积雪与分层针叶林，使用真实光照/遮挡，不依赖单面背景板；四环境独立起伏与配色。新增地形尚待构建/浏览器视觉检查，未声明照片一致。Role:A2；Codex代A2；跨组数值验证记录同步B交接。
+
+**2026-10-02 / A2-EXPERIENCE-010 / 用户授权跨组首批待验**：用户明确回复“授权本次最小跨组修改”。shared新增X9/L03/M03/GX独立车型布局，与各车轮距/轴距/前两排座位/门板扬声器坐标对应；X9/GX仍四受控点，第三排仅作空间查询，不伪称额外控制通道。B路径仅两处车顶高度选择改用已注册车型roof，未改DSP、交叉路径或旧P7参数。viewer使用实际布局身份匹配、总成挂接与场采样范围。当前未运行检查；下一步接通切车清理、全布局数值回归及浏览器验证。Role:A2；Executor:Codex代A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared。
+
 **2026-10-01 / A2-P7-004 / 已发布 GitHub，待审查**：Role: A2；Identity-Source: user-declared；执行者 Codex 代 A2。当前版本代码提交 `8f2d80ee5db5d86714170f4edd13114bd5ed717b` 已推送 `origin/a/a2-xpeng-reconstruction`，`ls-remote` 核对一致；提交作者和推送账号均为 `jiangchun526-cloud`。草稿 PR：[#56](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/56)，以原 A2 分支为 base、依赖 #30；两个 PR 尚未合并 main。此前“仅本地/待上传指令”条目保留为历史，本次用户已明确授权上传。验证：本次提交前 `pnpm check` 185/185，类型/边界/构建通过；Git 提交钩子边界/开发记录检查通过，源码与最终浏览器 69+12 项版本一致；发布只补记录，没有再改代码。初次直连 GitHub 超时，使用本机已有代理后成功，未改变全局代理配置。跨组影响与 110 个修改文件见代码提交及本批 README，未改 fixture。下一步：PR 审查、#30 后续集成、与 main 新增 B 导出功能组合验证，以及实车/目标设备/第二机验收；本条不声称云端 CI 已通过。此交接文档将随下一提交推送。
 
 **2026-10-01 / A2-P7-004 / 当前版本发布准备**：Role: A2；Identity-Source: user-declared；执行者 Codex 代 A2。用户本轮明确要求“提交当前版本至github”，本次上传已获授权。当前状态：发布 A2-XPENG-001、A2-P7-002、A2-CP-003、A2-P7-004 累计成果；作者及 GitHub API 身份均为 jiangchun526-cloud。验证：提交前重新执行 pnpm check，185/185 测试及类型、边界、生产构建全部通过，见 docs/evidence/A2/A2-P7-004/publish-check.log；68 个源码/资源哈希与最终浏览器验证版本一致，保留既有 69+12 项浏览器证据，未修改 fixture。跨组影响沿用用户整页/P7 声场明确授权，shared/B 改动已在本批证据登记。远端 main 已到 b968d92；开放 PR 仅原 A2 #30，头部 4c097d4 与本批基线一致。下一步：提交当前完整快照，推送 a/a2-xpeng-reconstruction，以原 A2 分支 a/a2-full-017-asset-inspection 为基线创建依赖 #30 的增量草稿 PR，避免把两个待审任务重复列入同一差异；不合并 main，不更新旧 PR。本条尚未提交/推送，发布 SHA 与 PR 结果由后续交接补记。未完成项仍为实车标定、OEM 隐藏结构、目标设备及第二机验收，未声称产品最终验收。

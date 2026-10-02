@@ -23,6 +23,8 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
     valueRange: { value: new THREE.Vector2(30, 80) }, quantity: { value: 1 },
     opacity: { value: .95 }, clip: { value: new THREE.Vector4() }, clipped: { value: 0 },
   };
+  let requestedOpacity=.95, showingVolume=true;
+  const sliceOpacity={value:.6};
   const data = new Float32Array(560);
   const texture = new THREE.Data3DTexture(data, 7, 5, 8);
   texture.format = THREE.RGFormat; texture.type = THREE.FloatType;
@@ -59,8 +61,8 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
         vec3 lo=min(ta,tb),hi=max(ta,tb);
         float near=max(0.,max(lo.x,max(lo.y,lo.z))),far=min(hi.x,min(hi.y,hi.z));
         if(near>=far)discard;
-        float stepSize=(far-near)/48.;vec4 sum=vec4(0.);
-        for(int i=0;i<48;i++){
+        float stepSize=(far-near)/72.;vec4 sum=vec4(0.);
+        for(int i=0;i<72;i++){
           vec3 p=rayOrigin+dir*(near+(float(i)+.5)*stepSize),uv=p+.5;
           vec3 world=lower+uv*extent;if(clipped==1&&dot(clip.xyz,world)+clip.w<0.)continue;
           vec3 edge=min(uv,1.-uv);float feather=smoothstep(0.,.055,min(edge.x,min(edge.y,edge.z)));
@@ -87,7 +89,7 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
     map.minFilter = map.magFilter = linearFloat ? THREE.LinearFilter : THREE.NearestFilter;
     map.needsUpdate = true;
     const material = new THREE.ShaderMaterial({
-      glslVersion: THREE.GLSL3, uniforms: { ...uniforms, values: { value: map }, dimensions: { value: new THREE.Vector2(topology.columns, topology.rows) } },
+      glslVersion: THREE.GLSL3, uniforms: { ...uniforms, opacity:sliceOpacity, values: { value: map }, dimensions: { value: new THREE.Vector2(topology.columns, topology.rows) } },
       defines: linearFloat ? {} : { MANUAL_FILTER: 1 },
       side: THREE.DoubleSide, transparent: true, depthWrite: false, depthTest: false, toneMapped: false,
       vertexShader: 'out vec2 sampleUv;out vec3 sampleWorld;void main(){sampleUv=uv;sampleWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
@@ -126,16 +128,16 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
       uniforms.quantity.value = quantity === 'primary' ? 0 : quantity === 'residual' ? 1 : 2;
       uniforms.valueRange.value.set(...range);
       uniforms.palette.value.forEach((c, i) => c.set((quantity === 'reduction' ? reductionColors : pressureColors)[i]));
-      volume.visible = slice === 'volume';
+      showingVolume=slice==='volume';volume.visible=showingVolume;uniforms.opacity.value=requestedOpacity*(showingVolume?.42:1);sliceOpacity.value=requestedOpacity*(showingVolume?.58:1);
       for (const [axis, row] of slices) {
-        row.mesh.visible = slice === axis;
+        row.mesh.visible = slice === axis || showingVolume && (axis==='x'||axis==='y');
         const pixels = row.texture.image.data as Float32Array;
         row.sampleIndices.forEach((sample, i) => { pixels[i * 2] = displayEnergy(frame.primarySpl[sample]); pixels[i * 2 + 1] = displayEnergy(frame.residualSpl[sample]); });
         row.texture.needsUpdate = true;
       }
     },
     setClip(plane: THREE.Plane | null) { uniforms.clipped.value = plane ? 1 : 0; if (plane) uniforms.clip.value.set(plane.normal.x, plane.normal.y, plane.normal.z, plane.constant); },
-    setOpacity(value: number) { uniforms.opacity.value = value; },
+    setOpacity(value: number) { requestedOpacity=value;uniforms.opacity.value=value*(showingVolume?.42:1);sliceOpacity.value=value*(showingVolume?.58:1); },
     dispose() { texture.dispose(); volume.geometry.dispose(); volumeMaterial.dispose(); slices.forEach(row => { row.texture.dispose(); row.mesh.geometry.dispose(); row.mesh.material.dispose(); }); group.removeFromParent(); group.clear(); },
   };
 }

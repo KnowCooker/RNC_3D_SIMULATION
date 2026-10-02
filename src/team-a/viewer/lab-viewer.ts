@@ -8,7 +8,7 @@ import type { AssetBodyMode, AssetSectionAxis } from './asset-inspection';
 import { createSectionDisplay } from './section-display';
 import { createSceneStage, type RoadSurface, type StageMode } from './scene-stage';
 import type { GalleryEnvironment } from './champagne-gallery';
-import { labLayout, P7_LAYOUT_ID, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
+import { labLayout, P7_LAYOUT_ID, registeredVehicleLayout, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
 import { describeVehiclePart, featuredVehicleParts } from './part-guide';
 import { createFieldPoints, createFieldPointsForSlice, fieldFrameMatchesPoints, type SliceAxis } from './field-slices';
@@ -17,6 +17,7 @@ import { fieldValues, improvementFieldRange, pairedFieldRange, pressureColors, r
 import { createCameraMotion } from './camera-motion';
 import { createDrivingView } from './driving-view';
 import { createWheelMotion } from './wheel-motion';
+import { sampleDrivingRoute } from './driving-route';
 import { travelDistance } from './driving-state';
 import './viewer.css';
 
@@ -119,7 +120,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       : `路面材质预览 · 声学计算仍按左侧粗糙度 ${config?.roadRoughness.toFixed(2) ?? '—'}`;
   }
   function focusStageCamera() {
-    if(stage.mode==='road'&&driving&&showroomModel?.assetId==='xpeng-p7plus'){driving.focus();return;}
+    if(stage.mode==='road'&&driving&&showroomModel?.assetId.startsWith('xpeng-')){driving.focus();return;}
     if (stage.mode === 'gallery') { focusCamera([6.7, 2.6, 7.6], [0, .8, 0]); return; }
     if (showroomActive && showroomModel?.assetId === 'xpeng-p7plus') {
       const compact = host.clientWidth < 900;
@@ -132,15 +133,16 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   function applyStage() {
     host.dataset.stage=stage.mode;
-    driving?.enable(stage.mode==='road'&&showroomModel?.assetId==='xpeng-p7plus');
+    driving?.enable(stage.mode==='road'&&!!showroomModel?.assetId.startsWith('xpeng-'));
     scene.fog=stage.mode==='road'?new THREE.Fog('#c6d1cf',140,370):null;
     stage.setClearBay(showroomActive && !!showroomModel?.assetId.startsWith('xpeng-'));
     stage.road.visible = stage.mode === 'road'; stage.workshop.visible = stage.mode === 'workshop';
     ground.visible = false; stripes.visible = false;
     scene.background = new THREE.Color(stage.mode === 'gallery' ? '#ead8bf' : stage.mode === 'road' ? '#bbd3dc' : '#263744');
+    key.position.set(4,7,5);fill.position.set(-5,4,-5);
     const gallery=stage.mode==='gallery',light=stage.gallery.lighting;
     scene.environmentIntensity = gallery ? light.intensity : stage.mode === 'road' ? 1 : 0.8;
-    scene.environmentRotation.y=gallery?light.rotation:0;
+    scene.environmentRotation.set(0,gallery?light.rotation:0,0);
     renderer.toneMappingExposure = gallery ? light.exposure : stage.mode === 'road' ? .93 : 1.0;
     key.color.set(gallery?light.sun:'#fff0d7');key.intensity=gallery?light.strength:2.7;
     key.position.set(...(gallery?[-10,8,-9]:[4,7,5]) as [number,number,number]);
@@ -227,8 +229,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   function focusCockpit() { focusCamera([0.05, 1.85, -0.25], [0.1, 1.25, 1.15]); }
   let showroomModel: ShowroomModel | null = null;
-  const p7Layout = () => config?.layoutId === P7_LAYOUT_ID;
-  const acousticAsset = () => !showroomActive || (p7Layout() && showroomModel?.assetId === 'xpeng-p7plus');
+  const vehicleLayout = () => registeredVehicleLayout(config?.layoutId);
+  const p7Layout = () => !!vehicleLayout();
+  const acousticAsset = () => !showroomActive || (!!vehicleLayout() && showroomModel?.assetId === vehicleLayout()?.assetId);
   let hardwareOverlay = false;
   const hardwareVisible = () => acousticAsset() && (!host.dataset.presentationPage || host.dataset.presentationPage === 'field' || host.dataset.presentationPage === 'structure' && (hardwareOverlay || editMode));
   let showroomActive = false, showroomRequest = 0, disposed = false;
@@ -255,10 +258,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   xpengPicker.textContent = '小鹏车型';
   const xpengSelect = document.createElement('select'); xpengSelect.setAttribute('aria-label', '选择小鹏车型');
   for (const spec of xpengCatalog) xpengSelect.add(new Option(spec.name, spec.id));
-  xpengSelect.onchange = () => { void enterShowroom(xpengSelect.value as XPengId); };
+  xpengSelect.onchange = () => { host.dispatchEvent(new CustomEvent('xpeng-vehicle-change',{bubbles:true,detail:xpengSelect.value})); };
   xpengPicker.append(xpengSelect); showroomPanel.prepend(xpengPicker);
   const xpengLaunch = document.createElement('button'); xpengLaunch.type = 'button'; xpengLaunch.className = 'lab-xpeng-launch';
-  xpengLaunch.textContent = '小鹏 · 五车重建'; xpengLaunch.onclick = () => { void enterShowroom(xpengSelect.value as XPengId); }; host.append(xpengLaunch);
+  xpengLaunch.textContent = '小鹏 · 五车重建'; xpengLaunch.onclick = () => { host.dispatchEvent(new CustomEvent('xpeng-vehicle-change',{bubbles:true,detail:xpengSelect.value})); }; host.append(xpengLaunch);
   const xpengActions = document.createElement('div'); xpengActions.className = 'lab-xpeng-actions'; xpengActions.hidden = true;
   const xpengExplode = document.createElement('button'); xpengExplode.type = 'button'; xpengExplode.textContent = '展开全部';
   xpengExplode.onclick = () => { showroomDetached.clear(); showroomModel?.parts.forEach(p => showroomDetached.add(p.id)); showroomAuto = null; refreshShowroomAssembly(); focusCamera([10.5,5.1,12.4],[0,-.4,0]); };
@@ -469,7 +472,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const bodyMaterials = new Map<THREE.Material, { opacity: number; transparent: boolean; depthWrite: boolean }>();
   const sourceAnchor = (i: number): Anchor => ({ origin: labLayout(config!).sources[i], mountPart: p7Layout() ? `wheel-${i<2?1:-1}-${i%2===0?1:-1}` : `wheel-${corners[i]}` });
   const speakerAnchor = (i: number): Anchor => ({ origin: labLayout(config!).speakers[i], mountPart: p7Layout() ? `${i<2?'front':'rear'}-door-${i%2===0?1:-1}` : `door-${i < 2 ? 'front' : 'rear'}-${i % 2 === 0 ? 1 : -1}` });
-  const micAnchor = (i: number): Anchor => ({ origin: labLayout(config!).microphones[i], mountPart: p7Layout() ? `seat-${i<2?1:2}-${i<2?i+1:i===2?1:3}` : `seat-${[1, 2, 3, 5][i]}` });
+  const micAnchor = (i: number): Anchor => ({ origin: labLayout(config!).microphones[i], mountPart: p7Layout() ? `seat-${i<2?1:2}-${i<2?i+1:i===2?1:vehicleLayout()?.secondRowSeats??3}` : `seat-${[1, 2, 3, 5][i]}` });
   const markerRows: { mesh: THREE.Mesh; button: HTMLButtonElement; line: SVGLineElement; selection: LabSelection; source: boolean; anchor: Anchor }[] = [];
   const waveRows: THREE.Mesh[] = [];
   const pathRows: { line: THREE.Line; dot: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; start: Anchor; end: Anchor; primary: boolean; channel: number; mic: number }[] = [];
@@ -520,7 +523,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
 
   function displayPosition(anchor: Anchor, target: THREE.Vector3) {
     target.set(...anchor.origin);
-    if (p7Layout() && showroomActive && showroomModel?.assetId === 'xpeng-p7plus') {
+    if (p7Layout() && showroomActive && showroomModel && acousticAsset()) {
       const object = anchor.mountPart ? showroomModel.group.getObjectByName(anchor.mountPart) : null;
       if (object) target.add(object.position);
       return target;
@@ -586,14 +589,14 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     host.append(button); markerRows.push({ mesh, button, line, selection, source, anchor });
   }
   function setConfig(next: LabConfig) {
-    if (config && config.vehicle !== next.vehicle) leaveShowroom();
+    if (config && config.vehicle !== next.vehicle && !registeredVehicleLayout(next.layoutId)) leaveShowroom();
     config = structuredClone(next);
     stage.setRoadSurface(next.roadRoughness>=1.7?'gravel':next.roadRoughness>=.9?'coarse':'smooth');
     refreshRoadSurface();
     const key = JSON.stringify([next.layoutId, next.vehicle, next.references, next.speakerEnabled]);
     if (key === signature) return;
     signature = key;
-    frame = null; paintField();
+    frame = null; lockedFieldRange=null;lockedImprovementRange=null;rangeButton.setAttribute('aria-pressed','false');rangeButton.textContent='增强局部对比';paintField();
     if (sections) { scene.remove(sections.group); sections.dispose(); }
     if (model) { scene.remove(model.group); model.dispose(); }
     model = createVehicleModel(next.vehicle); scene.add(model.group);
@@ -653,7 +656,11 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   function movingFieldSlice() { return fieldSlice !== 'volume' && clipAxis === fieldSlice && Number.isFinite(clipValue); }
   function syncFieldSampling() {
-    const next = p7Layout() ? createFieldPoints().map(([x,y,z]): Vec3 => [x, .68 + (y-.85)*.72, z*.90]) : createFieldPoints();
+    const row=vehicleLayout();
+    const next = config?.layoutId===P7_LAYOUT_ID ? createFieldPoints().map(([x,y,z]): Vec3 => [x, .68 + (y-.85)*.72, z*.90]) : row ? createFieldPoints().map(([x,y,z]):Vec3 => {
+      const front=row.seatZ[0]+.5,rear=row.seatZ[row.seatZ.length-1]-.25;
+      return [x*(row.layout.speakers[0][0]/.84),.65+(y-.85)/.84*(row.layout.roof-.70),rear+(z+1.2)/2.03*(front-rear)];
+    }) : createFieldPoints();
     if (movingFieldSlice()) {
       const sampled = createFieldPointsForSlice(fieldSlice as SliceAxis, clipValue);
       const component = {x:0,y:1,z:2}[fieldSlice as SliceAxis];
@@ -710,7 +717,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     }
     if (!fieldNote.hidden) {
       if (fieldSlice === 'volume') {
-        fieldNoteDetail.textContent = '280个真实采样点 · 连续体积透视；空间按声能插值，仅用于显示，色标范围见右侧图例';
+        fieldNoteDetail.textContent = '280个真实采样点 · 连续体积与等值切面；空间按声能插值，仅用于显示，色标范围见右侧图例';
         fieldNoteCompact.textContent = '280点 · 连续体积 · 声能插值';
       } else {
         const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
@@ -874,13 +881,14 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     focus:focusCamera,model:()=>showroomActive?showroomModel:null,
     body:solid=>{if(showroomModel)setShowroomBody(solid?'solid':'transparent');},
     road:()=>{stage.setMode('road');applyStage();},
-    gallery:()=>{stage.setMode('gallery');applyStage();if(fieldMode!=='off')setShowroomBody('transparent');focusPresentationCamera();},
+    inspect:()=>{stage.setMode('road');applyStage();fieldMode=fieldMode==='off'?'residual':fieldMode;if(frame?.valid&&!lockedFieldRange){lockedFieldRange=pairedFieldRange(frame);lockedImprovementRange=improvementFieldRange(frame);rangeButton.setAttribute('aria-pressed','true');rangeButton.textContent='恢复标准色标';}setShowroomBody('transparent');host.dispatchEvent(new CustomEvent('driving-field-inspect',{bubbles:true}));},
     assemble:()=>{showroomDetached.clear();showroomAuto=null;showroomProgress.clear();showroomModel?.parts.forEach(p=>showroomModel!.setPartProgress(p.id,0));showroomModel?.inspection.select(null);setShowroomSection('none',0);},
   });
   applyStage(); reset();
   if (['#xpeng', '#p7plus'].includes(window.location.hash)) queueMicrotask(() => { if (!disposed) void enterShowroom(window.location.hash === '#p7plus' ? 'p7plus' : 'x9'); });
   return {
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
+    get acousticAvailable() { return acousticAsset(); },
     get hasValidField() { return !!frame?.valid && acousticAsset(); },
     renderPreview(canvas: HTMLCanvasElement, top = false, acoustic = false) {
       if (!showroomModel || !showroomActive) return;
@@ -957,7 +965,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const entering = fieldMode === 'off' && mode !== 'off';
       fieldMode = mode; fieldSlice = slice; probeIndex = null;
       if (entering) { fieldFocus = true; if(stage.mode!=='road')focusPresentationCamera(); }
-      if (mode === 'off') fieldFocus = false;
+      if (mode === 'off') {fieldFocus = false;driving?.clearOverlay();}
       refreshFieldFocus(); applyStage(); syncFieldSampling(); applyClipping(); paintField();
     },
     updateField(value: FieldFrame) { frame = value; paintField(); },
@@ -993,16 +1001,25 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       }
       const distance=stage.mode==='road'?travelDistance(time,config?.speedKph??0):0;
       model?.wheels.forEach(wheel=>{wheel.rotation.x=distance/.4;});
+      const routeBefore=sampleDrivingRoute(distance-.1),routeAfter=sampleDrivingRoute(distance+.1);
+      const curvature=(Math.atan2(routeAfter.tangent.x,routeAfter.tangent.z)-Math.atan2(routeBefore.tangent.x,routeBefore.tangent.z))/.2;
+      const wheelbase=config?labLayout(config).sources[0][2]-labLayout(config).sources[2][2]:3;
       for(const part of showroomModel?.parts??[]){
         const wheel=showroomModel!.group.getObjectByName(part.id) as THREE.Group|undefined;
         if(!wheel?.userData.rollingCenter)continue;
         let motion=rollingWheels.get(wheel);if(!motion){motion=createWheelMotion(wheel,new THREE.Vector3(...wheel.userData.rollingCenter as [number,number,number]),wheel.userData.rollingRadius);rollingWheels.set(wheel,motion);}
-        motion.setDistance(distance);
+        motion.setDistance(distance);motion.setSteering(stage.mode==='road'&&wheel.userData.axleZ>0?Math.atan(wheelbase*curvature/(1-curvature*wheel.userData.rollingCenter[0])):0);
       }
       stripes.visible=false;
       stage.update(time,config?.speedKph??0);
+      if(stage.mode==='road'){
+        const inverse=sampleDrivingRoute(distance).rotation.invert();
+        key.position.set(4,7,5).applyQuaternion(inverse);fill.position.set(-5,4,-5).applyQuaternion(inverse);
+        scene.environmentRotation.setFromQuaternion(inverse);
+      }
       scene.environment = (stage.mode === 'gallery'||stage.mode==='road') && stage.gallery.environmentTexture ? stage.gallery.environmentTexture : environment.texture;
-      driving?.update(time,config?.speedKph??0,stage.driving.ready,stage.driving.failed);
+      driving?.update(time,config?.speedKph??0,stage.driving.ready,stage.driving.failed,Number(stage.road.userData.grade??0));
+      host.dataset.routeGrade=String(stage.road.userData.grade??0);host.dataset.routeHeading=String(stage.road.userData.heading??0);
       const environmentReady=stage.gallery.group.userData.environmentReady as string;
       if(host.dataset.environmentReady!==environmentReady)host.dataset.environmentReady=environmentReady;
       host.dataset.environment=stage.gallery.environment;

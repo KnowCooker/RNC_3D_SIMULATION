@@ -1,0 +1,14 @@
+Already up to date
+Done in 382ms using pnpm v11.19.0
+pnpm.cmd : $ pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build
+At line:32 char:1
++ pnpm.cmd check *> test-results/experience-refine/check.log
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ pnpm typechec...t && pnpm build:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+$ tsc --noEmit
+src/team-a/viewer/champagne-gallery.ts(23,41): error TS2448: Block-scoped variable 'group' used before its declaration.
+src/team-a/viewer/champagne-gallery.ts(23,41): error TS2454: Variable 'group' is used before being assigned.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.

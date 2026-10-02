@@ -112,8 +112,9 @@ export function labLayoutId(config: Pick<LabConfig, 'layoutId'>): string {
 /** Reject unknown layouts and unsupported powertrains before computing any paths. */
 export function supportedLabLayoutId(config: Pick<LabConfig, 'layoutId'> & Partial<Pick<LabConfig, 'vehicle'>>): string {
   const id = labLayoutId(config);
-  if (id === P7_LAYOUT_ID) {
-    if (config.vehicle !== undefined && config.vehicle !== 'bev') throw new Error('P7+ 当前布局仅支持纯电后驱版本');
+  const registered = registeredVehicleLayout(id);
+  if (registered && registered.id === id) {
+    if (config.vehicle !== undefined && config.vehicle !== registered.vehicle) throw new Error(`${registered.name} 当前布局仅支持 ${registered.vehicle==='bev'?'纯电':'增程'}版本`);
     return id;
   }
   if (id !== TEACHING_LAYOUT_ID) throw new Error(`物理布局 ${String(id)} 尚未接入声学路径和声场，不能运行实验`);
@@ -150,10 +151,37 @@ const P7_LAYOUT: LabLayout = {
 };
 export function labLayout(config: Pick<LabConfig,'layoutId'> & Partial<Pick<LabConfig,'vehicle'>>): LabLayout {
   const id = supportedLabLayoutId(config);
-  return id === P7_LAYOUT_ID ? P7_LAYOUT : { microphones: MIC_POSITIONS, speakers: SPEAKER_POSITIONS, sources: SOURCE_POSITIONS, floor: .55, roof: 1.9 };
+  return registeredVehicleLayout(id)?.layout ?? { microphones: MIC_POSITIONS, speakers: SPEAKER_POSITIONS, sources: SOURCE_POSITIONS, floor: .55, roof: 1.9 };
 }
 export function defaultP7Config(): LabConfig {
   return { ...defaultLabConfig(), layoutId: P7_LAYOUT_ID, vehicle: 'bev', references: P7_LAYOUT.sources.map(([x,,z],i) => ({
     id: `ref-${i+1}`, name: `REF ${['FL','FR','RL','RR'][i]}`, position: [x*.82,.59,z], mountPart: `suspension-${i<2?1:-1}`,
   })) };
+}
+
+/** Dimension-constrained authored layouts, NOT measured XPeng transfer functions.
+ * Four controlled positions are first/second-row left/right. Third rows remain
+ * queryable field locations; they are not extra error microphones/controllers. */
+export interface RegisteredVehicleLayout {
+  id: string; assetId: string; name: string; vehicle: VehicleKind; layout: LabLayout;
+  seatZ: readonly number[]; secondRowSeats: 2 | 3;
+}
+function fourWheelLayout(width:number,wheelbase:number,roof:number,frontSeat:number,rearSeat:number,frontSpeaker:number,rearSpeaker:number):LabLayout {
+  const x=width/2-.115, sx=width/2-.15;
+  return {sources:[[x,.1,wheelbase/2],[-x,.1,wheelbase/2],[x,.1,-wheelbase/2],[-x,.1,-wheelbase/2]],
+    microphones:[[.48,1.24,frontSeat-.14],[-.48,1.24,frontSeat-.14],[.48,1.24,rearSeat-.14],[-.48,1.24,rearSeat-.14]],
+    speakers:[[sx,.65,frontSpeaker],[-sx,.65,frontSpeaker],[sx,.65,rearSpeaker],[-sx,.65,rearSpeaker]],floor:.405,roof};
+}
+export const XPENG_LAB_LAYOUTS: readonly RegisteredVehicleLayout[] = [
+  {id:P7_LAYOUT_ID,assetId:'xpeng-p7plus',name:'小鹏 P7+',vehicle:'bev',layout:P7_LAYOUT,seatZ:[.39,-.82],secondRowSeats:3},
+  {id:'xpeng-x9-erev-v1',assetId:'xpeng-x9',name:'小鹏 X9',vehicle:'erev',layout:fourWheelLayout(1.988,3.160,1.70,.83,-.43,.915,-.505),seatZ:[.83,-.43,-1.52],secondRowSeats:2},
+  {id:'xpeng-l03-bev-v1',assetId:'xpeng-l03',name:'小鹏 MONA L03',vehicle:'bev',layout:fourWheelLayout(1.920,2.850,1.52,.45,-.72,.48,-.635),seatZ:[.45,-.72],secondRowSeats:3},
+  {id:'xpeng-m03-bev-v1',assetId:'xpeng-m03',name:'小鹏 MONA M03',vehicle:'bev',layout:fourWheelLayout(1.896,2.815,1.36,.45,-.72,.50,-.61),seatZ:[.45,-.72],secondRowSeats:3},
+  {id:'xpeng-gx-erev-v1',assetId:'xpeng-gx',name:'小鹏 GX',vehicle:'erev',layout:fourWheelLayout(1.999,3.115,1.72,.66,-.48,.605,-.60),seatZ:[.66,-.48,-1.50],secondRowSeats:2},
+];
+export function registeredVehicleLayout(id: string | undefined) { return XPENG_LAB_LAYOUTS.find(row=>row.id===id || row.assetId===id); }
+export function defaultXPengConfig(assetId: string): LabConfig {
+  const row=registeredVehicleLayout(assetId);if(!row)throw new Error(`未注册车型 ${assetId}`);
+  if(row.id===P7_LAYOUT_ID)return defaultP7Config();
+  return {...defaultLabConfig(),layoutId:row.id,vehicle:row.vehicle,references:row.layout.sources.map(([x,,z],i)=>({id:`ref-${i+1}`,name:`REF ${['FL','FR','RL','RR'][i]}`,position:[x*.82,.59,z],mountPart:`suspension-${i<2?1:-1}`}))};
 }

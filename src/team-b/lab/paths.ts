@@ -1,4 +1,4 @@
-import { labLayout, P7_LAYOUT_ID, type LabConfig, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
+import { labLayout, registeredVehicleLayout, type LabConfig, type Vec3, type VehicleKind } from '../../shared/lab-contracts';
 import { RECORDED_PROFILE } from './recorded-profile';
 import { TEACHING_PRESSURE_GAIN } from './pressure-calibration';
 
@@ -29,7 +29,7 @@ function fractionalPath(components: { delay: number; gain: number }[], shape: nu
 function acousticPath(config: LabConfig, source: Vec3, point: Vec3, gain: number, extraDelay: number, secondary: boolean): SparsePath {
   const profile = VEHICLE_ACOUSTICS[config.vehicle], fs = config.sampleRateHz, c = soundSpeed(config.temperatureC);
   // Image sources give a floor and roof early reflection; this is not FEM/BEM or a measured cabin.
-  const layout = labLayout(config), roof = config.layoutId === P7_LAYOUT_ID ? layout.roof : profile.roof;
+  const layout = labLayout(config), roof = registeredVehicleLayout(config.layoutId) !== undefined ? layout.roof : profile.roof;
   const positions: Vec3[] = [source, [source[0], 2 * layout.floor - source[1], source[2]], [source[0], 2 * roof - source[1], source[2]]];
   const relative = [1, profile.reflection, profile.reflection * 0.6];
   return fractionalPath(positions.map((position, i) => {
@@ -53,7 +53,7 @@ export function primaryPath(config: LabConfig, sourceIndex: number, point: Vec3)
     const wheel = labLayout(config).sources[sourceIndex], anchor = labLayout(config).microphones[sourceIndex];
     const profile = VEHICLE_ACOUSTICS[config.vehicle];
     const radiator: Vec3 = [wheel[0] * .72, .58, wheel[2] * .85];
-    const layout = labLayout(config), roof = config.layoutId === P7_LAYOUT_ID ? layout.roof : profile.roof;
+    const layout = labLayout(config), roof = registeredVehicleLayout(config.layoutId) !== undefined ? layout.roof : profile.roof;
     const positions: Vec3[] = [radiator, [radiator[0], 2*layout.floor-radiator[1], radiator[2]], [radiator[0], 2*roof-radiator[1], radiator[2]]];
     const locality = .05 + .95 * Math.exp(-(((point[0]-anchor[0])/.4)**2 + ((point[2]-anchor[2])/.6)**2));
     const scale = RECORDED_NOISE_PRESSURE_GAIN * 10 ** ((config.levelOffsetDb ?? 0) / 20);

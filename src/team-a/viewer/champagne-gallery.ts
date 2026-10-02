@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Reflector } from 'three/addons/objects/Reflector.js';
+import { createScenicTerrain } from './scenic-terrain';
 import { loadHDRTexture } from './hdr-texture';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
@@ -24,6 +25,7 @@ export function createChampagneGallery() {
   const backdrops=new Map<GalleryEnvironment,THREE.Texture>(),backdropPending=new Set<GalleryEnvironment>();
   const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>();
   const group=new THREE.Group();group.name='champagne-lakeside-gallery';
+  const landscape=createScenicTerrain();group.add(landscape.group);
   const mat=(color:string,roughness=.7,metalness=0)=>{const m=new THREE.MeshStandardMaterial({color,roughness,metalness});materials.add(m);return m;};
   const stone=mat('#d5c8b6',.3),bronze=mat('#b49a76',.24,.7),ivory=mat('#f1e6d3',.65),trunk=mat('#514234',.95);
   const foliage=mat('#576044',.9),bark=mat('#7b6b54',.9);
@@ -110,7 +112,7 @@ export function createChampagneGallery() {
   }
   function trimCache(){for(const cache of [panoramas,backdrops])for(const [id,texture] of cache){if(cache.size<=2)break;if(id!==environment){cache.delete(id);texture.dispose();}}}
   function setEnvironment(value:GalleryEnvironment){
-    environment=value;group.userData.panoramaFailed=false;
+    environment=value;landscape.setEnvironment(value);group.userData.panoramaFailed=false;
     const cachedBackdrop=backdrops.get(value);if(cachedBackdrop){backdrops.delete(value);backdrops.set(value,cachedBackdrop);}
     if(scenicBackdrops[value]&&!backdrops.has(value)&&!backdropPending.has(value)){backdropPending.add(value);new THREE.TextureLoader().load(scenicBackdrops[value]!,texture=>{backdropPending.delete(value);if(disposed){texture.dispose();return;}texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;backdrops.set(value,texture);trimCache();if(value===environment)activate();},undefined,()=>{backdropPending.delete(value);if(!disposed&&value===environment)group.userData.panoramaFailed=true;});}
     const cached=panoramas.get(value);if(cached){panoramas.delete(value);panoramas.set(value,cached);}activate();if(cached||pending.size>0)return;pending.add(value);
@@ -119,6 +121,6 @@ export function createChampagneGallery() {
   setEnvironment(environment);
   return {group,floor,get environmentTexture(){return panoramas.get(environment)??null;},get backgroundTexture(){return backdrops.get(environment)??null;},get environment(){return environment;},get lighting(){return galleryEnvironments[environment];},setEnvironment,
     resize(width:number,height:number){const w=Math.min(2048,Math.max(768,Math.round(width))),h=Math.min(1440,Math.max(512,Math.round(height)));const target=mirror.getRenderTarget();if(target.width!==w||target.height!==h){target.setSize(w,h);(mirror.material as THREE.ShaderMaterial).uniforms.texel.value.set(1/w,1/h);}},
-    dispose(){disposed=true;group.removeFromParent();mirror.dispose();panoramas.forEach(t=>t.dispose());panoramas.clear();backdrops.forEach(t=>t.dispose());backdrops.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());},
+    dispose(){disposed=true;landscape.dispose();group.removeFromParent();mirror.dispose();panoramas.forEach(t=>t.dispose());panoramas.clear();backdrops.forEach(t=>t.dispose());backdrops.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());},
   };
 }

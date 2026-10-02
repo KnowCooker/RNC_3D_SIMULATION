@@ -19,7 +19,7 @@ export function createXPengModel(id: XPengId): ShowroomModel {
 function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel {
   const profile = xpengProfiles[id], spec = getXPengSpec(id);
   const s = { ...spec, roofFront:profile.roofFront, roofRear:profile.roofRear, screenFront:profile.screenFront, screenRear:profile.screenRear, roofWidth: profile.roofHalf, belt: sampleXPeng(profile.shoulder,0) };
-  const group = new THREE.Group(); group.name = `xpeng-${id}`; group.userData.revision = `${id}-photo-v3`;
+  const group = new THREE.Group(); group.name = `xpeng-${id}`; group.userData.revision = `${id}-photo-v4`;
   const shell: THREE.Mesh[] = [], geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>();
   const parts: { id: string; name: string; object: THREE.Group; offset: THREE.Vector3 }[] = [];
   function mat(color: string, roughness = .4, metalness = 0) {
@@ -27,7 +27,7 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
   }
   const paint = mat(s.color, .28, .40); paint.clearcoat = 1; paint.clearcoatRoughness = .21;
   const black = mat('#11161b', .28, .12), glass = mat('#0b1620', .13, .02);
-  glass.transparent = true; glass.opacity = .95; glass.envMapIntensity = .7; glass.depthWrite = false;
+  glass.name='xpeng-window-glass'; glass.transparent = true; glass.opacity = .95; glass.envMapIntensity = .38; glass.roughness=.18; glass.depthWrite = false;
   const rubber = mat('#17191b', .92), alloy = mat('#a7afb3', .23, .9), darkAlloy = mat('#414a50', .52, .7);
   const leather = mat(id === 'gx' || id === 'x9' ? '#b8946f' : '#c8beb1', .83);
   const seam = mat('#827361', .85), screen = mat('#142c35', .22, .2), batteryMat = mat('#486574', .63, .5);
@@ -56,7 +56,7 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
   const width = (z:number) => sampleXPeng(profile.width,z);
   const belt = (z:number) => sampleXPeng(profile.shoulder,z);
   // Cross-section is a function of world height. Wheel cutouts must not reshape the door skin.
-  const sideX=(z:number,y:number)=>{const t=THREE.MathUtils.clamp((y-.23)/(belt(z)-.23),0,1);return width(z)+sampleXPeng([[0,-.065],[.13,-.028],[.38,-.017],[.68,0],[.84,-.006],[1,-.036]],t);};
+  const sideX=(z:number,y:number)=>{const t=THREE.MathUtils.clamp((y-.23)/(belt(z)-.23),0,1);return width(z)+sampleXPeng(id==='x9'?[[0,-.058],[.13,-.012],[.36,-.040],[.65,-.006],[.84,0],[1,-.026]]:id==='gx'?[[0,-.045],[.13,-.008],[.38,-.046],[.66,-.012],[.84,0],[1,-.032]]:id==='l03'?[[0,-.062],[.15,-.015],[.38,-.050],[.70,-.006],[.86,0],[1,-.036]]:[[0,-.062],[.13,-.020],[.38,-.035],[.69,0],[.84,-.003],[1,-.032]],t);};
   const windowRear=({x9:-2.20,l03:-1.69,m03:-1.74,gx:-2.11})[id];
   const low = (z:number) => { let y=.23; for(const axle of [-wheelZ,wheelZ]){const d=z-axle,r=tireR+.043;if(Math.abs(d)<r)y=Math.max(y,tireR+Math.sqrt(r*r-d*d));}return y; };
   const roofY = (z:number) => sampleXPeng(profile.roof,z)-.023;
@@ -94,6 +94,8 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
       surface(panel, (u, v) => { const z = mix(za + .0025, zb - .0025, u), y = mix(low(z), belt(z), v); return [side * sideX(z,y), y, z]; }, paint, true, 128, 32);
       surface(panel, (u, v) => { const z = mix(za + .0025, zb - .0025, u); const top = z >= s.screenFront ? hoodEdge(z) : z <= s.screenRear ? belt(z) + .035 : belt(z) + .016; return [side * sideX(z,mix(belt(z),top,v)), mix(belt(z), top, v), z]; }, paint, true, 32, 2);
       surface(panel,(u,v)=>{const z=mix(za+.003,zb-.003,u),y=low(z),x=sideX(z,y);return [side*(x-v*.06),y-.012*v,z];},paint,true,72,4);
+      for(const axle of [-wheelZ,wheelZ]){const radius=tireR+.043,a=Math.max(za+.005,axle-radius+.002),b=Math.min(zb-.005,axle+radius-.002);if(b>a)surface(panel,(u,v)=>{const z=mix(a,b,u),y=tireR+Math.sqrt(Math.max(0,radius*radius-(z-axle)**2));return [side*(sideX(z,y)-v*.014),y-v*.008,z];},paint,true,64,4);}
+
       // Sill/shoulder creases follow each physical panel; seams remain visible between assemblies.
       tube(panel, Array.from({ length: 20 }, (_, i): V => { const z = mix(za + .014, zb - .014, i / 19); return [side * (sideX(z,belt(z)-.085) + .001), belt(z) - .085, z]; }), .003, paint, true);
       if (zb > s.screenRear && za < s.screenFront) {
@@ -175,9 +177,9 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
         ribbon(face,end,path,.023,black,.012);ribbon(face,end,path,.010,white,.029);
         for(const side of [-1,1]){
           if(id==='x9'){
-            patch(face,end,[[side*.50,top-.11],[side*.88,top-.085],[side*.88,top-.22],[side*.61,top-.24]],black);
+            patch(face,end,[[side*.49,top-.105],[side*.90,top-.080],[side*.88,top-.177],[side*.63,top-.207]],black);
             for(let k=0;k<3;k++){
-              const x=side*(.64+k*.085),y=top-.167;
+              const x=side*(.64+k*.085),y=top-.150;
               const optic=mesh(face,new THREE.SphereGeometry(1,24,12),alloy,[x,y,endZ(end,x,y)+.018],true);optic.scale.set(.034,.017,.008);
               ribbon(face,end,[[x-.027,y-.013],[x+.027,y-.013]],.004,white,.03);
             }
@@ -240,7 +242,7 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
   for (const axle of [-1, 1]) for (const side of [-1, 1]) {
     const z = axle * wheelZ, x = side * (half - .115);
     const wheel = part(`wheel-${axle}-${side}`, `${axle === 1 ? '前' : '后'}${side === 1 ? '左' : '右'}轮 / 制动`, [side * 1.45, 0, axle * .22]);
-    wheel.userData.axleZ = z;
+    wheel.userData.axleZ = z; wheel.userData.rollingCenter=[x,tireR,z];wheel.userData.rollingRadius=tireR;
     const rimR=profile.rim;
     const tireProfile=[[rimR,-.123],[tireR-.031,-.123],[tireR-.004,-.095],[tireR,-.060],[tireR,.060],[tireR-.004,.095],[tireR-.031,.123],[rimR,.123],[rimR,-.123]].map(([r,y])=>new THREE.Vector2(r,y));
     const tire=mesh(wheel,new THREE.LatheGeometry(tireProfile,80),rubber,[x,tireR,z]);tire.rotation.z=Math.PI/2;
@@ -261,13 +263,16 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
         for(let k=0;k<pos.count;k++){const r=pos.getX(k),t=pos.getY(k),depth=pos.getZ(k);pos.setXYZ(k,x+side*(.125+depth),tireR+r*Math.cos(a)-t*Math.sin(a),z+r*Math.sin(a)+t*Math.cos(a));}
         g.computeVertexNormals();mesh(wheel,g,alloy);
       }else{
-        const spoke=box(wheel,[.018,rimR*.75,.016],[x+side*.13,tireR+Math.cos(a)*rimR*.60,z+Math.sin(a)*rimR*.60],alloy,.004);spoke.rotation.x=a;
+        const outline=new THREE.Shape([[.064,-.011],[rimR*.80,-.014],[rimR*.98,-.022],[rimR*.98,.011],[.080,.008]].map(([r,t])=>new THREE.Vector2(r,t)));
+        const g=new THREE.ExtrudeGeometry(outline,{depth:.010,bevelEnabled:true,bevelSize:.0015,bevelThickness:.0015,bevelSegments:2,steps:1});const p=g.getAttribute('position');
+        for(let j=0;j<p.count;j++){const r=p.getX(j),t=p.getY(j),d=p.getZ(j);p.setXYZ(j,x+side*(.125+d),tireR+r*Math.cos(a)-t*Math.sin(a),z+r*Math.sin(a)+t*Math.cos(a));}g.computeVertexNormals();mesh(wheel,g,alloy);
+        const insert=box(wheel,[.012,.038,.022],[x+side*.137,tireR+Math.cos(a)*rimR*.83,z+Math.sin(a)*rimR*.83],darkAlloy,.002);insert.rotation.x=a;
       }
     }
     const hub=mesh(wheel,new THREE.CylinderGeometry(.065,.065,.029,40),darkAlloy,[x+side*.137,tireR,z]);hub.rotation.z=Math.PI/2;
     for(const d of [-1,1])tube(wheel,[[x+side*.154,tireR-.018,z+d*.022],[x+side*.154,tireR,z],[x+side*.154,tireR+.018,z-d*.022]],.003,alloy);
     for(let i=0;i<5;i++){const a=i*Math.PI*2/5,b=mesh(wheel,new THREE.CylinderGeometry(.008,.008,.007,10),alloy,[x+side*.155,tireR+.045*Math.cos(a),z+.045*Math.sin(a)]);b.rotation.z=Math.PI/2;}
-    box(wheel,[.050,.15,.063],[x+side*.072,tireR+.01,z+.19],id==='l03'?mat('#c8ce48',.43,.4):darkAlloy,.018);
+    box(wheel,[.050,.15,.063],[x+side*.072,tireR+.01,z+.19],id==='l03'?mat('#c8ce48',.43,.4):darkAlloy,.018).name='brake-caliper';
   }
   // Authored interior topology reflects visible row counts; packaging remains schematic.
   const floor = part('platform', '地板 / 纵梁 · 结构示意', [0, .04, -1.3]);
