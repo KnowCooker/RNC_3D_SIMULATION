@@ -1,0 +1,8 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: paused road, scenery, car and wheels remain pixel-stable",
+  "checks": [
+    "experiment enters the actual road stage with the P7+ model"
+  ],
+  "errors": [],
+  "failures": []
+}

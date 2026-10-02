@@ -1,0 +1,52 @@
+[
+  {
+    "path": "src/team-a/viewer/assets/alps_field_4k.hdr",
+    "bytes": 26520861,
+    "sha256": "53a70291504177b47faf8a4dc598876e47740953d2cbc9af000d3a17095b9d42"
+  },
+  {
+    "path": "src/team-a/viewer/assets/lago_disola_4k.hdr",
+    "bytes": 26197094,
+    "sha256": "49b02525462f1e518bc39907277300d38bc611bbbc4703979d7881a9193c882c"
+  },
+  {
+    "path": "src/team-a/viewer/assets/quarry_04_4k.hdr",
+    "bytes": 24298113,
+    "sha256": "3ab1b52d0d34c8474fc1e16616d5b9f5f396eda2b5c509da3d70473f9ebb9a81"
+  },
+  {
+    "path": "src/team-a/viewer/assets/qwantani_sunset_4k.hdr",
+    "bytes": 24736295,
+    "sha256": "99ec5c2e3e7447128c09a9d74b76999907ed243aea664c3d32eb62ef7ecc3dba"
+  },
+  {
+    "path": "src/team-a/viewer/assets/gallery-coast-art-v1.png",
+    "bytes": 2437844,
+    "sha256": "762ddaf048e8d58b0a4db894f7863ee88d5603e5b97d3ff73577d735e247f0f5"
+  },
+  {
+    "path": "src/team-a/viewer/assets/gallery-desert-art-v1.png",
+    "bytes": 2038227,
+    "sha256": "8cf56cd0d583aeb5794595545db4531ce33aa454a74848e62e86a067e2c06652"
+  },
+  {
+    "path": "src/team-a/viewer/assets/gallery-coast.webp",
+    "bytes": 26814,
+    "sha256": "d4f2e1aa926b2154895157e79daef5a379e12f65702573822234605368a5a60a"
+  },
+  {
+    "path": "src/team-a/viewer/assets/gallery-desert.webp",
+    "bytes": 19072,
+    "sha256": "dba6b92536f179676d71313990d547f9d58f6a345293d42214f9c5e23759f665"
+  },
+  {
+    "path": "src/team-a/viewer/assets/gallery-mountain.webp",
+    "bytes": 19914,
+    "sha256": "aa48755fce990f1c904e702e22d6186a6438f7ae27757b5db4ea8ddabacc4286"
+  },
+  {
+    "path": "src/team-a/viewer/assets/gallery-snow.webp",
+    "bytes": 22820,
+    "sha256": "6c2f9ba7a38f6009556b4e2ddbe77d71d19de9e9222bb2cd2fd9d53d1fe4570e"
+  }
+]
