@@ -82,7 +82,10 @@ function readConfig(value: unknown): LabConfig {
   // Preserve optional absence; only the normalized copy gets the historical defaults.
   const config = Object.fromEntries([...required, ...optional].filter(key => record[key] !== undefined).map(key => [key, record[key]])) as unknown as LabConfig;
   config.references = references; config.speakerEnabled = [...record.speakerEnabled] as unknown as LabConfig['speakerEnabled'];
-  try { validateLabConfig(config); } catch { fail('INVALID_DATA', 'Invalid lab batch configuration'); }
+  // Validate shape and numeric limits without granting layout execution support.
+  // Preserve the imported identity; encode/recompute and verified metrics check
+  // supportedLabLayoutId on the actual configuration independently.
+  try { validateLabConfig({ ...config, layoutId: TEACHING_LAYOUT_ID }); } catch { fail('INVALID_DATA', 'Invalid lab batch configuration'); }
   return config;
 }
 function normalize(config: LabConfig): NormalizedConfig {
@@ -141,7 +144,7 @@ function serialize(value: LabRecipe, limits: LabRecipeLimits): string {
 export function encodeLabRecipe(input: LabRecipeInput, context: { sourceCommit: string }, limits: LabRecipeLimits = {}): string {
   const record = shape(input, ['mode', 'originSample', 'config', 'originalRunId', 'source']);
   const config = readConfig(record.config), normalizedConfig = normalize(config);
-  try { supportedLabLayoutId(normalizedConfig); } catch { fail('UNSUPPORTED_LAYOUT', 'Only teaching-fixed-v1 is supported'); }
+  try { supportedLabLayoutId(normalizedConfig); } catch { fail('UNSUPPORTED_LAYOUT', 'Layout or powertrain is not registered for this configuration'); }
   const recipe = validated({ ...record, config, normalizedConfig, format: 'rnc-recipe-v1', modelSchema: 'lab-v3',
     modelIdentity: structuredClone(LAB_RECIPE_MODEL), sourceCommit: context.sourceCommit, normalization: 'lab-legacy-defaults-v1',
     requestedSampleCount: config.durationSeconds * config.sampleRateHz,

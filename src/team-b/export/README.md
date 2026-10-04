@@ -74,7 +74,7 @@ const repeated = await recomputeLabRecipeAsync(recipe, {
 
 `rnc-recipe-v1` 内的 `modelSchema: lab-v3` 与 demo 分开；demo 入口仍拒 lab。原配置逐字段保存，`lab-legacy-defaults-v1` 规范化副本明确历史缺省：未提供 `sourceMode` 为 shaped-noise、`layoutId` 为 teaching-fixed-v1、`levelOffsetDb` 为 0。不会使用页面当前的录音默认值覆盖旧配置。两份配置、时长/样本数、稳定参考 ID/名称/坐标/安装点、四路扬声器开关、车型/算法/路况参数、原运行身份和来源必须一致有效；不接受额外脚本/URL字段。
 
-当前只复算 `teaching-fixed-v1`。`LAB_RECIPE_MODEL` 登记 UTF-8/LF 源码哈希，包括共享配置/坐标、lab 引擎/源/路径/实录读取/计权/指标及依赖；测试核对这些文件。未知模型或布局的同结构配方可供检查，但复算独立拒绝，且在请求素材之前拒绝；不依赖引擎对未知布局的默认行为。源码 commit 是调用方声明的来源，模型哈希用于支持版本核对，均不认证发布者。
+当前复算支持 `teaching-fixed-v1` 及 shared 注册表中的五种小鹏教学布局（P7+、X9、L03、M03、GX），注册布局须与其动力类型匹配，assetId 别名不能代替 layoutId。`LAB_RECIPE_MODEL` 的 `lab-v3-registered-batch-recipe-2` 登记 UTF-8/LF 源码哈希，包括共享配置/坐标、lab 引擎/源/路径/实录读取/计权/指标及依赖；测试逐文件核对。旧 `lab-v3-teaching-batch-recipe-1` 文件保留原身份，只读导入，不自动升级或直接复算；旧结果的 `modelSupported=false`、`verifiedMetrics=null`。未知或动力错配布局也可严格只读解析，但导出和复算使用实际配置独立拒绝，且在请求素材之前拒绝。结构解析仍检查字段、数值范围、规范化一致性、素材身份及预算。源码 commit 是调用方声明的来源，模型哈希用于支持版本核对，均不认证发布者。
 
 录音配方必须匹配 `LAB_RECORDING_ASSET`：RNQ1 全文件 1280016 字节 SHA-256，2000 Hz / 80000 点，源通道顺序 49/53/51/55，同步余弦交叠读取版本、79600 点周期/400 点交叠及统一源增益。原始 V 未标定，生成源为相对幅度，不能称实车 Pa 校准。调用方必须提供素材和异步 SHA-256，完整字节校验通过后使用现有读取器；缺素材、错长度、坏哈希或不支持的身份均拒绝，绝不替换为随机源。shaped-noise 不需要素材或哈希函数。
 

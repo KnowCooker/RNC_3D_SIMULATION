@@ -1,0 +1,418 @@
+TAP version 13
+# Subtest: B2-003 async: Web Crypto produces the same container and detached data as sync API
+ok 1 - B2-003 async: Web Crypto produces the same container and detached data as sync API
+  ---
+  duration_ms: 47.6571
+  type: 'test'
+  ...
+# Subtest: B2-003 async: encoding snapshots config, run identity, samples and budgets before awaiting
+ok 2 - B2-003 async: encoding snapshots config, run identity, samples and budgets before awaiting
+  ---
+  duration_ms: 24.0844
+  type: 'test'
+  ...
+# Subtest: B2-003 async: decode owns a snapshot across Buffer mutation, offset views and transfer
+ok 3 - B2-003 async: decode owns a snapshot across Buffer mutation, offset views and transfer
+  ---
+  duration_ms: 37.6777
+  type: 'test'
+  ...
+# Subtest: B2-003 async: hash rejections and invalid digests propagate without a partial result
+ok 4 - B2-003 async: hash rejections and invalid digests propagate without a partial result
+  ---
+  duration_ms: 35.7975
+  type: 'test'
+  ...
+# Subtest: B2-003 async: malformed, nonfinite and over-budget inputs reject before invoking crypto
+ok 5 - B2-003 async: malformed, nonfinite and over-budget inputs reject before invoking crypto
+  ---
+  duration_ms: 14.1946
+  type: 'test'
+  ...
+# Subtest: B2-003: default binary roundtrip, recipe recompute and Python oracle
+ok 6 - B2-003: default binary roundtrip, recipe recompute and Python oracle
+  ---
+  duration_ms: 585.6848
+  type: 'test'
+  ...
+# Subtest: B2-003: seed29 binary roundtrip, recipe recompute and Python oracle
+ok 7 - B2-003: seed29 binary roundtrip, recipe recompute and Python oracle
+  ---
+  duration_ms: 543.2267
+  type: 'test'
+  ...
+# Subtest: B2-003: seed47 binary roundtrip, recipe recompute and Python oracle
+ok 8 - B2-003: seed47 binary roundtrip, recipe recompute and Python oracle
+  ---
+  duration_ms: 595.596
+  type: 'test'
+  ...
+# Subtest: B2-003: taps32 binary roundtrip, recipe recompute and Python oracle
+ok 9 - B2-003: taps32 binary roundtrip, recipe recompute and Python oracle
+  ---
+  duration_ms: 458.6763
+  type: 'test'
+  ...
+# Subtest: B2-003: mu0 binary roundtrip, recipe recompute and Python oracle
+ok 10 - B2-003: mu0 binary roundtrip, recipe recompute and Python oracle
+  ---
+  duration_ms: 347.4353
+  type: 'test'
+  ...
+# Subtest: B2-003: registered source hashes match the numerical implementation
+ok 11 - B2-003: registered source hashes match the numerical implementation
+  ---
+  duration_ms: 1.6921
+  type: 'test'
+  ...
+# Subtest: B2-003: preserve reference identity, little-endian edge bits and offset views
+ok 12 - B2-003: preserve reference identity, little-endian edge bits and offset views
+  ---
+  duration_ms: 179.8706
+  type: 'test'
+  ...
+# Subtest: B2-003: silent and zero-denominator metrics retain nonfinite tags and unavailable measurements
+ok 13 - B2-003: silent and zero-denominator metrics retain nonfinite tags and unavailable measurements
+  ---
+  duration_ms: 87.9677
+  type: 'test'
+  ...
+# Subtest: B2-003: genuine zero/negative reductions and tagged negative zero stay distinct from silence
+ok 14 - B2-003: genuine zero/negative reductions and tagged negative zero stay distinct from silence
+  ---
+  duration_ms: 52.6446
+  type: 'test'
+  ...
+# Subtest: B2-003: malformed/truncated headers, overflow lengths, trailing bytes and padding are rejected
+ok 15 - B2-003: malformed/truncated headers, overflow lengths, trailing bytes and padding are rejected
+  ---
+  duration_ms: 12.4851
+  type: 'test'
+  ...
+# Subtest: B2-003: schema, channel mapping, units, metadata, normalized config and metrics are validated
+ok 16 - B2-003: schema, channel mapping, units, metadata, normalized config and metrics are validated
+  ---
+  duration_ms: 37.17
+  type: 'test'
+  ...
+# Subtest: B2-003: integrity mismatch and hash-correct nonfinite payload cannot import
+ok 17 - B2-003: integrity mismatch and hash-correct nonfinite payload cannot import
+  ---
+  duration_ms: 15.1635
+  type: 'test'
+  ...
+# Subtest: B2-003: budgets refuse before hashing/large output and count UTF-8 bytes
+ok 18 - B2-003: budgets refuse before hashing/large output and count UTF-8 bytes
+  ---
+  duration_ms: 8.4742
+  type: 'test'
+  ...
+# Subtest: B2-003: unknown numerical models are read-only; recipe recompute revalidates identity and fresh id
+ok 19 - B2-003: unknown numerical models are read-only; recipe recompute revalidates identity and fresh id
+  ---
+  duration_ms: 7.6144
+  type: 'test'
+  ...
+# Subtest: B2-003: recipes reject extra scripts/URLs/arrays, bad text/config and different schemas
+ok 20 - B2-003: recipes reject extra scripts/URLs/arrays, bad text/config and different schemas
+  ---
+  duration_ms: 0.9706
+  type: 'test'
+  ...
+# Subtest: B2-003: live snapshots, partial results, bad dimensions and invalid samples are not batches
+ok 21 - B2-003: live snapshots, partial results, bad dimensions and invalid samples are not batches
+  ---
+  duration_ms: 31.7969
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: ice, both sources and 1/4/8 reference topology
+ok 22 - B2-003 lab recipe: ice, both sources and 1/4/8 reference topology
+  ---
+  duration_ms: 643.285
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: bev, both sources and 1/4/8 reference topology
+ok 23 - B2-003 lab recipe: bev, both sources and 1/4/8 reference topology
+  ---
+  duration_ms: 581.1952
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: hev, both sources and 1/4/8 reference topology
+ok 24 - B2-003 lab recipe: hev, both sources and 1/4/8 reference topology
+  ---
+  duration_ms: 586.2263
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: erev, both sources and 1/4/8 reference topology
+ok 25 - B2-003 lab recipe: erev, both sources and 1/4/8 reference topology
+  ---
+  duration_ms: 610.2886
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: model/source/recording identities match current files
+ok 26 - B2-003 lab recipe: model/source/recording identities match current files
+  ---
+  duration_ms: 4.2968
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: preserve legacy absence and normalize shaped/layout/offset defaults explicitly
+ok 27 - B2-003 lab recipe: preserve legacy absence and normalize shaped/layout/offset defaults explicitly
+  ---
+  duration_ms: 80.2814
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: RNC off, zero step, speaker disable, seed/taps changes and negative gains retain exact behavior
+ok 28 - B2-003 lab recipe: RNC off, zero step, speaker disable, seed/taps changes and negative gains retain exact behavior
+  ---
+  duration_ms: 170.8101
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: actual divergence is a finite prefix, never padded or called complete
+ok 29 - B2-003 lab recipe: actual divergence is a finite prefix, never padded or called complete
+  ---
+  duration_ms: 135.1448
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: unknown layouts cannot encode/recompute and unknown model is only parsed
+ok 30 - B2-003 lab recipe: unknown layouts cannot encode/recompute and unknown model is only parsed
+  ---
+  duration_ms: 1.0538
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: recording asset is mandatory, full-byte hash checked, never random fallback
+ok 31 - B2-003 lab recipe: recording asset is mandatory, full-byte hash checked, never random fallback
+  ---
+  duration_ms: 2.3432
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: snapshot config/id/budget and asset before await, propagate resolver/hash failures
+ok 32 - B2-003 lab recipe: snapshot config/id/budget and asset before await, propagate resolver/hash failures
+  ---
+  duration_ms: 83.94
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: reject bad config, dimensions, identities, extra scripts, live mode and altered defaults
+ok 33 - B2-003 lab recipe: reject bad config, dimensions, identities, extra scripts, live mode and altered defaults
+  ---
+  duration_ms: 1.5018
+  type: 'test'
+  ...
+# Subtest: B2-003 lab recipe: byte and recompute budgets reject before asset loading or calculation
+ok 34 - B2-003 lab recipe: byte and recompute budgets reject before asset loading or calculation
+  ---
+  duration_ms: 1.2605
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: ice, both sources and 1/4/8 references sync/async exact roundtrip
+ok 35 - B2-003 lab result: ice, both sources and 1/4/8 references sync/async exact roundtrip
+  ---
+  duration_ms: 442.8582
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: bev, both sources and 1/4/8 references sync/async exact roundtrip
+ok 36 - B2-003 lab result: bev, both sources and 1/4/8 references sync/async exact roundtrip
+  ---
+  duration_ms: 345.6247
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: hev, both sources and 1/4/8 references sync/async exact roundtrip
+ok 37 - B2-003 lab result: hev, both sources and 1/4/8 references sync/async exact roundtrip
+  ---
+  duration_ms: 359.5473
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: erev, both sources and 1/4/8 references sync/async exact roundtrip
+ok 38 - B2-003 lab result: erev, both sources and 1/4/8 references sync/async exact roundtrip
+  ---
+  duration_ms: 293.3359
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: divergence, disabled RNC/output, mu0 and legacy absence retain status and identities
+ok 39 - B2-003 lab result: divergence, disabled RNC/output, mu0 and legacy absence retain status and identities
+  ---
+  duration_ms: 154.8271
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: tagged invalid metrics survive, disagreeing summary is quarantined
+ok 40 - B2-003 lab result: tagged invalid metrics survive, disagreeing summary is quarantined
+  ---
+  duration_ms: 50.4412
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: silence and empty divergence never become valid zero dB, real mu0 does
+ok 41 - B2-003 lab result: silence and empty divergence never become valid zero dB, real mu0 does
+  ---
+  duration_ms: 12.5236
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: finite edge bits and offset views survive with independent arrays
+ok 42 - B2-003 lab result: finite edge bits and offset views survive with independent arrays
+  ---
+  duration_ms: 33.791
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: unknown model/layout remain read-only without verified metrics
+ok 43 - B2-003 lab result: unknown model/layout remain read-only without verified metrics
+  ---
+  duration_ms: 15.7848
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: hostile manifest identities, dimensions, units, clocks, state and scalar tags reject before hashing
+ok 44 - B2-003 lab result: hostile manifest identities, dimensions, units, clocks, state and scalar tags reject before hashing
+  ---
+  duration_ms: 19.2343
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: truncation, trailing data, lengths, padding, UTF-8 and nonfinite samples reject
+ok 45 - B2-003 lab result: truncation, trailing data, lengths, padding, UTF-8 and nonfinite samples reject
+  ---
+  duration_ms: 41.6695
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: explicit batch, complete/prefix rules, array shape, UTF-8 identity and budgets reject before crypto
+ok 46 - B2-003 lab result: explicit batch, complete/prefix rules, array shape, UTF-8 identity and budgets reject before crypto
+  ---
+  duration_ms: 15.2663
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: async encoder captures all signals/metadata/limits before await
+ok 47 - B2-003 lab result: async encoder captures all signals/metadata/limits before await
+  ---
+  duration_ms: 18.6759
+  type: 'test'
+  ...
+# Subtest: B2-003 lab result: async import owns Buffer/offset views across mutation or transfer; SHA failures propagate
+ok 48 - B2-003 lab result: async import owns Buffer/offset views across mutation or transfer; SHA failures propagate
+  ---
+  duration_ms: 38.2061
+  type: 'test'
+  ...
+# Subtest: B2-003 registered export: xpeng-p7plus-bev-v1, both sources, 1/4/8 references
+ok 49 - B2-003 registered export: xpeng-p7plus-bev-v1, both sources, 1/4/8 references
+  ---
+  duration_ms: 483.4922
+  type: 'test'
+  ...
+# Subtest: B2-003 registered export: xpeng-x9-erev-v1, both sources, 1/4/8 references
+ok 50 - B2-003 registered export: xpeng-x9-erev-v1, both sources, 1/4/8 references
+  ---
+  duration_ms: 525.4101
+  type: 'test'
+  ...
+# Subtest: B2-003 registered export: xpeng-l03-bev-v1, both sources, 1/4/8 references
+ok 51 - B2-003 registered export: xpeng-l03-bev-v1, both sources, 1/4/8 references
+  ---
+  duration_ms: 459.1543
+  type: 'test'
+  ...
+# Subtest: B2-003 registered export: xpeng-m03-bev-v1, both sources, 1/4/8 references
+ok 52 - B2-003 registered export: xpeng-m03-bev-v1, both sources, 1/4/8 references
+  ---
+  duration_ms: 534.2743
+  type: 'test'
+  ...
+# Subtest: B2-003 registered export: xpeng-gx-erev-v1, both sources, 1/4/8 references
+ok 53 - B2-003 registered export: xpeng-gx-erev-v1, both sources, 1/4/8 references
+  ---
+  duration_ms: 448.3078
+  type: 'test'
+  ...
+# Subtest: B2-003 registered export: actual historical model-1 files remain read-only and cannot load assets
+ok 54 - B2-003 registered export: actual historical model-1 files remain read-only and cannot load assets
+  ---
+  duration_ms: 3.0627
+  type: 'test'
+  ...
+# Subtest: B2-003 registered export: unknown, asset aliases and powertrain mismatches parse without enabling execution
+ok 55 - B2-003 registered export: unknown, asset aliases and powertrain mismatches parse without enabling execution
+  ---
+  duration_ms: 22.7851
+  type: 'test'
+  ...
+# Subtest: B2-003 registered export: unsupported layouts still reject invalid config and normalization before hashing
+ok 56 - B2-003 registered export: unsupported layouts still reject invalid config and normalization before hashing
+  ---
+  duration_ms: 39.4508
+  type: 'test'
+  ...
+# Subtest: Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak
+ok 57 - Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak
+  ---
+  duration_ms: 3.1003
+  type: 'test'
+  ...
+# Subtest: B2-002: RMS uses exactly the trailing 1000 samples, including first and final windows
+ok 58 - B2-002: RMS uses exactly the trailing 1000 samples, including first and final windows
+  ---
+  duration_ms: 3.6125
+  type: 'test'
+  ...
+# Subtest: B2-002: same-window reduction preserves negative gains and aggregates powers before dB
+ok 59 - B2-002: same-window reduction preserves negative gains and aggregates powers before dB
+  ---
+  duration_ms: 2.4724
+  type: 'test'
+  ...
+# Subtest: B2-002: silence and near-floor pressure never report valid zero-dB benefit
+ok 60 - B2-002: silence and near-floor pressure never report valid zero-dB benefit
+  ---
+  duration_ms: 16.3146
+  type: 'test'
+  ...
+# Subtest: B2-002: non-finite pressure is unavailable, never a valid analysis frame
+ok 61 - B2-002: non-finite pressure is unavailable, never a valid analysis frame
+  ---
+  duration_ms: 11.0356
+  type: 'test'
+  ...
+# Subtest: B2-002: power rejects invalid ranges and PSD clamps finite sample cursors to actual data
+ok 62 - B2-002: power rejects invalid ranges and PSD clamps finite sample cursors to actual data
+  ---
+  duration_ms: 0.9089
+  type: 'test'
+  ...
+# Subtest: B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples
+ok 63 - B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples
+  ---
+  duration_ms: 0.6697
+  type: 'test'
+  ...
+# Subtest: B2-002: non-finite PSD cursors cannot trap a caller in an unbounded loop
+ok 64 - B2-002: non-finite PSD cursors cannot trap a caller in an unbounded loop
+  ---
+  duration_ms: 255.5199
+  type: 'test'
+  ...
+# Subtest: B2-002: shared PSD preserves lab pressure weighting and vibration/drive/source units
+ok 65 - B2-002: shared PSD preserves lab pressure weighting and vibration/drive/source units
+  ---
+  duration_ms: 11.6327
+  type: 'test'
+  ...
+# Subtest: B2-002: asymmetric signal Welch bins match direct DFT, 50% overlap and incomplete-tail handling
+ok 66 - B2-002: asymmetric signal Welch bins match direct DFT, 50% overlap and incomplete-tail handling
+  ---
+  duration_ms: 116.5906
+  type: 'test'
+  ...
+# Subtest: B2-002: DC and Nyquist are not doubled; PSD scales as signal-unit squared per Hz
+ok 67 - B2-002: DC and Nyquist are not doubled; PSD scales as signal-unit squared per Hz
+  ---
+  duration_ms: 13.6781
+  type: 'test'
+  ...
+# Subtest: analysis warming-up, window boundary, channel identity and pressure calibration
+ok 68 - analysis warming-up, window boundary, channel identity and pressure calibration
+  ---
+  duration_ms: 0.7242
+  type: 'test'
+  ...
+1..68
+# tests 68
+# suites 0
+# pass 68
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11706.5204
