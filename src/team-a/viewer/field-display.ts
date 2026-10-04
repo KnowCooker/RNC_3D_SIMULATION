@@ -34,10 +34,12 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
     improvementPalette: { value: reductionColors.map(c => new THREE.Color(c)) },
     pressureRange: { value: new THREE.Vector2(45, 85) }, improvementRange: { value: new THREE.Vector2(-10, 10) },
     quantityWeights: { value: new THREE.Vector3(0, 1, 0) },
-    opacity: { value: .75 }, clip: { value: new THREE.Vector4() }, clipped: { value: 0 },
+    opacity: { value: .9 }, clip: { value: new THREE.Vector4() }, clipped: { value: 0 },
+    opaqueDepth: { value: null as THREE.DepthTexture | null }, depthSize: { value: new THREE.Vector2(1, 1) },
+    cameraRange: { value: new THREE.Vector2(.08, 1200) }, hasDepth: { value: 0 },
   };
-  let requestedOpacity=.75;
-  const sliceOpacity={value:.75};
+  let requestedOpacity=.9;
+  const sliceOpacity={value:.9};
   const grid = gridForCount(points.length);
   const data = new Float32Array(points.length * 2), previousData = data.slice();
   const texture = new THREE.Data3DTexture(data, grid.x, grid.y, grid.z);
@@ -57,12 +59,13 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
   const volumeMaterial = new THREE.ShaderMaterial({
     glslVersion: THREE.GLSL3, uniforms: volumeUniforms, defines: linearFloat ? {} : { MANUAL_FILTER: 1 },
     side: THREE.BackSide, transparent: true, depthWrite: false, depthTest: false, toneMapped: false,
-    vertexShader: `out vec3 rayOrigin;out vec3 rayEnd;
-      void main(){rayOrigin=(inverse(modelMatrix)*vec4(cameraPosition,1.)).xyz;rayEnd=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    vertexShader: `out vec3 rayOrigin;out vec3 rayEnd;out float endDepth;
+      void main(){rayOrigin=(inverse(modelMatrix)*vec4(cameraPosition,1.)).xyz;rayEnd=position;vec4 view=modelViewMatrix*vec4(position,1.);endDepth=-view.z;gl_Position=projectionMatrix*view;}`,
     fragmentShader: `precision highp sampler3D;
-      in vec3 rayOrigin;in vec3 rayEnd;out vec4 result;
+      in vec3 rayOrigin;in vec3 rayEnd;in float endDepth;out vec4 result;
       uniform sampler3D samples;uniform sampler3D previousSamples;uniform float temporalMix;uniform vec3 dimensions;uniform vec3 lower;uniform vec3 extent;
       uniform vec4 clip;uniform int clipped;uniform float opacity;
+      uniform sampler2D opaqueDepth;uniform vec2 depthSize;uniform vec2 cameraRange;uniform int hasDepth;
       ${paletteShader}
       vec2 readEnergy(sampler3D source,vec3 uv){
         vec3 p=clamp(uv,0.,1.)*(dimensions-1.);
@@ -83,38 +86,36 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
         vec3 ta=(-.5-rayOrigin)/safeDir,tb=(.5-rayOrigin)/safeDir;
         vec3 lo=min(ta,tb),hi=max(ta,tb);
         float near=max(0.,max(lo.x,max(lo.y,lo.z))),far=min(hi.x,min(hi.y,hi.z));
+        if(hasDepth==1){
+          float depth=texture(opaqueDepth,gl_FragCoord.xy/depthSize).r;
+          float viewDepth=cameraRange.x*cameraRange.y/(cameraRange.y-depth*(cameraRange.y-cameraRange.x));
+          far=min(far,viewDepth*length(rayEnd-rayOrigin)/max(endDepth,.00001));
+        }
         if(near>=far)discard;
-        float stepSize=(far-near)/96.;vec4 sum=vec4(0.);
-        for(int i=0;i<96;i++){
+        float stepSize=(far-near)/72.;vec4 sum=vec4(0.);
+        for(int i=0;i<72;i++){
           vec3 p=rayOrigin+dir*(near+(float(i)+.5)*stepSize),uv=p+.5;
           vec3 world=lower+uv*extent;if(clipped==1&&dot(clip.xyz,world)+clip.w<0.)continue;
-          vec3 edge=min(uv,1.-uv);float feather=smoothstep(0.,.055,min(edge.x,min(edge.y,edge.z)));
+          vec3 edge=min(uv,1.-uv);float feather=smoothstep(0.,.09,min(edge.x,min(edge.y,edge.z)));
           vec2 energy=energyAt(uv);vec3 db=levels(energy);
-          float value=dot(db,quantityWeights);
           // Curved iso-pressure shells and a translucent interior, never planar overlays.
-          vec3 bands=abs(fract(db/3.)-.5)*2.;
-          float shell=dot(vec3(1.)-smoothstep(vec3(.05),vec3(.23),bands),quantityWeights);
+          vec3 bands=abs(fract(db/3.+.5)-.5)*2.;
+          float shell=dot(vec3(1.)-smoothstep(vec3(.07),vec3(.32),bands),quantityWeights);
           vec3 significance=vec3(clamp((db.xy-pressureRange.x)/(pressureRange.y-pressureRange.x),0.,1.),
             clamp(abs(db.z)/max(improvementRange.y,1.),0.,1.));
-          // A low optical depth leaves the seat silhouettes readable. The
-          // density is a presentation transfer function, never an SPL edit.
-          float density=.045+.11*dot(significance,quantityWeights)+.72*shell;
+          // Front-to-back extinction preserves spatial colour instead of
+          // averaging the entire cabin into pale fog. Actual seats stop the ray.
+          float density=.65+.5*dot(significance,quantityWeights)+2.4*shell;
           vec3 rgb=colour(db);
-          if(shell>.15){
-            vec3 h=1./dimensions;
-            vec3 gradient=vec3(pressure(energyAt(uv+vec3(h.x,0.,0.)))-value,
-              pressure(energyAt(uv+vec3(0.,h.y,0.)))-value,
-              pressure(energyAt(uv+vec3(0.,0.,h.z)))-value);
-            float light=.70+.30*abs(dot(normalize(gradient+vec3(.00001)),normalize(vec3(.45,.8,.35))));
-            rgb*=light;
-          }
-          float alpha=(1.-exp(-stepSize*2.8*density))*feather;
+          // No extra gradient texture fetches per step; the true 3 dB layers
+          // provide depth cues without fake travelling waves or new hotspots.
+          rgb*=.92+.08*shell;
+          float alpha=(1.-exp(-stepSize*3.2*density))*feather;
           sum.rgb+=(1.-sum.a)*rgb*alpha;sum.a+=(1.-sum.a)*alpha;
           if(sum.a>.96)break;
         }
-        // Apply user opacity after integration so 75% cannot accumulate back
-        // to an opaque fog across the 96 samples. Colours and data stay paired.
-        if(sum.a<.005)discard;result=linearToOutputTexel(vec4(sum.rgb/max(sum.a,.001),min(sum.a,.82)*opacity));
+        // The user controls final composited opacity, not per-sample opacity.
+        if(sum.a<.005)discard;result=linearToOutputTexel(vec4(sum.rgb/max(sum.a,.001),min(sum.a,.94)*opacity));
       }`,
   });
   const volume = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), volumeMaterial);
@@ -141,6 +142,7 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
       side: THREE.DoubleSide, transparent: true, depthWrite: false, depthTest: false, toneMapped: false,
       vertexShader: 'out vec2 sampleUv;out vec3 sampleWorld;void main(){sampleUv=uv;sampleWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
       fragmentShader: `in vec2 sampleUv;in vec3 sampleWorld;out vec4 result;uniform vec4 clip;uniform int clipped;uniform sampler2D values;uniform sampler2D previousValues;uniform float temporalMix;uniform vec2 dimensions;uniform float opacity;
+        uniform sampler2D opaqueDepth;uniform vec2 depthSize;uniform int hasDepth;
         ${paletteShader}
         vec2 readEnergy(sampler2D source,vec2 uv){vec2 p=clamp(uv,0.,1.)*(dimensions-1.);
           #ifdef MANUAL_FILTER
@@ -151,6 +153,7 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
           #endif
         }
         void main(){if(clipped==1&&dot(clip.xyz,sampleWorld)+clip.w<-.0001)discard;
+          if(hasDepth==1&&gl_FragCoord.z>texture(opaqueDepth,gl_FragCoord.xy/depthSize).r+.000002)discard;
           vec3 db=levels(mix(readEnergy(previousValues,sampleUv),readEnergy(values,sampleUv),temporalMix));vec3 rgb=colour(db);
           vec3 contour=abs(fract(db/3.+.5)-.5);
           float line=dot(vec3(1.)-smoothstep(vec3(.015),vec3(.015)+max(fwidth(db/3.)*1.5,vec3(.018)),contour),quantityWeights);
@@ -178,14 +181,25 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
   }
   setPoints(points);
   return { group, volume, slices, setPoints,
+    setOcclusion(depth: THREE.DepthTexture | null, size?: THREE.Vector2, camera?: THREE.PerspectiveCamera) {
+      uniforms.opaqueDepth.value=depth;uniforms.hasDepth.value=depth?1:0;
+      if(size)uniforms.depthSize.value.copy(size);
+      if(camera)uniforms.cameraRange.value.set(camera.near,camera.far);
+    },
     /** Overview uses the latest complete residual volume, independently of the lab inspection view. */
-    renderSnapshot(render: () => void) {
+    renderSnapshot(render: () => void, inspection?: { quantity: FieldQuantity; slice: 'volume' | SliceAxis }) {
       const oldMix=temporalMix.value,weights=uniforms.quantityWeights.value.clone(),range=uniforms.pressureRange.value.clone();
       const oldClip=uniforms.clipped.value,oldVolume=volume.visible,oldOpacity=uniforms.opacity.value;
       const visible=[...slices.values()].map(row=>row.mesh.visible);
       try {
         temporalMix.value=1;uniforms.quantityWeights.value.set(0,1,0);uniforms.pressureRange.value.set(45,85);
         uniforms.clipped.value=0;uniforms.opacity.value=.75;volume.visible=true;slices.forEach(row=>row.mesh.visible=false);
+        if(inspection){
+          uniforms.clipped.value=oldClip;
+          uniforms.quantityWeights.value.set(inspection.quantity==='primary'?1:0,inspection.quantity==='residual'?1:0,inspection.quantity==='reduction'?1:0);
+          uniforms.pressureRange.value.copy(range);
+          volume.visible=inspection.slice==='volume';slices.forEach((row,axis)=>{row.mesh.visible=inspection.slice===axis;});
+        }
         render();
       } finally {
         temporalMix.value=oldMix;uniforms.quantityWeights.value.copy(weights);uniforms.pressureRange.value.copy(range);

@@ -14,6 +14,8 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
   const rimModes = new Map<THREE.Material, { value: number }>();
   const materials = new Set<THREE.Material>();
   const originalPlanes = new Map<THREE.Material, THREE.Plane[] | null>();
+  const outlines: THREE.LineSegments[] = [];
+  const outlineMaterial = new THREE.LineBasicMaterial({ color: '#f5f3e9', transparent: true, opacity: .62, depthWrite: false });
   for (const mesh of meshes) {
     originals.set(mesh, { material: mesh.material, visible: mesh.visible });
     if (shellSet.has(mesh)) {
@@ -40,6 +42,12 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
         return cloned;
       };
       mesh.material = Array.isArray(mesh.material) ? mesh.material.map(copy) : copy(mesh.material);
+      const sourceMaterials = Array.isArray(originals.get(mesh)!.material) ? originals.get(mesh)!.material as THREE.Material[] : [originals.get(mesh)!.material as THREE.Material];
+      if (sourceMaterials.some(m => m.userData.inspectionRim || m.userData.inspectionGlass)) {
+        const outline = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 28), outlineMaterial);
+        outline.name = 'inspection-body-contour'; outline.visible = false; outline.renderOrder = 6;
+        mesh.add(outline); outlines.push(outline);
+      }
     }
     for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
       materials.add(material); originalPlanes.set(material, material.clippingPlanes);
@@ -56,14 +64,20 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
   let sectionAxis: AssetSectionAxis = 'none', selected: THREE.Object3D | null = null, disposed = false;
 
   function setBody(mode: AssetBodyMode) {
+    outlines.forEach(line => { line.visible = mode === 'transparent'; });
     for (const mesh of shellSet) {
       const original = originals.get(mesh);
       if (original) mesh.visible = original.visible && mode !== 'hidden';
     }
     for (const [original, material] of copies) {
+      material.side=mode==='transparent'?THREE.FrontSide:original.side;
       material.transparent = mode === 'transparent' || original.transparent;
       material.opacity = mode === 'transparent' ? Math.min(original.opacity,
-        original.userData.inspectionGlass ? .065 : original.userData.inspectionRim ? .32 : .18) : original.opacity;
+        original.userData.inspectionGlass ? .055 : original.userData.inspectionRim ? .5 : .18) : original.opacity;
+      if(original instanceof THREE.MeshStandardMaterial && material instanceof THREE.MeshStandardMaterial){
+        material.color.copy(original.color);material.metalness=original.metalness;material.roughness=original.roughness;
+        if(mode==='transparent'&&!original.userData.inspectionGlass){material.color.lerp(new THREE.Color('#e2e9ec'),original.userData.inspectionRim?.85:.72);material.metalness=.12;material.roughness=.32;}
+      }
       const rim = rimModes.get(material); if (rim) rim.value = mode === 'transparent' ? 1 : 0;
       material.depthWrite = mode === 'transparent' ? false : original.depthWrite;
       material.needsUpdate = true;
@@ -74,6 +88,7 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
     sectionAxis = axis;
     plane.normal.set(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
     plane.constant = -coordinate;
+    outlineMaterial.clippingPlanes = axis === 'none' ? null : [plane];
     for (const material of materials) {
       material.clippingPlanes = axis === 'none' ? originalPlanes.get(material)! : [plane];
       material.needsUpdate = true;
@@ -116,6 +131,7 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
     dispose() {
       if (disposed) return; disposed = true;
       sections.dispose(); selectedBounds.geometry.dispose();
+      outlines.forEach(line => { line.geometry.dispose(); line.removeFromParent(); }); outlineMaterial.dispose();
       (selectedBounds.material as THREE.Material).dispose();
       for (const [mesh, original] of originals) { mesh.material = original.material; mesh.visible = original.visible; }
       for (const material of materials) material.clippingPlanes = originalPlanes.get(material)!;

@@ -11,6 +11,8 @@ import { mountOverviewMotion, overviewMotionMarkup } from './overview-motion';
 import './overview-motion.css';
 import { overviewReading } from './overview-reading';
 import './champagne-workspace.css';
+import { mountCabinFieldPanel } from './cabin-field-panel';
+import './cabin-field.css';
 
 type Page = 'overview' | 'field' | 'structure' | 'compare';
 /** Rehomes existing controls; one experiment, one viewer and one transport across pages. */
@@ -87,21 +89,22 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   if(viewTools[0]) q('.cp-structure-controls').append(viewTools[0]);
   if(viewTools[1]) q('.cp-field-tools').append(viewTools[1]);
   q('.cp-readings').prepend(get('viewer').querySelector('.lab-field-hud')!);
-  const driveModes=element('<div class="cp-drive-modes" aria-label="实验观察模式"><button data-stage="road">道路行驶</button><button data-stage="inspect">声场检视</button><label>行驶环境<select aria-label="行驶环境"><option value="coast">田野公路</option><option value="mountain">山地</option><option value="desert">沙漠</option><option value="snow">雪山</option></select></label></div>');
+  const driveModes=element('<div class="cp-drive-modes" aria-label="实验观察模式"><button data-stage="gallery">展厅声场</button><button data-stage="road">道路行驶</button><button data-stage="inspect">行驶声场</button><label>行驶环境<select aria-label="行驶环境"><option value="coast">田野公路</option><option value="mountain">山地</option><option value="desert">沙漠</option><option value="snow">雪山</option></select></label></div>');
   q('.cp-observation-panel').append(driveModes,get('viewer').querySelector('.lab-driving-controls')!);
   const extraViews=element('<div class="lab-view-tools" aria-label="传播示意"></div>');extraViews.append(get('paths').closest('label')!,get('waves').closest('label')!);q('.cp-observation-panel').append(extraViews);
   root.dataset.fieldPanel='field';
   const showPanel=(name:string)=>{root.dataset.fieldPanel=name;shell.querySelectorAll<HTMLButtonElement>('[data-panel]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.panel===name)));requestAnimationFrame(redraw);};
   shell.querySelectorAll<HTMLButtonElement>('[data-panel]').forEach(button=>button.onclick=()=>showPanel(button.dataset.panel!));
-  driveModes.querySelectorAll<HTMLButtonElement>('[data-stage]').forEach(b=>b.onclick=()=>{if(b.dataset.stage==='inspect')q<HTMLButtonElement>('[data-drive-analysis]').click();else{const overlay=q<HTMLButtonElement>('[data-drive-overlay]');if(overlay.getAttribute('aria-pressed')==='true')overlay.click();viewer.setStage('road');q<HTMLButtonElement>('[data-view="orbit"]').click();}});
+  driveModes.querySelectorAll<HTMLButtonElement>('[data-stage]').forEach(b=>b.onclick=()=>{if(b.dataset.stage==='gallery'){viewer.setStage('gallery');viewer.setPresentationView('field');}else if(b.dataset.stage==='inspect')q<HTMLButtonElement>('[data-drive-analysis]').click();else{const overlay=q<HTMLButtonElement>('[data-drive-overlay]');if(overlay.getAttribute('aria-pressed')==='true')overlay.click();viewer.setStage('road');q<HTMLButtonElement>('[data-view="orbit"]').click();}});
   driveModes.querySelector<HTMLSelectElement>('select')!.onchange=e=>viewer.setEnvironment((e.target as HTMLSelectElement).value as GalleryEnvironment);
-  const driveObserver=new MutationObserver(()=>{const stage=get('viewer').dataset.stage;sceneSettings.querySelector<HTMLSelectElement>('[aria-label="道路材质与声学预设"]')!.value=get('viewer').dataset.roadSurface??'smooth';root.dataset.stage=stage??'';q('.cp-footer-note').firstChild!.textContent=stage==='road'?'仿真道路 / ':'湖畔展厅 / ';sceneSettings.querySelector<HTMLSelectElement>('[aria-label="展示场景"]')!.value=stage??'gallery';driveModes.querySelectorAll<HTMLButtonElement>('[data-stage]').forEach(b=>b.setAttribute('aria-pressed',String(stage==='road'&&(b.dataset.stage==='inspect')===(get('viewer').dataset.drivingOverlay==='true'))));});
+  const driveObserver=new MutationObserver(()=>{const stage=get('viewer').dataset.stage;sceneSettings.querySelector<HTMLSelectElement>('[aria-label="道路材质与声学预设"]')!.value=get('viewer').dataset.roadSurface??'smooth';root.dataset.stage=stage??'';q('.cp-footer-note').firstChild!.textContent=stage==='road'?'仿真道路 / ':'湖畔展厅 / ';sceneSettings.querySelector<HTMLSelectElement>('[aria-label="展示场景"]')!.value=stage??'gallery';driveModes.querySelectorAll<HTMLButtonElement>('[data-stage]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.stage==='gallery'?stage==='gallery':stage==='road'&&(b.dataset.stage==='inspect')===(get('viewer').dataset.drivingOverlay==='true'))));});
   const driveSeat=(e:Event)=>{const channel=(e as CustomEvent<{channel:number|null}>).detail.channel;if(channel!==null){get<HTMLSelectElement>('seat').value=String(channel);get('seat').dispatchEvent(new Event('change'));}};
   get('viewer').addEventListener('driving-view-change',driveSeat);
   driveObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-stage','data-road-surface','data-driving-overlay']});
 
   get<HTMLSelectElement>('field-slice').options[0].textContent='连续三维声场';
   q('.cp-charts').append(root.querySelector('.lab-plots')!);
+  const cabinField=mountCabinFieldPanel(root,viewer);
   // Preserve hidden controls referenced by existing event closures without duplicate IDs.
   const retained = element('<div hidden></div>');
   for (const id of ['controls-toggle','controls-close']) retained.append(get(id));
@@ -172,7 +175,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   shell.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog=>dialog.addEventListener('cancel',event=>{event.preventDefault();closeDialog(dialog);}));
   const chooseAsset = async () => {
     asset.disabled = true;
-    try { await changeVehicle(asset.value as XPengId); if(asset.value==='gx')viewer.setPresentationPaint('#b9b4a9'); get('reset').click(); viewer.setStage('gallery'); viewer.setPresentationView(page); syncAsset(); if(page==='overview'){get<HTMLSelectElement>('field').value=rememberedField;get('field').dispatchEvent(new Event('change'));} else if(page==='structure') inspectStructure(root.dataset.structureView==='paths'?'paths':'layout'); }
+    try { await changeVehicle(asset.value as XPengId); if(asset.value==='gx')viewer.setPresentationPaint('#b9b4a9'); get('reset').click(); viewer.setStage('gallery'); viewer.setPresentationView(page); syncAsset(); if(page==='overview'||page==='field'){get<HTMLSelectElement>('field').value=rememberedField;get('field').dispatchEvent(new Event('change'));} else if(page==='structure') inspectStructure(root.dataset.structureView==='paths'?'paths':'layout'); }
     finally { asset.disabled = false; }
   };
   asset.onchange=()=>void chooseAsset();
@@ -199,7 +202,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   });
   function openRealField() {
     navigate('field');showPanel('field');
-    driveModes.querySelector<HTMLButtonElement>('[data-stage="inspect"]')!.click();
+    driveModes.querySelector<HTMLButtonElement>('[data-stage="gallery"]')!.click();
   }
   function inspectStructure(kind: 'paths' | 'layout') {
     navigate('structure');
@@ -225,6 +228,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   function updateLevels() {
     const visible = hasAnalysis && lastAnalysis?.valid === true && viewer.acousticAvailable;
     const reading=visible?overviewReading(lastAnalysis,lastSeat,lastOffset):null,unit=reading?.unit??lastUnit;
+    cabinField.update(reading,lastSeat);
     const values=reading?[reading.primary,reading.residual,reading.reduction]:[];
     ['primary','residual','reduction'].forEach((key,i)=>{q(`[data-level="${key}"]`).textContent=reading&&Number.isFinite(values[i])?`${values[i].toFixed(1)} ${i===2?'dB':unit}`:'—';});
     q('.cp-field-empty').hidden=!!reading;
@@ -277,6 +281,6 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
         card.querySelector('article>small')!.textContent=value ? `dBA · ${registeredVehicleLayout(value.config.layoutId)?.name ?? value.config.vehicle} · ${value.config.speedKph} km/h · 实验 ${value.runId.slice(0,8)}` : index ? '调整一个设计因素后，重新计算。' : '运行一次预计算实验，再保存基线。';
       });
     },
-    dispose() {previewResize.disconnect();overviewMotion.dispose();events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
+    dispose() {cabinField.dispose();previewResize.disconnect();overviewMotion.dispose();events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
   };
 }
