@@ -1,6 +1,8 @@
 import * as THREE from 'three';
+import { createRenderMeter } from './render-meter';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import { createVehicleModel, type VehiclePart } from './vehicle-model';
 import type { ShowroomModel } from './showroom-model';
 import { xpengCatalog, getXPengSpec, type XPengId } from './xpeng-catalog';
@@ -34,6 +36,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#101a25');
   const camera = new THREE.PerspectiveCamera(40, 1, 0.08, 1200);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.info.autoReset=false;
+  const recordRender=createRenderMeter(host);
   renderer.setPixelRatio(1); renderer.localClippingEnabled = true;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace; host.append(renderer.domElement);
@@ -69,6 +73,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const key = new THREE.DirectionalLight('#fff0d7', 2.7); key.position.set(4, 7, 5); scene.add(key);
   key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.camera.left = -6; key.shadow.camera.right = 6; key.shadow.camera.top = 6; key.shadow.camera.bottom = -6; key.shadow.normalBias = .025;
   const fill = new THREE.DirectionalLight('#7cb6ff', 1.1); fill.position.set(-5, 4, -5); scene.add(fill);
+  // Broad pavilion light sources make clearcoat curvature readable without a point-light hotspot.
+  RectAreaLightUniformsLib.init();
+  const softKey=new THREE.RectAreaLight('#fff2de',4.2,5.8,1.5);softKey.position.set(-3.5,3.9,2.0);softKey.lookAt(0,.8,0);scene.add(softKey);
+  const softRim=new THREE.RectAreaLight('#e6efff',2.5,4.5,1.2);softRim.position.set(3.4,3.2,-1.5);softRim.lookAt(0,.9,0);scene.add(softRim);
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 100), new THREE.MeshStandardMaterial({ color: '#1b2832', roughness: 1 }));
   ground.rotation.x = -Math.PI / 2; ground.position.y = -0.035; scene.add(ground);
   const shadowPixels = new Uint8Array(64 * 64 * 4);
@@ -87,6 +95,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const stage = createSceneStage(scene,renderer.capabilities.getMaxAnisotropy());
   let driving:ReturnType<typeof createDrivingView>|null=null;
   const rollingWheels=new WeakMap<THREE.Group,ReturnType<typeof createWheelMotion>>();
+  const wheelGroups=new WeakMap<THREE.Group,THREE.Group[]>();
   stage.road.traverse(o => { if (o instanceof THREE.Mesh) o.receiveShadow = true; });
   stage.workshop.traverse(o => { if (o instanceof THREE.Mesh) o.receiveShadow = true; });
   const underfloorNote = document.createElement('div'); underfloorNote.className = 'lab-underfloor-note';
@@ -159,6 +168,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     scene.background = new THREE.Color(stage.mode === 'gallery' ? '#ead8bf' : stage.mode === 'road' ? '#bbd3dc' : '#263744');
     key.position.set(4,7,5);fill.position.set(-5,4,-5);
     const gallery=stage.mode==='gallery',light=stage.gallery.lighting;
+    softKey.visible=softRim.visible=gallery;
     scene.environmentIntensity = gallery ? light.intensity : stage.mode === 'road' ? 1 : 0.8;
     scene.environmentRotation.set(0,gallery?light.rotation:0,0);
     renderer.toneMappingExposure = gallery ? light.exposure : stage.mode === 'road' ? .93 : 1.0;
@@ -1106,9 +1116,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const routeBefore=sampleDrivingRoute(distance-.1),routeAfter=sampleDrivingRoute(distance+.1);
       const curvature=(Math.atan2(routeAfter.tangent.x,routeAfter.tangent.z)-Math.atan2(routeBefore.tangent.x,routeBefore.tangent.z))/.2;
       const wheelbase=config?labLayout(config).sources[0][2]-labLayout(config).sources[2][2]:3;
-      for(const part of showroomModel?.parts??[]){
-        const wheel=showroomModel!.group.getObjectByName(part.id) as THREE.Group|undefined;
-        if(!wheel?.userData.rollingCenter)continue;
+      const car=showroomModel?.group;
+      if(car&&!wheelGroups.has(car))wheelGroups.set(car,car.children.filter(o=>o instanceof THREE.Group&&o.userData.rollingCenter) as THREE.Group[]);
+      for(const wheel of car?wheelGroups.get(car)!:[]){
         let motion=rollingWheels.get(wheel);if(!motion){motion=createWheelMotion(wheel,new THREE.Vector3(...wheel.userData.rollingCenter as [number,number,number]),wheel.userData.rollingRadius);rollingWheels.set(wheel,motion);}
         motion.setDistance(distance);motion.setSteering(stage.mode==='road'&&wheel.userData.axleZ>0?Math.atan(wheelbase*curvature/(1-curvature*wheel.userData.rollingCenter[0])):0);
       }
@@ -1162,6 +1172,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       cameraMotion.update(reducedMotion.matches?Number.MAX_SAFE_INTEGER:now);
       host.dataset.cameraTransition=cameraMotion.active?'moving':'idle';
       if(controls.enabled){
+        controls.dampingFactor=1-Math.exp(-Math.min(dt,.05)*9);
         controls.update();
         const outdoor=stage.mode!=='workshop';
         if(outdoor&&!driving?.cabin&&!cameraMotion.active){
@@ -1175,11 +1186,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       stage.setUnderfloorView(underfloor); underfloorNote.hidden = !underfloor;
       stripes.visible = false; contactShade.visible = !underfloor;
       const occluder=showroomActive?showroomModel?.group:model?.group;
+      renderer.info.reset();
       if(field.visible&&occluder){
         fieldOcclusion.render(renderer,occluder,camera);
         fieldDisplay.setOcclusion(fieldOcclusion.texture,fieldOcclusion.size,camera);
       }else fieldDisplay.setOcclusion(null);
       renderer.render(scene, camera);
+      recordRender(now,`${showroomModel?.assetId}/${host.dataset.presentationPage}/${stage.mode}/${host.clientWidth}x${host.clientHeight}/${field.visible}`,renderer.info.render.calls,renderer.info.render.triangles);
       fieldDisplay.setOcclusion(null);
       const width = host.clientWidth, height = host.clientHeight;
       const visible = markerRows.map(row => {

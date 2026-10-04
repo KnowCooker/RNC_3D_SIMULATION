@@ -37,6 +37,16 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
                   #include <opaque_fragment>`);
             };
             cloned.customProgramCacheKey = () => `${material.customProgramCacheKey()}/rnc-inspection-rim-v1`;
+          } else if(material.userData.inspectionGlass && cloned instanceof THREE.MeshStandardMaterial) {
+            // Thin tinted glazing: clear head-on, a stronger grazing reflection.
+            // Alpha coverage avoids the extra full-scene transmission pass on small GPUs.
+            cloned.onBeforeCompile = shader => {
+              shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`
+                float glazingEdge=pow(1.-abs(dot(normal,normalize(vViewPosition))),3.);
+                diffuseColor.a*=mix(.40,1.,glazingEdge);
+                #include <opaque_fragment>`);
+            };
+            cloned.customProgramCacheKey=()=> 'rnc-thin-glazing-v1';
           }
         }
         return cloned;
@@ -62,8 +72,11 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
   const plane = new THREE.Plane();
   const meshBounds = new THREE.Box3();
   let sectionAxis: AssetSectionAxis = 'none', selected: THREE.Object3D | null = null, disposed = false;
+  let bodyMode:AssetBodyMode='solid';
 
   function setBody(mode: AssetBodyMode) {
+    if(mode===bodyMode)return;
+    bodyMode=mode;
     outlines.forEach(line => { line.visible = mode === 'transparent'; });
     for (const mesh of shellSet) {
       const original = originals.get(mesh);

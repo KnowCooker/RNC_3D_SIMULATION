@@ -6,7 +6,10 @@ import type { ShowroomModel } from './showroom-model';
 import { getXPengSpec, type XPengId } from './xpeng-catalog';
 import { createP7PlusModel } from './p7plus-model';
 import { xpengProfiles, sampleXPeng } from './xpeng-profiles';
-import { upholsteryGrain, upholsterySurface } from './upholstery-surface';
+import { upholsterySurface } from './upholstery-surface';
+import { refineVehicleMaterials } from './vehicle-materials';
+import { createCabinCraft, sculptDashboard } from './cabin-craft';
+import { batchVehicleParts } from './vehicle-batching';
 
 type V = [number, number, number];
 const mix = THREE.MathUtils.lerp;
@@ -21,6 +24,7 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
   const profile = xpengProfiles[id], spec = getXPengSpec(id);
   const s = { ...spec, roofFront:profile.roofFront, roofRear:profile.roofRear, screenFront:profile.screenFront, screenRear:profile.screenRear, roofWidth: profile.roofHalf, belt: sampleXPeng(profile.shoulder,0) };
   const group = new THREE.Group(); group.name = `xpeng-${id}`; group.userData.revision = `${id}-photo-v5`;
+  group.userData.finishRevision='atelier-v1';
   const shell: THREE.Mesh[] = [], geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>();
   const parts: { id: string; name: string; object: THREE.Group; offset: THREE.Vector3 }[] = [];
   function mat(color: string, roughness = .4, metalness = 0) {
@@ -33,10 +37,12 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
   glass.userData.inspectionGlass = true;
   const rubber = mat('#17191b', .92), alloy = mat('#a7afb3', .23, .9), darkAlloy = mat('#414a50', .52, .7);
   const leather = mat(id === 'gx' || id === 'x9' ? '#c6b7a2' : '#c8beb1', .72);
-  const grain = upholsteryGrain(); leather.bumpMap = grain; leather.bumpScale = .0012;
-  leather.roughnessMap = grain; leather.sheen = .24; leather.sheenRoughness = .72; leather.sheenColor.set('#ded1bc');
   const seam = mat('#827361', .85), screen = mat('#142c35', .22, .2), batteryMat = mat('#486574', .63, .5);
   black.envMapIntensity=.45;
+  const finish=refineVehicleMaterials(paint,glass,leather,alloy),craft=createCabinCraft(geometries,finish);
+  black.roughness=.24;black.metalness=.05;
+  const structure=mat('#969e9f',.43,.58);
+  const boxCache=new Map<string,THREE.BufferGeometry>();
   const white = mat('#e2fbff', .2); white.emissive.set('#bfe9ff'); white.emissiveIntensity = 1.8;
   const red = mat('#e73138', .27); red.emissive.set('#e5222c'); red.emissiveIntensity = .85;
   function part(key: string, name: string, offset: V) {
@@ -48,10 +54,13 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
     item.castShadow = true; item.receiveShadow = true; parent.add(item); if (exterior) shell.push(item); return item;
   }
   function box(parent: THREE.Group, size: V, pos: V, material: THREE.Material, radius = .025, exterior = false) {
-    return mesh(parent, new RoundedBoxGeometry(...size, 5, Math.min(radius, ...size.map(n => n / 2))), material, pos, exterior);
+    const segments=radius>.025?4:2,key=[...size,segments,radius].join('/');
+    let geometry=boxCache.get(key);if(!geometry){geometry=new RoundedBoxGeometry(...size,segments,Math.min(radius,...size.map(n=>n/2)));boxCache.set(key,geometry);}
+    return mesh(parent, geometry, material, pos, exterior);
   }
   function tube(parent: THREE.Group, points: V[], radius: number, material: THREE.Material, exterior = false) {
-    return mesh(parent, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p))), Math.max(8, points.length * 5), radius, 8, false), material, [0, 0, 0], exterior);
+    const o=mesh(parent, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p))), Math.max(8, points.length * 5), radius, 8, false), material, [0, 0, 0], exterior);
+    if(exterior&&radius<.005)o.castShadow=false;return o;
   }
   function surface(parent: THREE.Group, fn: (u: number, v: number) => V, material: THREE.Material, exterior = false, nu = 64, nv = 18) {
     return mesh(parent, coachworkSurface(fn, nu, nv), material, [0, 0, 0], exterior);
@@ -119,6 +128,7 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
       if(id==='x9'&&key==='quarter')tube(panel,[[side*(width(-2.15)+.005),1.15,-2.15],[side*(width(-1.65)+.005),1.17,-1.65],[side*(width(-1.31)+.005),1.18,-1.31]],.010,black,true);
       if(key.includes('door')){
         const doorZ=(za+zb)/2;
+        craft.door(panel,side,half,belt(doorZ),doorZ,zb-za-.09);
         box(panel,[.056,.051,.40],[side*(half-.18),s.belt-.20,doorZ],leather,.018);
         const speaker=mesh(panel,new THREE.CylinderGeometry(.078,.07,.018,40),black,[side*(half-.15),.65,doorZ]);speaker.rotation.z=Math.PI/2;
         const grille=mesh(panel,new THREE.TorusGeometry(.079,.003,8,48),alloy,[side*(half-.163),.65,doorZ]);grille.rotation.y=Math.PI/2;
@@ -290,9 +300,10 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
       const z = rowZ[row], w = count === 2 ? .47 : .43;
       const chair = part(`seat-${row + 1}-${seat + 1}`, `${row + 1}排 ${seat + 1}座 · 内饰重建`, [x * 1.7, .75 + row * .3, -.15 * row]);
       chair.userData.seatRow = row + 1;
-      mesh(chair, upholsterySurface(w, .13, .49, 'cushion'), leather, [x, .60, z]).name = 'contoured-seat-cushion';
+      const cushion=mesh(chair, upholsterySurface(w, .13, .49, 'cushion'), leather, [x, .60, z]);cushion.name = 'contoured-seat-cushion';
       const back = mesh(chair, upholsterySurface(w, .53, .145, 'back'), leather, [x, .91, z - .24]); back.rotation.x = -.12; back.name = 'contoured-seat-back';
       mesh(chair, upholsterySurface(w * .66, .18, .12, 'headrest'), leather, [x, 1.24, z - .29]).name = 'padded-headrest';
+      craft.seat(back,cushion,w);craft.floor(floor,x,.439,z+.36,w*.93);
       for (const side of [-1, 1]) {
         box(chair, [.07, .11, .43], [x + side * (w / 2 - .04), .68, z], leather, .032);
         tube(chair, [[x + side * (w / 2 - .085), .70, z - .20], [x + side * (w / 2 - .085), .91, z - .16], [x + side * (w / 2 - .085), 1.12, z - .20]], .004, seam);
@@ -316,13 +327,14 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
   });
   const cockpit = part('cockpit', '仪表台 / 方向盘 / 中控屏', [0, .65, 1.1]);
   const dashZ = s.screenFront - .2, dashY = s.belt - .08;
-  box(cockpit, [s.width - .2, .15, .34], [0, dashY, dashZ], black, .065);
+  mesh(cockpit,sculptDashboard(s.width-.2,.15,.34),finish.softTouch,[0,dashY,dashZ]).name='sculpted-dashboard';
   box(cockpit, [s.width - .25, .1, .22], [0, dashY - .11, dashZ], leather, .035);
   box(cockpit, [.38, .25, .035], [0, dashY + .085, dashZ - .2], black, .013);
-  box(cockpit, [.35, .22, .006], [0, dashY + .085, dashZ - .221], screen, .006);
+  box(cockpit, [.35, .22, .006], [0, dashY + .085, dashZ - .221], finish.screen, .006);
+  craft.dashboard(cockpit,s.width-.30,dashY,dashZ-.18);
   for (let j = 0; j < 3; j++) box(cockpit, [.065, .012, .008], [-.105 + j * .105, dashY + .15, dashZ - .227], white, .003);
   if (id !== 'm03') box(cockpit, [.25, .095, .035], [.46, dashY + .065, dashZ - .17], screen, .012);
-  const steering = mesh(cockpit, new THREE.TorusGeometry(.155, .017, 10, 40), black, [.46, dashY - .01, dashZ - .38]); steering.rotation.x = -.25;
+  const steering = mesh(cockpit, new THREE.TorusGeometry(.155, .017, 12, 64), finish.softTouch, [.46, dashY - .01, dashZ - .38]); steering.rotation.x = -.25;
   box(cockpit, [.22, .032, .028], [.46, dashY - .01, dashZ - .38], alloy, .01);
   box(cockpit, [.065, .09, .04], [.46, dashY - .02, dashZ - .385], black, .02);
   box(cockpit, [.28, .16, .64], [0, .65, .55], leather, .045);
@@ -416,8 +428,8 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
   tube(hv,[[-.52,.32,packZ+packLength*.42],[-.60,.47,wheelZ-.39],[-.28,.67,wheelZ-.25]],.012,orange);
   const cage=part('body-cage','白车身 / A-B-C柱 / 车顶横梁 · 路径重建',[0,1.38,0]);
   for(const side of [-1,1]){
-    tube(cage,[[side*(half-.15),.44,s.screenFront-.25],...Array.from({length:24},(_,i):V=>{const z=mix(s.screenFront-.05,s.screenRear+.05,i/23);return [side*(cabinX(z,topT(z))-.035),roofY(z)-.026,z];}),[side*(half-.15),.44,profile.rearDoor]],.027,darkAlloy);
-    for(const z of [profile.split,profile.rearDoor])tube(cage,[[side*(half-.15),.44,z],[side*(width(z)-.06),belt(z),z],[side*(cabinX(z,topT(z))-.035),roofY(z)-.03,z]],.029,darkAlloy);
+    tube(cage,[[side*(half-.15),.44,s.screenFront-.25],...Array.from({length:24},(_,i):V=>{const z=mix(s.screenFront-.05,s.screenRear+.05,i/23);return [side*(cabinX(z,topT(z))-.035),roofY(z)-.026,z];}),[side*(half-.15),.44,profile.rearDoor]],.027,structure);
+    for(const z of [profile.split,profile.rearDoor])tube(cage,[[side*(half-.15),.44,z],[side*(width(z)-.06),belt(z),z],[side*(cabinX(z,topT(z))-.035),roofY(z)-.03,z]],.029,structure);
     box(cage,[.076,.077,s.wheelbase+.18],[side*(half-.15),.425,0],darkAlloy,.019);
   }
   for(const z of [s.roofFront-.25,s.roofRear+.24])tube(cage,[[-s.roofWidth+.035,roofY(z)-.04,z],[0,roofY(z)-.024,z],[s.roofWidth-.035,roofY(z)-.04,z]],.022,alloy);
@@ -439,6 +451,7 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
     tube(fuel,[[-.34,.42,wheelZ+.14],[-.72,.29,.8],[-.72,.27,-1.20],[-.59,.25,rear+.24]],.017,alloy);
     box(fuel,[.32,.11,.27],[-.48,.28,rear+.36],alloy,.028);
   }
+  batchVehicleParts(group,shell,geometries);boxCache.clear();
   group.updateMatrixWorld(true);
   const inspection = createAssetInspection(group, shell);
   let disposed = false;
@@ -449,6 +462,6 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
     selectPart(key) { inspection.select(parts.find(p => p.id === key)?.object ?? null); },
     setPartProgress(key, progress) { if (!Number.isFinite(progress)) throw new Error('Non-finite disassembly progress'); const p = parts.find(item => item.id === key); if (p) p.object.position.copy(p.offset).multiplyScalar(THREE.MathUtils.clamp(progress, 0, 1)); },
     setPaint(color) { paint.color.set(color); for (const item of shell) { const m = item.material as THREE.MeshPhysicalMaterial; if (m.clearcoat === 1) m.color.set(color); } },
-    dispose() { if (disposed) return; disposed = true; inspection.dispose(); grain.dispose(); for (const geometry of geometries) geometry.dispose(); for (const material of materials) material.dispose(); group.removeFromParent(); group.clear(); },
+    dispose() { if (disposed) return; disposed = true; inspection.dispose(); finish.dispose(); for (const geometry of geometries) geometry.dispose(); for (const material of materials) material.dispose(); group.removeFromParent(); group.clear(); },
   };
 }

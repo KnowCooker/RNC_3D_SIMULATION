@@ -1,0 +1,48 @@
+✔ separate curved sheets have continuous boundary normals and finite UV coordinates (8.8193ms)
+✔ rounded lamp apertures preserve the original silhouette bounds without repeated sharp corners (0.674ms)
+✔ P7 shoulder-to-window gap is closed by paint owned by the removable front door (1434.1866ms)
+✔ P7+ canopy, liftback glazing and rear bumper are separately owned assemblies (1402.1379ms)
+✔ P7+ hidden shell exposes actual seat picking, and clipping rejects the removed half (1052.8664ms)
+✔ P7+ intermediate explosion poses remain finite and return to identical world transforms (1136.7958ms)
+✔ P7+ paint and shell presentation preserve independent glass, tires and cabin materials (1202.298ms)
+✔ P7 detailed EV assemblies and acoustic diaphragms own their reversible geometry (1002.8885ms)
+✔ contoured upholstery remains finite, smoothly shaded and inside the assembled seat envelope (128.3064ms)
+✔ GX seat detail retains part ownership, reversibility and shared micrograin lifetime (1729.7871ms)
+✔ xpeng-p7plus: independent layout, full cross paths, both sources and live/batch/field agreement (269.7394ms)
+✔ xpeng-p7plus: observer seats and acoustic attachment nodes exist in the actual detachable model (1267.5224ms)
+✔ xpeng-x9: independent layout, full cross paths, both sources and live/batch/field agreement (205.7525ms)
+✔ xpeng-x9: observer seats and acoustic attachment nodes exist in the actual detachable model (1578.9124ms)
+✔ xpeng-l03: independent layout, full cross paths, both sources and live/batch/field agreement (293.6997ms)
+✔ xpeng-l03: observer seats and acoustic attachment nodes exist in the actual detachable model (1525.6679ms)
+✔ xpeng-m03: independent layout, full cross paths, both sources and live/batch/field agreement (193.5965ms)
+✔ xpeng-m03: observer seats and acoustic attachment nodes exist in the actual detachable model (1327.3201ms)
+✔ xpeng-gx: independent layout, full cross paths, both sources and live/batch/field agreement (225.7699ms)
+✔ xpeng-gx: observer seats and acoustic attachment nodes exist in the actual detachable model (1313.592ms)
+✔ x9: P7-level structural coverage and correctly separated battery layers (1953.1957ms)
+✔ x9: interior ray picking and sampled disassembly restore world transforms (1960.7239ms)
+✔ l03: P7-level structural coverage and correctly separated battery layers (1557.3105ms)
+✔ l03: interior ray picking and sampled disassembly restore world transforms (1433.7726ms)
+✔ m03: P7-level structural coverage and correctly separated battery layers (1385.4003ms)
+✔ m03: interior ray picking and sampled disassembly restore world transforms (1518.03ms)
+✔ gx: P7-level structural coverage and correctly separated battery layers (1292.6733ms)
+✔ gx: interior ray picking and sampled disassembly restore world transforms (1499.4761ms)
+✔ Verified drivetrain and suspension differences survive shared construction helpers (5378.6146ms)
+✔ A2 XPeng x9: real proportions, semantic rows and finite geometry (2168.5862ms)
+✔ A2 XPeng x9: explosion is reversible, clamped and above floor (2037.5379ms)
+✔ A2 XPeng p7plus: real proportions, semantic rows and finite geometry (1247.592ms)
+✔ A2 XPeng p7plus: explosion is reversible, clamped and above floor (1037.7061ms)
+✔ A2 XPeng l03: real proportions, semantic rows and finite geometry (1552.8873ms)
+✔ A2 XPeng l03: explosion is reversible, clamped and above floor (1320.845ms)
+✔ A2 XPeng m03: real proportions, semantic rows and finite geometry (1630.4945ms)
+✔ A2 XPeng m03: explosion is reversible, clamped and above floor (1486.1046ms)
+✔ A2 XPeng gx: real proportions, semantic rows and finite geometry (1632.8384ms)
+✔ A2 XPeng gx: explosion is reversible, clamped and above floor (1436.1761ms)
+✔ A2 XPeng paint affects exterior clones only; resources dispose exactly once (1352.2011ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18700.5904

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "gx",
+    "meshes": 927,
+    "triangles": 910780,
+    "materials": 19,
+    "geometryBytes": 67606720,
+    "buildMs": 1246,
+    "parts": 43,
+    "bounds": [
+      2.559,
+      1.7993031759262084,
+      5.344009876251221
+    ]
+  },
+  {
+    "id": "x9",
+    "meshes": 964,
+    "triangles": 961296,
+    "materials": 19,
+    "geometryBytes": 71786080,
+    "buildMs": 1358,
+    "parts": 43,
+    "bounds": [
+      2.548,
+      1.7851103632450105,
+      5.395009994506836
+    ]
+  },
+  {
+    "id": "p7plus",
+    "meshes": 955,
+    "triangles": 822744,
+    "materials": 27,
+    "geometryBytes": 57781224,
+    "buildMs": 530,
+    "parts": 38,
+    "bounds": [
+      2.368,
+      1.5080120441913605,
+      5.133163690567017
+    ]
+  },
+  {
+    "id": "l03",
+    "meshes": 695,
+    "triangles": 763064,
+    "materials": 23,
+    "geometryBytes": 51612160,
+    "buildMs": 1169,
+    "parts": 38,
+    "bounds": [
+      2.4800000000000004,
+      1.6043487882614136,
+      4.729010105133057
+    ]
+  },
+  {
+    "id": "m03",
+    "meshes": 688,
+    "triangles": 765288,
+    "materials": 19,
+    "geometryBytes": 52078336,
+    "buildMs": 1173,
+    "parts": 38,
+    "bounds": [
+      2.4560000000000004,
+      1.4406520237922669,
+      4.864009857177734
+    ]
+  }
+]

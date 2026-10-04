@@ -1,0 +1,49 @@
+{
+  "role": "A1",
+  "task": "A1-FULL-021",
+  "scope": "vehicle material / cabin / rendering",
+  "at": "2026-10-04T18:39:53.506Z",
+  "checks": {
+    "models": [
+      "GX",
+      "X9",
+      "P7+",
+      "MONA L03",
+      "MONA M03"
+    ],
+    "seatDetachRestore": "GX 1/43 -> 0/43",
+    "section": "GX longitudinal section -> off",
+    "roadPlayback": "GX 0.00 -> 20.00 s, 0.00 -> 0.33 km, auto-paused at end"
+  },
+  "acoustic": {
+    "field": {
+      "mode": "residual",
+      "quantity": "residual",
+      "range": "45,85",
+      "rendering": "volume",
+      "sampleCount": "1989",
+      "time": "20",
+      "weighting": "A"
+    },
+    "overflow": false,
+    "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+    "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+  },
+  "overview720": {
+    "meter": {
+      "context": "xpeng-gx/overview/gallery/1280x648/false",
+      "drawCalls": 871,
+      "fps": 116.1,
+      "frames": 90,
+      "p95Ms": 13.7,
+      "triangles": 1791232
+    },
+    "overflow": false
+  },
+  "phone": {
+    "height": 844,
+    "overflow": false,
+    "width": 390
+  },
+  "console": []
+}

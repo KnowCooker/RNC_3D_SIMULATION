@@ -1,0 +1,9 @@
+{
+  "role": "A1",
+  "task": "A1-FULL-021",
+  "context": "xpeng-gx/overview/gallery/1280x648/false",
+  "viewport": [1280, 720],
+  "method": "90 consecutive render-loop frames, main view including reflection/shadows; independent windows on same machine, not controlled GPU benchmark",
+  "before": { "frames": 90, "fps": 81.7, "p95Ms": 14.7, "drawCalls": 2944, "triangles": 2994544 },
+  "after": { "frames": 90, "fps": 116.1, "p95Ms": 13.7, "drawCalls": 871, "triangles": 1791232 }
+}
