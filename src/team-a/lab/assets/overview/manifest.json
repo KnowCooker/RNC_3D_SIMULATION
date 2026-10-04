@@ -1,0 +1,35 @@
+[
+  {
+    "file": "field.png",
+    "bytes": 2388100,
+    "sha256": "8b0bbe9dc521fe72450d56568c144fafde0c477760fe0c2672c566b782bf31f2",
+    "size": [
+      1774,
+      887
+    ],
+    "png_color_type": 6,
+    "source": "builtin imagegen; original pixels preserved"
+  },
+  {
+    "file": "layout.png",
+    "bytes": 1671885,
+    "sha256": "515d113349604e4bee13e4ac8fb9eed93d475226ff19c524e2d59078ccf6408b",
+    "size": [
+      1774,
+      887
+    ],
+    "png_color_type": 6,
+    "source": "builtin imagegen; original pixels preserved"
+  },
+  {
+    "file": "paths.png",
+    "bytes": 1989860,
+    "sha256": "c00d3e9a467a5362f0c3f712938ac47c941d472a0a26c01c824c33e3af5d5895",
+    "size": [
+      1774,
+      887
+    ],
+    "png_color_type": 6,
+    "source": "builtin imagegen; original pixels preserved"
+  }
+]

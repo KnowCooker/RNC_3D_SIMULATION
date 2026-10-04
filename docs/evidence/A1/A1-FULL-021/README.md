@@ -1,5 +1,7 @@
 # A1-FULL-021 云境香槟总览对齐
 
+> 后续用户明确要求总览用精细渲染动效。当前最终行为见[追加证据](motion/README.md)：三张静态同车缩略图已替换为明确标注的高清概念动效，点击进入当前车型三维视图；实时读数保留。以下记录为首次构图对齐的历史验收。
+
 2026-10-04；Role: A1；Identity-Source: user-declared；Executor: Codex 代 A1。
 基线66c1e45；认领72096de；[草稿PR #59](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/59)，依赖#58/#57。main仍为b968d92，此目录不是main已集成证明。
 

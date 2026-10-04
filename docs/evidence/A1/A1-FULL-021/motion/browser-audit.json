@@ -1,0 +1,398 @@
+{
+  "runningA": [
+    {
+      "offset": "-72.1996px",
+      "state": "running",
+      "transform": "none"
+    },
+    {
+      "offset": "-55.4095px",
+      "state": "running",
+      "transform": "none"
+    },
+    {
+      "offset": "-261.124px",
+      "state": "running",
+      "transform": "none"
+    },
+    {
+      "offset": "-536.43px",
+      "state": "running",
+      "transform": "none"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(2.48662, 0, 0, 2.48662, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(2.48662, 0, 0, 2.48662, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(2.24343, 0, 0, 2.24343, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(1.79441, 0, 0, 1.79441, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(1.20187, 0, 0, 1.20187, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(2.3973, 0, 0, 2.3973, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(2.03945, 0, 0, 2.03945, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(1.5141, 0, 0, 1.5141, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(0.858243, 0, 0, 0.858243, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(2.32737, 0, 0, 2.32737, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(1.92164, 0, 0, 1.92164, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(1.36185, 0, 0, 1.36185, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "running",
+      "transform": "matrix(0.672561, 0, 0, 0.672561, 0, 0)"
+    }
+  ],
+  "pausedA": [
+    {
+      "offset": "-88.6415px",
+      "state": "paused",
+      "transform": "none"
+    },
+    {
+      "offset": "-126.587px",
+      "state": "paused",
+      "transform": "none"
+    },
+    {
+      "offset": "-332.301px",
+      "state": "paused",
+      "transform": "none"
+    },
+    {
+      "offset": "-591.79px",
+      "state": "paused",
+      "transform": "none"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.5, 0, 0, 2.5, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.5, 0, 0, 2.5, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.40199, 0, 0, 2.40199, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.048, 0, 0, 2.048, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.52534, 0, 0, 1.52534, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.48846, 0, 0, 2.48846, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.25027, 0, 0, 2.25027, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.80439, 0, 0, 1.80439, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.2143, 0, 0, 1.2143, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.45462, 0, 0, 2.45462, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.15478, 0, 0, 2.15478, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.66903, 0, 0, 1.66903, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.04715, 0, 0, 1.04715, 0, 0)"
+    }
+  ],
+  "pausedB": [
+    {
+      "offset": "-88.6415px",
+      "state": "paused",
+      "transform": "none"
+    },
+    {
+      "offset": "-126.587px",
+      "state": "paused",
+      "transform": "none"
+    },
+    {
+      "offset": "-332.301px",
+      "state": "paused",
+      "transform": "none"
+    },
+    {
+      "offset": "-591.79px",
+      "state": "paused",
+      "transform": "none"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.5, 0, 0, 2.5, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.5, 0, 0, 2.5, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.40199, 0, 0, 2.40199, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.048, 0, 0, 2.048, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.52534, 0, 0, 1.52534, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.48846, 0, 0, 2.48846, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.25027, 0, 0, 2.25027, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.80439, 0, 0, 1.80439, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.2143, 0, 0, 1.2143, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.45462, 0, 0, 2.45462, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(2.15478, 0, 0, 2.15478, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.66903, 0, 0, 1.66903, 0, 0)"
+    },
+    {
+      "offset": "0px",
+      "state": "paused",
+      "transform": "matrix(1.04715, 0, 0, 1.04715, 0, 0)"
+    }
+  ],
+  "secondary": {
+    "asset": "xpeng-gx",
+    "paths": "secondary",
+    "paused": [
+      "true",
+      "true",
+      "true"
+    ]
+  },
+  "actualField": {
+    "field": "residual",
+    "legend": "残余声 e · 车内声场51.34 s / 采样范围 63.3–76.4 dBA45 dBA85 dBA最高采样值 76.4 dBA · (0.49, 0.65, 0.98) m点击声场读取最近采样点；切片可定位车内不同区域同窗改善分布增强局部对比俯视座舱不透明度1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+    "model": "xpeng-gx",
+    "overlay": "true",
+    "paused": [
+      "true",
+      "true",
+      "true"
+    ]
+  },
+  "overviewResult": {
+    "canvases": 0,
+    "font": "\"RNC Sans\", \"Microsoft YaHei\", sans-serif",
+    "heroFont": "\"RNC Serif\", \"Songti SC\", serif",
+    "images": [
+      {
+        "complete": true,
+        "height": 887,
+        "width": 1774
+      },
+      {
+        "complete": true,
+        "height": 887,
+        "width": 1774
+      },
+      {
+        "complete": true,
+        "height": 887,
+        "width": 1774
+      }
+    ],
+    "note": "当前实验 · 左前座附近采样点 · 52.47 s · 同点同窗 · 仿真",
+    "plot": {
+      "clientHeight": 104,
+      "clientWidth": 312,
+      "height": 104,
+      "width": 312
+    },
+    "readings": [
+      "71.2 dBA",
+      "65.9 dBA",
+      "5.3 dB"
+    ]
+  },
+  "desktop1440": {
+    "card": {
+      "bottom": 482.6770858764648,
+      "height": 389.15625,
+      "left": 931.6875,
+      "right": 1418.40625,
+      "top": 93.52083587646484,
+      "width": 486.71875,
+      "x": 931.6875,
+      "y": 93.52083587646484
+    },
+    "plot": {
+      "bottom": 736.9062728881836,
+      "height": 95.48958587646484,
+      "left": 1130.2396240234375,
+      "right": 1391.4167175292969,
+      "top": 641.4166870117188,
+      "width": 261.1770935058594,
+      "x": 1130.2396240234375,
+      "y": 641.4166870117188
+    },
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  "mobile": {
+    "cards": [
+      {
+        "bounds": {
+          "bottom": 807.6666870117188,
+          "height": 165,
+          "left": 33.66666793823242,
+          "right": 329.0000114440918,
+          "top": 642.6666870117188,
+          "width": 295.3333435058594,
+          "x": 33.66666793823242,
+          "y": 642.6666870117188
+        },
+        "paused": "false",
+        "type": "cp-motion-art cp-motion-field"
+      },
+      {
+        "bounds": {
+          "bottom": 1129.3333358764648,
+          "height": 98.52083587646484,
+          "left": 35.66666793823242,
+          "right": 339.0000114440918,
+          "top": 1030.8125,
+          "width": 303.3333435058594,
+          "x": 35.66666793823242,
+          "y": 1030.8125
+        },
+        "paused": "true",
+        "type": "cp-motion-art cp-motion-paths"
+      },
+      {
+        "bounds": {
+          "bottom": 1361.3333358764648,
+          "height": 98.52083587646484,
+          "left": 35.66666793823242,
+          "right": 339.0000114440918,
+          "top": 1262.8125,
+          "width": 303.3333435058594,
+          "x": 35.66666793823242,
+          "y": 1262.8125
+        },
+        "paused": "true",
+        "type": "cp-motion-art cp-motion-layout"
+      }
+    ],
+    "scrollWidth": 375,
+    "width": 390
+  },
+  "switchVehicle": {
+    "asset": "xpeng-x9",
+    "body": "transparent",
+    "markers": 12,
+    "paths": "both",
+    "proxy": "both",
+    "view": "paths"
+  },
+  "console": []
+}
