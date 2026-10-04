@@ -700,7 +700,12 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     if (viewer.fieldPoints !== points) clearField();
   }
   $('section').onchange = section; $('section-position').oninput = section;
-  function fieldOptions() { clearField(); viewer.setField($<HTMLSelectElement>('field').value, $<HTMLSelectElement>('field-slice').value as 'volume' | 'x' | 'y' | 'z'); }
+  function fieldOptions() {
+    const points = viewer.fieldPoints, mode = $<HTMLSelectElement>('field').value;
+    viewer.setField(mode, $<HTMLSelectElement>('field-slice').value as 'volume' | 'x' | 'y' | 'z');
+    // Each complete frame already contains d and e for all slices. Reuse it for view-only changes.
+    if (mode === 'off' || viewer.fieldPoints !== points) clearField();
+  }
   $('field').onchange = fieldOptions; $('field-slice').onchange = fieldOptions;
   $('field-weight').onchange = () => {
     levelWeighting = $<HTMLSelectElement>('field-weight').value as AcousticWeighting;

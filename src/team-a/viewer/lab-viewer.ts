@@ -981,8 +981,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     },
     updateField(value: FieldFrame, animate = false) { animateField = animate; frame = value; paintField(); },
     render(time: number, selected: LabSelection, drives: number[], sourceValues: number[], playing = false) {
-      fieldDisplay.advance(time, playing);
       const now = performance.now(), dt = Math.min(0.1, (now - lastTime) / 1000); lastTime = now;
+      // Presentation easing uses the render clock; physics and driving retain the single playback time.
+      fieldDisplay.advance(time, playing, now / 1000);
       const targetAmount = exploded ? 1 : 0;
       amount += (targetAmount - amount) * (1 - Math.exp(-dt * 5));
       // Below 0.1 mm of displacement, snap to the exact pose so section geometry stops rebuilding.

@@ -1,0 +1,31 @@
+✔ B1-002: unchanged core in test harness matches normal production entry sample-for-sample (409.9524ms)
+✔ B1-002: asymmetric matrices and independent recurrence detect sign/index/cross-path/timing faults (2628.3165ms)
+✔ B1-002: every one of 16 output/reference controller routes contributes with the correct update (1128.9457ms)
+✔ B1-002: modifying future x/d cannot change any past output (404.5615ms)
+✔ B1-003: invalid shapes, every missing/fixed field and nonfinite values return structured config errors (2.0909ms)
+✔ B1-003: all 12 legal configurations have finite isolated Float32 channels and exact zero-step identities (1682.5072ms)
+✔ B1-003: nonfinite data, short arrays, drive failure and Float32 overflow never return partial success (1009.2535ms)
+✔ B1-003: a failed call preserves prior results and cannot poison the next run (646.5499ms)
+✔ B1-001: default all 640000 samples and metrics match independent Python; exact repeat (502.9657ms)
+✔ B1-001: seed29 all 640000 samples and metrics match independent Python; exact repeat (475.0375ms)
+✔ B1-001: seed47 all 640000 samples and metrics match independent Python; exact repeat (447.3985ms)
+✔ B1-001: taps32 all 640000 samples and metrics match independent Python; exact repeat (323.284ms)
+✔ B1-001: mu0 all 640000 samples and metrics match independent Python; exact repeat (295.9714ms)
+✔ B1-001: comparison rejects sign, time shift, zeroed output, NaN and near-zero overflow (2.5794ms)
+✔ B01/B03: all 640,000 samples match immutable Python Float32 golden and e=d+a (29.9256ms)
+✔ B02/B04/B05: five configurations match Python metrics; repeat is deterministic (846.31ms)
+✔ B06: every output reaches every mic; removing one cross-path removes only that response (0.3223ms)
+✔ B07: rejects invalid taps, negative/NaN step, wrong fixed dimensions, null config (0.2661ms)
+✔ B2-001: independent unsigned PRNG oracle preserves all three seeds and distinct channel streams (0.9632ms)
+✔ B2-001: three-seed shaped references and primary pressure match every Python Float32 sample (110.1684ms)
+✔ B2-001: all primary and secondary FIRs retain oracle taps, causal delays and complete cross-coupling (0.8764ms)
+✔ B2-001: original pressure includes the documented independent disturbance after causal P*x (49.6852ms)
+✔ B2-001: exported demo-v2 identity, units and last-sample time stay explicit (0.1742ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12227.9946
