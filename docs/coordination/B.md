@@ -412,3 +412,10 @@ Role: B2；Identity-Source: user-declared；执行者Codex。用户已合并#53�
 Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。实现提交 `c2d6aa1bd72b58e6cdacf1b1fe2459e54b52fe67` 已推送 fork 分支 `b/b2-003-registered-compat`，原仓库 PR #60 的 base 保持 #57 候选5be0802。提交范围仅 B export、B测试、新证据和双日志；本地源码哈希与 comparison.json 一致，暂存历史文件原字节SHA已复核，Git差异空白检查通过。发布前#59新增5899827仅改A1交接和根日志，无另一B认领。
 
 本批状态待合并，B2源码写入结束。上述实际验证仍对应已发布实现；此交接提交不改代码。后续CI以#60最新head为准，不使用认领head的旧失败或其他分支结果替代。本批提供给维护者审查并集成至#57，再由A1同步#58/#59依赖且复验；不自动合并A分支/main。完整003的产品/设备门槛、注册布局B1独立审查及004最终报告仍待验，下一轮B角色先查PR合并状态与串行交接后取无阻塞任务。
+## 2026-10-05 B2-003 注册布局浏览器 Worker 验证认领
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。用户要求继续本角色；B1已停止、开放PR无另一B任务。#60已合并到A2 #57分支，合并SHA `382100930ca950adfed27390acbb6226e0af4afc`，尚未进入main（仍b968d92）；先前待合并状态保留为历史。本批从3821009建立 `b/b2-003-registered-worker`，以 `a/a2-driving-experience` 为PR base。
+
+认领范围仅 `docs/evidence/B/B2-003/registered-worker/**`、本页和根开发记录；新独立生产构建Worker夹具与真实浏览器报告，补新模型五布局的Web Crypto、完整结果/配方复算、异步数据所有权及只读/拒绝行为。旧浏览器证据不改写；不修改运行算法、产品Worker、A/shared/integration、根配置或冻结基准。验收为实际浏览器Worker执行、构建源码/产物/报告哈希、B测试和完整check；真实峰值内存、目标核显性能、第二机、A1正式产品文件/取消等仍独立待验。
+
+状态进行中；先推送认领创建草稿PR并复查重复，再实现验证夹具，运行并记录实际结果，提交推送。PR链接在下一批回填，不自动合并。
