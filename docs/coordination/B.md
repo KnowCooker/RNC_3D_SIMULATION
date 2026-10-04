@@ -1,5 +1,7 @@
 # B1/B2 共同任务与串行交接
 
+**2026-10-04 / B2 当前批次**：B2-003 注册布局导出兼容已完成本地验证，原仓库 [PR #60](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/60) 提交发布中；base 为 A2 #57 分支。B1 已停止，无另一 B 组认领。B2-004 报告准备 #55 已合并 main `b968d92`；完整003的产品/设备门槛及004最终报告仍待验。Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。证据见[本批报告](../evidence/B/B2-003/registered-compat/README.md)。下方各历史条目保留其记录时点。
+
 **2026-10-02 / A2-EXPERIENCE-010 / GitHub同步完成**：Role:A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared；Executor:Codex代A2。实现提交7653e8c及日志格式修正945021780b4b85ee20b8ba05248fb5803de994b3已推送origin/a/a2-driving-experience，GitHub PR head与本地一致，账号jiangchun526-cloud；草稿PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/57 ，base为A2集成分支，未合并main。220项全仓及78项Chrome检查通过，65个构建源码/18个变更文件哈希一致；最终差异检查无错误。远端verify在本条记录时仍运行，尚未宣称CI通过。全部本轮项目源码、景观生成资源、28张验收截图及报告已同步；依赖缓存/临时输出不作为项目资源上传。外观实拍一致性仍未通过，后续为授权高精几何、逐车人工视觉及实车标定；无基准修改。此发布交接为文档后续提交，源码仍为上述已验版本。
 
 **2026-10-02 / A2-EXPERIENCE-010 / 最终验证与发布准备**：Role:A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared；Executor:Codex代A2。最终源码pnpm check：220/220、类型/边界/构建通过；Chrome实时行驶与五车拆装62/62，四环境全周/道路/390至2560布局16/16，零JS/Shader/资源失败。28张截图、报告、复验脚本及18文件源码清单见docs/evidence/A2/A2-EXPERIENCE-010。五车独立布局、弯坡道路/转向、360景观、行驶中场检视已接通；用户明确授权的shared注册/B两处roof选择保持旧P7、16交叉路径与fixture。未达到官网实拍一模一样，参数仍非实车标定；视觉细节与授权高精几何是后续工作，不将功能通过冒充外观验收。下一步按既有上传授权提交推送至a/a2-driving-experience并更新草稿#57，不合并main；发布SHA与远端结果另记。
@@ -396,3 +398,11 @@ Role: B2；Identity-Source: user-declared；执行者Codex。用户已合并#53�
 - 范围：`src/team-b/export/**`、B 组导出测试、`docs/evidence/B/B2-003/registered-compat/**`、本页及根开发记录。只更新真实模型身份及只读解析/执行校验边界；不修改 shared、integration、A 源码、计算算法、既有 fixtures 或旧断言/容差。
 - 验收：复现三项失败；五种已注册教学布局的合成/录音结果与配方往返；旧模型及未知/错配布局只读、禁止复算；配置与素材校验继续严格；B 测试、类型、边界、完整 check 及冻结基准检查。
 - 下一步：推送认领并创建原仓库草稿 PR，再查重复占用，然后复现、修复、验证和记录。PR URL 在下一批补录。完整 B2-003 的 A1 产品文件/Worker/取消及真实设备、第二机验收仍独立待办，本批不签收物理标定或最终交付。
+
+## 2026-10-04 B2-003 注册布局导出兼容实现与验证
+
+- Role: B2；Task: B2-003；Identity-Source: user-declared；Executor: Codex。用户已继续本角色任务；认领 `68ef6f71c1fcce67fdf63013f99905eeb1c08f09`，原仓库 PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/60 。版本为 A2 #57 候选 `5be0802beec22be171e36c5b0d754b3799e09e21` 加本批实现；源码/测试哈希绑定见 `docs/evidence/B/B2-003/registered-compat/comparison.json`。
+- 修改：B 导出登记 `lab-v3-registered-batch-recipe-2` 和六项实际变化的数值文件哈希；结构解析保留原布局身份，实际导出/复算独立校验注册布局与动力类型；补五车型和历史模型真实文件验证及 API 说明。旧断言/容差、shared、integration、A 源码、数值算法与 fixtures 均未修改。
+- 实际验证：修改前 analysis 57/60、三项失败；修改后68/68；`pnpm test:b`125/125；`pnpm typecheck`、`pnpm check:boundaries`及独立证据 strict tsc 通过；`pnpm check`295/295、类型/边界/构建通过。30组矩阵在配方复算/同步解码/异步解码各核对1460000个Float32值，全部逐位一致，同步/异步文件字节相同；模型17哈希与RNQ1身份一致；八份冻结基准与main b968d92一致。未知/别名/动力错配布局只读、执行先拒绝；实际旧model-1文件只读、不请求素材、不自动升级模型。原始命令日志及每路哈希已保存新证据目录，旧证据不改写。
+- 状态：本批实现完成，提交并推送准备中；远端最终 SHA/CI 尚待发布后核对，未宣称已合并。下一步推送、核对 PR #60 最终检查，由维护者审查并向 #57 集成；A1 #58/#59 随后同步该依赖并复验。B1已停止，无重复 B 认领；本批结束后停止 B 源码写入。完整003的A1正式文件/Worker/取消、真实峰值内存/目标设备/第二机及004最终报告仍待验，不以本批教学兼容验证签收物理标定或最终交付。
+2026-10-05 发布前复核：#57 base head 仍为5be0802；无另一B组开放认领。#59前移至5899827，属于A1分支后续，本批未在该head运行组合验收，仍须A1集成B修复后复验。发布继续使用#60与独立B差异。
