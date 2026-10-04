@@ -1,33 +1,47 @@
 type Point = { x: number; y: number };
+export type LabelObstacle = { x: number; y: number; width: number; height: number };
+export type LabLabelPosition = Point & { hidden?: boolean };
 
-/** Keep the dense lab-v3 hardware list outside the central vehicle silhouette. */
-export function placeLabLabels(anchors: readonly Point[], width: number, height: number): Point[] {
-  // Put dense lab labels beside the car. Keep their correspondence with the
-  // projected hardware through leader lines, rather than covering the cabin.
-  if (width >= 320 && height >= 240 && anchors.length <= 2 * Math.floor((height - 8) / 28)) {
-    const rails: { index: number; anchor: Point }[][] = [[], []];
-    const capacity = Math.floor((height - 8) / 28);
-    anchors.forEach((anchor, index) => {
-      let side = anchor.x < width / 2 ? 0 : 1;
-      if (Math.abs(anchor.x - width / 2) < 20) side = rails[0].length <= rails[1].length ? 0 : 1;
-      if (rails[side].length >= capacity) side = 1 - side;
-      rails[side].push({ index, anchor });
-    });
-    const result: Point[] = Array(anchors.length);
-    rails.forEach((rail, side) => {
-      rail.sort((a, b) => a.anchor.y - b.anchor.y || a.index - b.index);
-      const top = Math.max(4, height - 28);
-      const ys = rail.map(({ anchor }) => Math.max(4, Math.min(top, anchor.y - 12)));
-      for (let i = 1; i < ys.length; i++) ys[i] = Math.max(ys[i], ys[i - 1] + 28);
-      if (ys.length && ys.at(-1)! > top) {
-        ys[ys.length - 1] = top;
-        for (let i = ys.length - 2; i >= 0; i--) ys[i] = Math.min(ys[i], ys[i + 1] - 28);
+/** Near-car callouts avoid actual interface panels, rather than the viewport edges.
+ * A label with no available space is suppressed, while its 3D marker stays selectable. */
+export function placeLabLabels(anchors: readonly Point[], width: number, height: number, obstacles: readonly LabelObstacle[] = []): LabLabelPosition[] {
+  if (!anchors.length) return [];
+  const maxX = Math.max(4, width - 68), maxY = Math.max(4, height - 28);
+  const clampX = (x: number) => Math.max(4, Math.min(maxX, x));
+  const left = Math.min(...anchors.map(p => p.x)), right = Math.max(...anchors.map(p => p.x));
+  const center = (left + right) / 2;
+  const rails = [clampX(left - 84), clampX(right + 20)];
+  const placed: LabLabelPosition[] = Array(anchors.length);
+  const used: Point[] = [];
+  const available = (p: Point) => p.x >= 4 && p.x <= maxX && p.y >= 4 && p.y <= maxY
+    && used.every(q => p.x + 68 <= q.x || q.x + 68 <= p.x || p.y + 28 <= q.y || q.y + 28 <= p.y)
+    && obstacles.every(q => p.x + 68 <= q.x || q.x + q.width + 4 <= p.x || p.y + 28 <= q.y || q.y + q.height + 4 <= p.y);
+  // Stable vertical ordering keeps leaders from repeatedly swapping while orbiting.
+  const order = anchors.map((anchor, index) => ({ anchor, index })).sort((a, b) => a.anchor.y - b.anchor.y || a.index - b.index);
+  for (const { anchor, index } of order) {
+    const side = anchor.x < center ? 0 : anchor.x > center ? 1 : index % 2;
+    const idealY = Math.max(4, Math.min(maxY, anchor.y - 12));
+    let best: Point | undefined, score = Infinity;
+    const consider = (p: Point, penalty = 0) => {
+      if (!available(p)) return;
+      const distance = Math.hypot(p.x + 32 - anchor.x, p.y + 12 - anchor.y) + penalty;
+      if (distance < score) { best = p; score = distance; }
+    };
+    for (let rail = 0; rail < rails.length; rail++) {
+      consider({ x: rails[rail], y: idealY }, rail === side ? 0 : 24);
+      for (let y = 4; y <= maxY; y += 28) consider({ x: rails[rail], y }, rail === side ? 0 : 24);
+    }
+    // A sidebar may cover an entire rail. Place in the remaining work area,
+    // preferring short leaders to sending the label to the opposite screen edge.
+    if (!best || score > 200) {
+      for (let y = 4; y <= maxY; y += 28) for (let x = 4; x <= maxX; x += 68) {
+        consider({ x, y }, x + 64 > left && x < right ? 36 : 0);
       }
-      rail.forEach(({ index }, i) => { result[index] = { x: side === 0 ? 4 : width - 68, y: ys[i] }; });
-    });
-    return result;
+    }
+    placed[index] = best ?? { x: clampX(anchor.x - 32), y: idealY, hidden: true };
+    if (best) used.push(best);
   }
-  return placeLabels(anchors, width, height);
+  return placed;
 }
 
 /** Place fixed 64 × 24 labels near projected hardware, without overlapping labels. */

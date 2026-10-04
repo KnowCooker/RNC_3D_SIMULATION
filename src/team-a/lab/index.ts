@@ -125,6 +125,12 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     const reviewOutput = $('case-review-current'); reviewOutput.replaceChildren(); reviewOutput.hidden = true;
     const save = $<HTMLButtonElement>('case-save'), clear = $<HTMLButtonElement>('case-clear');
     save.disabled = !!halted || realtime || busy || !result;
+    const run=root.querySelector<HTMLButtonElement>('#lab-case-run');
+    if(run){
+      run.disabled=busy;run.textContent=busy?'正在计算…':`${realtime?'结束实时并':''}计算${caseBaseline?'候选 B':'基线 A'}`;
+      $('case-next-note').textContent=realtime?'将结束当前实时实验，以当前配置重新计算完整对比实验；已保存的基线保留。':!result?'按当前配置计算完整实验，完成后保存 A 或查看 B。':!caseBaseline?'计算已完成，点击“保存当前实验为基线 A”。':result.runId===caseBaseline.runId?'基线 A 已锁定；调整一个候选参数，再计算 B。':'候选 B 已就绪；核对条件和四座位差值后，可导出评审摘要。';
+      root.querySelectorAll('.cp-case-workflow li').forEach((step,i)=>step.setAttribute('aria-current',String(i===(!caseBaseline?0:!candidateCase()?1:2)?'step':'false')));
+    }
     clear.disabled = !caseBaseline;
     $<HTMLButtonElement>('case-export').disabled = busy || !candidateCase();
     output.replaceChildren(); output.hidden = true;
@@ -350,6 +356,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   const timeOffset = () => liveSnapshot ? liveSnapshot.startSample / config.sampleRateHz : 0;
   const mountIssues = () => (viewer as typeof viewer & { getMountIssues?: () => { sensorId: string; mountPart: string }[] }).getMountIssues?.() ?? [];
   function select(value: LabSelection) {
+    selected = value;
+    flow.setSelected(value.signal, value.channel);
     flow.openSignal(value.signal, value.channel);
     presentation?.showSignal();
     $('context').hidden = true;
@@ -520,7 +528,11 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     }
     drawSpl(time);
     $('metrics').innerHTML = ORDER.map((corner, i) => `<div><strong>${corner.toUpperCase()}</strong><b>${analysis.reductionDb[i] === null ? unavailable : analysis.reductionDb[i]!.toFixed(1) + ' dB'}</b><small>${analysis.primarySpl[i]?.toFixed(1) ?? '—'} → ${analysis.residualSpl[i]?.toFixed(1) ?? '—'} ${levelUnit()}</small></div>`).join('');
-    presentation?.update(analysis, original, Number($<HTMLSelectElement>('seat').value), levelUnit(), result.runId, config.sampleRateHz, offset);
+    // Summary always compares the selected seat's d/e, even when the inspector selects q/x/u.
+    const overviewSeat=Number($<HTMLSelectElement>('seat').value);
+    const residual=selected.signal==='e'&&selected.channel===overviewSeat ? analysis : ports.analyze(result,localTime,{signal:'e',channel:overviewSeat},options);
+    const primary=seat===overviewSeat ? original : ports.analyze(result,localTime,{signal:'d',channel:overviewSeat},options);
+    presentation?.update(residual,primary,overviewSeat,levelUnit(),result.runId,config.sampleRateHz,offset);
   }
   async function calculate() {
     if (mountIssues().length) { $('status').textContent = '请先修正缺失的传感器安装部件。'; return; }
@@ -529,7 +541,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     if (realtime) { await startLive(); return; }
     const token = ++generation; ports.cancel(); busy = true; clearExperiment();
     for (const name of ['play', 'replay', 'seek', 'calculate']) $<HTMLButtonElement>(name).disabled = true;
-    $<HTMLButtonElement>('cancel').disabled = false; $('status').textContent = '正在计算真实动态MIMO实验…';
+    $<HTMLButtonElement>('cancel').disabled = false; $('status').textContent = '正在计算真实动态MIMO实验…';renderCase();
     const runId = crypto.randomUUID();
     try {
       const computed = await ports.calculate(structuredClone(config), runId);
@@ -570,7 +582,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     } catch (error) {
       if (token === generation) { ports.cancel(); clearExperiment(); $('status').textContent = `实时启动失败：${String(error)}`; }
     } finally {
-      if (token === generation) { busy = false; $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = !liveSession; }
+      if (token === generation) { busy = false; $<HTMLButtonElement>('calculate').disabled = false; $<HTMLButtonElement>('cancel').disabled = !liveSession; renderCase(); }
     }
   }
   function stopDiverged(detail: LabDivergence) {
@@ -833,6 +845,8 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   // Audio startup requires the user's gesture. Loading the page only prepares live controls.
   refreshConfig(); clearPlots(); renderCase();
   presentation = createChampagneShell(root, viewer, () => { if(result) draw(); else clearPlots(); }, changeVehicle);
+  $('case-run').onclick=()=>{if(busy)return;if(realtime){$<HTMLSelectElement>('mode').value='replay';$('mode').dispatchEvent(new Event('change'));}void calculate();};
+  renderCase();
   requestAnimationFrame(tick);
   return () => { disposed = true;vehicleEvents.abort(); presentation?.dispose(); ++generation; ++fieldEpoch; liveSession = false; livePullPending = false; document.removeEventListener('visibilitychange', visibility); narrowViewport.removeEventListener('change', onNarrowViewport); player.pause(); livePlayer.dispose(); ports.cancel(); viewer.dispose(); flow.dispose(); root.replaceChildren(); };
 }

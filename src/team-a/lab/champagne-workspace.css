@@ -1,0 +1,87 @@
+/* Work pages share the approved palette; compact windows prioritise results over controls. */
+.cp-panel-tabs { display:flex;gap:5px;margin:12px 0;border-bottom:1px solid #b9a78955;padding-bottom:9px; }
+.cp-app .cp-panel-tabs button { flex:1;padding:8px 4px;font-size:12px;border-radius:10px; }
+.cp-panel-tabs button[aria-pressed=true] { color:#69491f;background:#e6d3b3;border-color:#b59160; }
+.cp-app:not([data-field-panel=observe]) .cp-observation-panel,
+.cp-app:not([data-field-panel=charts]) .cp-charts,
+.cp-app:not([data-field-panel=field]) :is(.cp-readings,.cp-field-tools,.cp-mic-readings) { display:none; }
+.cp-field-panel .cp-layout-notice { margin:8px 0;font-size:11px; }
+.cp-field-panel .cp-run-status { margin:8px 0;line-height:1.5;font-size:10px; }
+.cp-field-panel .cp-run-actions { gap:7px;margin:8px 0; }
+.cp-field-panel .cp-run-actions button { padding:8px 12px;font-size:12px; }
+.cp-app .cp-field-tools .lab-view-tools { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:8px 0;gap:8px; }
+.cp-app .cp-field-tools select { max-width:100%;width:100%;font-size:12px;padding:7px; }
+.cp-readings .lab-field-hud { margin:10px 0;padding:10px 12px; }
+.cp-readings .lab-field-hud p { margin:5px 0;font-size:11px;line-height:1.55; }
+.cp-app .cp-field-panel .lab-metrics { grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:10px 0; }
+.cp-app .cp-field-panel .lab-metrics>div { padding:8px 5px;border-radius:10px; }
+.cp-app .cp-field-panel .lab-metrics b { font-size:15px;white-space:nowrap;margin:4px 0; }
+.cp-app .cp-field-panel .lab-metrics small { font-size:9px;line-height:1.5; }
+.cp-readings .lab-field-evidence { padding:10px 12px;margin:10px 0;font-size:11px;background:#fff9edb3;border-radius:12px; }
+.cp-readings .lab-field-evidence p { font-size:11px;margin:7px 0; }
+.cp-readings .lab-field-evidence small { font-size:10px; }
+.cp-app .cp-charts .lab-plots { display:grid;grid-template-columns:1fr;gap:12px; }
+.cp-app .cp-charts .lab-plots canvas { height:180px; }
+.cp-app .cp-charts .lab-plot-panel { min-width:0; }
+.cp-app .cp-comparison { top:112px;bottom:104px;padding:18px 24px; }
+.cp-compare-intro { margin:6px 0; }
+.cp-app .cp-comparison .lab-case { margin:12px 0 0; }
+.cp-case-workflow ol { display:flex;gap:14px;padding:0;margin:0 0 10px;list-style:none;font-size:12px;color:#87765e; }
+.cp-case-workflow li[aria-current=step] { color:#684514;font-weight:600; }
+.cp-app .cp-case-workflow .lab-case-actions button { padding:8px 15px;font-size:12px; }
+.cp-case-workflow>small { display:block;font-size:11px;margin-top:7px; }
+.cp-app .cp-case-pair { gap:12px;margin:12px 0; }
+.cp-app .cp-case-pair article { padding:14px 17px;border-radius:15px; }
+.cp-app .cp-case-pair h3 { font-size:15px;margin:7px 0 10px; }
+.cp-app .cp-case-pair article>small { margin-top:8px;font-size:10px; }
+.cp-app .cp-case-seats strong { font-size:22px;margin-top:4px; }
+.cp-case-pair article[data-ready=false] { background:#f6f0e88c;border-style:dashed; }
+.cp-app .lab-comparison-purpose { margin:8px 0;gap:8px;font-size:12px; }
+.cp-app .lab-comparison-purpose select { padding:7px 10px;font-size:12px; }
+.cp-app .lab-case-state { font-size:12px;padding:10px 12px;border-radius:10px;background:#fff9ecb0; }
+.cp-compare-method { border-top:1px solid #cbb99e66;margin:16px 0;padding-top:12px; }
+.cp-compare-method summary { cursor:pointer;font-size:12px;color:#745b38; }
+.cp-app .cp-compare-method .lab-case-intro h3 { font-size:16px; }
+.cp-app .cp-compare-method p { font-size:12px; }
+.cp-app .cp-compare-method .lab-comparison-policy { padding:8px 12px; }
+.cp-app .cp-case-pair + .lab-comparison-purpose { margin-top:4px; }
+@media(min-width:1001px) {
+  .cp-app[data-page=field] .cp-field-panel { width:360px;max-width:42%;padding:17px;top:18px;right:20px;bottom:104px; }
+  .cp-app[data-page=field] .cp-work-title { top:20px;left:8%;max-width:calc(100% - 510px);padding:10px 14px;background:#fff7e3d9;border-radius:15px;backdrop-filter:blur(12px); }
+  .cp-app[data-page=field] .cp-work-title h1 { font-size:25px;margin:5px 0; }
+  .cp-app[data-page=field] .cp-work-title .cp-eyebrow { font-size:9px; }
+  .cp-app[data-page=field] .cp-config-line { max-height:48px;overflow:auto;font-size:10px; }
+  .cp-app[data-page=field] .cp-asset { top:155px;left:8%; }
+  .cp-app[data-page=field] .cp-asset-note { display:none; }
+  .cp-app[data-page=compare] .cp-work-title h1 { font-size:26px; }
+  .cp-app[data-page=compare] .cp-work-title { top:12px; }
+  .cp-app[data-page=compare] .cp-asset { top:20px;left:auto;right:30px; }
+  .cp-app[data-page=compare] .cp-asset-note { display:none; }
+}
+@media(min-width:1001px) and (max-height:800px) {
+  .cp-app[data-page=overview] .cp-summary-cards { top:54%;height:30%; }
+  .cp-app[data-page=overview] .cp-summary { padding:10px 12px; }
+  .cp-app[data-page=overview] .cp-summary[data-card=spectrum]>small { display:none; }
+  .cp-app[data-page=overview] .cp-spectrum-key { margin-top:5px; }
+  .cp-app[data-page=overview] .cp-summary .cp-spectrum-preview { min-height:100px; }
+  .cp-app[data-page=field] .cp-layout-notice { display:none; }
+  .cp-app[data-page=field] .cp-card-heading h2 { font-size:18px; }
+  .cp-app[data-page=field] .cp-field-tools .lab-view-tools { grid-template-columns:repeat(3,minmax(0,1fr));gap:6px; }
+  .cp-app[data-page=field] .cp-field-tools label { font-size:10px; }
+  .cp-app[data-page=field] .cp-field-tools select { font-size:10px;padding:6px 3px; }
+  .cp-app[data-page=field] .cp-field-tools .lab-check { display:flex;align-items:center; }
+  .cp-app .cp-panel-tabs { margin:8px 0; }
+  .cp-app .cp-readings .lab-field-hud { font-size:10px;padding:9px; }
+  .cp-app .cp-comparison { top:98px; }
+}
+@media(max-width:1000px) {
+  .cp-app .cp-comparison { padding:18px; }
+  .cp-case-workflow ol { flex-wrap:wrap;gap:8px;font-size:11px; }
+  .cp-app .cp-field-panel .lab-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .cp-app .cp-field-panel { max-width:none; }
+}
+
+.cp-settings-tabs { display:flex;gap:7px;margin-bottom:14px; }
+.cp-settings-tabs button { flex:1;padding:9px 5px;font-size:12px; }
+.cp-settings-tabs button[aria-pressed=true] { background:#e6d3b3;color:#69491f;border-color:#b59160; }
+.cp-app .cp-dialog .lab-controls h2 { margin-top:8px; }

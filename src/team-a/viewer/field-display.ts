@@ -34,10 +34,10 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
     improvementPalette: { value: reductionColors.map(c => new THREE.Color(c)) },
     pressureRange: { value: new THREE.Vector2(45, 85) }, improvementRange: { value: new THREE.Vector2(-10, 10) },
     quantityWeights: { value: new THREE.Vector3(0, 1, 0) },
-    opacity: { value: .95 }, clip: { value: new THREE.Vector4() }, clipped: { value: 0 },
+    opacity: { value: .75 }, clip: { value: new THREE.Vector4() }, clipped: { value: 0 },
   };
-  let requestedOpacity=.95;
-  const sliceOpacity={value:.85};
+  let requestedOpacity=.75;
+  const sliceOpacity={value:.75};
   const grid = gridForCount(points.length);
   const data = new Float32Array(points.length * 2), previousData = data.slice();
   const texture = new THREE.Data3DTexture(data, grid.x, grid.y, grid.z);
@@ -96,7 +96,9 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
           float shell=dot(vec3(1.)-smoothstep(vec3(.05),vec3(.23),bands),quantityWeights);
           vec3 significance=vec3(clamp((db.xy-pressureRange.x)/(pressureRange.y-pressureRange.x),0.,1.),
             clamp(abs(db.z)/max(improvementRange.y,1.),0.,1.));
-          float density=.12+.35*dot(significance,quantityWeights)+2.8*shell;
+          // A low optical depth leaves the seat silhouettes readable. The
+          // density is a presentation transfer function, never an SPL edit.
+          float density=.045+.11*dot(significance,quantityWeights)+.72*shell;
           vec3 rgb=colour(db);
           if(shell>.15){
             vec3 h=1./dimensions;
@@ -106,11 +108,13 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
             float light=.70+.30*abs(dot(normalize(gradient+vec3(.00001)),normalize(vec3(.45,.8,.35))));
             rgb*=light;
           }
-          float alpha=(1.-exp(-stepSize*4.5*density))*feather*opacity;
+          float alpha=(1.-exp(-stepSize*2.8*density))*feather;
           sum.rgb+=(1.-sum.a)*rgb*alpha;sum.a+=(1.-sum.a)*alpha;
-          if(sum.a>.97)break;
+          if(sum.a>.96)break;
         }
-        if(sum.a<.005)discard;result=linearToOutputTexel(vec4(sum.rgb/max(sum.a,.001),sum.a));
+        // Apply user opacity after integration so 75% cannot accumulate back
+        // to an opaque fog across the 96 samples. Colours and data stay paired.
+        if(sum.a<.005)discard;result=linearToOutputTexel(vec4(sum.rgb/max(sum.a,.001),min(sum.a,.82)*opacity));
       }`,
   });
   const volume = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), volumeMaterial);
@@ -150,7 +154,12 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
           vec3 db=levels(mix(readEnergy(previousValues,sampleUv),readEnergy(values,sampleUv),temporalMix));vec3 rgb=colour(db);
           vec3 contour=abs(fract(db/3.+.5)-.5);
           float line=dot(vec3(1.)-smoothstep(vec3(.015),vec3(.015)+max(fwidth(db/3.)*1.5,vec3(.018)),contour),quantityWeights);
-          rgb=mix(rgb,rgb*.58,line*.32);result=linearToOutputTexel(vec4(rgb,opacity));
+          // Contrasting 3 dB contours plus a thin actual slice boundary, not
+          // decorative hot spots. These remain visible on a near-uniform field.
+          rgb=mix(rgb,rgb*.38,line*.62);
+          vec2 edge=min(sampleUv,1.-sampleUv);float rim=1.-smoothstep(0.,.008,min(edge.x,edge.y));
+          rgb=mix(rgb,vec3(.93,.97,1.),rim*.65);
+          result=linearToOutputTexel(vec4(rgb,opacity));
         }`,
     });
     const mesh = new THREE.Mesh(geometry, material); mesh.name = `sampled-field-slice-${axis}`; mesh.renderOrder = 5; mesh.visible = false; mesh.frustumCulled = false;
@@ -176,7 +185,7 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
       const visible=[...slices.values()].map(row=>row.mesh.visible);
       try {
         temporalMix.value=1;uniforms.quantityWeights.value.set(0,1,0);uniforms.pressureRange.value.set(45,85);
-        uniforms.clipped.value=0;uniforms.opacity.value=.95;volume.visible=true;slices.forEach(row=>row.mesh.visible=false);
+        uniforms.clipped.value=0;uniforms.opacity.value=.75;volume.visible=true;slices.forEach(row=>row.mesh.visible=false);
         render();
       } finally {
         temporalMix.value=oldMix;uniforms.quantityWeights.value.copy(weights);uniforms.pressureRange.value.copy(range);
@@ -225,7 +234,7 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
       for (const [axis, row] of slices) row.mesh.visible = slice === axis;
     },
     setClip(plane: THREE.Plane | null) { uniforms.clipped.value = plane ? 1 : 0; if (plane) uniforms.clip.value.set(plane.normal.x, plane.normal.y, plane.normal.z, plane.constant); },
-    setOpacity(value: number) { requestedOpacity=value;uniforms.opacity.value=value;sliceOpacity.value=value; },
+    setOpacity(value: number) { requestedOpacity=Number.isFinite(value)?THREE.MathUtils.clamp(value,0,1):.75;uniforms.opacity.value=requestedOpacity;sliceOpacity.value=requestedOpacity; },
     dispose() { texture.dispose(); previousTexture.dispose(); volume.geometry.dispose(); volumeMaterial.dispose(); slices.forEach(row => { row.texture.dispose(); row.previousTexture.dispose(); row.mesh.geometry.dispose(); row.mesh.material.dispose(); }); group.removeFromParent(); group.clear(); },
   };
 }

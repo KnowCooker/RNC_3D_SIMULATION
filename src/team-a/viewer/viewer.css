@@ -120,6 +120,21 @@
   pointer-events: none;
 }
 .lab-path-focus-compact { display: none; }
+.lab-path-focus-note { pointer-events: auto; }
+.lab-path-isolation { display:block;margin-top:6px;padding:4px 9px;font:inherit;cursor:pointer; }
+.cp-app[data-page=structure] #lab-viewer[data-presentation-page=structure] .lab-path-focus-note:not([hidden]) {
+  display:block!important;top:auto;bottom:106px;left:250px;right:352px;max-width:none;
+  padding:9px 12px;border:1px solid #fff9;border-radius:12px;background:#f8f2e7eb;
+  color:#604c32;font:11px/1.5 "RNC Sans",sans-serif;box-shadow:0 4px 18px #3d2a1710;
+}
+.cp-app[data-page=structure] #lab-viewer[data-presentation-page=structure] .lab-path-isolation { margin-top:5px;font-size:11px; }
+.cp-app #lab-viewer .lab-marker { border-left:3px solid var(--marker-color);font-family:"RNC Sans",sans-serif; }
+.cp-app #lab-viewer .lab-marker[aria-pressed=true] { box-shadow:0 0 0 2px #94724866;background:#fffaf0; }
+@media(max-width:1000px) {
+  .cp-app[data-page=structure] #lab-viewer[data-presentation-page=structure] .lab-path-focus-note:not([hidden]) {
+    left:84px;right:14px;bottom:14px;max-width:calc(100% - 98px);
+  }
+}
 @media (max-width: 600px) {
   .lab-path-focus-note { max-width: min(150px, calc(100% - 250px)); font-size: 9px; line-height: 1.25; }
   .lab-path-focus-detail { display: none; }

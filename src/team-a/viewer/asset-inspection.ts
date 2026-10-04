@@ -11,6 +11,7 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
   const shellSet = new Set(shell);
   const originals = new Map<THREE.Mesh, { material: THREE.Material | THREE.Material[]; visible: boolean }>();
   const copies = new Map<THREE.Material, THREE.Material>();
+  const rimModes = new Map<THREE.Material, { value: number }>();
   const materials = new Set<THREE.Material>();
   const originalPlanes = new Map<THREE.Material, THREE.Plane[] | null>();
   for (const mesh of meshes) {
@@ -18,7 +19,24 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
     if (shellSet.has(mesh)) {
       const copy = (material: THREE.Material) => {
         let cloned = copies.get(material);
-        if (!cloned) { cloned = material.clone(); copies.set(material, cloned); }
+        if (!cloned) {
+          cloned = material.clone(); copies.set(material, cloned);
+          if (material.userData.inspectionRim && cloned instanceof THREE.MeshStandardMaterial) {
+            const mode = { value: 0 }; rimModes.set(cloned, mode);
+            const originalCompile = cloned.onBeforeCompile;
+            cloned.onBeforeCompile = function(shader, renderer) {
+              originalCompile.call(this, shader, renderer);
+              shader.uniforms.rncInspectionRim = mode;
+              shader.fragmentShader = shader.fragmentShader
+                .replace('#include <common>', '#include <common>\nuniform float rncInspectionRim;')
+                .replace('#include <opaque_fragment>', `
+                  float rncRim = pow(1. - abs(dot(normal, normalize(vViewPosition))), 2.);
+                  diffuseColor.a *= mix(1., mix(.28, 1., rncRim), rncInspectionRim);
+                  #include <opaque_fragment>`);
+            };
+            cloned.customProgramCacheKey = () => `${material.customProgramCacheKey()}/rnc-inspection-rim-v1`;
+          }
+        }
         return cloned;
       };
       mesh.material = Array.isArray(mesh.material) ? mesh.material.map(copy) : copy(mesh.material);
@@ -44,7 +62,9 @@ export function createAssetInspection(root: THREE.Group, shell: readonly THREE.M
     }
     for (const [original, material] of copies) {
       material.transparent = mode === 'transparent' || original.transparent;
-      material.opacity = mode === 'transparent' ? Math.min(original.opacity, 0.18) : original.opacity;
+      material.opacity = mode === 'transparent' ? Math.min(original.opacity,
+        original.userData.inspectionGlass ? .065 : original.userData.inspectionRim ? .32 : .18) : original.opacity;
+      const rim = rimModes.get(material); if (rim) rim.value = mode === 'transparent' ? 1 : 0;
       material.depthWrite = mode === 'transparent' ? false : original.depthWrite;
       material.needsUpdate = true;
     }

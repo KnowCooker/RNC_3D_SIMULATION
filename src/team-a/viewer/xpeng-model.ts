@@ -6,6 +6,7 @@ import type { ShowroomModel } from './showroom-model';
 import { getXPengSpec, type XPengId } from './xpeng-catalog';
 import { createP7PlusModel } from './p7plus-model';
 import { xpengProfiles, sampleXPeng } from './xpeng-profiles';
+import { upholsteryGrain, upholsterySurface } from './upholstery-surface';
 
 type V = [number, number, number];
 const mix = THREE.MathUtils.lerp;
@@ -19,17 +20,21 @@ export function createXPengModel(id: XPengId): ShowroomModel {
 function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel {
   const profile = xpengProfiles[id], spec = getXPengSpec(id);
   const s = { ...spec, roofFront:profile.roofFront, roofRear:profile.roofRear, screenFront:profile.screenFront, screenRear:profile.screenRear, roofWidth: profile.roofHalf, belt: sampleXPeng(profile.shoulder,0) };
-  const group = new THREE.Group(); group.name = `xpeng-${id}`; group.userData.revision = `${id}-photo-v4`;
+  const group = new THREE.Group(); group.name = `xpeng-${id}`; group.userData.revision = `${id}-photo-v5`;
   const shell: THREE.Mesh[] = [], geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>();
   const parts: { id: string; name: string; object: THREE.Group; offset: THREE.Vector3 }[] = [];
   function mat(color: string, roughness = .4, metalness = 0) {
     const m = new THREE.MeshPhysicalMaterial({ color, roughness, metalness, side: THREE.DoubleSide }); materials.add(m); return m;
   }
-  const paint = mat(s.color, .28, .40); paint.clearcoat = 1; paint.clearcoatRoughness = .21;
+  const paint = mat(s.color, .24, .44); paint.clearcoat = 1; paint.clearcoatRoughness = .14;
+  paint.userData.inspectionRim = true;
   const black = mat('#11161b', .28, .12), glass = mat('#0b1620', .13, .02);
   glass.name='xpeng-window-glass'; glass.transparent = true; glass.opacity = .95; glass.envMapIntensity = .38; glass.roughness=.18; glass.depthWrite = false;
+  glass.userData.inspectionGlass = true;
   const rubber = mat('#17191b', .92), alloy = mat('#a7afb3', .23, .9), darkAlloy = mat('#414a50', .52, .7);
-  const leather = mat(id === 'gx' || id === 'x9' ? '#b8946f' : '#c8beb1', .83);
+  const leather = mat(id === 'gx' || id === 'x9' ? '#c6b7a2' : '#c8beb1', .72);
+  const grain = upholsteryGrain(); leather.bumpMap = grain; leather.bumpScale = .0012;
+  leather.roughnessMap = grain; leather.sheen = .24; leather.sheenRoughness = .72; leather.sheenColor.set('#ded1bc');
   const seam = mat('#827361', .85), screen = mat('#142c35', .22, .2), batteryMat = mat('#486574', .63, .5);
   black.envMapIntensity=.45;
   const white = mat('#e2fbff', .2); white.emissive.set('#bfe9ff'); white.emissiveIntensity = 1.8;
@@ -285,9 +290,9 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
       const z = rowZ[row], w = count === 2 ? .47 : .43;
       const chair = part(`seat-${row + 1}-${seat + 1}`, `${row + 1}排 ${seat + 1}座 · 内饰重建`, [x * 1.7, .75 + row * .3, -.15 * row]);
       chair.userData.seatRow = row + 1;
-      box(chair, [w, .12, .47], [x, .60, z], leather, .055);
-      const back = box(chair, [w, .52, .13], [x, .91, z - .24], leather, .06); back.rotation.x = -.12;
-      box(chair, [w * .61, .17, .105], [x, 1.24, z - .29], leather, .045);
+      mesh(chair, upholsterySurface(w, .13, .49, 'cushion'), leather, [x, .60, z]).name = 'contoured-seat-cushion';
+      const back = mesh(chair, upholsterySurface(w, .53, .145, 'back'), leather, [x, .91, z - .24]); back.rotation.x = -.12; back.name = 'contoured-seat-back';
+      mesh(chair, upholsterySurface(w * .66, .18, .12, 'headrest'), leather, [x, 1.24, z - .29]).name = 'padded-headrest';
       for (const side of [-1, 1]) {
         box(chair, [.07, .11, .43], [x + side * (w / 2 - .04), .68, z], leather, .032);
         tube(chair, [[x + side * (w / 2 - .085), .70, z - .20], [x + side * (w / 2 - .085), .91, z - .16], [x + side * (w / 2 - .085), 1.12, z - .20]], .004, seam);
@@ -297,11 +302,13 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
       for(const side of [-1,1]){
         box(chair,[.035,.024,.61],[x+side*.17,.415,z],alloy,.007);
         tube(chair,[[x+side*.095,1.12,z-.29],[x+side*.095,1.22,z-.29]],.007,alloy);
-        const bolster=box(chair,[.06,.37,.086],[x+side*(w/2-.039),.91,z-.14],leather,.028);bolster.rotation.x=-.12;
+        const bolster=mesh(chair,new THREE.SphereGeometry(1,24,16),leather,[x+side*(w/2-.065),.93,z-.14]);bolster.scale.set(.045,.22,.062);bolster.rotation.x=-.12;
         tube(chair,[[x+side*(w/2-.012),.69,z+.17],[x+side*(w/2-.012),.71,z-.16],[x+side*(w/2-.013),.92,z-.11],[x+side*(w/2-.025),1.12,z-.17]],.003,seam);
       }
-      box(chair,[w*.68,.018,.31],[x,.671,z],leather,.015);
-      for(let j=0;j<5;j++)tube(chair,[[x-w*.32,.92+j*.036,z-.157],[x+w*.32,.92+j*.036,z-.157]],.002,seam);
+      for(let j=0;j<4;j++){
+        const yy=.82+j*.072;
+        tube(chair,[[x-w*.28,yy,z-.149],[x,yy+.006,z-.139],[x+w*.28,yy,z-.149]],.0014,seam);
+      }
       box(chair,[.035,.07,.024],[x-w*.55,.68,z-.14],black,.007);
       if(s.rows.length===3&&row===1){const leg=box(chair,[w*.87,.075,.29],[x,.555,z+.29],leather,.027);leg.rotation.x=-.16;}
 
@@ -442,6 +449,6 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
     selectPart(key) { inspection.select(parts.find(p => p.id === key)?.object ?? null); },
     setPartProgress(key, progress) { if (!Number.isFinite(progress)) throw new Error('Non-finite disassembly progress'); const p = parts.find(item => item.id === key); if (p) p.object.position.copy(p.offset).multiplyScalar(THREE.MathUtils.clamp(progress, 0, 1)); },
     setPaint(color) { paint.color.set(color); for (const item of shell) { const m = item.material as THREE.MeshPhysicalMaterial; if (m.clearcoat === 1) m.color.set(color); } },
-    dispose() { if (disposed) return; disposed = true; inspection.dispose(); for (const geometry of geometries) geometry.dispose(); for (const material of materials) material.dispose(); group.removeFromParent(); group.clear(); },
+    dispose() { if (disposed) return; disposed = true; inspection.dispose(); grain.dispose(); for (const geometry of geometries) geometry.dispose(); for (const material of materials) material.dispose(); group.removeFromParent(); group.clear(); },
   };
 }

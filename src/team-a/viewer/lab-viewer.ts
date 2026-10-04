@@ -9,7 +9,7 @@ import { createSectionDisplay } from './section-display';
 import { createSceneStage, type RoadSurface, type StageMode } from './scene-stage';
 import type { GalleryEnvironment } from './champagne-gallery';
 import { labLayout, P7_LAYOUT_ID, registeredVehicleLayout, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
-import { placeLabLabels } from './labels';
+import { placeLabLabels, type LabelObstacle } from './labels';
 import { describeVehiclePart, featuredVehicleParts } from './part-guide';
 import { createFieldPoints, createFieldPointsForSlice, fieldFrameMatchesPoints, type SliceAxis } from './field-slices';
 import { DENSE_FIELD_GRID } from './field-grid';
@@ -38,6 +38,19 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   renderer.outputColorSpace = THREE.SRGBColorSpace; host.append(renderer.domElement);
   const leaders = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   leaders.classList.add('lab-marker-leaders'); leaders.setAttribute('aria-hidden', 'true'); host.append(leaders);
+  let labelObstacles: LabelObstacle[] = [], obstaclesAt = -Infinity, obstaclePage = '';
+  function readLabelObstacles(now: number) {
+    const page = `${host.dataset.presentationPage}/${host.clientWidth}/${host.clientHeight}`;
+    if (page === obstaclePage && now - obstaclesAt < 200) return labelObstacles;
+    obstaclesAt = now; obstaclePage = page;
+    const root = host.closest('.cp-app') ?? host;
+    const box = host.getBoundingClientRect();
+    labelObstacles = [...root.querySelectorAll<HTMLElement>('.cp-structure-tools,.cp-field-panel,.cp-bottom-bar,.cp-mode-rail,.cp-asset,.cp-work-title,.lab-assembly-panel,.lab-showroom-panel,.lab-part-card,.lab-part-picker,.lab-path-focus-note')]
+      .filter(element => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden')
+      .map(element => { const r = element.getBoundingClientRect(); return { x: r.left-box.left, y: r.top-box.top, width: r.width, height: r.height }; })
+      .filter(r => r.width > 0 && r.height > 0 && r.x < box.width && r.y < box.height && r.x+r.width > 0 && r.y+r.height > 0);
+    return labelObstacles;
+  }
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.95;
   const environmentRoom = new RoomEnvironment(), environmentGenerator = new THREE.PMREMGenerator(renderer);
   const environment = environmentGenerator.fromScene(environmentRoom, 0.04);
@@ -482,7 +495,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const fieldDisplay=createFieldDisplay(fieldPoints,renderer.extensions.has('OES_texture_float_linear'));
   field.add(fieldDisplay.group);field.visible=false;
   const sliceMeshes=fieldDisplay.slices;
-  let improvementView=false,lockedFieldRange:[number,number]|null=null,lockedImprovementRange:[number,number]|null=null,fieldOpacity=.95;
+  let improvementView=false,lockedFieldRange:[number,number]|null=null,lockedImprovementRange:[number,number]|null=null,fieldOpacity=.75;
   const fieldNote = document.createElement('div'); fieldNote.className = 'lab-field-interpolation-note'; fieldNote.hidden = true;
   const fieldNoteDetail = document.createElement('span'); fieldNoteDetail.className = 'lab-field-note-detail';
   const fieldNoteCompact = document.createElement('span'); fieldNoteCompact.className = 'lab-field-note-compact';
@@ -500,7 +513,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const rangeButton=document.createElement('button');rangeButton.type='button';rangeButton.textContent='增强局部对比';rangeButton.setAttribute('aria-pressed','false');
   rangeButton.onclick=()=>{if(!frame?.valid)return;const lock=!lockedFieldRange;lockedFieldRange=lock?pairedFieldRange(frame):null;lockedImprovementRange=lock?improvementFieldRange(frame):null;rangeButton.setAttribute('aria-pressed',String(!!lockedFieldRange));rangeButton.textContent=lockedFieldRange?'恢复标准色标':'增强局部对比';paintField();};
   const overheadButton=document.createElement('button');overheadButton.type='button';overheadButton.textContent='俯视座舱';overheadButton.onclick=()=>focusCamera(host.clientWidth<1000?[.01,8,.02]:[1,8,.02],host.clientWidth<1000?[0,.8,-.12]:[1,.8,-.12]);
-  const densityLabel=document.createElement('label');densityLabel.textContent='不透明度';const density=document.createElement('input');density.type='range';density.min='25';density.max='100';density.value='95';density.step='5';density.setAttribute('aria-label','声场不透明度');density.oninput=()=>{fieldOpacity=Number(density.value)/100;fieldDisplay.setOpacity(fieldOpacity);};densityLabel.append(density);
+  const densityLabel=document.createElement('label');densityLabel.textContent='不透明度';const density=document.createElement('input');density.type='range';density.min='25';density.max='100';density.value='75';density.step='5';density.setAttribute('aria-label','声场不透明度');density.oninput=()=>{fieldOpacity=Number(density.value)/100;fieldDisplay.setOpacity(fieldOpacity);};densityLabel.append(density);
   const fieldDisplayNote=document.createElement('small');fieldDisplayNote.textContent='1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。';
   fieldControls.append(improvementButton,rangeButton,overheadButton,densityLabel,fieldDisplayNote);fieldHud.append(fieldControls);
 
@@ -519,7 +532,12 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const pathFocusNote = document.createElement('div'); pathFocusNote.className = 'lab-path-focus-note'; pathFocusNote.hidden = true;
   const pathFocusDetail = document.createElement('span'); pathFocusDetail.className = 'lab-path-focus-detail';
   const pathFocusCompact = document.createElement('span'); pathFocusCompact.className = 'lab-path-focus-compact';
-  pathFocusNote.append(pathFocusDetail, pathFocusCompact); host.append(pathFocusNote);
+  const pathIsolation = document.createElement('button'); pathIsolation.type = 'button';
+  pathIsolation.className = 'lab-path-isolation'; pathIsolation.setAttribute('aria-label', '聚焦所选通道路径');
+  let isolatePaths = true, hasPathFocus = false;
+  pathIsolation.setAttribute('aria-pressed', 'true'); pathIsolation.textContent = '显示全部关联';
+  pathIsolation.onclick = () => { isolatePaths = !isolatePaths; pathFocusKey = ''; pathIsolation.setAttribute('aria-pressed', String(isolatePaths)); pathIsolation.textContent = isolatePaths ? '显示全部关联' : '聚焦所选通道'; };
+  pathFocusNote.append(pathFocusDetail, pathFocusCompact, pathIsolation); host.append(pathFocusNote);
   let frame: FieldFrame | null = null;
   let pathFocusKey = '';
 
@@ -721,7 +739,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     }
     if (!fieldNote.hidden) {
       if (fieldSlice === 'volume') {
-        fieldNoteDetail.textContent = '1,989个真实采样点 · 三维等声压面与体积；空间/帧间按声能平滑显示，精确读数对应标注时间窗';
+        fieldNoteDetail.textContent = '1,989个真实采样点 · 透视体场 / 每3dB等声压层；透明度仅改变显示，精确读数对应标注时间窗';
         fieldNoteCompact.textContent = '1,989点 · 三维体声场 · 声能平滑';
       } else {
         const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
@@ -743,13 +761,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     return selected.signal === 'e' && row.mic === selected.channel;
   }
   function updatePathFocus(selected: LabSelection) {
-    const key = `${selected.signal}:${selected.channel}:${pathMode}:${config?.speakerEnabled.join(',')}`;
+    const key = `${selected.signal}:${selected.channel}:${pathMode}:${config?.speakerEnabled.join(',')}:${isolatePaths}`;
     if (key === pathFocusKey) return;
     pathFocusKey = key;
     pathFocusNote.hidden = pathMode === 'none';
     if (pathFocusNote.hidden) return;
     const shown = pathRows.filter(pathIsShown), focused = shown.filter(row => pathMatchesSelection(row, selected));
-    const hasFocus = focused.length > 0;
+    const hasFocus = focused.length > 0; hasPathFocus = hasFocus;
     for (const row of pathRows) {
       const highlight = hasFocus && pathIsShown(row) && pathMatchesSelection(row, selected);
       const material = row.line.material as THREE.LineBasicMaterial;
@@ -769,7 +787,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
           : selected.signal === 'a' ? `MIC ${corner} 控制声 a · 次级路径`
             : selected.signal === 'e' ? `MIC ${corner} 残余声 e · 初级+次级路径`
               : '参考 x 是测量信号，不是轮端源 q';
-    pathFocusDetail.textContent = `直线示意路径 · ${identity} · 高亮 ${focused.length}/${shown.length} 条；其余淡化但保留`;
+    pathFocusDetail.textContent = `直线关系示意 · ${identity} · ${isolatePaths && hasFocus ? '聚焦' : '高亮'} ${focused.length}/${shown.length} 条；全部交叉影响仍参与计算`;
     const shortIdentity = selected.signal === 'q' ? `Q${selected.channel + 1} → 四麦克风`
       : selected.signal === 'u' ? config?.speakerEnabled[selected.channel] ? `OUT ${selected.channel + 1} → 四麦克风` : `OUT ${selected.channel + 1} 停用`
         : selected.signal === 'x' ? '参考 x ≠ 轮端 q' : `MIC ${corner} ${selected.signal}`;
@@ -1102,7 +1120,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       if (!acousticAsset() || host.dataset.presentationPage === 'overview'||!driving?.fieldVisible) field.visible = false;
       else field.visible=fieldMode!=='off'&&!!frame&&fieldFrameMatchesPoints(frame,fieldPoints);
       pathRows.forEach((row, i) => {
-        const visible = pathIsShown(row);
+        const visible = pathIsShown(row) && (!isolatePaths || !hasPathFocus || pathMatchesSelection(row, selected));
         row.line.visible = row.dot.visible = visible;
         displayPosition(row.start, row.from); displayPosition(row.end, row.to);
         const positions = row.line.geometry.getAttribute('position');
@@ -1134,9 +1152,15 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.button.hidden = !show; row.line.style.display = show ? '' : 'none';
         return { row, visible: show, x: (p.x + 1) / 2 * width, y: (1 - p.y) / 2 * height };
       }).filter(row => row.visible);
-      const positions = placeLabLabels(visible, width, height);
+      const obstacles = readLabelObstacles(now);
+      const positions = placeLabLabels(visible, width, height, obstacles);
       visible.forEach(({ row, x, y }, i) => {
-        const position = positions[i]; row.button.style.left = `${position.x}px`; row.button.style.top = `${position.y}px`;
+        const position = positions[i]; row.button.hidden = !!position.hidden;
+        row.button.style.left = `${position.x}px`; row.button.style.top = `${position.y}px`;
+        // Never draw a leader across an opaque panel to an invisible anchor.
+        const occluded = obstacles.some(r => x >= r.x && x <= r.x+r.width && y >= r.y && y <= r.y+r.height);
+        row.line.style.display = position.hidden || occluded ? 'none' : '';
+        row.line.style.opacity = row.button.getAttribute('aria-pressed') === 'true' ? '.85' : '.36';
         row.line.setAttribute('x1', String(x)); row.line.setAttribute('y1', String(y));
         row.line.setAttribute('x2', String(Math.max(position.x, Math.min(position.x + 64, x))));
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
