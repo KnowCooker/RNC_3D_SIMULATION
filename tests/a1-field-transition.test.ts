@@ -12,6 +12,25 @@ const frame = (time: number, db: number): FieldFrame => ({
   reductionDb: new Float32Array(points.length).fill(8),
 });
 
+test('A1: overview snapshot preserves lab quantity, slice, range and interpolation even when rendering fails', () => {
+  const view=createFieldDisplay(points,true),data=frame(1,60);
+  view.advance(1,true);view.update(data,'reduction','y',[-4,4],true);
+  view.advance(2,true);view.update(frame(2,70),'primary','y',[50,80],true);view.advance(2.5,true);
+  const u=view.volume.material.uniforms,weights=u.quantityWeights.value.clone(),mix=view.blend;
+  const pixels=(u.samples.value.image.data as Float32Array).slice();
+  assert.throws(()=>view.renderSnapshot(()=>{
+    assert.equal(view.blend,1);assert.equal(view.volume.visible,true);
+    assert.deepEqual(u.quantityWeights.value.toArray(),[0,1,0]);
+    assert.deepEqual(u.pressureRange.value.toArray(),[45,85]);
+    for(const row of view.slices.values())assert.equal(row.mesh.visible,false);
+    throw new Error('render aborted');
+  }),/render aborted/);
+  assert.equal(view.blend,mix);assert.equal(view.volume.visible,false);
+  assert.deepEqual(u.quantityWeights.value,weights);assert.deepEqual(u.pressureRange.value.toArray(),[50,80]);
+  assert.equal(view.slices.get('y')!.mesh.visible,true);
+  assert.deepEqual(u.samples.value.image.data,pixels);view.dispose();
+});
+
 test('A1: one-second field cadence keeps moving past the old 350 ms plateau', () => {
   const view = createFieldDisplay(points, true);
   view.advance(1, true); view.update(frame(1, 50), 'residual', 'volume', [45, 85], true);

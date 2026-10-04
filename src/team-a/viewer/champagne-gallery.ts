@@ -27,6 +27,8 @@ export function createChampagneGallery() {
   const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>();
   const group=new THREE.Group();group.name='champagne-lakeside-gallery';
   const landscape=createScenicTerrain();group.add(landscape.group);
+  // Art-directed lake sky belongs only to the pavilion. Driving retains its photographic panorama.
+  let lakeArt: THREE.Texture | null = null;
   const mat=(color:string,roughness=.7,metalness=0)=>{const m=new THREE.MeshStandardMaterial({color,roughness,metalness});materials.add(m);return m;};
   const stone=mat('#d5c8b6',.3),bronze=mat('#b49a76',.24,.7),ivory=mat('#f1e6d3',.65),trunk=mat('#514234',.95);
   const foliage=mat('#576044',.9),bark=mat('#7b6b54',.9);
@@ -51,7 +53,7 @@ export function createChampagneGallery() {
     `)};
   const mirror=new Reflector(reflectorGeometry,{textureWidth:1536,textureHeight:1024,color:0x9c968d,clipBias:.003,shader:reflectShader});
   mirror.rotation.x=-Math.PI/2;mirror.position.y=-.062;mirror.name='gallery-reflection';floor.add(mirror);
-  const glaze=new THREE.MeshStandardMaterial({color:'#aaa08e',roughness:.30,metalness:.04,transparent:true,opacity:.86,depthWrite:false,envMapIntensity:.4});materials.add(glaze);
+  const glaze=new THREE.MeshStandardMaterial({color:'#d8c8b6',roughness:.24,metalness:.04,transparent:true,opacity:.68,depthWrite:false,envMapIntensity:.6});materials.add(glaze);
   glaze.onBeforeCompile=shader=>{
     shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec2 vStone;').replace('#include <begin_vertex>','#include <begin_vertex>\nvStone=position.xy;');
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
@@ -71,13 +73,13 @@ export function createChampagneGallery() {
   // All azimuths share the same open-air architectural finish and planted perimeter.
   const canopyMat=mat('#e4d9c5',.72);canopyMat.side=THREE.DoubleSide;
   const roofG=new THREE.RingGeometry(24,28,192,3);roofG.rotateX(-Math.PI/2);
-  mesh(roofG,canopyMat,[0,5.25,0]).name='continuous-pavilion-canopy';
+  mesh(roofG,canopyMat,[0,8.25,0]).name='continuous-pavilion-canopy';
   const glow=new THREE.MeshStandardMaterial({color:'#fff0d0',emissive:'#ffdfad',emissiveIntensity:1.4,roughness:.45});materials.add(glow);
-  const edgeG=new THREE.TorusGeometry(24,.024,6,192);edgeG.rotateX(Math.PI/2);mesh(edgeG,glow,[0,5.23,0]);
+  const edgeG=new THREE.TorusGeometry(24,.024,6,192);edgeG.rotateX(Math.PI/2);mesh(edgeG,glow,[0,8.23,0]);
   const edgeStone=mat('#b3a791',.65);
   for(let i=0;i<12;i++){
     const a=i*Math.PI/6,x=Math.sin(a)*26,z=Math.cos(a)*26;
-    mesh(new THREE.CylinderGeometry(.065,.09,5.3,20),bronze,[x,2.55,z]);
+    mesh(new THREE.CylinderGeometry(.065,.09,8.3,20),bronze,[x,4.05,z]);
     mesh(new THREE.CylinderGeometry(.19,.23,.09,24),bronze,[x,-.012,z]);
     if(i%3===1){
       const seat=new THREE.Group();seat.position.set(Math.sin(a)*21.5,0,Math.cos(a)*21.5);seat.rotation.y=a;group.add(seat);
@@ -86,7 +88,7 @@ export function createChampagneGallery() {
     }
   }
   const curb=mesh(new THREE.TorusGeometry(27.2,.12,8,192),edgeStone,[0,-.10,0]);curb.rotation.x=Math.PI/2;
-  const plants=new THREE.Group();plants.name='pavilion-olive-trees';group.add(plants);
+  const plants=new THREE.Group();plants.name='pavilion-olive-trees';plants.rotation.y=.65;group.add(plants);
   for(const [x,z,s] of Array.from({length:8},(_,i)=>[Math.sin(i*Math.PI/4+.2)*23,Math.cos(i*Math.PI/4+.2)*23,.9+(i%3)*.1])){
     const tree=new THREE.Group();tree.position.set(x,0,z);tree.scale.setScalar(s);plants.add(tree);
     mesh(new THREE.CylinderGeometry(.63,.52,.62,48),stone,[0,.24,0],tree);mesh(new THREE.CylinderGeometry(.58,.58,.025,32),bark,[0,.56,0],tree);
@@ -97,13 +99,33 @@ export function createChampagneGallery() {
     leaves.castShadow=true;leaves.instanceMatrix.needsUpdate=true;tree.add(leaves);
   }
   const sky=createPanoramaSky('landscape-panorama-360');group.add(sky.mesh);
+  // The generated landscape is a wide art plate, not a surveyed 360° photograph.
+  // Project it across the front vista and feather into the full photographic sky.
+  const artUniforms={image:{value:null as THREE.Texture|null},opacity:{value:0}};
+  const artMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,side:THREE.BackSide,toneMapped:false,uniforms:artUniforms,
+    vertexShader:`varying vec3 ray;
+      void main(){ray=position;vec4 p=projectionMatrix*vec4(mat3(viewMatrix)*position,0.);gl_Position=p.xyww;}`,
+    fragmentShader:`varying vec3 ray;uniform sampler2D image;uniform float opacity;
+      void main(){vec3 d=normalize(ray);vec3 front=vec3(.62161,0.,-.78333),right=vec3(.78333,0.,.62161);
+        vec2 uv=vec2(.5+atan(dot(d,right),dot(d,front))/1.7,.5+asin(clamp(d.y,-1.,1.))/.75);
+        float edge=smoothstep(0.,.12,uv.x)*(1.-smoothstep(.88,1.,uv.x))*smoothstep(0.,.12,uv.y)*(1.-smoothstep(.88,1.,uv.y));
+        gl_FragColor=vec4(texture2D(image,clamp(uv,0.,1.)).rgb,edge*opacity);
+        #include <colorspace_fragment>
+      }`});
+  const artGeometry=new THREE.SphereGeometry(1,96,64);geometries.add(artGeometry);materials.add(artMaterial);
+  const artSky=new THREE.Mesh(artGeometry,artMaterial);artSky.name='champagne-art-vista';artSky.frustumCulled=false;artSky.renderOrder=-99;artSky.visible=false;group.add(artSky);
+  new THREE.TextureLoader().load(new URL('./assets/gallery-champagne-sunset-v2.png',import.meta.url).href,texture=>{
+    if(disposed){texture.dispose();return;} texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;lakeArt=texture;artUniforms.image.value=texture;activate();
+  });
   group.userData.panoramaCoverage=360;
   let activeLighting:THREE.DataTexture|null=null, backgroundGuard: (texture:THREE.Texture)=>boolean=()=>false;
   function activate(){
     const style=galleryEnvironments[environment],texture=panoramas.get(environment),backdrop=backdrops.get(environment);
     group.userData.environment=environment;group.userData.environmentReady=texture&&backdrop?environment:'';
     sky.set(backdrop??null,style.rotation);if(texture)activeLighting=texture;
-    stone.color.set(style.stone);glaze.color.set(style.stone).multiplyScalar(.52);
+    // Keep the lake horizon open; procedural hills previously hid the entire approved vista.
+    landscape.group.visible=environment!=='coast';
+    stone.color.set(style.stone);glaze.color.set(style.stone).multiplyScalar(.84);
     plants.visible=environment!=='desert';foliage.color.set(environment==='snow'?'#89958c':'#576044');
   }
   function trimCache(){for(const cache of [panoramas,backdrops])for(const [id,texture] of cache){if(cache.size<=2)break;if(id!==environment&&texture!==activeLighting&&!sky.uses(texture)&&!backgroundGuard(texture)){cache.delete(id);texture.dispose();}}}
@@ -117,8 +139,8 @@ export function createChampagneGallery() {
   setEnvironment(environment);
   return {group,floor,get environmentTexture(){return activeLighting;},get backgroundTexture(){return backdrops.get(environment)??null;},get environment(){return environment;},get lighting(){return galleryEnvironments[environment];},setEnvironment,
     protectBackground(guard:(texture:THREE.Texture)=>boolean){backgroundGuard=guard;},
-    update(dt:number){sky.update(dt);trimCache();},
+    update(dt:number){sky.update(dt);const target=environment==='coast'&&lakeArt?1:0;artUniforms.opacity.value+=Math.sign(target-artUniforms.opacity.value)*Math.min(Math.abs(target-artUniforms.opacity.value),Math.min(.05,dt)/1.2);artSky.visible=artUniforms.opacity.value>0;trimCache();},
     resize(width:number,height:number){const w=Math.min(2048,Math.max(768,Math.round(width))),h=Math.min(1440,Math.max(512,Math.round(height)));const target=mirror.getRenderTarget();if(target.width!==w||target.height!==h){target.setSize(w,h);(mirror.material as THREE.ShaderMaterial).uniforms.texel.value.set(1/w,1/h);}},
-    dispose(){disposed=true;sky.dispose();landscape.dispose();group.removeFromParent();mirror.dispose();panoramas.forEach(t=>t.dispose());panoramas.clear();backdrops.forEach(t=>t.dispose());backdrops.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());},
+    dispose(){disposed=true;sky.dispose();lakeArt?.dispose();landscape.dispose();group.removeFromParent();mirror.dispose();panoramas.forEach(t=>t.dispose());panoramas.clear();backdrops.forEach(t=>t.dispose());backdrops.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());},
   };
 }

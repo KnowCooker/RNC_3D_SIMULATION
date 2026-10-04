@@ -839,8 +839,11 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const pageCameras = new Map<string, {asset: string; position: Vec3; target: Vec3; fov: number; stage: StageMode; compact: boolean}>();
   function focusPresentationCamera() {
     const compact=host.clientWidth<1000,page=host.dataset.presentationPage;
+    camera.clearViewOffset();
+    if(page==='overview'&&!compact)camera.setViewOffset(host.clientWidth,host.clientHeight,host.clientWidth*.04,host.clientHeight*.075,host.clientWidth,host.clientHeight);
     if(page==='field'){focusCamera(compact?[5.8,4.6,6.6]:[4.4,4.6,4.7],compact?[0,1.0,0]:[1.0,.8,-.6]);return;}
-    focusCamera(compact?[7.4,3.1,8.2]:[6.7,2.6,7.6],compact?[0,1.15,0]:page==='overview'?[1.6,-.08,-.9]:[.75,.3,-.55]);
+    if(page==='overview'){focusCamera(compact?[-7.6,2.9,9.2]:[-7.6,1.9,9.9],compact?[0,1.0,0]:[1.9,.45,1.0],compact?38:35);return;}
+    focusCamera(compact?[7.4,3.1,8.2]:[6.7,2.6,7.6],compact?[0,1.15,0]:[.75,.3,-.55]);
   }
   let presentationCompact=host.clientWidth<1000;
   let wasNarrow = host.clientWidth < 600;
@@ -858,6 +861,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     renderer.setSize(width, height, false);
     stage.gallery.resize(width,height);
     camera.aspect = width / height;
+    if(host.dataset.presentationPage==='overview'&&stage.mode==='gallery'){
+      if(width>=1000)camera.setViewOffset(width,height,width*.04,height*.075,width,height);
+      else camera.clearViewOffset();
+    }
     camera.updateProjectionMatrix();
     if(presentationCompact!==(width<1000)&&stage.mode==='road')driving?.focus();
     if(presentationCompact!==(width<1000)&&host.dataset.presentationPage&&stage.mode==='gallery'&&showroomClipAxis==='none'){focusPresentationCamera();}
@@ -896,30 +903,63 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
     get acousticAvailable() { return acousticAsset(); },
     get hasValidField() { return !!frame?.valid && acousticAsset(); },
-    renderPreview(canvas: HTMLCanvasElement, top = false, acoustic = false) {
+    previewReading(seat: number) {
+      if(!config || !frame || !acousticAsset() || !fieldFrameMatchesPoints(frame,fieldPoints))return null;
+      const point=micAnchor(seat).origin;
+      let nearest=0,distance=Infinity;
+      frame.points.forEach((p,i)=>{const d=p.reduce((sum,v,axis)=>sum+(v-point[axis])**2,0);if(d<distance){distance=d;nearest=i;}});
+      return {time:frame.time,weighting:frame.weighting,primary:frame.primarySpl[nearest],residual:frame.residualSpl[nearest],reduction:frame.reductionDb[nearest]};
+    },
+    renderPreview(canvas: HTMLCanvasElement, top = false, acoustic = false, detail: 'vehicle' | 'paths' | 'layout' = 'vehicle') {
       if (!showroomModel || !showroomActive) return;
       const size = renderer.getSize(new THREE.Vector2()), ratio = renderer.getPixelRatio();
       const saved = scene.children.map(object => [object,object.visible] as const), background = scene.background;
       const oldBody = inspectionBody.value as AssetBodyMode;
       const clearColor=renderer.getClearColor(new THREE.Color()),clearAlpha=renderer.getClearAlpha();
+      const overlay=new THREE.Group();
+      const previewMaterials:THREE.Material[]=[],previewGeometries:THREE.BufferGeometry[]=[];
+      const bead=(point:THREE.Vector3,color:string,r=.062)=>{
+        const g=new THREE.SphereGeometry(r,12,8),m=new THREE.MeshBasicMaterial({color,depthTest:false});
+        const mesh=new THREE.Mesh(g,m);mesh.position.copy(point);mesh.renderOrder=10;overlay.add(mesh);previewMaterials.push(m);previewGeometries.push(g);
+      };
       try {
         scene.children.forEach(object => { if (!(object instanceof THREE.Light) && object !== showroomModel!.group) object.visible = false; });
         // Transparent off-screen preview preserves the glass panel behind the model.
         scene.background = null;renderer.setClearColor(0,0);
         if (top) showroomModel.inspection.setBody('hidden');
-        else if(acoustic && frame?.valid && acousticAsset()) {showroomModel.inspection.setBody('transparent');field.visible=true;}
-        const previewCamera = new THREE.PerspectiveCamera(32,2, .05,100);
-        previewCamera.position.set(...(top ? [0,5.5,.01] : [4.0,2.0,4.4]) as [number,number,number]); previewCamera.lookAt(0,.65,0); if(top) previewCamera.up.set(1,0,0); previewCamera.lookAt(0,.65,0);
-        renderer.setPixelRatio(1); renderer.setSize(760,380,false); renderer.render(scene,previewCamera);
-        canvas.width=760;canvas.height=380;canvas.getContext('2d')!.drawImage(renderer.domElement,0,0);
+        else if(acoustic || detail==='paths') showroomModel.inspection.setBody('transparent');
+        if(acoustic && frame?.valid && acousticAsset()) field.visible=true;
+        if(top || detail==='layout') markerRows.filter(row=>!row.source).forEach(row=>{
+          const color=row.selection.signal==='x'?'#e5a03b':row.selection.signal==='e'?'#2285e0':'#e44c48';
+          const point=row.mesh.position.clone();point.y=1.95;bead(point,'#ffffff',.085);bead(point.clone().add(new THREE.Vector3(0,.012,0)),color,.059);
+        });
+        if(detail==='paths'){
+          const sources=markerRows.filter(row=>row.source);
+          sources.forEach((row,i)=>{
+            const start=row.mesh.position.clone(),end=new THREE.Vector3(start.x*.45,1.04,start.z*.45);
+            const curve=new THREE.CatmullRomCurve3([start,new THREE.Vector3(start.x,.5,start.z*.6),end]);
+            const g=new THREE.TubeGeometry(curve,24,.025,6,false),m=new THREE.MeshBasicMaterial({color:i<2?'#eda83b':'#4c98eb',transparent:true,opacity:.9,depthTest:false});
+            overlay.add(new THREE.Mesh(g,m));previewGeometries.push(g);previewMaterials.push(m);bead(start,'#ffd166',.08);
+          });
+        }
+        scene.add(overlay);
+        const width=960,height=top||detail==='paths'?430:480;
+        const previewCamera = new THREE.PerspectiveCamera(31,width/height, .05,100);
+        previewCamera.position.set(...(top ? [0,6.6,.01] : [-4.7,2.65,5.4]) as [number,number,number]); if(top) previewCamera.up.set(1,0,0); previewCamera.lookAt(0,.8,0);previewCamera.zoom=top?1.25:1.45;previewCamera.updateProjectionMatrix();
+        renderer.setPixelRatio(1); renderer.setSize(width,height,false);
+        if(acoustic&&frame?.valid&&acousticAsset())fieldDisplay.renderSnapshot(()=>renderer.render(scene,previewCamera));
+        else renderer.render(scene,previewCamera);
+        canvas.width=width;canvas.height=height;canvas.getContext('2d')!.drawImage(renderer.domElement,0,0);
       } finally {
+        overlay.removeFromParent();previewGeometries.forEach(g=>g.dispose());previewMaterials.forEach(m=>m.dispose());
         showroomModel.inspection.setBody(oldBody); scene.background=background;renderer.setClearColor(clearColor,clearAlpha); saved.forEach(([object,visible])=>object.visible=visible);
         renderer.setPixelRatio(ratio); renderer.setSize(size.x,size.y,false);
       }
     },
     get displayAsset() { return showroomActive ? showroomModel?.assetId ?? 'loading' : 'teaching-fixed-v1'; },
     async showVehicle(id: 'teaching' | XPengId) { if (id === 'teaching') leaveShowroom(); else await enterShowroom(id); },
-    setStage(mode: StageMode) { stage.setMode(mode); applyStage(); if(mode==='gallery'&&fieldMode!=='off')setShowroomBody('transparent'); focusStageCamera(); },
+    setPresentationPaint(color: string) { showroomModel?.setPaint(color); },
+    setStage(mode: StageMode) { stage.setMode(mode); applyStage(); if(mode==='gallery'&&fieldMode!=='off'&&host.dataset.presentationPage!=='overview')setShowroomBody('transparent'); focusStageCamera(); },
     setRoadSurface(surface: RoadSurface) { stage.setRoadSurface(surface); refreshRoadSurface(); callbacks.roadPreset?.(surface, { smooth: .6, coarse: 1.2, gravel: 2.2 }[surface]); },
     setEnvironment(value: GalleryEnvironment) { stage.gallery.setEnvironment(value); if(stage.mode!=='road')stage.setMode('gallery'); applyStage(); },
     setPresentationView(page: string) {
@@ -927,6 +967,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       if(previous===page){if(page==='field'&&stage.mode==='gallery'){stage.setMode('road');applyStage();focusStageCamera();}else if(stage.mode==='gallery')focusPresentationCamera();return;}
       if(previous)pageCameras.set(previous,{asset,position:camera.position.toArray() as Vec3,target:controls.target.toArray() as Vec3,fov:camera.fov,stage:stage.mode,compact:host.clientWidth<1000});
       host.dataset.presentationPage = page; paintField();
+      camera.clearViewOffset();if(page==='overview'&&host.clientWidth>=1000)camera.setViewOffset(host.clientWidth,host.clientHeight,host.clientWidth*.04,host.clientHeight*.075,host.clientWidth,host.clientHeight);
       const saved=pageCameras.get(page);
       if(saved?.asset===asset&&saved.compact===(host.clientWidth<1000)){stage.setMode(saved.stage);applyStage();focusCamera(saved.position,saved.target,saved.fov);return;}
       if (page === 'structure') { assemblyPanel.open = showroomAssemblyPanel.open = host.clientWidth >= 900; }
@@ -972,7 +1013,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     setPaths(value: string) { if (value !== 'none' && !acousticAsset()) return; pathMode = value; pathFocusKey = ''; applyClipping(); },
     setField(mode: string, slice: 'volume' | 'x' | 'y' | 'z') {
       if (mode !== 'off' && !acousticAsset()) return;
-      if (showroomActive && mode !== 'off' && stage.mode!=='road') setShowroomBody('transparent');
+      if (showroomActive && mode !== 'off' && stage.mode!=='road' && host.dataset.presentationPage!=='overview') setShowroomBody('transparent');
       const entering = fieldMode === 'off' && mode !== 'off';
       fieldMode = mode; fieldSlice = slice; probeIndex = null;
       if (entering) { fieldFocus = true; if(stage.mode!=='road')focusPresentationCamera(); }

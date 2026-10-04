@@ -1,0 +1,100 @@
+/* Approved 1672×941 composition. Work pages keep their existing operable controls. */
+.cp-header-note { color:#7d7061;font-size:11px;letter-spacing:.18em;white-space:nowrap;margin-left:auto; }
+.cp-signature { display:none; }
+.cp-acoustic-visual { position:relative;min-height:0; }
+.cp-mini-scale { position:absolute;right:0;top:12%;height:72%;display:grid;grid-template-columns:12px 24px;column-gap:7px;font-size:10px;color:#49423a; }
+.cp-mini-scale small { position:absolute;top:-20px;left:0;font-size:10px; }
+.cp-mini-scale i { width:12px;background:linear-gradient(#e63232,#ffd543,#50dba1,#13b6e0,#173bd8);border:1px solid #fff6; }
+.cp-mini-scale span { display:flex;align-items:stretch;line-height:2.6; }
+.cp-mini-scale[data-valid=false] { opacity:.35; }
+.cp-level-arrow { display:flex;align-items:center;justify-content:center;color:#9a8b79;font-size:22px; }
+.cp-path-preview { display:block;width:100%;height:105px;object-fit:contain; }
+.cp-card-legend { display:flex;justify-content:space-between;gap:6px;white-space:nowrap; }
+.cp-card-legend>span { display:inline-flex;align-items:center;gap:5px; }
+.cp-dot { display:inline-block;width:8px;height:8px;border:1.5px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #c4b8aa55; }
+.cp-dot.amber { background:#efa431; }.cp-dot.blue { background:#278ded; }.cp-dot.red { background:#e94c47; }
+.cp-spectrum-key { display:flex;justify-content:flex-end;gap:14px;font-size:10px;color:#746655;margin-top:10px; }
+.cp-spectrum-key span::before { content:'';display:inline-block;width:14px;height:2px;background:#bc5f4d;vertical-align:middle;margin-right:5px; }
+.cp-spectrum-key span:last-child::before { background:#477eaa; }
+.cp-app .cp-overview-run { display:block;min-height:28px;margin:5px auto 0;padding:4px 12px;border-radius:20px;background:#fff7e5ba;border:1px solid #b69b7566;color:#7b5736;font-size:11px; }
+.cp-app[data-page=overview] .cp-hero .cp-eyebrow { display:none; }
+.cp-app[data-page=overview] .cp-field-empty { position:absolute;bottom:0;left:0;right:28px;margin:0;text-align:center;color:#847564;font-size:11px; }
+.cp-app[data-page=overview] .cp-levels { grid-template-columns:1fr 22px 1fr 1.04fr;gap:6px; }
+.cp-app[data-page=overview] .cp-levels>div:last-child { border-left:1px solid #ad9d8b;background:transparent;border-radius:0;margin-left:10px;padding-left:19px; }
+.cp-app[data-page=overview] .cp-data-note { font-size:10px;line-height:1.45;color:#7e7163; }
+.cp-app[data-page=overview] .cp-field-card .cp-card-heading>button,.cp-summary>span>i { display:inline-grid;place-items:center;width:29px;height:29px;border:1px solid #a598862b;border-radius:50%;font-size:23px;color:#76634e;font-style:normal;background:#fff3; }
+.cp-app[data-page=overview] .cp-card-heading h2 { font-weight:600; }
+.cp-app[data-page=overview] .cp-summary>span { justify-content:flex-start;gap:12px; }
+.cp-app[data-page=overview] .cp-summary>small { margin-top:5px; }
+.cp-app[data-page=overview] .cp-summary>em { font-size:10px;line-height:1.5; }
+.cp-app[data-page=overview] .cp-summary canvas { flex:1;min-height:0;margin:4px 0;width:100%; }
+.cp-app[data-page=overview] .cp-summary .cp-spectrum-preview { background:none; }
+.cp-app[data-page=overview] .cp-spectrum-empty { position:absolute;bottom:15px;left:20px;right:20px;text-align:center; }
+.cp-app[data-page=overview] .cp-summary[data-card=spectrum] { position:relative; }
+.cp-app[data-page=overview] .cp-summary .cp-spectrum-key { flex:none; }
+.cp-app[data-page=overview] .cp-field-card,.cp-app[data-page=overview] .cp-summary {
+  background:linear-gradient(125deg,rgba(255,250,242,.77),rgba(238,226,211,.70));
+  border:1px solid rgba(255,255,255,.8);box-shadow:0 12px 40px #55362013,inset 0 1px 1px #fff9;backdrop-filter:blur(20px) saturate(110%);
+}
+.cp-app[data-page=overview] .cp-field-card .cp-levels>div { background:#fff9f260; }
+.cp-app[data-page=overview] .cp-field-card .cp-levels>div:last-child { background:none; }
+.cp-app[data-page=overview] .cp-asset-note { display:none; }
+.cp-app[data-page=overview] .cp-asset label { font-size:0;gap:0; }
+.cp-app[data-page=overview] .cp-asset select { color:#746454;background:#fff8ed69;border-color:#fff7;font-size:11px;box-shadow:none;padding:5px 22px 5px 9px;border-radius:20px; }
+.cp-app[data-page=overview] #lab-viewer .lab-view-help { display:none; }
+.cp-app[data-page=overview] #lab-viewer::after { background:radial-gradient(ellipse 60% 30% at 16% 0%,#fff5e7e0,transparent 100%),linear-gradient(180deg,transparent 65%,#f3e6d337); }
+
+@media(min-width:1001px) {
+  .cp-header { height:72px;padding:0 2.4%;gap:16px; }
+  .cp-brand { font-size:clamp(16px,1.45vw,24px);gap:20px;letter-spacing:.08em; }
+  .cp-brand svg { width:70px;height:42px; }.cp-brand small { display:none; }
+  .cp-header nav { left:50%;gap:clamp(22px,3vw,52px); }
+  .cp-header nav button { font-size:clamp(14px,1.05vw,18px);padding:23px 3px; }
+  .cp-header .cp-more { margin-left:10px;font-size:20px; }
+  .cp-stage { height:calc(100dvh - 72px);min-height:590px; }
+  .cp-app[data-page=overview] .cp-stage { height:calc(100dvh - 72px);min-height:540px; }
+  .cp-app[data-page=overview] .cp-hero { top:5.5%;left:7%; }
+  .cp-app[data-page=overview] .cp-hero h1 { margin:0 0 8px;font-size:clamp(29px,2.7vw,46px);font-weight:600;letter-spacing:.11em; }
+  .cp-app[data-page=overview] .cp-hero p { font-size:clamp(12px,1.04vw,18px);letter-spacing:.23em;color:#776653; }
+  .cp-app[data-page=overview] .cp-asset { top:17.8%;left:7%; }
+  .cp-app[data-page=overview] .cp-mode-rail { top:18%;left:1.7%;width:5%;min-width:65px;max-width:84px;gap:6px;padding:8px;border-radius:25px; }
+  .cp-app[data-page=overview] .cp-mode-rail button { height:clamp(62px,8.1vh,83px);padding:10px 5px;color:#fffdf6;text-shadow:0 1px 4px #7c61454a; }
+  .cp-app[data-page=overview] .cp-mode-rail button[aria-pressed=true] { color:#5c4329;text-shadow:none; }
+  .cp-app[data-page=overview] .cp-field-card { top:2.6%;right:1.5%;width:33.8%;max-width:none;height:47%;min-height:0;padding:clamp(16px,2vw,32px);border-radius:30px;display:flex;flex-direction:column; }
+  .cp-app[data-page=overview] .cp-card-heading h2 { font-size:clamp(18px,1.5vw,25px); }
+  .cp-app[data-page=overview] .cp-acoustic-visual { flex:1;min-height:85px; }
+  .cp-app[data-page=overview] .cp-model-preview { width:calc(100% - 18px);height:100%;max-height:none;object-fit:contain; }
+  .cp-app[data-page=overview] .cp-field-card .cp-levels { margin-top:9px; }
+  .cp-app[data-page=overview] .cp-levels>div { padding:11px 12px; }
+  .cp-app[data-page=overview] .cp-levels b { font-size:clamp(19px,1.85vw,31px);font-weight:550;white-space:nowrap;letter-spacing:-.025em;margin-top:4px; }
+  .cp-app[data-page=overview] .cp-levels small { font-size:clamp(11px,.9vw,15px); }
+  .cp-app[data-page=overview] .cp-data-note { margin-top:8px; }
+  .cp-app[data-page=overview] .cp-summary-cards { top:57.2%;bottom:auto;left:32.4%;right:1.8%;height:25.6%;gap:14px; }
+  .cp-app[data-page=overview] .cp-summary { height:100%;padding:16px 22px;border-radius:22px; }
+  .cp-app[data-page=overview] .cp-summary>span { font-size:clamp(15px,1.08vw,18px); }
+  .cp-app[data-page=overview] .cp-summary>small { font-size:clamp(10px,.85vw,14px);line-height:1.4; }
+  .cp-app[data-page=overview] .cp-environments { left:2.3%;bottom:2.8%;width:47%;max-width:790px;height:12.5%;max-height:113px;min-height:80px;border-radius:55px;padding:10px 30px;gap:22px;background:#f8f3ee80; }
+  .cp-app[data-page=overview] .cp-landscape { height:calc(100% - 24px);min-height:38px;border-radius:14px; }
+  .cp-app[data-page=overview] .cp-environments button { height:100%;font-size:12px; }
+  .cp-app[data-page=overview] .cp-cta { bottom:5.1%;right:15.1%;width:20.7%;padding:15px 20px;min-width:230px;font-size:clamp(15px,1.15vw,20px);border-radius:44px;background:linear-gradient(115deg,#7f5937,#bd8e5d 75%,#f0c383); }
+  .cp-app[data-page=overview] .cp-signature { display:block;position:absolute;right:3.5%;bottom:6.4%;border-left:1px solid #aa95816b;padding-left:22px;font-size:11px;letter-spacing:.17em;color:#796553; }
+  .cp-signature small { display:block;font-size:8px;letter-spacing:.2em;margin-top:6px; }
+  .cp-app[data-page=overview] .cp-footer-note { left:auto;right:2%;bottom:1%;font-size:8px;color:#807261; }
+}
+@media(min-width:1001px) and (max-width:1390px) {
+  .cp-brand {font-size:16px;gap:12px}.cp-brand svg{width:47px}.cp-header-note{font-size:9px;letter-spacing:.04em}.cp-header nav{left:55%;gap:26px}
+  .cp-app[data-page=overview] .cp-levels b{font-size:21px}.cp-app[data-page=overview] .cp-levels>div{padding:8px}.cp-app[data-page=overview] .cp-levels>div:last-child{padding-left:10px;margin-left:4px}
+  .cp-app[data-page=overview] .cp-summary{padding:12px 14px}.cp-app[data-page=overview] .cp-summary>em{font-size:8px}.cp-app[data-page=overview] .cp-signature{font-size:9px;padding-left:12px;right:2%}
+}
+@media(min-width:601px) and (max-width:1000px) {
+  .cp-header-note{display:none}.cp-app[data-page=overview] .cp-field-card{display:block;height:290px;top:500px}.cp-acoustic-visual{height:155px;width:54%}.cp-model-preview{height:100%}
+  .cp-app[data-page=overview] .cp-levels{position:absolute;left:57%;right:20px;top:105px;grid-template-columns:1fr 1fr 1fr}.cp-level-arrow{display:none}.cp-field-empty{font-size:10px}
+  .cp-app[data-page=overview] .cp-summary-cards{top:810px}.cp-app[data-page=overview] .cp-stage{min-height:1180px}.cp-app[data-page=overview] .cp-data-note{margin-top:14px}.cp-mini-scale{display:none}
+}
+@media(max-width:600px) {
+  .cp-header-note{display:none}.cp-app[data-page=overview] .cp-stage{min-height:1690px}.cp-app[data-page=overview] .cp-field-card{top:485px;height:320px;padding:18px}
+  .cp-acoustic-visual{height:165px}.cp-app[data-page=overview] .cp-model-preview{height:100%;width:100%}.cp-mini-scale{height:63%;top:17%;font-size:8px;grid-template-columns:8px 17px}.cp-mini-scale i{width:8px}.cp-mini-scale span{line-height:2.35}
+  .cp-app[data-page=overview] .cp-levels b{font-size:19px}.cp-app[data-page=overview] .cp-levels>div{padding:7px}.cp-app[data-page=overview] .cp-levels>div:last-child{padding-left:9px;margin-left:1px}.cp-app[data-page=overview] .cp-levels small{font-size:11px}
+  .cp-app[data-page=overview] .cp-summary-cards{top:825px}.cp-app[data-page=overview] .cp-summary{display:flex;height:220px;padding:15px 20px}.cp-app[data-page=overview] .cp-summary canvas{height:110px}.cp-app[data-page=overview] .cp-summary>small{font-size:11px}.cp-app[data-page=overview] .cp-spectrum-preview{height:110px}
+  .cp-app[data-page=overview] .cp-environments{bottom:84px}.cp-app[data-page=overview] .cp-cta{bottom:28px}.cp-app[data-page=overview] .cp-asset{top:115px}.cp-app[data-page=overview] .cp-field-empty{font-size:10px}
+}

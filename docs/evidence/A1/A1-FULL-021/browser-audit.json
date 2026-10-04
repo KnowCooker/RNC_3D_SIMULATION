@@ -1,0 +1,96 @@
+{
+  "viewport1672": {
+    "height": 941,
+    "levels": [
+      "71.2 dBA",
+      "66.2 dBA",
+      "5.0 dB"
+    ],
+    "reading": "残余场 e · 左前座附近采样点 · 33.60 s · 同点同窗 · 仿真",
+    "scrollHeight": 941,
+    "scrollWidth": 1672,
+    "width": 1672
+  },
+  "snapshotIsolation": {
+    "overview": "residual volume, fixed 45–85 dBA",
+    "restoredLab": "improvement, horizontal slice, paused 33.60 s"
+  },
+  "viewport1440": {
+    "height": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  "viewport390": {
+    "areas": [
+      {
+        "name": "cp-field-card cp-glass",
+        "rect": {
+          "bottom": 910,
+          "height": 320,
+          "left": 15,
+          "right": 359.66668701171875,
+          "top": 590,
+          "width": 344.66668701171875,
+          "x": 15,
+          "y": 590
+        }
+      },
+      {
+        "name": "cp-summary-cards",
+        "rect": {
+          "bottom": 1614,
+          "height": 684,
+          "left": 15,
+          "right": 359.66668701171875,
+          "top": 930,
+          "width": 344.66668701171875,
+          "x": 15,
+          "y": 930
+        }
+      },
+      {
+        "name": "cp-environments cp-glass",
+        "rect": {
+          "bottom": 1711.0000839233398,
+          "height": 83.33333587646484,
+          "left": 15,
+          "right": 359.66668701171875,
+          "top": 1627.666748046875,
+          "width": 344.66668701171875,
+          "x": 15,
+          "y": 1627.666748046875
+        }
+      },
+      {
+        "name": "cp-cta",
+        "rect": {
+          "bottom": 1767,
+          "height": 42,
+          "left": 15,
+          "right": 359.66668701171875,
+          "top": 1725,
+          "width": 344.66668701171875,
+          "x": 15,
+          "y": 1725
+        }
+      }
+    ],
+    "height": 844,
+    "scrollHeight": 1795,
+    "scrollWidth": 375,
+    "width": 390
+  },
+  "mobileCta": true,
+  "console": [],
+  "interactions": [
+    "GX real-time Worker run and mute",
+    "overview real same-frame readout, solid body",
+    "path explanation dialog open and close",
+    "structure card enables acoustic hardware overlay",
+    "compare page read-only baseline eligibility",
+    "mountain/coast scenery switch without changing acoustic config",
+    "overview residual snapshot does not change paused lab improvement horizontal slice",
+    "mobile CTA opens field experiment"
+  ]
+}

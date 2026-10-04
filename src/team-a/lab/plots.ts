@@ -32,15 +32,17 @@ export function plot(canvas: HTMLCanvasElement, series: PlotSeries[], options: {
   const ratio = Math.min(globalThis.devicePixelRatio || 1, 2);
   canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
   const ctx = canvas.getContext('2d')!; ctx.scale(ratio, ratio);
-  const left = 54, top = 26, w = Math.max(1, width - left - (options.right ? 62 : 18)), h = Math.max(1, height - top - 48);
-  ctx.font = '11px ui-monospace, monospace'; ctx.lineWidth = 1;
+  const compact=height<170;
+  const left = compact?37:54, top = compact?18:26, w = Math.max(1, width - left - (options.right ? 62 : compact?12:18)), h = Math.max(1, height - top - (compact?33:48));
+  ctx.font = `${compact?9:11}px ui-monospace, monospace`; ctx.lineWidth = 1;
   const grid = (x1: number, y1: number, x2: number, y2: number) => { ctx.strokeStyle = '#d6c9b7'; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); };
-  for (let i = 0; i <= 4; i++) {
-    const y = top + h * i / 4; grid(left,y,left+w,y);
-    ctx.fillStyle = '#786852'; ctx.textAlign = 'right'; ctx.fillText(tick(options.y[1] - (options.y[1] - options.y[0]) * i / 4), left - 8,y+4);
+  const ySteps=compact?3:4;
+  for (let i = 0; i <= ySteps; i++) {
+    const y = top + h * i / ySteps; grid(left,y,left+w,y);
+    ctx.fillStyle = '#786852'; ctx.textAlign = 'right'; ctx.fillText(tick(options.y[1] - (options.y[1] - options.y[0]) * i / ySteps), left - 8,y+4);
     if (options.right) {
       ctx.textAlign = 'left'; ctx.fillStyle = ORIGINAL_COLOR;
-      ctx.fillText(tick(options.right.range[1] - (options.right.range[1] - options.right.range[0]) * i / 4), left+w+7,y+4);
+      ctx.fillText(tick(options.right.range[1] - (options.right.range[1] - options.right.range[0]) * i / ySteps), left+w+7,y+4);
     }
   }
   const log = options.xScale === 'log' && options.x[0] > 0;

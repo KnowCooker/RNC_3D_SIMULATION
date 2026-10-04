@@ -169,6 +169,21 @@ export function createFieldDisplay(points: readonly Vec3[], linearFloat: boolean
   }
   setPoints(points);
   return { group, volume, slices, setPoints,
+    /** Overview uses the latest complete residual volume, independently of the lab inspection view. */
+    renderSnapshot(render: () => void) {
+      const oldMix=temporalMix.value,weights=uniforms.quantityWeights.value.clone(),range=uniforms.pressureRange.value.clone();
+      const oldClip=uniforms.clipped.value,oldVolume=volume.visible,oldOpacity=uniforms.opacity.value;
+      const visible=[...slices.values()].map(row=>row.mesh.visible);
+      try {
+        temporalMix.value=1;uniforms.quantityWeights.value.set(0,1,0);uniforms.pressureRange.value.set(45,85);
+        uniforms.clipped.value=0;uniforms.opacity.value=.95;volume.visible=true;slices.forEach(row=>row.mesh.visible=false);
+        render();
+      } finally {
+        temporalMix.value=oldMix;uniforms.quantityWeights.value.copy(weights);uniforms.pressureRange.value.copy(range);
+        uniforms.clipped.value=oldClip;uniforms.opacity.value=oldOpacity;volume.visible=oldVolume;
+        [...slices.values()].forEach((row,i)=>row.mesh.visible=visible[i]);
+      }
+    },
     get blend() { return temporalMix.value; },
     advance(time: number, playing: boolean, presentationTime = time) {
       clock = presentationTime;

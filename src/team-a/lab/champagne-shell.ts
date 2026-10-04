@@ -1,10 +1,11 @@
-import { drawSignalComparison } from './plots';
+import { drawSignalComparison, plot } from './plots';
 import { registeredVehicleLayout, type LabAnalysis } from '../../shared/lab-contracts';
 import type { CaseSnapshot } from './case-compare';
 import type { createLabViewer } from '../viewer/lab-viewer';
 import type { XPengId } from '../viewer/xpeng-catalog';
 import type { GalleryEnvironment } from '../viewer/champagne-gallery';
 import './champagne.css';
+import './champagne-overview.css';
 
 type Page = 'overview' | 'field' | 'structure' | 'compare';
 const icons: Record<string, string> = {
@@ -23,20 +24,20 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   const element = (html: string) => { const template = document.createElement('template'); template.innerHTML = html; return template.content.firstElementChild as HTMLElement; };
   const originalMain = root.querySelector('.lab-main')!, oldHeader = root.querySelector('.lab-header')!, journey = root.querySelector('.lab-journey')!;
   const shell = element(`<section class="cp-shell" data-page="overview">
-    <header class="cp-header"><a class="cp-brand" href="#overview" aria-label="汽车主动降噪数字孪生平台，总览"><svg viewBox="0 0 64 38" aria-hidden="true"><path d="M3 25C15 38 20 0 34 13S50 39 61 23M17 12C31-3 37 12 46 19"/></svg><span>汽车主动降噪数字孪生平台<small>RNC · A QUIETER WORLD</small></span></a><nav aria-label="主导航">${(['overview','field','structure','compare'] as Page[]).map((p,i)=>`<button data-page="${p}" aria-current="${i===0?'page':'false'}">${['总览','声场实验','结构与布置','方案对比'][i]}</button>`).join('')}</nav><button class="cp-more" aria-label="帮助与数据来源">•••</button></header>
+    <header class="cp-header"><a class="cp-brand" href="#overview" aria-label="汽车主动降噪数字孪生平台，总览"><svg viewBox="0 0 64 38" aria-hidden="true"><path d="M3 25C15 38 20 0 34 13S50 39 61 23M17 12C31-3 37 12 46 19"/></svg><span>汽车主动降噪数字孪生平台<small>RNC · A QUIETER WORLD</small></span></a><nav aria-label="主导航">${(['overview','field','structure','compare'] as Page[]).map((p,i)=>`<button data-page="${p}" aria-current="${i===0?'page':'false'}">${['总览','声场实验','结构与布置','方案对比'][i]}</button>`).join('')}</nav><span class="cp-header-note">数字孪生 · 参数化仿真</span><button class="cp-more" aria-label="帮助与数据来源">•••</button></header>
     <main class="cp-stage">
       <div class="cp-hero"><span class="cp-eyebrow">QUIETER DRIVES. A BRIGHTER TOMORROW.</span><h1>让每一段旅程，都更安静</h1><p>以数字孪生，洞察声音的本质</p></div>
       <div class="cp-work-title"><span class="cp-eyebrow">EXPLORE / UNDERSTAND / REFINE</span><h1></h1><div class="cp-config-line"></div></div>
       <div class="cp-mode-rail" role="group" aria-label="车辆显示模式">${[['solid','car','外观'],['transparent','seat','透明'],['field','wave','声场'],['explode','cube','拆解']].map(([mode,img,label])=>`<button data-mode="${mode}" aria-pressed="${mode==='solid'}">${icon(img)}<span>${label}</span></button>`).join('')}</div>
-      <div class="cp-asset"><label>当前车辆<select aria-label="展示车辆"><option value="p7plus">小鹏 P7+ · 2026</option><option value="x9">小鹏 X9</option><option value="l03">MONA L03</option><option value="m03">MONA M03</option><option value="gx">小鹏 GX</option></select></label><span class="cp-asset-note">照片参考重建 · 可旋转与拆解</span></div>
-      <section class="cp-field-card cp-glass" aria-labelledby="cp-field-title"><div class="cp-card-heading"><h2 id="cp-field-title">车内声场</h2><button data-go="field" aria-label="进入车内声场">↗</button></div><canvas class="cp-model-preview" aria-label="当前车型三维缩略图"></canvas><div class="cp-field-empty"><strong>从一次实验，听见改变</strong><p>运行当前车型 声场实验后，查看同一时间窗的原声与残余。</p></div><div class="cp-levels"><div><small>原声 d</small><b data-level="primary">—</b></div><div><small>残余 e</small><b data-level="residual">—</b></div><div><small>改善</small><b data-level="reduction">—</b></div></div><small class="cp-data-note">尚无有效实验 · 不显示示例读数</small></section>
+      <div class="cp-asset"><label>当前车辆<select aria-label="展示车辆"><option value="p7plus">小鹏 P7+ · 2026</option><option value="x9">小鹏 X9</option><option value="l03">MONA L03</option><option value="m03">MONA M03</option><option value="gx" selected>小鹏 GX · SUV</option></select></label><span class="cp-asset-note">照片参考重建 · 可旋转与拆解</span></div>
+      <section class="cp-field-card cp-glass" aria-labelledby="cp-field-title"><div class="cp-card-heading"><h2 id="cp-field-title">车内声场</h2><button data-go="field" aria-label="进入车内声场">›</button></div><div class="cp-acoustic-visual"><canvas class="cp-model-preview" aria-label="当前车型三维声场缩略图"></canvas><div class="cp-mini-scale" aria-label="声场色标"><small>dBA</small><i></i><span>85<br>75<br>65<br>55<br>45</span></div><div class="cp-field-empty"><span>同车座舱 · 等待声场计算</span><button type="button" class="cp-overview-run">开始当前实验 ↗</button></div></div><div class="cp-levels"><div><small>原声 d</small><b data-level="primary">—</b></div><span class="cp-level-arrow" aria-hidden="true">→</span><div><small>残余 e</small><b data-level="residual">—</b></div><div><small>改善</small><b data-level="reduction">—</b></div></div><small class="cp-data-note">运行后展示同一采样点与时间窗的真实结果</small></section>
       <div class="cp-summary-cards">
-        <button class="cp-glass cp-summary" data-card="paths"><span>传递路径 <i>↗</i></span><small>从路面激励，理解声音如何抵达座舱</small><div class="cp-path-art"><b>路面</b><i>→</i><b>轮胎</b><i>→</i><b>车身</b><i>→</i><b>座舱</b></div><em>路径解释与实际通道分析</em></button>
-        <button class="cp-glass cp-summary" data-card="structure"><span>结构布置 <i>↗</i></span><small>逐件探索，检查传感器与执行器</small><canvas class="cp-layout-preview" aria-label="当前车型座舱俯视图"></canvas><em>参考传感器 · 误差麦克风 · 扬声器</em></button>
-        <button class="cp-glass cp-summary" data-card="spectrum"><span>频谱对比 <i>↗</i></span><small>相同座位、相同时间窗的声音变化</small><canvas class="cp-spectrum-preview" aria-label="当前实验频谱缩略图"></canvas><em class="cp-spectrum-empty">等待有效计算数据</em></button>
+        <button class="cp-glass cp-summary" data-card="paths"><span>传递路径 <i>›</i></span><small>识别与分析多路径噪声传递</small><canvas class="cp-path-preview" aria-label="当前车型噪声传递路径示意"></canvas><em class="cp-card-legend"><span><i class="cp-dot amber"></i>路面激励</span><span><i class="cp-dot blue"></i>结构传递</span><span>路径示意</span></em></button>
+        <button class="cp-glass cp-summary" data-card="structure"><span>结构布置 <i>›</i></span><small>传感器与执行器的协同布局</small><canvas class="cp-layout-preview" aria-label="当前车型座舱俯视图"></canvas><em class="cp-card-legend"><span><i class="cp-dot blue"></i>麦克风</span><span><i class="cp-dot amber"></i>参考传感器</span><span><i class="cp-dot red"></i>扬声器</span></em></button>
+        <button class="cp-glass cp-summary" data-card="spectrum"><span>频谱对比 <i>›</i></span><small>关键位置噪声频谱变化</small><div class="cp-spectrum-key"><span>原声 d</span><span>残余 e</span></div><canvas class="cp-spectrum-preview" aria-label="当前实验频谱缩略图"></canvas><em class="cp-spectrum-empty">运行实验，查看同窗频谱</em></button>
       </div>
       <div class="cp-environments cp-glass" role="group" aria-label="三维环境">${[['coast','海岸'],['mountain','山地'],['desert','沙漠'],['snow','雪山']].map(([id,name])=>`<button data-env="${id}" aria-pressed="${id==='coast'}"><span class="cp-landscape cp-landscape-${id}" aria-hidden="true"></span><span>${name}</span></button>`).join('')}</div>
-      <button class="cp-cta" data-go="field">进入声场实验 <span>→</span></button>
+      <button class="cp-cta" data-go="field">进入声场实验 <span>→</span></button><div class="cp-signature">更安静的出行体验<small>A QUIETER WORLD</small></div>
       <div class="cp-field-panel cp-glass"><div class="cp-card-heading"><h2>声场实验</h2><button class="cp-settings-button">工况设置</button></div><p class="cp-layout-notice"></p><button class="cp-teaching-button">切换 P7+ 实验车</button><div class="cp-run-actions"><button class="cp-run lab-primary">启动当前实验</button><button class="cp-stop">结束 / 取消</button></div><p class="cp-run-status" role="status"></p><div class="cp-field-tools"></div><div class="cp-readings"></div><div class="cp-charts"></div></div>
       <div class="cp-structure-tools cp-glass"><div class="cp-card-heading"><h2>结构与布置</h2><button class="cp-settings-button">编辑声学硬件</button></div><p>部件可点选、逐件拆装与复位。当前车型安装点随部件显示，计算始终使用回装坐标。</p><label class="cp-hardware-toggle"><input type="checkbox" aria-label="显示声学安装点">显示声学安装点</label><div class="cp-structure-controls"></div></div>
       <div class="cp-comparison cp-glass"><div class="cp-card-heading"><h2>方案对比</h2><button class="cp-settings-button">配置下一次实验</button></div><p class="cp-compare-intro">保存基线 A，改变一个设计因素，再与候选 B 比较。所有结论保留条件与时间窗。</p></div>
@@ -58,7 +59,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   sceneSettings.querySelector<HTMLSelectElement>('[aria-label="展示场景"]')!.onchange = event => viewer.setStage((event.target as HTMLSelectElement).value as 'gallery'|'road'|'workshop');
   sceneSettings.querySelector<HTMLSelectElement>('[aria-label="道路材质与声学预设"]')!.onchange = event => viewer.setRoadSurface((event.target as HTMLSelectElement).value as 'smooth'|'coarse'|'gravel');
   q('.cp-help .cp-dialog-content').append(root.querySelector('.lab-disclosure')!, get('guide'), root.querySelector('.lab-sources')!);
-  q('.cp-help .cp-dialog-content').append(element('<p class="cp-attribution">路旁地形：<a href="https://polyhaven.com/a/aerial_grass_rock" target="_blank" rel="noreferrer">Aerial Grass Rock</a>（Rob Tuytel，2K/CC0）。道路新增素材：<a href="https://polyhaven.com/a/small_rural_road" target="_blank" rel="noreferrer">Small Rural Road</a>（Andreas Mischok，8K实拍全景）、<a href="https://polyhaven.com/a/asphalt_02" target="_blank" rel="noreferrer">Asphalt 02</a>（Rob Tuytel）、<a href="https://polyhaven.com/a/gravel_floor" target="_blank" rel="noreferrer">Gravel Floor</a>（Matterfield / Jenelle van Heerden）；4K颜色/2K法线，均CC0。路旁为按里程生成的三维景物，非实测路线。四环境采用完整360°实拍全景：<a href="https://polyhaven.com/a/lakes" target="_blank" rel="noreferrer">Lakes</a>（Sergej Majboroda）、<a href="https://polyhaven.com/a/alps_field" target="_blank" rel="noreferrer">Alps Field</a>、<a href="https://polyhaven.com/a/lago_disola" target="_blank" rel="noreferrer">Lago d’Isola</a>（Andreas Mischok）、<a href="https://polyhaven.com/a/goegap" target="_blank" rel="noreferrer">Goegap</a>（Greg Zaal）。均为Poly Haven / <a href="https://polyhaven.com/license" target="_blank" rel="noreferrer">CC0</a>；背景原生8192×4096，配套2K或4K HDR负责光照与反射，全部本地打包、按需加载。展厅、植被为原创三维几何；菜单海岸/沙漠小图为早期AI创作预览，不是当前实拍全景。环境不代表实车测试地点。</p>'));
+  q('.cp-help .cp-dialog-content').append(element('<p class="cp-attribution">路旁地形：<a href="https://polyhaven.com/a/aerial_grass_rock" target="_blank" rel="noreferrer">Aerial Grass Rock</a>（Rob Tuytel，2K/CC0）。道路新增素材：<a href="https://polyhaven.com/a/small_rural_road" target="_blank" rel="noreferrer">Small Rural Road</a>（Andreas Mischok，8K实拍全景）、<a href="https://polyhaven.com/a/asphalt_02" target="_blank" rel="noreferrer">Asphalt 02</a>（Rob Tuytel）、<a href="https://polyhaven.com/a/gravel_floor" target="_blank" rel="noreferrer">Gravel Floor</a>（Matterfield / Jenelle van Heerden）；4K颜色/2K法线，均CC0。路旁为按里程生成的三维景物，非实测路线。四环境采用完整360°实拍全景：<a href="https://polyhaven.com/a/lakes" target="_blank" rel="noreferrer">Lakes</a>（Sergej Majboroda）、<a href="https://polyhaven.com/a/alps_field" target="_blank" rel="noreferrer">Alps Field</a>、<a href="https://polyhaven.com/a/lago_disola" target="_blank" rel="noreferrer">Lago d’Isola</a>（Andreas Mischok）、<a href="https://polyhaven.com/a/goegap" target="_blank" rel="noreferrer">Goegap</a>（Greg Zaal）。均为Poly Haven / <a href="https://polyhaven.com/license" target="_blank" rel="noreferrer">CC0</a>；背景原生8192×4096，配套2K或4K HDR负责光照与反射，全部本地打包、按需加载。展厅、植被为原创三维几何；海岸展厅远景采用AI创作的湖畔日落球面美术背景，非实测环境；车辆、展厅和控件为实时三维与HTML。道路保留实拍全景。菜单海岸/沙漠小图为AI创作预览。环境不代表实车测试地点。</p>'));
   q('.cp-paths-dialog .cp-dialog-content').append(root.querySelector('.lab-signals')!);
   q('.cp-comparison').append(get('case'));
   const caseCards = element('<div class="cp-case-pair"><article data-case="A"><span>方案 A / 基线</span><h3>等待保存基线</h3><div class="cp-case-seats"></div><small>运行一次预计算实验，再保存基线。</small></article><article data-case="B"><span>方案 B / 候选</span><h3>等待候选实验</h3><div class="cp-case-seats"></div><small>调整一个设计因素后，重新计算。</small></article></div>');
@@ -104,7 +105,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     q('.cp-config-line').hidden = !teaching;
     q('.cp-run-actions').hidden = q('.cp-run-status').hidden = !teaching;
     q('.cp-field-tools').hidden = q('.cp-readings').hidden = q('.cp-charts').hidden = !teaching;
-    q('.cp-field-empty').hidden = hasAnalysis && teaching;
+    q('.cp-field-empty').hidden = !!viewer.previewReading(lastSeat);
     updateLevels();
   }
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -129,13 +130,14 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     navigating=true;
     viewer.setPresentationView(next);
     uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();
-    if(next!=='field') {get<HTMLSelectElement>('field').value='off';get('field').dispatchEvent(new Event('change'));}
+    if(next!=='field') {get<HTMLSelectElement>('field').value=next==='overview'?rememberedField:'off';get('field').dispatchEvent(new Event('change'));}
     if(next==='overview' && viewer.displayAsset.startsWith('xpeng-')) {get<HTMLSelectElement>('body').value='solid';get('body').dispatchEvent(new Event('change'));}
     page = next; shell.dataset.page = next; root.dataset.page = next;
     q('.cp-work-title h1').textContent = {overview:'',field:'探索更安静的旅程',structure:'结构与布置',compare:'方案对比与结论'}[next];
     shell.querySelectorAll<HTMLButtonElement>('.cp-header [data-page]').forEach(b=>b.setAttribute('aria-current',b.dataset.page===next?'page':'false'));
     if(next==='field' && viewer.acousticAvailable) { get<HTMLSelectElement>('field').value=rememberedField; get('field').dispatchEvent(new Event('change')); }
     if(next==='field') shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='field')));
+    if(next==='overview') shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='solid')));
     navigating=false; syncAsset(); requestAnimationFrame(redraw);
     if(changed&&navigated){const selectors=next==='overview'?['.cp-hero','.cp-field-card','.cp-summary-cards','.cp-environments']:next==='field'?['.cp-work-title','.cp-field-panel']:next==='structure'?['.cp-structure-tools']:['.cp-work-title','.cp-comparison'];selectors.forEach((selector,i)=>animatePanel(q(selector),false,i*25));}
     navigated=true;
@@ -150,12 +152,13 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   shell.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog=>dialog.addEventListener('cancel',event=>{event.preventDefault();closeDialog(dialog);}));
   const chooseAsset = async () => {
     asset.disabled = true;
-    try { await changeVehicle(asset.value as XPengId); get('reset').click(); viewer.setStage('gallery'); viewer.setPresentationView(page); syncAsset(); viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview')); viewer.renderPreview(q<HTMLCanvasElement>('.cp-layout-preview'),true); }
+    try { await changeVehicle(asset.value as XPengId); if(asset.value==='gx')viewer.setPresentationPaint('#b9b4a9'); get('reset').click(); viewer.setStage('gallery'); viewer.setPresentationView(page); syncAsset(); if(page==='overview'){get<HTMLSelectElement>('field').value=rememberedField;get('field').dispatchEvent(new Event('change'));} refreshPreviews(); }
     finally { asset.disabled = false; }
   };
   asset.onchange=()=>void chooseAsset();
   q<HTMLButtonElement>('.cp-teaching-button').onclick=()=>{asset.value='p7plus';void chooseAsset();};
   q<HTMLButtonElement>('.cp-run').onclick=()=>get('calculate').click();
+  q<HTMLButtonElement>('.cp-overview-run').onclick=()=>{navigate('field');get('calculate').click();};
   q<HTMLButtonElement>('.cp-stop').onclick=()=>get('cancel').click();
   const frameField = () => { if(page==='field'&&!navigating) { rememberedField=get<HTMLSelectElement>('field').value; shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode===(rememberedField==='off'?'solid':'field')))); } };
   get('field').addEventListener('change',frameField,{signal:events.signal}); get('field-slice').addEventListener('change',frameField,{signal:events.signal});
@@ -164,7 +167,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     const mode = b.dataset.mode!;
     if(mode==='field') { navigate('field'); if(viewer.acousticAvailable) {get<HTMLSelectElement>('field').value='residual';get('field').dispatchEvent(new Event('change'));} }
     else if(mode==='explode') {navigate('structure'); if(get('explode').getAttribute('aria-pressed')!=='true') get('explode').click();}
-    else {get<HTMLSelectElement>('field').value='off';get('field').dispatchEvent(new Event('change'));get<HTMLSelectElement>('body').value=mode;get('body').dispatchEvent(new Event('change'));}
+    else {if(page!=='overview'){get<HTMLSelectElement>('field').value='off';get('field').dispatchEvent(new Event('change'));}get<HTMLSelectElement>('body').value=mode;get('body').dispatchEvent(new Event('change'));}
     shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String(el===b)));
   });
   shell.querySelectorAll<HTMLButtonElement>('[data-env]').forEach(b=>b.onclick=()=>{
@@ -177,17 +180,26 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   q<HTMLButtonElement>('[data-card="paths"]').onclick=()=>openDialog('.cp-paths-dialog');
   q<HTMLButtonElement>('[data-card="structure"]').onclick=()=>{navigate('structure');q<HTMLInputElement>('[aria-label="显示声学安装点"]').checked=true;viewer.setHardwareOverlay(true);};
   q<HTMLButtonElement>('[data-card="spectrum"]').onclick=()=>{navigate('field');q('.cp-charts').scrollIntoView({block:'nearest'});};
+  function refreshPreviews() {
+    viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,true);
+    viewer.renderPreview(q<HTMLCanvasElement>('.cp-layout-preview'),true,false,'layout');
+    viewer.renderPreview(q<HTMLCanvasElement>('.cp-path-preview'),false,false,'paths');
+  }
   function updateLevels() {
     const visible = hasAnalysis && lastAnalysis?.valid === true && viewer.acousticAvailable;
-    const values = lastAnalysis ? [lastAnalysis.primarySpl[lastSeat],lastAnalysis.residualSpl[lastSeat],lastAnalysis.reductionDb[lastSeat]] : [];
-    ['primary','residual','reduction'].forEach((key,i)=>{q(`[data-level="${key}"]`).textContent=visible && values[i]!=null ? `${values[i]!.toFixed(1)} ${i===2?'dB':lastUnit}` : '—';});
-    q('.cp-data-note').textContent=visible ? `${['左前','右前','左后','右后'][lastSeat]}座 · ${lastUnit} · ${(Math.max(0,(lastAnalysis?.time??0)-.5)+lastOffset).toFixed(1)}–${((lastAnalysis?.time??0)+lastOffset).toFixed(1)} s · 实验 ${lastRun.slice(0,8)}` : '尚无当前车辆的有效声场 · 不显示示例读数';
+    const reading=viewer.previewReading(lastSeat),unit=reading?.weighting==='Z'?'dB':'dBA';
+    const values=reading?[reading.primary,reading.residual,reading.reduction]:[];
+    ['primary','residual','reduction'].forEach((key,i)=>{q(`[data-level="${key}"]`).textContent=reading&&Number.isFinite(values[i])?`${values[i].toFixed(1)} ${i===2?'dB':unit}`:'—';});
+    q('.cp-field-empty').hidden=!!reading;
+    q('.cp-mini-scale').setAttribute('data-valid',String(!!reading));
+    q('.cp-mini-scale small').textContent=unit;
+    q('.cp-data-note').textContent=reading?`残余场 e · ${['左前','右前','左后','右后'][lastSeat]}座附近采样点 · ${reading.time.toFixed(2)} s · 同点同窗 · 仿真`:'运行后展示同一采样点与时间窗的真实结果';
     q('.cp-spectrum-empty').hidden=visible;
     const preview=q<HTMLCanvasElement>('.cp-spectrum-preview'), context=preview.getContext('2d')!;
     const width=Math.max(1,Math.round(preview.clientWidth*2)),height=Math.max(1,Math.round(preview.clientHeight*2));
     if(preview.width!==width)preview.width=width;if(preview.height!==height)preview.height=height;
-    if(visible && lastAnalysis && lastOriginal) drawSignalComparison(preview,lastAnalysis,lastOriginal,lastSampleRate,lastOffset,true,false);
-    else context.clearRect(0,0,preview.width,preview.height);
+    if(visible && lastAnalysis && lastOriginal) drawSignalComparison(preview,lastAnalysis,lastOriginal,lastSampleRate,lastOffset,true,false,[20,lastSampleRate/2],{x:[20,lastSampleRate/2],y:null,rightY:null,xScale:'log',showOriginal:true,weighting:lastAnalysis.spectrumWeighting??'A'});
+    else {context.clearRect(0,0,preview.width,preview.height);plot(preview,[],{x:[20,1000],y:[0,80],xScale:'log',xLabel:'频率 Hz',yLabel:'PSD dB/Hz',empty:'等待有效计算数据'});}
   }
   const observer = new MutationObserver(()=>{
     syncAsset();
@@ -206,7 +218,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     environmentStatus.querySelector('span')!.textContent=failed?'高清环境加载失败，当前使用基础景物。':'正在加载高清环境…';
     q('.cp-environments').setAttribute('aria-busy',String(!ready&&!failed));
     const env=get('viewer').dataset.environment as GalleryEnvironment|undefined;if(env){driveModes.querySelector<HTMLSelectElement>('select')!.value=env;shell.querySelectorAll<HTMLButtonElement>('[data-env]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.env===env)));q('.cp-footer-note span').textContent=({coast:get('viewer').dataset.stage==='road'?'田野公路':'海岸',mountain:'山地',desert:'沙漠',snow:'雪山'})[env];}
-    if(get('viewer').dataset.environmentReady){viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,hasAnalysis&&viewer.hasValidField);viewer.renderPreview(q<HTMLCanvasElement>('.cp-layout-preview'),true);}
+    if(get('viewer').dataset.environmentReady)refreshPreviews();
   });environmentObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-environment-ready','data-environment-failed','data-environment','data-stage']});
   q<HTMLButtonElement>('.cp-stop').disabled = true;
   q('.cp-run-status').textContent = get('status').textContent;
@@ -214,8 +226,8 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   if(location.hash==='#xpeng') asset.value='x9';
   navigate('overview'); void chooseAsset();
   return {
-    update(analysis: LabAnalysis, original: LabAnalysis, seat: number, unit: string, runId: string, sampleRate: number, offset: number) {hasAnalysis=true;lastAnalysis=analysis;lastOriginal=original;lastSeat=seat;lastUnit=unit;lastRun=runId;lastSampleRate=sampleRate;lastOffset=offset;syncAsset();updateLevels();if(analysis.valid && viewer.hasValidField && previewRun!==runId) {viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,true);previewRun=runId;}},
-    clear() {hasAnalysis=false;lastAnalysis=null;previewRun='';syncAsset();viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'));},
+    update(analysis: LabAnalysis, original: LabAnalysis, seat: number, unit: string, runId: string, sampleRate: number, offset: number) {hasAnalysis=true;lastAnalysis=analysis;lastOriginal=original;lastSeat=seat;lastUnit=unit;lastRun=runId;lastSampleRate=sampleRate;lastOffset=offset;syncAsset();updateLevels();const fieldKey=`${runId}/${viewer.previewReading(seat)?.time}`;if(page==='overview'&&analysis.valid&&viewer.hasValidField&&previewRun!==fieldKey){viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,true);previewRun=fieldKey;}},
+    clear() {hasAnalysis=false;lastAnalysis=null;previewRun='';syncAsset();viewer.renderPreview(q<HTMLCanvasElement>('.cp-model-preview'),false,true);},
     showSignal() { openDialog('.cp-paths-dialog'); },
     showPage(next: Page) {shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());navigate(next);},
     showSettings() {shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());openDialog('.cp-settings');},
