@@ -43,3 +43,5 @@ pnpm exec vite preview --config docs/evidence/B/B2-003/registered-worker/vite-au
 ## 后续门槛
 
 本批通过的是独立生产模块Worker的数据兼容验证。A1正式文件UI/产品Worker/取消/实验隔离、新布局B1独立审查、真实峰值内存、目标设备性能和第二台Windows真断网仍待验；完整B2-003/最终B2-004未签收。#58/#59最新A实现未在本夹具中组合验收；各角色按其最终head自行集成复验。本批B2写入结束后由维护者审查#61，不自动合并A分支或main。
+
+2026-10-05 发布回填：本批实际浏览器/构建/证据源码提交 `a0dfa3b03954d969ee6350c42e76d2539690081c` 已推送 PR #61。后续只补发布交接及README的报告哈希，不改变已验Worker；云端结果以PR最新head为准，尚未合并。
