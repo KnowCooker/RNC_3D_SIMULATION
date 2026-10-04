@@ -388,3 +388,11 @@ Role: B2；Identity-Source: user-declared；执行者Codex。用户已合并#53�
 - 下一步提交推送本报告准备，核对#55最终head的CI/可合并性，再由维护者审查；本批停止写入，不自动合并。A1按前述#54请求接正式文件/Worker/取消/实验隔离；B1仍负责布局审查和B1-004目标性能。依赖就绪后B2汇总同版设备/第二机、新布局导出证据，完整003/最终004继续保持待签收。
 
 **B2-004 发布回填（2026-10-01）**：Role: B2；Task: B2-004；Identity-Source: user-declared；执行者Codex。报告/审计/真实检查日志提交 `85fcf54ed0224583ee7b35f32857c348df7080d4` 已推送hgyong:b/b2-004-report-preparation，交付 [PR #55](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/55)。本批26个本地报告链接、最终审计源码/报告哈希及全检查后的8冻结文件复核通过，见 [verification.json](../evidence/B/B2-004/verification.json)。首轮报告范围检查误把Git转义的中文路径当成不同文件，改用NUL分隔文件清单后通过；不涉及运行源码或数值修复。推送前main仍93ed882，提交钩子/差异检查通过。报告准备已远端同步、待维护者审查合并；本回填提交之后的最终head/云端CI/冲突状态以PR最终核对为准，本条不预先宣称其通过。本批结束停止写入；设备/正式产品接入仍待，完整003/最终004未签收。
+
+## 2026-10-04 B2-003 注册布局导出兼容认领
+
+- 角色：B2；执行者：Codex；身份来源：user-declared；状态：进行中。用户已明确继续 B2；B1 已停止，当前开放 PR 无另一 B 组认领。
+- 分支：`b/b2-003-registered-compat`。原仓库 main 为 `b968d926ce343cb4568e00bdb14da4e87bdd6fc6`（#55 已合并）；修复基于 A2 #57 候选 `5be0802beec22be171e36c5b0d754b3799e09e21`，以 `a/a2-driving-experience` 为 PR base，保持 B 组差异独立。#58/#59 依赖 #57，A1 最新交接将三项 B2 兼容失败留给独立处理。
+- 范围：`src/team-b/export/**`、B 组导出测试、`docs/evidence/B/B2-003/registered-compat/**`、本页及根开发记录。只更新真实模型身份及只读解析/执行校验边界；不修改 shared、integration、A 源码、计算算法、既有 fixtures 或旧断言/容差。
+- 验收：复现三项失败；五种已注册教学布局的合成/录音结果与配方往返；旧模型及未知/错配布局只读、禁止复算；配置与素材校验继续严格；B 测试、类型、边界、完整 check 及冻结基准检查。
+- 下一步：推送认领并创建原仓库草稿 PR，再查重复占用，然后复现、修复、验证和记录。PR URL 在下一批补录。完整 B2-003 的 A1 产品文件/Worker/取消及真实设备、第二机验收仍独立待办，本批不签收物理标定或最终交付。
