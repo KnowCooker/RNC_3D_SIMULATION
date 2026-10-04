@@ -1,0 +1,1 @@
+30 registered cases; 1460000 Float32 values per comparison; 8 frozen fixtures unchanged.
