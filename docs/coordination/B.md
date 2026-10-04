@@ -1,6 +1,6 @@
 # B1/B2 共同任务与串行交接
 
-**2026-10-04 / B2 当前批次**：B2-003 注册布局导出兼容已完成本地验证，原仓库 [PR #60](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/60) 提交发布中；base 为 A2 #57 分支。B1 已停止，无另一 B 组认领。B2-004 报告准备 #55 已合并 main `b968d92`；完整003的产品/设备门槛及004最终报告仍待验。Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。证据见[本批报告](../evidence/B/B2-003/registered-compat/README.md)。下方各历史条目保留其记录时点。
+**2026-10-05 / B2 当前批次**：B2-003 注册布局导出兼容已发布待合并，原仓库 [PR #60](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/60)；实现 `c2d6aa1bd72b58e6cdacf1b1fe2459e54b52fe67`，base 为 A2 #57 分支。B1 已停止，本批 B2 源码写入结束。B2-004 报告准备 #55 已合并 main `b968d92`；完整003的产品/设备门槛及004最终报告仍待验。Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。证据见[本批报告](../evidence/B/B2-003/registered-compat/README.md)，CI按PR最新head核对。下方各历史条目保留其记录时点。
 
 **2026-10-02 / A2-EXPERIENCE-010 / GitHub同步完成**：Role:A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared；Executor:Codex代A2。实现提交7653e8c及日志格式修正945021780b4b85ee20b8ba05248fb5803de994b3已推送origin/a/a2-driving-experience，GitHub PR head与本地一致，账号jiangchun526-cloud；草稿PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/57 ，base为A2集成分支，未合并main。220项全仓及78项Chrome检查通过，65个构建源码/18个变更文件哈希一致；最终差异检查无错误。远端verify在本条记录时仍运行，尚未宣称CI通过。全部本轮项目源码、景观生成资源、28张验收截图及报告已同步；依赖缓存/临时输出不作为项目资源上传。外观实拍一致性仍未通过，后续为授权高精几何、逐车人工视觉及实车标定；无基准修改。此发布交接为文档后续提交，源码仍为上述已验版本。
 
@@ -406,3 +406,9 @@ Role: B2；Identity-Source: user-declared；执行者Codex。用户已合并#53�
 - 实际验证：修改前 analysis 57/60、三项失败；修改后68/68；`pnpm test:b`125/125；`pnpm typecheck`、`pnpm check:boundaries`及独立证据 strict tsc 通过；`pnpm check`295/295、类型/边界/构建通过。30组矩阵在配方复算/同步解码/异步解码各核对1460000个Float32值，全部逐位一致，同步/异步文件字节相同；模型17哈希与RNQ1身份一致；八份冻结基准与main b968d92一致。未知/别名/动力错配布局只读、执行先拒绝；实际旧model-1文件只读、不请求素材、不自动升级模型。原始命令日志及每路哈希已保存新证据目录，旧证据不改写。
 - 状态：本批实现完成，提交并推送准备中；远端最终 SHA/CI 尚待发布后核对，未宣称已合并。下一步推送、核对 PR #60 最终检查，由维护者审查并向 #57 集成；A1 #58/#59 随后同步该依赖并复验。B1已停止，无重复 B 认领；本批结束后停止 B 源码写入。完整003的A1正式文件/Worker/取消、真实峰值内存/目标设备/第二机及004最终报告仍待验，不以本批教学兼容验证签收物理标定或最终交付。
 2026-10-05 发布前复核：#57 base head 仍为5be0802；无另一B组开放认领。#59前移至5899827，属于A1分支后续，本批未在该head运行组合验收，仍须A1集成B修复后复验。发布继续使用#60与独立B差异。
+
+## 2026-10-05 B2-003 注册布局导出兼容发布交接
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。实现提交 `c2d6aa1bd72b58e6cdacf1b1fe2459e54b52fe67` 已推送 fork 分支 `b/b2-003-registered-compat`，原仓库 PR #60 的 base 保持 #57 候选5be0802。提交范围仅 B export、B测试、新证据和双日志；本地源码哈希与 comparison.json 一致，暂存历史文件原字节SHA已复核，Git差异空白检查通过。发布前#59新增5899827仅改A1交接和根日志，无另一B认领。
+
+本批状态待合并，B2源码写入结束。上述实际验证仍对应已发布实现；此交接提交不改代码。后续CI以#60最新head为准，不使用认领head的旧失败或其他分支结果替代。本批提供给维护者审查并集成至#57，再由A1同步#58/#59依赖且复验；不自动合并A分支/main。完整003的产品/设备门槛、注册布局B1独立审查及004最终报告仍待验，下一轮B角色先查PR合并状态与串行交接后取无阻塞任务。

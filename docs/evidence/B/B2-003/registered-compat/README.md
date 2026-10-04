@@ -2,6 +2,8 @@
 
 角色 B2；执行者 Codex；身份来源 user-declared；日期 2026-10-04。用户指令为“继续 B2 任务”。认领提交 `68ef6f71c1fcce67fdf63013f99905eeb1c08f09`，原仓库 [PR #60](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/60)。
 
+2026-10-05 发布：实现提交 `c2d6aa1bd72b58e6cdacf1b1fe2459e54b52fe67` 已推送 `hgyong:b/b2-003-registered-compat`，其源码与 comparison.json 哈希一致。本次后续提交只补发布交接；PR 最终检查以 GitHub 最新 head 为准，尚未合并。
+
 本批基于 A2 #57 的 `5be0802beec22be171e36c5b0d754b3799e09e21`，PR base 为 `a/a2-driving-experience`。main `b968d926ce343cb4568e00bdb14da4e87bdd6fc6` 已合并 B2 报告准备 #55；注册布局仍在 A 候选中。#58/#59 的三项 B 失败由本批独立修复，不能把本 PR 验证写成这些分支已复验。
 
 ## 问题与修改
