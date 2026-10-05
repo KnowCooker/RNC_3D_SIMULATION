@@ -1,5 +1,7 @@
 # B1/B2 共同任务与串行交接
 
+**2026-10-05 / B2 最新批次**：B2-003五注册布局浏览器Worker验证完成本地检查，[PR #61](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/61)已发布待合并（实现a0dfa3b）；218/218真实Worker检查、30组逐路Node哈希对照、B125/125及全仓295/295通过。#60已合入A2 #57，合并SHA `382100930ca950adfed27390acbb6226e0af4afc`，尚未进入main。B1已停止；本批只新增证据与双日志。完整003/004产品与设备门槛仍待验。Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex；[新浏览器证据](../evidence/B/B2-003/registered-worker/README.md)。下方发布状态均保留其历史时点。
+
 **2026-10-05 / B2 当前批次**：B2-003 注册布局导出兼容已发布待合并，原仓库 [PR #60](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/60)；实现 `c2d6aa1bd72b58e6cdacf1b1fe2459e54b52fe67`，base 为 A2 #57 分支。B1 已停止，本批 B2 源码写入结束。B2-004 报告准备 #55 已合并 main `b968d92`；完整003的产品/设备门槛及004最终报告仍待验。Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。证据见[本批报告](../evidence/B/B2-003/registered-compat/README.md)，CI按PR最新head核对。下方各历史条目保留其记录时点。
 
 **2026-10-02 / A2-EXPERIENCE-010 / GitHub同步完成**：Role:A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared；Executor:Codex代A2。实现提交7653e8c及日志格式修正945021780b4b85ee20b8ba05248fb5803de994b3已推送origin/a/a2-driving-experience，GitHub PR head与本地一致，账号jiangchun526-cloud；草稿PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/57 ，base为A2集成分支，未合并main。220项全仓及78项Chrome检查通过，65个构建源码/18个变更文件哈希一致；最终差异检查无错误。远端verify在本条记录时仍运行，尚未宣称CI通过。全部本轮项目源码、景观生成资源、28张验收截图及报告已同步；依赖缓存/临时输出不作为项目资源上传。外观实拍一致性仍未通过，后续为授权高精几何、逐车人工视觉及实车标定；无基准修改。此发布交接为文档后续提交，源码仍为上述已验版本。
@@ -412,3 +414,25 @@ Role: B2；Identity-Source: user-declared；执行者Codex。用户已合并#53�
 Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。实现提交 `c2d6aa1bd72b58e6cdacf1b1fe2459e54b52fe67` 已推送 fork 分支 `b/b2-003-registered-compat`，原仓库 PR #60 的 base 保持 #57 候选5be0802。提交范围仅 B export、B测试、新证据和双日志；本地源码哈希与 comparison.json 一致，暂存历史文件原字节SHA已复核，Git差异空白检查通过。发布前#59新增5899827仅改A1交接和根日志，无另一B认领。
 
 本批状态待合并，B2源码写入结束。上述实际验证仍对应已发布实现；此交接提交不改代码。后续CI以#60最新head为准，不使用认领head的旧失败或其他分支结果替代。本批提供给维护者审查并集成至#57，再由A1同步#58/#59依赖且复验；不自动合并A分支/main。完整003的产品/设备门槛、注册布局B1独立审查及004最终报告仍待验，下一轮B角色先查PR合并状态与串行交接后取无阻塞任务。
+## 2026-10-05 B2-003 注册布局浏览器 Worker 验证认领
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。用户要求继续本角色；B1已停止、开放PR无另一B任务。#60已合并到A2 #57分支，合并SHA `382100930ca950adfed27390acbb6226e0af4afc`，尚未进入main（仍b968d92）；先前待合并状态保留为历史。本批从3821009建立 `b/b2-003-registered-worker`，以 `a/a2-driving-experience` 为PR base。
+
+认领范围仅 `docs/evidence/B/B2-003/registered-worker/**`、本页和根开发记录；新独立生产构建Worker夹具与真实浏览器报告，补新模型五布局的Web Crypto、完整结果/配方复算、异步数据所有权及只读/拒绝行为。旧浏览器证据不改写；不修改运行算法、产品Worker、A/shared/integration、根配置或冻结基准。验收为实际浏览器Worker执行、构建源码/产物/报告哈希、B测试和完整check；真实峰值内存、目标核显性能、第二机、A1正式产品文件/取消等仍独立待验。
+
+状态进行中；先推送认领创建草稿PR并复查重复，再实现验证夹具，运行并记录实际结果，提交推送。PR链接在下一批回填，不自动合并。
+
+## 2026-10-05 B2-003 五注册布局浏览器 Worker 实现与验证
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。认领 `71fc8e985cff89a450539ebaa3205640db17b156`，原仓库PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/61 ，base为#57候选3821009。新增独立生产module Worker/page/config、可重跑证据核验脚本、实际报告/控制台/截图和源码产物哈希；无运行源码、原测试、旧证据、A/shared/integration或冻结fixture修改。
+
+实际验证：Windows内嵌Chromium154安全上下文 DedicatedWorkerGlobalScope，218/218检查，五布局×两声源×1/4/8参考共30组，浏览器对Node、同步/异步解码、配方复算每种对照1460000个Float32值全部逐位/哈希一致。同步摘要适配器仅复用实际Web Crypto对相同载荷的缓存，不信任manifest自报；异步与篡改校验直接调用Web Crypto。旧model-1只读/复算先拒绝；未知/别名/动力错配只读且素材访问0次；坏seed、预算、篡改、offset、buffer转移和输入修改拒绝/隔离通过；GX真实发散551/6000有限点前缀保持。控制台error/warn为空，夹具观测2456.5ms不作为B1目标性能；峰值内存/产品集成/目标设备/第二机标志均false。
+
+命令：证据strict tsc、Vite生产构建、verify.ts均通过；pnpm test:b125/125、pnpm check295/295及类型/边界/构建通过。核验报告30组Node哈希、17数值源码、8冻结文件、源码/产物/报告绑定见docs/evidence/B/B2-003/registered-worker/verification.json；源码/测试相对3821009无改动。旧证据只读，日志保存新目录。
+
+发布前复查#61 base仍3821009；#59已更新09ef1bc，A1报告最终309/309及集成B2 #60，本批没有验收该A1候选或其产品文件回读。状态：本批完成待提交推送；下一步同步实现/记录、核对#61最终云端CI并转待审查，由维护者集成至#57；本批B2写入结束。完整003的正式B文件/产品Worker/取消/实验隔离、新布局B1独立审查、真实峰值内存/目标设备/第二机及004最终报告仍按各角色同版证据待验，不自动合并。
+## 2026-10-05 B2-003 注册布局浏览器 Worker 发布交接
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。实际浏览器证据实现提交 `a0dfa3b03954d969ee6350c42e76d2539690081c` 已推送 `hgyong:b/b2-003-registered-worker`，原仓库PR #61；#60已经合入候选3821009但未进main。218/218真实浏览器及B125/全仓295验证、源码/构建/报告/冻结哈希已在新目录保存；此后续只补发布信息和相应报告哈希，不改变Worker或B源码。
+
+本批状态已发布待合并，B2写入结束。PR最终head与CI发布后准确核对，不能用旧head结果替代；维护者审查并集成#61至#57。A1当前#59的309项与页面证据是其独立版本，本批未重做其组合流程。正式产品文件/取消/实验隔离、新布局B1审查、真实峰值内存/目标设备/第二机、最终004继续按同版证据待验；下一轮先同步开放PR、串行交接及可执行节点，不自动合并main。
