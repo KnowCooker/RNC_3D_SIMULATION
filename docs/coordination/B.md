@@ -436,3 +436,10 @@ Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。认领 
 Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。实际浏览器证据实现提交 `a0dfa3b03954d969ee6350c42e76d2539690081c` 已推送 `hgyong:b/b2-003-registered-worker`，原仓库PR #61；#60已经合入候选3821009但未进main。218/218真实浏览器及B125/全仓295验证、源码/构建/报告/冻结哈希已在新目录保存；此后续只补发布信息和相应报告哈希，不改变Worker或B源码。
 
 本批状态已发布待合并，B2写入结束。PR最终head与CI发布后准确核对，不能用旧head结果替代；维护者审查并集成#61至#57。A1当前#59的309项与页面证据是其独立版本，本批未重做其组合流程。正式产品文件/取消/实验隔离、新布局B1审查、真实峰值内存/目标设备/第二机、最终004继续按同版证据待验；下一轮先同步开放PR、串行交接及可执行节点，不自动合并main。
+## 2026-10-05 B2-004 注册模型候选报告增补认领
+
+Role:B2；Task:B2-004；Identity-Source:user-declared；Executor:Codex。用户要求继续B2；B1已停止，无另一B开放任务。#61已合入#57，合并SHA `795d9095eb8996da2938a7513bbcaa435a18d8e8`，#60同在该父链；main仍 `b968d926ce343cb4568e00bdb14da4e87bdd6fc6`。本批分支 `b/b2-004-registered-report`，base为 `a/a2-driving-experience`。
+
+认领B2-004可独立完成的候选报告增补：将#55旧教学报告、#60注册模型Node证据及#61真实Worker证据按不可变提交绑定；在当前候选核对五布局×两声源的默认16秒/R4结果、维度/单位/时标、同步/异步文件、配方复算和A/Z分析一致性，给新版数据交付及第二机复现入口。范围仅 `docs/evidence/B/B2-004/registered-candidate/**`、B.md及根日志；旧报告/证据保持原版本，不改变B/A/shared/integration/测试/配置/冻结基准。
+
+状态进行中；先提交推送认领及草稿PR，再复查重复任务，实际审计、B测试、类型/边界/完整check与新报告记录同批发布。本批不是最终004签收，不代替B1新布局/目标设备、A1正式B文件/产品生命周期、真实峰值内存或第二机验证；不自动合并。
