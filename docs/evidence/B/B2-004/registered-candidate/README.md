@@ -2,6 +2,8 @@
 
 2026-10-05；Role:B2；Task:B2-004；Identity-Source:user-declared；Executor:Codex。认领 `3d8bdb17157acd32479e8876a56f4d7550d79614`，交付 [PR #62](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/62)，base 为 A2 `a/a2-driving-experience`。
 
+实现提交 `e8965a52ce99e0f1fed40eb56670c707d3b2e033` 已推送 `hgyong:b/b2-004-registered-report`；包含实际审计、报告及双日志。audit.json的checkoutHead记录执行时的认领提交，auditSourceSha256绑定实际执行脚本，不能把后续发布SHA冒充当时checkout。后续仅补发布回执和报告哈希；PR检查按其最新head核对。
+
 本报告绑定候选 `795d9095eb8996da2938a7513bbcaa435a18d8e8`，已经包含 B2 #60 注册模型兼容和 #61 真实浏览器证据。正式 main 仍为 `b968d926ce343cb4568e00bdb14da4e87bdd6fc6`，已包含 #55 旧教学报告。**这是候选数据报告增补，完整B2-003/最终B2-004没有签收。** 本批不改运行源码、原测试、旧报告或冻结基准。
 
 ## 版本与证据
@@ -40,7 +42,7 @@
 
 `pnpm test:b`125/125；`pnpm check`295/295，类型/边界/构建通过；独立审计strict tsc通过。命令日志保存在本目录。首轮脚本误用估算字段名，strict tsc检出；仅脚本改为实际 `minimumResidentSignalBytes` 后通过，原诊断保存在initial-typecheck-failure.txt，B接口没有改变。
 
-运行 `pnpm exec tsx docs/evidence/B/B2-004/registered-candidate/run-audit.ts test-results/B2-004-registered-recheck/audit.json` 可重新核对五份历史绑定并计算十组默认16秒数据；脚本拒绝覆盖已有输出。再执行 `pnpm test:b`、`pnpm check`，并按[候选第二机步骤](SECOND_WINDOWS.md)保存真实设备记录。文件语义见[新模型数据说明](DATA_CONTRACT.md)，最终源码/报告/链接核验见verification.json。
+运行 `pnpm exec tsx docs/evidence/B/B2-004/registered-candidate/run-audit.ts test-results/B2-004-registered-recheck/audit.json` 可重新核对五份历史绑定并计算十组默认16秒数据；脚本拒绝覆盖已有输出。`pnpm exec tsx docs/evidence/B/B2-004/registered-candidate/verify.ts` 核验并更新本目录verification.json的11份报告哈希及14个本地链接；该文件排除自身，文本按UTF-8/LF取SHA。再执行 `pnpm test:b`、`pnpm check`，并按[候选第二机步骤](SECOND_WINDOWS.md)保存真实设备记录。文件语义见[新模型数据说明](DATA_CONTRACT.md)，最终源码/报告/链接核验见verification.json。
 
 ## 未完成项
 
