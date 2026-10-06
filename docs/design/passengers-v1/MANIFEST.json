@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-06",
+  "task": "A1-FULL-021",
+  "mode": "built-in image_gen",
+  "status": "concept art; not production 3D assets",
+  "prompts": "prompts.json",
+  "assets": [
+    {
+      "path": "assets/ayaka.png",
+      "bytes": 2185157,
+      "sha256": "a49bd0de40e0a315504420b672f62163e064f0403325db0ebb3d4b2c9a5c0d82",
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "assets/luffy.png",
+      "bytes": 2037565,
+      "sha256": "f0720217f9d12479fa0fdef116189b01c45f24a34ac197a2029a1e9d4201c5da",
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "assets/niulai-provisional.png",
+      "bytes": 2127224,
+      "sha256": "069d265e1619edea3afce66c62d319fa38dd0b06b0265f35246a8ebaef22aa69",
+      "width": 1672,
+      "height": 941
+    }
+  ]
+}
