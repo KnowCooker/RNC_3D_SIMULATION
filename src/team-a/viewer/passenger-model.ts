@@ -1,19 +1,26 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { createCrewPassenger } from './passenger-crew';
 
 export const PASSENGERS = [
-  { id: 'niulai', name: '牛来', detail: '黄色小牛 · 短角与浅色口鼻', color: '#c79d32' },
-  { id: 'ayaka', name: '神里绫华', detail: '蓝白织物 · 银蓝马尾', color: '#7e91bc' },
-  { id: 'luffy', name: '路飞', detail: '红色背心 · 膝上草帽', color: '#b75b49' },
+  { id: 'niulai', name: '牛来', detail: '黄色小牛', color: '#c79d32', hipOffset: .04 },
+  { id: 'ayaka', name: '神里绫华', detail: '蓝白雅致', color: '#7e91bc', hipOffset: .105 },
+  { id: 'luffy', name: '路飞', detail: '草帽船长', color: '#b75b49', hipOffset: .105 },
+  { id: 'chopper', name: '乔巴', detail: '鹿角船医', color: '#bc7499', hipOffset: .14 },
+  { id: 'nami', name: '娜美', detail: '橘发航海士', color: '#ce8843', hipOffset: .105 },
+  { id: 'zoro', name: '索隆', detail: '绿发剑士', color: '#6f9660', hipOffset: .105 },
 ] as const;
 export type PassengerId = typeof PASSENGERS[number]['id'];
 export const isPassenger = (id: unknown): id is PassengerId => PASSENGERS.some(c => c.id === id);
+export const passengerHipOffset = (id: PassengerId) => PASSENGERS.find(c => c.id === id)!.hipOffset;
+export const PASSENGER_PRESETS = { classic: ['niulai', 'ayaka', 'luffy'], strawhats: ['zoro', 'nami', 'chopper', 'luffy'] } as const satisfies Record<string, readonly PassengerId[]>;
 type V = [number, number, number];
 
 /** Authored, real geometry. +Z faces the windscreen; origin is the seated hip.
  * Small rigid rig, not an imported/official character or a physical human model. */
 export function createPassengerModel(id: PassengerId, driver = false) {
   if (!isPassenger(id)) throw new Error('Unknown passenger');
+  if (id === 'chopper' || id === 'nami' || id === 'zoro') return createCrewPassenger(id, driver);
   const group = new THREE.Group(); group.name = `passenger-${id}`;
   group.userData.passengerId = id; group.userData.visualOnly = true;
   group.userData.driver = driver; group.userData.assetStatus = 'basic';

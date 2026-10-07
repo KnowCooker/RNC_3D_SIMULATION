@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import type { PassengerId, createPassengerModel } from './passenger-model';
+import { passengerHipOffset } from './passenger-model';
 
 export type PassengerModel = ReturnType<typeof createPassengerModel>;
 
@@ -38,7 +39,7 @@ export function createPassengerAssetLibrary(loadSource: (key: string) => Promise
       if (disposed) throw new Error('Character library disposed');
       const group = new THREE.Group(), pose = template.clone(true);
       group.name = `passenger-${id}`; group.add(pose);
-      group.userData = { passengerId: id, visualOnly: true, driver, assetStatus: 'detailed', seatedHipOffset: id === 'niulai' ? .04 : .105 };
+      group.userData = { passengerId: id, visualOnly: true, driver, assetStatus: 'detailed', seatedHipOffset: passengerHipOffset(id) };
       const geometry = new Set<THREE.BufferGeometry>(), material = new Set<THREE.Material>();
       pose.traverse(o => { if (o instanceof THREE.Mesh) {
         o.geometry = o.geometry.clone(); geometry.add(o.geometry);

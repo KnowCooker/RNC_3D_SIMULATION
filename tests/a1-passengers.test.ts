@@ -71,7 +71,7 @@ test('A1 passengers: swap, empty, detach and clip preserve the car and acoustic 
 test('A1 passengers: head/horns stay below each current cabin roof; geometry follows matching seats', () => {
   for (const spec of xpengCatalog) {
     const model = createXPengModel(spec.id), cabin = createPassengerCabin(); cabin.attach(model);
-    const mounts = passengerMounts(model); cabin.setAssignments(Object.fromEntries(mounts.map((m, i) => [m.id, PASSENGERS[i % 3].id])));
+    const mounts = passengerMounts(model); cabin.setAssignments(Object.fromEntries(mounts.map((m, i) => [m.id, PASSENGERS[i % PASSENGERS.length].id])));
     for (const m of mounts) {
       const occupant = m.parent.children.find(o => o.userData.passengerId)!; assert.ok(occupant);
       const box = new THREE.Box3().setFromObject(occupant); assert.ok(box.max.y < m.roof - .025, `${spec.id} ${m.id}: ${box.max.y}`);

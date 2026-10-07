@@ -2,6 +2,8 @@
 
 2026-10-08 · Role: A1 · Task: A1-FULL-021 · Identity-Source: user-declared · Executor: Codex
 
+后续已扩展为六位角色，乔巴/娜美/索隆、草帽同行及最新检查见 [v3 接续](../passengers-v3/README.md)。本页保留原三人资源复现说明；界面“三人同行”现名为“经典三人”。
+
 本机已接入牛来、神里绫华、路飞的精细三维网格，每人提供乘客/驾驶两种坐姿。使用现成 `character-artist` skill 的比例、面部与服装整理流程，在 Blender 4.5.9 中处理真实模型，保留绫华与路飞原 UV 绘制纹理。牛来按黄色小牛参考使用雕刻网格，经连续曲面重建、平滑、减面及渐变色区处理。不是人物图片贴片，也不是云端生成服务的占位结果。
 
 ![本机安装的三位人物，实际 GLB 离线渲染](renders/three-characters.png)

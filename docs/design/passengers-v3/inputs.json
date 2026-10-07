@@ -1,0 +1,32 @@
+[
+  {
+    "id": "chopper",
+    "file": "chopper.zip",
+    "character": "托尼托尼·乔巴",
+    "variant": "One Piece Run, Chopper, Run! / default",
+    "reference": "https://one-piece.com/character/chopper/index.html",
+    "page": "https://models.spriters-resource.com/mobile/onepiecerunchopperrun/asset/312423/",
+    "url": "https://models.spriters-resource.com/media/assets/309/312423.zip?updated=1755503345",
+    "sha256": "e9c88ef666126d82bebbd8f011717050fdf52c7555c155de47730ae86482eea7"
+  },
+  {
+    "id": "nami",
+    "file": "nami.zip",
+    "character": "娜美",
+    "variant": "ONE PIECE ODYSSEY / Redtarp extraction",
+    "reference": "https://one-piece.com/character/nami/index.html",
+    "page": "https://models.spriters-resource.com/pc_computer/onepieceodyssey/asset/359822/",
+    "url": "https://models.spriters-resource.com/media/assets/357/359822.zip?updated=1755517466",
+    "sha256": "618de775e6517266af8ca28fa8574f2bc369ba28747e1d0841a543d78c443036"
+  },
+  {
+    "id": "zoro",
+    "file": "zoro.zip",
+    "character": "罗罗诺亚·索隆",
+    "variant": "ONE PIECE Bounty Rush / Skypiea / navy vest and goggles",
+    "reference": "https://one-piece.com/character/zoro/index.html",
+    "page": "https://models.spriters-resource.com/mobile/onepiecebountyrush/asset/316794/",
+    "url": "https://models.spriters-resource.com/media/assets/314/316794.zip?updated=1755504454",
+    "sha256": "9e8a8ec540f1df25fa31cb223710d1f80fa7ce7105f65173164016f3e085c236"
+  }
+]

@@ -1,4 +1,4 @@
-import { isPassenger, type PassengerId } from '../viewer/passenger-model';
+import { isPassenger, PASSENGER_PRESETS, type PassengerId } from '../viewer/passenger-model';
 import type { PassengerSeat, PassengerAssignments } from '../viewer/passenger-cabin';
 
 /** Purely visual, per-vehicle preferences. Deliberately outside LabConfig/run identity. */
@@ -19,6 +19,6 @@ export function createPassengerState() {
       current()[seat] = passenger; return true;
     },
     clear() { for (const seat of seats) current()[seat.id] = null; },
-    fill() { seats.forEach((s, i) => current()[s.id] = i < 3 ? (['niulai', 'ayaka', 'luffy'] as const)[i] : null); },
+    fill(party: readonly PassengerId[] = PASSENGER_PRESETS.classic) { seats.forEach((s, i) => current()[s.id] = party[i] ?? null); },
   };
 }
