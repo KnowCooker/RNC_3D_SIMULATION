@@ -11,6 +11,7 @@ import { mountOverviewMotion, overviewMotionMarkup } from './overview-motion';
 import './overview-motion.css';
 import { overviewReading } from './overview-reading';
 import './champagne-workspace.css';
+import { mountPassengerPanel } from './passenger-panel';
 import { mountCabinFieldPanel } from './cabin-field-panel';
 import './cabin-field.css';
 
@@ -146,7 +147,9 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     uiAnimations.add(motion);motion.onfinish=()=>{uiAnimations.delete(motion);closingDialogs.delete(dialog);if(dialog.open)dialog.close();};
     motion.oncancel=()=>{uiAnimations.delete(motion);closingDialogs.delete(dialog);};
   }
+  let passengerPanel: ReturnType<typeof mountPassengerPanel> | undefined;
   function navigate(next: Page) {
+    if (next !== 'structure') passengerPanel?.close(false);
     const changed=page!==next;
     if (!changed && navigated) return;
     if(page==='field' && get<HTMLSelectElement>('field').value!=='off') rememberedField=get<HTMLSelectElement>('field').value;
@@ -175,7 +178,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   shell.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog=>dialog.addEventListener('cancel',event=>{event.preventDefault();closeDialog(dialog);}));
   const chooseAsset = async () => {
     asset.disabled = true;
-    try { await changeVehicle(asset.value as XPengId); if(asset.value==='gx')viewer.setPresentationPaint('#b9b4a9'); get('reset').click(); viewer.setStage('gallery'); viewer.setPresentationView(page); syncAsset(); if(page==='overview'||page==='field'){get<HTMLSelectElement>('field').value=rememberedField;get('field').dispatchEvent(new Event('change'));} else if(page==='structure') inspectStructure(root.dataset.structureView==='paths'?'paths':'layout'); }
+    try { await changeVehicle(asset.value as XPengId); if(asset.value==='gx')viewer.setPresentationPaint('#b9b4a9'); get('reset').click(); viewer.setStage('gallery'); viewer.setPresentationView(page); syncAsset(); if(page==='overview'||page==='field'){get<HTMLSelectElement>('field').value=rememberedField;get('field').dispatchEvent(new Event('change'));} else if(page==='structure') inspectStructure(root.dataset.structureView==='paths'?'paths':'layout'); passengerPanel?.resume(); }
     finally { asset.disabled = false; }
   };
   asset.onchange=()=>void chooseAsset();
@@ -262,6 +265,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   });environmentObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-environment-ready','data-environment-failed','data-environment','data-stage']});
   q<HTMLButtonElement>('.cp-stop').disabled = true;
   q('.cp-run-status').textContent = get('status').textContent;
+  passengerPanel = mountPassengerPanel(root, viewer, () => { navigate('structure'); get<HTMLSelectElement>('body').value='hidden'; get('body').dispatchEvent(new Event('change')); });
   viewer.setStage('gallery');
   if(location.hash==='#xpeng') asset.value='x9';
   navigate('overview'); void chooseAsset();
@@ -281,6 +285,6 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
         card.querySelector('article>small')!.textContent=value ? `dBA · ${registeredVehicleLayout(value.config.layoutId)?.name ?? value.config.vehicle} · ${value.config.speedKph} km/h · 实验 ${value.runId.slice(0,8)}` : index ? '调整一个设计因素后，重新计算。' : '运行一次预计算实验，再保存基线。';
       });
     },
-    dispose() {cabinField.dispose();previewResize.disconnect();overviewMotion.dispose();events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
+    dispose() {passengerPanel?.dispose();cabinField.dispose();previewResize.disconnect();overviewMotion.dispose();events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
   };
 }

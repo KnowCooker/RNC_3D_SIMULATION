@@ -1,0 +1,81 @@
+import type { createLabViewer } from '../viewer/lab-viewer';
+import { PASSENGERS, type PassengerId } from '../viewer/passenger-model';
+import { createPassengerState } from './passenger-state';
+import { presentationIcon as icon } from './presentation-icons';
+import './passenger-panel.css';
+
+/** Modeless drawer: the live vehicle remains directly rotatable beside the controls. */
+export function mountPassengerPanel(root: HTMLElement, viewer: ReturnType<typeof createLabViewer>, enter: () => void) {
+  const host = root.querySelector<HTMLElement>('#lab-viewer')!, state = createPassengerState();
+  const trigger = document.createElement('button'); trigger.type = 'button'; trigger.className = 'cp-passenger-trigger';
+  trigger.innerHTML = `${icon('seat')}<span>同行伙伴</span>`; trigger.setAttribute('aria-expanded', 'false'); trigger.setAttribute('aria-controls', 'cp-passenger-drawer');
+  root.querySelector('.cp-asset')!.append(trigger);
+  const panel = document.createElement('aside'); panel.className = 'cp-passenger-drawer cp-glass'; panel.id = 'cp-passenger-drawer'; panel.hidden = true;
+  panel.setAttribute('aria-label', '车内乘客选择');
+  panel.innerHTML = `<header><div><small>TRAVEL COMPANIONS</small><h2>让旅程，多一份陪伴</h2></div><button class="pc-close" aria-label="关闭乘客选择">${icon('close')}</button></header>
+    <p class="pc-intro">选择座位，再邀请喜欢的角色上车。</p><div class="pc-availability" role="status"></div>
+    <div class="pc-seat-map" role="group" aria-label="当前车辆乘客座位"></div>
+    <div class="pc-selection-title"><b>为<span class="pc-active-seat">副驾</span>选择伙伴</b><small class="pc-count"></small></div>
+    <div class="pc-characters" role="group" aria-label="选择三维乘客">${PASSENGERS.map(c => `<button data-character="${c.id}" style="--pc-color:${c.color}" aria-label="安排${c.name}" aria-pressed="false"><span class="pc-avatar pc-avatar-${c.id}" aria-hidden="true">${avatar(c.id)}</span><strong>${c.name}</strong><small>${c.id === 'niulai' ? '黄色小牛' : c.id === 'ayaka' ? '蓝白雅致' : '自由活力'}</small></button>`).join('')}</div>
+    <div class="pc-actions"><button data-action="remove">此座留空</button><button data-action="focus">近看此座 ${icon('chevron')}</button></div>
+    <div class="pc-presets"><button data-action="trio">三人同行</button><button data-action="clear">全部清空</button><button data-action="cabin">整舱视角</button></div>
+    <label class="pc-visibility"><input type="checkbox" checked>显示车内乘客</label>
+    <p class="pc-message" role="status" aria-live="polite"></p>
+    <footer>实时三维 · 角色初版<br>各座位可独立选择相同角色；主驾保留。<br>乘客仅作视觉展示，不影响本次声学结果。</footer>`;
+  root.querySelector('.cp-stage')!.append(panel);
+  let seat = '', visible = true; const events = new AbortController();
+  const q = <T extends HTMLElement = HTMLElement>(selector: string) => panel.querySelector<T>(selector)!;
+  function render() {
+    const seats = viewer.passengerSeats, assignments = state.assignments;
+    if (!seats.some(s => s.id === seat)) seat = seats[0]?.id ?? '';
+    q('.pc-availability').textContent = seats.length ? `${seats.length} 个乘客位 · 本次会话按车型保留配置` : '正在匹配座位；当前仅支持五款小鹏实验车。';
+    const map = q('.pc-seat-map'); map.replaceChildren();
+    const rows = [...new Set(seats.map(s => s.row))];
+    for (const row of rows) {
+      const line = document.createElement('div'); line.className = 'pc-seat-row';
+      if (row === 1) { const driver = document.createElement('div'); driver.className = 'pc-driver'; driver.innerHTML = `${icon('seat')}<span>主驾保留</span>`; line.append(driver); }
+      for (const s of seats.filter(s => s.row === row)) {
+        const button = document.createElement('button'); button.type = 'button'; button.dataset.seat = s.id;
+        const person = PASSENGERS.find(c => c.id === assignments[s.id]);
+        button.setAttribute('aria-label', `${s.label}，${person?.name ?? '空座'}`); button.setAttribute('aria-pressed', String(seat === s.id));
+        button.innerHTML = `${icon('seat')}<span>${s.label}</span><strong>${person?.name ?? '空座'}</strong>`;
+        button.onclick = () => { seat = s.id; render(); q<HTMLButtonElement>(`[data-seat="${s.id}"]`).focus(); q('.pc-message').textContent = `已选择${s.label}。`; };
+        line.append(button);
+      }
+      map.append(line);
+    }
+    q('.pc-active-seat').textContent = seats.find(s => s.id === seat)?.label ?? '座位';
+    q('.pc-count').textContent = `${Object.values(assignments).filter(Boolean).length} 位已上车`;
+    panel.querySelectorAll<HTMLButtonElement>('[data-character]').forEach(b => { b.disabled = !seat; b.setAttribute('aria-pressed', String(assignments[seat] === b.dataset.character)); });
+    panel.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(b => b.disabled = !seat || b.dataset.action === 'remove' && !assignments[seat]);
+    host.dataset.passengerSeatCount = String(seats.length);
+  }
+  function apply(message: string) {
+    viewer.setPassengers(state.assignments); render(); q('.pc-message').textContent = message + (visible ? '' : ' 当前人物已隐藏，可勾选显示。');
+  }
+  function bind() { state.bind(viewer.passengerAsset, viewer.passengerSeats); viewer.setPassengers(state.assignments); viewer.setPassengersVisible(visible); render(); }
+  host.addEventListener('passenger-layout-change', bind, { signal: events.signal }); bind();
+  panel.querySelectorAll<HTMLButtonElement>('[data-character]').forEach(b => b.onclick = () => {
+    const id = b.dataset.character as PassengerId; if (state.choose(seat, id)) apply(`${PASSENGERS.find(c => c.id === id)!.name}已坐在${q('.pc-active-seat').textContent}。`);
+  });
+  q<HTMLButtonElement>('[data-action=remove]').onclick = () => { state.choose(seat, null); apply('当前座位已留空。'); };
+  q<HTMLButtonElement>('[data-action=clear]').onclick = () => { state.clear(); apply('所有乘客已离座。'); };
+  q<HTMLButtonElement>('[data-action=trio]').onclick = () => { state.fill(); apply('牛来、神里绫华和路飞已上车。'); viewer.focusPassengers(); };
+  q<HTMLButtonElement>('[data-action=focus]').onclick = () => viewer.focusPassengers(seat);
+  q<HTMLButtonElement>('[data-action=cabin]').onclick = () => viewer.focusPassengers();
+  q<HTMLInputElement>('input').onchange = event => { visible = (event.target as HTMLInputElement).checked; viewer.setPassengersVisible(visible); q('.pc-message').textContent = visible ? '乘客已显示。' : '乘客已隐藏；选座配置保留。'; };
+  function close(restoreFocus = true) { panel.hidden = true; delete root.dataset.passengerPanel; trigger.setAttribute('aria-expanded', 'false'); if (restoreFocus) { viewer.focusPassengers(); trigger.focus(); } }
+  q<HTMLButtonElement>('.pc-close').onclick = () => close();
+  trigger.onclick = () => {
+    if (!panel.hidden) { close(); return; }
+    enter(); panel.hidden = false; root.dataset.passengerPanel = 'open'; trigger.setAttribute('aria-expanded', 'true'); bind();
+    viewer.focusPassengers(); q<HTMLButtonElement>('.pc-close').focus();
+  };
+  panel.addEventListener('keydown', event => { if (event.key === 'Escape') { event.stopPropagation(); close(); } }, { signal: events.signal });
+  return { close, resume() { if (!panel.hidden) { enter(); viewer.focusPassengers(); } }, dispose() { events.abort(); panel.remove(); trigger.remove(); delete root.dataset.passengerPanel; } };
+}
+
+function avatar(id: PassengerId) {
+  const face = id === 'niulai' ? '<path d="M18 25 11 10 21 17M46 25 53 10 43 17" fill="#777567"/><ellipse cx="32" cy="35" rx="18" ry="19" fill="#d5ae3c"/><ellipse cx="32" cy="44" rx="14" ry="10" fill="#d9c0ae"/><path d="m21 30 8-2m6 0 8 2m-17 15q6 4 12 0" stroke="#635344" fill="none" stroke-width="2"/>' : id === 'ayaka' ? '<path d="M13 54V29a19 19 0 0 1 38 0v25" fill="#aebbe2"/><ellipse cx="32" cy="35" rx="13" ry="17" fill="#f3d7c6"/><path d="M18 31 22 14 31 12 45 19 46 31 21 27" fill="#b8c5ea"/><path d="m20 54 12-8 12 8" fill="#516790"/>' : '<ellipse cx="32" cy="25" rx="26" ry="5" fill="#c69d59"/><path d="M16 24q0-21 16-21t16 21" fill="#d9b56f"/><path d="M16 23h32" stroke="#a94e40" stroke-width="5"/><ellipse cx="32" cy="38" rx="15" ry="18" fill="#e8b68c"/><path d="M17 34 18 26 44 26 47 35 42 30 36 34 28 29 24 35" fill="#323032"/><path d="M24 44q8 11 16 0Z" fill="#fff8ea"/>';
+  return `<svg viewBox="0 0 64 64" fill="none">${face}<circle cx="26" cy="35" r="2" fill="#3b393a"/><circle cx="38" cy="35" r="2" fill="#3b393a"/></svg>`;
+}

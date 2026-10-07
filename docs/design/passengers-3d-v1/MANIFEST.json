@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-07",
+  "role": "A1",
+  "task": "A1-FULL-021",
+  "executor": "Codex",
+  "kind": "Procedural 3D passenger initial implementation; offline renders, not browser screenshots",
+  "digestScope": "Binary deliverable assets; text files tracked by Git",
+  "files": [
+    {
+      "path": "models/ayaka.glb",
+      "bytes": 2242980,
+      "sha256": "3a920f363b7e6334dcac49e403fac4d7d6bded2ac284ff651af486f8e062a3f0"
+    },
+    {
+      "path": "models/luffy.glb",
+      "bytes": 2070028,
+      "sha256": "781d802ed6d53468a1791e02fe707cec24b22d61658881a947becce7a3b46335"
+    },
+    {
+      "path": "models/niulai.glb",
+      "bytes": 1224088,
+      "sha256": "5eb72e167cac19808073ae3b70f64cf35ae812ac82e514f51c9540329c06931c"
+    },
+    {
+      "path": "reference/niulai-user-reference.png",
+      "bytes": 314428,
+      "sha256": "4b865cb1e147c489315e4c780cfccc2b1775fd20ae20f86bdda6e2ab999509b5"
+    },
+    {
+      "path": "renders/gx-seat-fit.png",
+      "bytes": 2013686,
+      "sha256": "bfbac968504958821bc18ad18021bf124ebda5db0a7e3d6cb9a5cbb94a02f7e3"
+    },
+    {
+      "path": "renders/three-passengers.png",
+      "bytes": 1891853,
+      "sha256": "9bbc65d5bab6a7dfc283b9f3d03d8fafc0a7ec6af268bbd676a666a720508a0e"
+    }
+  ]
+}

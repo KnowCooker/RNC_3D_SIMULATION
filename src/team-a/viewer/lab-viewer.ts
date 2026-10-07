@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { createRenderMeter } from './render-meter';
+import { createPassengerCabin, type PassengerAssignments } from './passenger-cabin';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
@@ -34,6 +35,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   roadPreset?(surface: RoadSurface, roughness: number): void;
 }) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#101a25');
+  const passengers = createPassengerCabin(); let passengerFocus = false;
   const camera = new THREE.PerspectiveCamera(40, 1, 0.08, 1200);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.info.autoReset=false;
@@ -251,6 +253,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   function clearGuide() { guideSelect.value = ''; guideCard.hidden = true; }
   guideClose.onclick = clearGuide;
   function focusCamera(position: Vec3, target: Vec3, fov=40) {
+    if (passengerFocus) { passengerFocus = false; controls.minDistance = 3; }
     const damping=controls.enableDamping;controls.enableDamping=false;controls.update();controls.enableDamping=damping;
     cameraMotion.start(position,target,fov,performance.now(),renderedOnce&&!reducedMotion.matches?420:0);
     if(!cameraMotion.active)controls.update();
@@ -309,6 +312,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     inspectionPartAction.textContent = !id ? '先选择部件' : showroomDetached.has(id) ? '回装所选部件' : '拆出所选部件';
   }
   function setShowroomBody(value: AssetBodyMode) {
+    if (value !== 'hidden' && passengerFocus) { passengerFocus = false; controls.minDistance = 3; }
     inspectionBody.value = value; showroomModel?.inspection.setBody(value);
   }
   function setShowroomSection(axis: AssetSectionAxis, value: number) {
@@ -319,6 +323,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     inspectionPosition.value = String(value); inspectionPosition.disabled = axis === 'none';
     inspectionOutput.textContent = axis === 'none' ? '剖面关闭' : `${axis.toUpperCase()} = ${value.toFixed(2)} m`;
     showroomModel?.inspection.setSection(axis, value);
+    passengers.setSection(axis, value);
     if (changed) { if (axis === 'none') focusStageCamera(); else focusSection(axis); }
   }
   inspectionBody.onchange = () => setShowroomBody(inspectionBody.value as AssetBodyMode);
@@ -385,6 +390,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   host.append(showroomToggle, showroomPanel, showroomAssemblyPanel);
   function leaveShowroom() {
+    passengers.attach(null); host.dispatchEvent(new CustomEvent('passenger-layout-change'));
     ++showroomRequest;
     showroomToggle.removeAttribute('title');
     if (!showroomActive) {
@@ -417,6 +423,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     showroomToggle.disabled = true; showroomToggle.textContent = '加载外观…';
     try {
       if (showroomModel && showroomModel.assetId !== wantedAssetId) {
+        passengers.attach(null); host.dispatchEvent(new CustomEvent('passenger-layout-change'));
         scene.remove(showroomModel.group); showroomModel.dispose(); showroomModel = null;
       }
       if (!showroomModel) {
@@ -464,6 +471,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         inspectionPanel.querySelector('small')!.textContent = '保留侧为坐标 ≥ 剖面位置。资产仅显示真实截线；未校验实体内部，不填充封口。';
       }
       showroomActive = true; host.dataset.asset = showroomModel.assetId;
+      passengers.attach(showroomModel); host.dispatchEvent(new CustomEvent('passenger-layout-change'));
       showroomModel.group.visible = true;
       showroomModel.inspection.overlay.visible = true;
       setShowroomBody('solid'); setShowroomSection('none', 0);
@@ -916,9 +924,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       if(width>=1000)camera.setViewOffset(width,height,width*.16,0,width,height);
       else camera.clearViewOffset();
     }
+    if (passengerFocus) {
+      if (width >= 1000 && host.closest('.cp-app')?.getAttribute('data-passenger-panel') === 'open') camera.setViewOffset(width,height,width*.12,0,width,height);
+      else camera.clearViewOffset();
+    }
     camera.updateProjectionMatrix();
     if(presentationCompact!==(width<1000)&&stage.mode==='road')driving?.focus();
-    if((presentationCompact!==(width<1000)||(fieldNarrowChanged&&host.dataset.presentationPage==='field'))&&host.dataset.presentationPage&&stage.mode==='gallery'&&showroomClipAxis==='none'){focusPresentationCamera();}
+    if(!passengerFocus&&(presentationCompact!==(width<1000)||(fieldNarrowChanged&&host.dataset.presentationPage==='field'))&&host.dataset.presentationPage&&stage.mode==='gallery'&&showroomClipAxis==='none'){focusPresentationCamera();}
     presentationCompact=width<1000;
   }
   const resize = new ResizeObserver(resizeViewer); resize.observe(host);
@@ -951,6 +963,20 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   applyStage(); reset();
   if (['#xpeng', '#p7plus'].includes(window.location.hash)) queueMicrotask(() => { if (!disposed) void enterShowroom(window.location.hash === '#p7plus' ? 'p7plus' : 'x9'); });
   return {
+    get passengerSeats() { return passengers.seats; },
+    get passengerAsset() { return passengers.assetId; },
+    setPassengers(value: PassengerAssignments) { passengers.setAssignments(value); host.dataset.passengers = JSON.stringify(value); },
+    setPassengersVisible(value: boolean) { passengers.setVisible(value); host.dataset.passengersVisible = String(value); },
+    focusPassengers(seatId?: string) {
+      if (!showroomActive || !passengers.seats.length) return;
+      const point = seatId ? passengers.position(seatId) : null;
+      stage.setMode('gallery'); applyStage(); setShowroomSection('none', 0); setShowroomBody('hidden');
+      camera.clearViewOffset();
+      if (host.clientWidth >= 1000 && host.closest('.cp-app')?.getAttribute('data-passenger-panel') === 'open') camera.setViewOffset(host.clientWidth, host.clientHeight, host.clientWidth * .12, 0, host.clientWidth, host.clientHeight);
+      if (point) focusCamera([point.x + 1.0, point.y + .70, point.z + 1.8], [point.x, point.y + .32, point.z], 38);
+      else focusCamera([-3.8, 2.7, 4.5], [0, .94, -.38], 37);
+      controls.minDistance = .38; passengerFocus = true;
+    },
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
     get acousticAvailable() { return acousticAsset(); },
     get hasValidField() { return !!frame?.valid && acousticAsset(); },
@@ -1083,6 +1109,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const now = performance.now(), dt = Math.min(0.1, (now - lastTime) / 1000); lastTime = now;
       // Presentation easing uses the render clock; physics and driving retain the single playback time.
       fieldDisplay.advance(time, playing, now / 1000);
+      passengers.animate(time, reducedMotion.matches);
       const targetAmount = exploded ? 1 : 0;
       amount += (targetAmount - amount) * (1 - Math.exp(-dt * 5));
       // Below 0.1 mm of displacement, snap to the exact pose so section geometry stops rebuilding.
@@ -1175,7 +1202,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         controls.dampingFactor=1-Math.exp(-Math.min(dt,.05)*9);
         controls.update();
         const outdoor=stage.mode!=='workshop';
-        if(outdoor&&!driving?.cabin&&!cameraMotion.active){
+        if(outdoor&&!driving?.cabin&&!passengerFocus&&!cameraMotion.active){
           constrainEnvironmentCamera(camera.position,controls.target,stage.mode,showroomModel?.assetId);
           camera.lookAt(controls.target);
         }
@@ -1215,6 +1242,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { disposed = true; ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); driving?.dispose(); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); fieldOcclusion.dispose(); previewOcclusion.dispose(); cabinLegend.remove(); fieldDisplay.dispose(); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); fieldHud.remove(); fieldFocusButton.remove(); pathFocusNote.remove(); showroomToggle.remove(); xpengLaunch.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); underfloorNote.remove(); roadSurfaceBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { disposed = true; passengers.dispose(); ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); driving?.dispose(); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); fieldOcclusion.dispose(); previewOcclusion.dispose(); cabinLegend.remove(); fieldDisplay.dispose(); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); fieldHud.remove(); fieldFocusButton.remove(); pathFocusNote.remove(); showroomToggle.remove(); xpengLaunch.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); underfloorNote.remove(); roadSurfaceBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }
