@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createRenderMeter } from './render-meter';
 import { createPassengerCabin, type PassengerAssignments } from './passenger-cabin';
+import { createPassengerAssetLibrary } from './passenger-assets';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
@@ -35,7 +36,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   roadPreset?(surface: RoadSurface, roughness: number): void;
 }) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#101a25');
-  const passengers = createPassengerCabin(); let passengerFocus = false;
+  const passengerAssets = createPassengerAssetLibrary();
+  const passengers = createPassengerCabin({ loadDetailed: (id, driver) => passengerAssets.load(id, driver), onChange: () => host.dispatchEvent(new CustomEvent('passenger-quality-change')) }); let passengerFocus = false;
   const camera = new THREE.PerspectiveCamera(40, 1, 0.08, 1200);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.info.autoReset=false;
@@ -965,6 +967,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   return {
     get passengerSeats() { return passengers.seats; },
     get passengerAsset() { return passengers.assetId; },
+    get passengerQuality() { return passengers.quality; },
     setPassengers(value: PassengerAssignments) { passengers.setAssignments(value); host.dataset.passengers = JSON.stringify(value); },
     setPassengersVisible(value: boolean) { passengers.setVisible(value); host.dataset.passengersVisible = String(value); },
     focusPassengers(seatId?: string) {
@@ -1242,6 +1245,6 @@ export function createLabViewer(host: HTMLElement, callbacks: {
         row.line.setAttribute('y2', String(Math.max(position.y, Math.min(position.y + 24, y))));
       });
     },
-    dispose() { disposed = true; passengers.dispose(); ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); driving?.dispose(); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); fieldOcclusion.dispose(); previewOcclusion.dispose(); cabinLegend.remove(); fieldDisplay.dispose(); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); fieldHud.remove(); fieldFocusButton.remove(); pathFocusNote.remove(); showroomToggle.remove(); xpengLaunch.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); underfloorNote.remove(); roadSurfaceBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
+    dispose() { disposed = true; passengers.dispose(); passengerAssets.dispose(); ++showroomRequest; resize.disconnect(); window.removeEventListener('resize', resizeViewer); driving?.dispose(); controls.dispose(); sections?.dispose(); model?.dispose(); showroomModel?.dispose(); stage.dispose(); clear(markers); clear(paths); clear(waves); fieldOcclusion.dispose(); previewOcclusion.dispose(); cabinLegend.remove(); fieldDisplay.dispose(); clear(field); clear(stripes); ground.geometry.dispose(); ground.material.dispose(); contactShade.geometry.dispose(); shadowTexture.dispose(); environment.dispose(); renderer.dispose(); markerRows.forEach(row => { row.button.remove(); row.line.remove(); }); guidePicker.remove(); guideCard.remove(); fieldNote.remove(); fieldHud.remove(); fieldFocusButton.remove(); pathFocusNote.remove(); showroomToggle.remove(); xpengLaunch.remove(); showroomPanel.remove(); showroomAssemblyPanel.remove(); stageBar.remove(); underfloorNote.remove(); roadSurfaceBar.remove(); assemblyPanel.remove(); leaders.remove(); renderer.domElement.remove(); },
   };
 }

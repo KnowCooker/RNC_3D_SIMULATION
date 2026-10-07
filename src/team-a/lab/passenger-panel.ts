@@ -14,28 +14,28 @@ export function mountPassengerPanel(root: HTMLElement, viewer: ReturnType<typeof
   panel.setAttribute('aria-label', '车内乘客选择');
   panel.innerHTML = `<header><div><small>TRAVEL COMPANIONS</small><h2>让旅程，多一份陪伴</h2></div><button class="pc-close" aria-label="关闭乘客选择">${icon('close')}</button></header>
     <p class="pc-intro">选择座位，再邀请喜欢的角色上车。</p><div class="pc-availability" role="status"></div>
-    <div class="pc-seat-map" role="group" aria-label="当前车辆乘客座位"></div>
+    <div class="pc-seat-map" role="group" aria-label="当前车辆全部座位，包含主驾"></div>
     <div class="pc-selection-title"><b>为<span class="pc-active-seat">副驾</span>选择伙伴</b><small class="pc-count"></small></div>
     <div class="pc-characters" role="group" aria-label="选择三维乘客">${PASSENGERS.map(c => `<button data-character="${c.id}" style="--pc-color:${c.color}" aria-label="安排${c.name}" aria-pressed="false"><span class="pc-avatar pc-avatar-${c.id}" aria-hidden="true">${avatar(c.id)}</span><strong>${c.name}</strong><small>${c.id === 'niulai' ? '黄色小牛' : c.id === 'ayaka' ? '蓝白雅致' : '自由活力'}</small></button>`).join('')}</div>
     <div class="pc-actions"><button data-action="remove">此座留空</button><button data-action="focus">近看此座 ${icon('chevron')}</button></div>
     <div class="pc-presets"><button data-action="trio">三人同行</button><button data-action="clear">全部清空</button><button data-action="cabin">整舱视角</button></div>
     <label class="pc-visibility"><input type="checkbox" checked>显示车内乘客</label>
     <p class="pc-message" role="status" aria-live="polite"></p>
-    <footer>实时三维 · 角色初版<br>各座位可独立选择相同角色；主驾保留。<br>乘客仅作视觉展示，不影响本次声学结果。</footer>`;
+    <p class="pc-quality" role="status"></p><footer>主驾、副驾和后排均可独立选人或留空。<br>角色仅作视觉展示，不影响本次声学结果。</footer>`;
   root.querySelector('.cp-stage')!.append(panel);
   let seat = '', visible = true; const events = new AbortController();
   const q = <T extends HTMLElement = HTMLElement>(selector: string) => panel.querySelector<T>(selector)!;
   function render() {
     const seats = viewer.passengerSeats, assignments = state.assignments;
     if (!seats.some(s => s.id === seat)) seat = seats[0]?.id ?? '';
-    q('.pc-availability').textContent = seats.length ? `${seats.length} 个乘客位 · 本次会话按车型保留配置` : '正在匹配座位；当前仅支持五款小鹏实验车。';
+    q('.pc-availability').textContent = seats.length ? `${seats.length} 个可选座位（含主驾）· 本次会话按车型保留` : '正在匹配座位；当前仅支持五款小鹏实验车。';
     const map = q('.pc-seat-map'); map.replaceChildren();
     const rows = [...new Set(seats.map(s => s.row))];
     for (const row of rows) {
       const line = document.createElement('div'); line.className = 'pc-seat-row';
-      if (row === 1) { const driver = document.createElement('div'); driver.className = 'pc-driver'; driver.innerHTML = `${icon('seat')}<span>主驾保留</span>`; line.append(driver); }
       for (const s of seats.filter(s => s.row === row)) {
         const button = document.createElement('button'); button.type = 'button'; button.dataset.seat = s.id;
+        if (s.driver) button.className = 'pc-driver-seat';
         const person = PASSENGERS.find(c => c.id === assignments[s.id]);
         button.setAttribute('aria-label', `${s.label}，${person?.name ?? '空座'}`); button.setAttribute('aria-pressed', String(seat === s.id));
         button.innerHTML = `${icon('seat')}<span>${s.label}</span><strong>${person?.name ?? '空座'}</strong>`;
@@ -49,12 +49,20 @@ export function mountPassengerPanel(root: HTMLElement, viewer: ReturnType<typeof
     panel.querySelectorAll<HTMLButtonElement>('[data-character]').forEach(b => { b.disabled = !seat; b.setAttribute('aria-pressed', String(assignments[seat] === b.dataset.character)); });
     panel.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(b => b.disabled = !seat || b.dataset.action === 'remove' && !assignments[seat]);
     host.dataset.passengerSeatCount = String(seats.length);
+    renderQuality();
+  }
+  function renderQuality() {
+    const quality = viewer.passengerQuality;
+    const detailed = quality.filter(q => q.status === 'detailed').length, loading = quality.filter(q => q.status === 'loading').length;
+    q('.pc-quality').textContent = !quality.length ? '选择角色后显示模型状态。' : loading ? `正在加载精细模型 · ${detailed}/${quality.length}` : detailed === quality.length ? `精细模型已就绪 · ${detailed} 位` : `精细模型 ${detailed}/${quality.length} · 部分本机资源缺失，暂显示基础模型。`;
+    host.dataset.passengerQuality = JSON.stringify(quality);
   }
   function apply(message: string) {
     viewer.setPassengers(state.assignments); render(); q('.pc-message').textContent = message + (visible ? '' : ' 当前人物已隐藏，可勾选显示。');
   }
   function bind() { state.bind(viewer.passengerAsset, viewer.passengerSeats); viewer.setPassengers(state.assignments); viewer.setPassengersVisible(visible); render(); }
   host.addEventListener('passenger-layout-change', bind, { signal: events.signal }); bind();
+  host.addEventListener('passenger-quality-change', renderQuality, { signal: events.signal });
   panel.querySelectorAll<HTMLButtonElement>('[data-character]').forEach(b => b.onclick = () => {
     const id = b.dataset.character as PassengerId; if (state.choose(seat, id)) apply(`${PASSENGERS.find(c => c.id === id)!.name}已坐在${q('.pc-active-seat').textContent}。`);
   });

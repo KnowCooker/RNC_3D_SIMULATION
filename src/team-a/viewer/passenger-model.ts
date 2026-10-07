@@ -12,10 +12,11 @@ type V = [number, number, number];
 
 /** Authored, real geometry. +Z faces the windscreen; origin is the seated hip.
  * Small rigid rig, not an imported/official character or a physical human model. */
-export function createPassengerModel(id: PassengerId) {
+export function createPassengerModel(id: PassengerId, driver = false) {
   if (!isPassenger(id)) throw new Error('Unknown passenger');
   const group = new THREE.Group(); group.name = `passenger-${id}`;
   group.userData.passengerId = id; group.userData.visualOnly = true;
+  group.userData.driver = driver; group.userData.assetStatus = 'basic';
   const body = new THREE.Group(), head = new THREE.Group(); group.add(body); body.add(head);
   head.position.set(0, .49, -.012); head.name = 'head-rig';
   const eyeRigs: THREE.Group[] = [], geometries = new Set<THREE.BufferGeometry>();
@@ -67,16 +68,17 @@ export function createPassengerModel(id: PassengerId) {
     if (cow) ell(e, [0, .024, .008], [.045, .013, .016], skin);
   }
   function hand(side: number, hoof = false) {
+    const hands = new THREE.Group(); body.add(hands); if (driver) hands.position.set(0,.215,.10);
     const p: V = [side * .105, .075, .235];
-    ell(body, p, [hoof ? .03 : .025, .016, .039], hoof ? white : skin);
+    ell(hands, p, [hoof ? .03 : .025, .016, .039], hoof ? white : skin);
     if (hoof) {
-      sweep(body, [[p[0], .09, .263], [p[0], .075, .273]], .0018, dark, .9); return;
+      sweep(hands, [[p[0], .09, .263], [p[0], .075, .273]], .0018, dark, .9); return;
     }
     for (let i = 0; i < 4; i++) {
       const x = p[0] + (i - 1.5) * .011;
-      sweep(body, [[x, .079, .252], [x, .072, .272], [x, .061, .279 - Math.abs(i - 1.3) * .006]], .0054, skin, .66);
+      sweep(hands, [[x, .079, .252], [x, .072, .272], [x, .061, .279 - Math.abs(i - 1.3) * .006]], .0054, skin, .66);
     }
-    sweep(body, [[p[0] - side * .022, .080, .231], [p[0] - side * .031, .075, .25], [p[0] - side * .024, .068, .263]], .007, skin, .75);
+    sweep(hands, [[p[0] - side * .022, .080, .231], [p[0] - side * .031, .075, .25], [p[0] - side * .024, .068, .263]], .007, skin, .75);
   }
   const torso = ell(body, [0, .215, -.005], [id === 'niulai' ? .153 : .133, .181, .084], id === 'ayaka' ? navy : skin);
   torso.name = 'seated-torso';
@@ -99,7 +101,7 @@ export function createPassengerModel(id: PassengerId) {
       sweep(body, [[side * .073, -.175, .298], [side * .102, -.167, .318], [side * .132, -.176, .299]], .007, navy);
       ell(body, [side * .102, -.174, .322], [.012, .007, .01], gold);
     }
-    const shoulder: V = [side * .13, .33, .0], elbow: V = [side * .175, .155, .085], wrist: V = [side * .115, .083, .213];
+    const shoulder: V = [side * .13, .33, .0], elbow: V = [side * .175, driver ? .19 : .155, driver ? .16 : .085], wrist: V = [side * .115, driver ? .298 : .083, driver ? .313 : .213];
     limb(shoulder, elbow, id === 'ayaka' ? .051 : .038, id === 'ayaka' ? cloth : skin, id === 'ayaka' ? 1.2 : .84);
     limb(elbow, wrist, id === 'ayaka' ? .035 : .031, id === 'ayaka' ? cloth : skin, .72);
     if (id === 'ayaka') {
@@ -158,6 +160,7 @@ export function createPassengerModel(id: PassengerId) {
       ell(body, [0, .058, .022], [.139, .034, .10], gold);
       sweep(body, [[.13, .07, .035], [.16, .0, .05], [.145, -.07, .09]], .018, gold, .7);
       const straw = mat('#cba260', .9), hat = new THREE.Group(); hat.name = 'lap-straw-hat'; body.add(hat); hat.position.set(0, .103, .253); hat.rotation.x = .15;
+      if (driver) { hat.position.set(0,.30,-.12); hat.rotation.x=Math.PI/2; }
       ell(hat, [0, 0, 0], [.165, .009, .135], straw); ell(hat, [0, .035, -.002], [.1, .046, .089], straw);
       const ribbon = mesh(hat, new THREE.CylinderGeometry(.097, .104, .019, 40, 1, true), cloth, [0, .026, -.002]); ribbon.scale.z = .9;
       for (let i = 0; i < 6; i++) { const ring = mesh(hat, new THREE.TorusGeometry(.108 + i * .01, .0012, 4, 40), gold); ring.rotation.x = Math.PI / 2; ring.scale.y = .82; ring.position.y = .007; }

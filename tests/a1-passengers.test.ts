@@ -26,11 +26,12 @@ test('A1 passengers: real finite geometry, bounded draw count, unique silhouette
   }
 });
 
-test('A1 passengers: all five models use actual cushion anchors and reserve driver', () => {
+test('A1 passengers: all five models use actual cushion anchors including driver', () => {
   for (const spec of xpengCatalog) {
     const model = createXPengModel(spec.id), mounts = passengerMounts(model);
-    assert.equal(mounts.length, spec.rows.reduce((a, b) => a + b, 0) - 1);
-    assert.ok(mounts.every(m => m.id !== 'seat-1-1' && m.parent.userData.partId === m.id));
+    assert.equal(mounts.length, spec.rows.reduce((a, b) => a + b, 0));
+    assert.ok(mounts.every(m => m.parent.userData.partId === m.id));
+    assert.deepEqual(mounts.filter(m => m.driver).map(m => [m.id, m.label]), [['seat-1-1', '主驾']]);
     for (const m of mounts) { assert.ok(m.origin.y > .61 && m.origin.y < .75); assert.ok(m.roof > 1.3); }
     assert.equal(mounts.filter(m => m.row === 3).length, spec.rows[2] ?? 0);
     model.dispose();
