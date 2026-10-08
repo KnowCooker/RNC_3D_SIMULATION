@@ -2,7 +2,7 @@ import { drawSignalComparison, plot } from './plots';
 import { registeredVehicleLayout, type LabAnalysis } from '../../shared/lab-contracts';
 import type { CaseSnapshot, ComparisonPolicy } from './case-compare';
 import { caseVisualsMarkup } from './case-visuals';
-import { DRIVING_ENVIRONMENTS, drivingEnvironmentMarkup, mountPanelDisclosure, observationDockMarkup, observationMode } from './workspace-controls';
+import { DRIVING_ENVIRONMENTS, drivingEnvironmentMarkup, mountEnvironmentPicker, mountPanelDisclosure, observationDockMarkup, observationMode } from './workspace-controls';
 import type { createLabViewer } from '../viewer/lab-viewer';
 import type { XPengId } from '../viewer/xpeng-catalog';
 import type { GalleryEnvironment } from '../viewer/champagne-gallery';
@@ -98,7 +98,8 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   if(viewTools[1]) q('.cp-field-tools').append(viewTools[1]);
   q('.cp-readings').prepend(get('viewer').querySelector('.lab-field-hud')!);
   const driveModes=element(observationDockMarkup()),drivingEnvironments=element(drivingEnvironmentMarkup());
-  q('.cp-bottom-bar').prepend(driveModes);q('.cp-stage').append(drivingEnvironments);
+  q('.cp-bottom-bar').prepend(driveModes);driveModes.append(drivingEnvironments);
+  const environmentPicker=mountEnvironmentPicker(drivingEnvironments,environment=>viewer.setEnvironment(environment));
   q('.cp-observation-panel').append(get('viewer').querySelector('.lab-driving-controls')!);
   const extraViews=element('<div class="lab-view-tools" aria-label="传播示意"></div>');extraViews.append(get('paths').closest('label')!,get('waves').closest('label')!);q('.cp-observation-panel').append(extraViews);
   root.dataset.fieldPanel='field';
@@ -111,7 +112,6 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     else{const overlay=q<HTMLButtonElement>('[data-drive-overlay]');if(overlay.getAttribute('aria-pressed')==='true')overlay.click();viewer.setStage('road');q<HTMLButtonElement>('[data-view="orbit"]').click();showPanel('observe');}
     syncDriveControls();
   });
-  drivingEnvironments.querySelectorAll<HTMLButtonElement>('[data-driving-env]').forEach(b=>b.onclick=()=>viewer.setEnvironment(b.dataset.drivingEnv as GalleryEnvironment));
   function syncDriveControls(){
     const data=get('viewer').dataset,stage=data.stage,mode=observationMode(stage,data.drivingOverlay),env=data.environment??'coast';
     root.dataset.stage=stage??'';
@@ -121,9 +121,11 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     q('.cp-footer-note').firstChild!.textContent=stage==='road'?'仿真道路 / ':'湖畔展厅 / ';
     driveModes.querySelectorAll<HTMLButtonElement>('[data-observation]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.observation==='road'?stage==='road':b.dataset.observation===mode)));
     drivingEnvironments.hidden=root.dataset.page!=='field'||stage!=='road';
+    if(drivingEnvironments.hidden)environmentPicker.close();
     drivingEnvironments.querySelectorAll<HTMLButtonElement>('[data-driving-env]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.drivingEnv===env)));
     const name=DRIVING_ENVIRONMENTS.find(([id])=>id===env)?.[1]??'田野公路';
-    drivingEnvironments.querySelector('.cp-driving-current')!.textContent=`${name} · ${data.environmentFailed==='true'?'基础景物 / 高清加载失败':data.environmentReady?'当前环境':'加载中…'}`;
+    drivingEnvironments.querySelector('.cp-driving-current')!.textContent=name;
+    drivingEnvironments.querySelector('.cp-driving-status')!.textContent=`${name} · ${data.environmentFailed==='true'?'基础景物 / 高清加载失败':data.environmentReady?'当前环境':'加载中…'}`;
     drivingEnvironments.setAttribute('aria-busy',String(!data.environmentReady&&data.environmentFailed!=='true'));
   }
   const driveObserver=new MutationObserver(syncDriveControls);
@@ -134,10 +136,10 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   get<HTMLSelectElement>('field-slice').options[0].textContent='连续三维声场';
   q('.cp-charts').append(root.querySelector('.lab-plots')!);
   const cabinField=mountCabinFieldPanel(root,viewer);
-  const disclosures=[mountPanelDisclosure(q('.cp-field-panel'),'声场实验','cp-field-panel-body',redraw),mountPanelDisclosure(get('viewer').querySelector<HTMLElement>('.lab-showroom-panel')!,'结构与布置','cp-structure-panel-body',redraw),mountPanelDisclosure(q('.cp-structure-tools'),'结构工具','cp-structure-tools-body',redraw)];
+  const disclosures=[mountPanelDisclosure(q('.cp-field-panel'),'声场实验','cp-field-panel-body',redraw),mountPanelDisclosure(get('viewer').querySelector<HTMLElement>('.lab-showroom-panel')!,'车辆检视','cp-structure-panel-body',redraw),mountPanelDisclosure(q('.cp-structure-tools'),'结构与布置','cp-structure-tools-body',redraw)];
   const dockResize=new ResizeObserver(()=>{
     const height=q('.cp-bottom-bar').getBoundingClientRect().height;
-    if(height>0)root.style.setProperty('--cp-dock-clearance',`${Math.ceil(height)+40}px`);
+    if(height>0)root.style.setProperty('--cp-dock-clearance',`${Math.ceil(height)+32}px`);
     root.style.setProperty('--cp-header-height',`${Math.ceil(q('.cp-header').getBoundingClientRect().height)}px`);
   });dockResize.observe(q('.cp-bottom-bar'));dockResize.observe(q('.cp-header'));
   // Preserve hidden controls referenced by existing event closures without duplicate IDs.
@@ -320,6 +322,6 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
         card.querySelector('article>small')!.textContent=value ? `dBA · ${registeredVehicleLayout(value.config.layoutId)?.name ?? value.config.vehicle} · ${value.config.speedKph} km/h · 实验 ${value.runId.slice(0,8)}` : index ? '调整一个设计因素后，重新计算。' : '运行一次预计算实验，再保存基线。';
       });
     },
-    dispose() {disclosures.forEach(d=>d.dispose());dockResize.disconnect();passengerPanel?.dispose();cabinField.dispose();previewResize.disconnect();overviewMotion.dispose();events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
+    dispose() {environmentPicker.dispose();disclosures.forEach(d=>d.dispose());dockResize.disconnect();passengerPanel?.dispose();cabinField.dispose();previewResize.disconnect();overviewMotion.dispose();events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
   };
 }

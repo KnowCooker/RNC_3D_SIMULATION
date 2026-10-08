@@ -1,87 +1,83 @@
-/* Shared shell controls; the underlying viewer and experiment keep their state. */
-.cp-app .cp-mode-dock{display:flex;align-items:center;gap:16px;padding:10px 16px;margin-bottom:9px;border-radius:22px;background:rgba(249,244,235,.94);box-shadow:0 8px 28px #3e281522}
-.cp-app .cp-dock-label{display:grid;gap:3px;flex:none;color:#674c32}
-.cp-app .cp-dock-label small{font-size:10px;letter-spacing:.18em}
-.cp-app .cp-dock-label strong{font-size:13px;font-weight:500}
-.cp-app .cp-dock-modes{display:flex;gap:8px;flex:1}
-.cp-app .cp-dock-modes button{display:flex;align-items:center;justify-content:center;gap:12px;flex:1;min-height:56px;border-radius:14px;border:1px solid #99744e50;background:#fff9;color:#473421;text-align:left}
-.cp-app .cp-dock-modes button>svg{width:25px;height:25px;flex:none}
-.cp-app .cp-dock-modes button span{font-size:17px;font-weight:600;letter-spacing:.08em}
-.cp-app .cp-dock-modes button small{display:block;font-size:11px;font-weight:400;letter-spacing:.01em;margin-top:3px}
-.cp-app .cp-dock-modes button[aria-pressed=true]{background:linear-gradient(120deg,#8d6742,#b78f62);border-color:#8d6742;color:#fff;box-shadow:0 3px 14px #8d67423b}
-.cp-app .cp-drive-inspect{display:flex;align-items:center;gap:7px;min-height:44px;padding:8px 14px;border-radius:12px;background:#fff9;border:1px solid #99744e50;white-space:nowrap}
-.cp-app .cp-drive-inspect svg{width:19px;height:19px}
-.cp-app .cp-drive-inspect[aria-pressed=true]{color:#305e62;border-color:#41797c;background:#e0f0ed}
+/* Compact work controls. The vehicle owns the centre of the stage. */
+.cp-app:not([data-page=overview]) .cp-bottom-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;left:16px;right:16px;bottom:16px;z-index:9}
+.cp-app .cp-mode-dock{display:flex;align-items:center;gap:5px;flex:0 0 auto;width:max-content;max-width:100%;padding:4px;margin:0;border-radius:17px;background:rgba(249,244,235,.95);box-shadow:0 5px 20px #3e28151a}
+.cp-app .cp-dock-modes{display:flex;gap:3px}
+.cp-app .cp-dock-modes button,.cp-app .cp-drive-inspect,.cp-app .cp-environment-toggle{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;min-width:0;padding:7px 10px;border:0;border-radius:12px;background:transparent;color:#59422e;font-size:12px;line-height:1.3;white-space:nowrap;box-shadow:none}
+.cp-app .cp-dock-modes button{font-weight:600}
+.cp-app .cp-dock-modes button>svg,.cp-app .cp-drive-inspect>svg{width:17px;height:17px;flex:none}
+.cp-app .cp-dock-modes button[aria-pressed=true]{background:linear-gradient(110deg,#95704b,#b39065);color:white;box-shadow:0 2px 6px #78533220}
+.cp-app .cp-drive-inspect{border-left:1px solid #bba3854d;border-radius:0 10px 10px 0;font-weight:400}
+.cp-app .cp-drive-inspect[aria-pressed=true]{background:#dcece7;color:#235f59}
 .cp-app[data-page=overview] .cp-mode-dock,.cp-app[data-page=compare] .cp-mode-dock{display:none}
-.cp-app .cp-driving-environments{position:absolute;left:8%;top:222px;width:min(560px,calc(92% - 422px));padding:14px 17px;border-radius:22px;background:rgba(249,244,235,.94)}
-.cp-app .cp-driving-environments[hidden],.cp-app .cp-panel-body[hidden]{display:none!important}
-.cp-app .cp-driving-environments header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.cp-app .cp-driving-environments h2{font-size:18px;margin:3px 0 0;font-weight:600}
-.cp-app .cp-driving-environments header small{font-size:9px;letter-spacing:.13em;color:#7d6246}
-.cp-app .cp-driving-current{font-size:11px;text-align:right;max-width:45%;color:#635140}
-.cp-app .cp-driving-environment-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
-.cp-app .cp-driving-environment-options button{min-width:0;min-height:64px;padding:5px 5px 7px;border:1px solid #9e805548;border-radius:12px;background:#fff5;color:#453525}
-.cp-app .cp-driving-environment-options button[aria-pressed=true]{border:2px solid #926438;background:#fff4df;box-shadow:0 0 0 2px #ae814528}
-.cp-app .cp-driving-environment-options .cp-landscape{display:block;height:44px;width:100%;border-radius:7px;margin-bottom:5px;background-size:cover;background-position:center}
+.cp-app .cp-bottom-bar .lab-player{flex:1 1 600px;min-width:0;min-height:46px;padding:6px 10px;gap:7px;border-radius:17px;background:rgba(249,244,235,.93);font-size:11px}
+.cp-app .cp-bottom-bar .lab-player :is(button,select){min-height:32px;padding:6px 9px;border-radius:10px;font-size:12px}
+.cp-app .cp-bottom-bar .lab-player label{font-size:11px;gap:6px}
+.cp-app .cp-bottom-bar .lab-player input[type=range]{max-width:100%;accent-color:#a1794a}
+.cp-app .cp-driving-environments{position:relative;flex:none;min-width:0}
+.cp-app .cp-driving-environments[hidden],.cp-app .cp-environment-popover[hidden],.cp-app .cp-panel-body[hidden]{display:none!important}
+.cp-app .cp-environment-toggle{border:1px solid #ad8b6166;background:#fff9;padding:6px 9px}
+.cp-app .cp-environment-toggle small{font-size:10px;color:#877055}
+.cp-app .cp-environment-toggle svg{width:12px;height:12px;transform:rotate(-90deg)}
+.cp-app .cp-environment-toggle[aria-expanded=true]{border-color:#95704b;background:#eee0cc}
+.cp-app .cp-environment-toggle[aria-expanded=true] svg{transform:rotate(90deg)}
+.cp-app .cp-environment-popover{position:absolute;bottom:calc(100% + 12px);right:0;width:300px;max-width:calc(100vw - 32px);padding:12px;border-radius:18px;background:#f9f4ecf7;box-shadow:0 10px 30px #3e28152b;max-height:min(340px,65dvh);overflow:auto}
+.cp-app .cp-environment-popover header{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px}
+.cp-app .cp-environment-popover h2{font-size:14px;font-weight:600;margin:0}
+.cp-app .cp-environment-close{display:grid;place-items:center;min-width:32px;min-height:32px;padding:5px;border:0;border-radius:50%;background:transparent}
+.cp-app .cp-environment-close svg{width:16px;height:16px}
+.cp-app .cp-driving-environment-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cp-app .cp-driving-environment-options button{display:flex;align-items:center;gap:7px;min-width:0;min-height:44px;padding:6px;border:1px solid #b59b7a40;border-radius:10px;background:#fff7;color:#59422e;font-size:12px}
+.cp-app .cp-driving-environment-options button[aria-pressed=true]{border-color:#967042;background:#efdfc5;box-shadow:inset 0 0 0 1px #967042}
+.cp-app .cp-driving-environment-options .cp-landscape{display:block;flex:none;height:30px;width:38px;border-radius:5px;margin:0;background-size:cover;background-position:center}
 .cp-app [data-driving-env=coast] .cp-landscape{background-image:url('../viewer/assets/small_rural_road_8k.jpg');background-position:50% 68%}
-.cp-app .cp-driving-environment-options button>span:last-child{font-size:12px}
-.cp-app .cp-driving-environments p{font-size:10px;line-height:1.6;color:#6b5849;margin:9px 0 0}
-.cp-app .cp-disclosure-panel>.cp-card-heading{display:flex;align-items:center;gap:7px;position:sticky;top:0;z-index:2;padding-bottom:9px;background:inherit}
-.cp-app .cp-disclosure-panel>.cp-card-heading h2{flex:1;margin:0;font-size:18px;font-weight:600;white-space:nowrap}
-.cp-app .cp-panel-toggle{display:inline-flex;align-items:center;justify-content:center;gap:2px;min-height:44px;min-width:64px;padding:7px;border:1px solid #9e805548;border-radius:12px;background:#fff9;color:#684e35;font-size:12px;flex:none}
-.cp-app .cp-panel-toggle svg{width:14px;height:14px;transform:rotate(90deg)}
-.cp-app .cp-disclosure-panel[data-collapsed=true] .cp-panel-toggle svg{transform:rotate(-90deg)}
-.cp-app .cp-disclosure-panel[data-collapsed=true]>.cp-card-heading{padding-bottom:0}
-.cp-app .cp-disclosure-panel[data-collapsed=true]>.cp-card-heading>.cp-settings-button{display:none}
-.cp-app .cp-disclosure-panel[data-collapsed=true]{height:auto;max-height:none;bottom:auto;overflow:visible}
-.cp-app .cp-field-panel[data-collapsed=true]{width:230px;max-width:calc(100% - 32px)}
-.cp-app .lab-showroom-panel.cp-disclosure-panel .cp-card-heading h2{font-size:15px}
-.cp-app .lab-showroom-panel.cp-disclosure-panel .cp-panel-toggle{font-size:11px;min-width:58px}
-.cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel>.cp-card-heading{flex-shrink:0}
-.cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel[data-collapsed=true]{width:220px;max-height:none;overflow:visible}
-.cp-app button:focus-visible,.cp-app summary:focus-visible{outline:3px solid #397b85;outline-offset:3px}
+.cp-app .cp-driving-status{font-size:11px;line-height:1.5;color:#6b5849;margin:10px 0 3px}
+.cp-app .cp-environment-popover>small{display:block;font-size:10px;line-height:1.6;color:#867360}
+.cp-app .cp-disclosure-panel>.cp-card-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;position:relative;top:auto;min-height:32px;margin:0;padding:0 0 8px;background:transparent}
+.cp-app .cp-disclosure-panel>.cp-card-heading h2{flex:1;margin:0;font-size:15px;font-weight:600;white-space:nowrap}
+.cp-app .cp-disclosure-panel>.cp-card-heading .cp-settings-button{font-size:10px;padding:6px 8px;min-height:30px}
+.cp-app .cp-disclosure-panel>.cp-card-heading .cp-panel-toggle{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:30px;min-width:48px;width:auto;height:auto;padding:6px 7px;border:0;border-radius:9px;background:#fff6;color:#705333;font-size:11px;line-height:1.3;flex:none}
+.cp-app .cp-panel-toggle svg{width:13px;height:13px;transform:rotate(-90deg)}
+.cp-app .cp-disclosure-panel[data-collapsed=true]>.cp-card-heading{height:44px;min-height:0;margin:0;padding:0;position:static}
+.cp-app .cp-disclosure-panel[data-collapsed=true]>.cp-card-heading>:not(.cp-panel-toggle){display:none}
+.cp-app .cp-disclosure-panel[data-collapsed=true]>.cp-card-heading>.cp-panel-toggle{height:44px;min-height:44px;padding:10px 14px;font-size:12px;border-radius:999px;background:transparent}
+.cp-app .cp-disclosure-panel[data-collapsed=true] .cp-panel-toggle svg{transform:rotate(90deg)}
+.cp-app .cp-disclosure-panel[data-collapsed=true]{border-radius:999px;box-shadow:0 4px 15px #59412515}
+.cp-app .cp-panel-body{min-height:0}
+.cp-app button:focus-visible,.cp-app summary:focus-visible{outline:3px solid #397b85;outline-offset:2px}
 @media(min-width:1001px){
   .cp-app:not([data-page=overview]) .cp-stage{height:calc(100dvh - var(--cp-header-height,78px));min-height:0}
-  .cp-app .cp-field-panel:not([data-collapsed=true]),.cp-app .cp-comparison{bottom:var(--cp-dock-clearance,195px)}
-  .cp-app .cp-structure-tools{bottom:var(--cp-dock-clearance,195px)}
-  .cp-app .cp-structure-tools[data-collapsed=true]{bottom:var(--cp-dock-clearance,195px);width:245px;left:auto;right:325px}
-  .cp-app[data-page=structure] #lab-viewer .lab-showroom-panel.cp-disclosure-panel:not([data-collapsed=true]){max-height:calc(100% - var(--cp-dock-clearance,195px) - 20px)}
-  .cp-app[data-page=structure] #lab-viewer .lab-assembly-panel{max-height:calc(100% - var(--cp-dock-clearance,195px) - 20px)}
-  .cp-app .lab-driving-location{bottom:var(--cp-dock-clearance,195px)}
-  .cp-app[data-page=field] .cp-environment-status{bottom:var(--cp-dock-clearance,195px)}
-}
-@media(min-width:1001px) and (max-height:800px){
-  .cp-app .cp-mode-dock{padding:7px 12px;gap:12px;margin-bottom:6px}
-  .cp-app .cp-dock-modes button{min-height:48px}
-  .cp-app .cp-dock-modes button span{font-size:15px}
-  .cp-app .cp-driving-environments{top:190px;padding:10px 13px}
-  .cp-app .cp-driving-environments h2{font-size:16px}
-  .cp-app .cp-driving-environment-options .cp-landscape{height:32px}
+  .cp-app[data-page=field] .cp-field-panel,.cp-app[data-page=structure] .cp-structure-tools{top:16px;right:18px;left:auto;bottom:auto;width:320px;max-width:38%;height:auto;min-height:0;max-height:calc(100% - var(--cp-dock-clearance,110px) - 28px);padding:12px;border-radius:18px;overflow:auto}
+  .cp-app[data-page=structure] .cp-structure-tools{width:294px}
+  .cp-app .cp-comparison{bottom:var(--cp-dock-clearance,110px)}
+  .cp-app[data-page=structure] #lab-viewer .lab-assembly-panel{max-height:calc(100% - var(--cp-dock-clearance,110px) - 20px)}
+  .cp-app .lab-driving-location{bottom:var(--cp-dock-clearance,110px)}
+  .cp-app[data-page=field] .cp-environment-status{bottom:var(--cp-dock-clearance,110px)}
+  .cp-app .cp-disclosure-panel[data-collapsed=true]{right:18px;left:auto}
 }
 @media(max-width:1000px){
+  .cp-app:not([data-page=overview]) .cp-bottom-bar{position:relative;left:auto;right:auto;bottom:auto;margin:18px 15px 24px}
+  .cp-app:not([data-page=overview]):not([data-page=compare]) .cp-mode-dock{position:fixed;z-index:20;left:12px;right:auto;bottom:max(8px,env(safe-area-inset-bottom));width:max-content;max-width:calc(100vw - 24px)}
+  .cp-app:not([data-page=overview]):not([data-page=compare]) .cp-bottom-bar{margin-bottom:78px}
+  .cp-app .cp-dock-modes button,.cp-app .cp-drive-inspect,.cp-app .cp-environment-toggle{min-height:40px}
+  .cp-app .cp-environment-popover{right:0;left:auto}
+  .cp-app[data-page=field] .cp-field-panel,.cp-app[data-page=structure] .cp-structure-tools{padding:12px;border-radius:18px}
+  .cp-app[data-page=field] .cp-field-panel[data-collapsed=true],.cp-app[data-page=structure] .cp-structure-tools[data-collapsed=true]{position:absolute;top:182px;right:15px;left:auto;margin:0}
   .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel .cp-panel-body{display:flex;flex-direction:column}
   .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel .cp-panel-body>strong{order:-2;font-size:12px}
   .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel .cp-panel-body>.lab-asset-inspection{order:-1}
-  .cp-app:not([data-page=overview]):not([data-page=compare]) .cp-mode-dock{position:fixed;z-index:20;left:10px;right:10px;bottom:max(8px,env(safe-area-inset-bottom));margin:0;padding:8px;gap:6px;border-radius:18px}
-  .cp-app .cp-dock-label{display:none}
-  .cp-app .cp-dock-modes{gap:6px}
-  .cp-app .cp-dock-modes button{min-height:54px;gap:8px;padding:6px 10px}
-  .cp-app .cp-dock-modes button span{font-size:15px;letter-spacing:0}
-  .cp-app .cp-drive-inspect{font-size:12px;padding:8px;min-height:54px}
-  .cp-app .cp-drive-inspect svg{display:none}
-  .cp-app .cp-driving-environments{left:7%;right:7%;top:245px;width:auto;max-width:580px}
-  .cp-app:not([data-page=overview]):not([data-page=compare]) .cp-bottom-bar{margin-bottom:120px}
-  .cp-app .cp-field-panel[data-collapsed=true]{margin-left:auto;margin-right:24px}
 }
 @media(max-width:600px){
-  .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel[data-collapsed=true]{width:185px}
-  .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel .cp-card-heading{flex-wrap:wrap}
-  .cp-app .cp-dock-modes button small{display:none}
-  .cp-app .cp-dock-modes button>svg{width:20px;height:20px}
-  .cp-app .cp-driving-environments{left:15px;right:15px;top:242px;padding:12px}
-  .cp-app .cp-driving-environment-options{gap:6px}
-  .cp-app .cp-driving-current{font-size:10px}
-  .cp-app .cp-disclosure-panel>.cp-card-heading h2{font-size:16px}
-  .cp-app .cp-disclosure-panel>.cp-card-heading .cp-settings-button{font-size:11px;padding:6px}
-  .cp-app .cp-panel-toggle{min-width:57px;padding:5px}
+  .cp-app .cp-dock-modes button{padding:7px 8px;font-size:11px;gap:4px}
+  .cp-app .cp-dock-modes button>svg{width:15px;height:15px}
+  .cp-app .cp-drive-inspect{width:36px;padding:7px}
+  .cp-app .cp-drive-inspect span{display:none}
+  .cp-app .cp-environment-toggle{gap:4px;padding:6px;font-size:11px}
+  .cp-app .cp-environment-toggle small{display:none}
+  .cp-app .cp-driving-environments{position:static}
+  .cp-app .cp-environment-popover{position:absolute;left:0;right:auto;bottom:calc(100% + 8px);width:300px}
+  .cp-app .cp-disclosure-panel>.cp-card-heading h2{font-size:14px}
+  .cp-app .cp-bottom-bar .lab-player{gap:6px;padding:8px}
+}
+@media(pointer:coarse){
+  .cp-app .cp-dock-modes button,.cp-app .cp-drive-inspect,.cp-app .cp-environment-toggle,.cp-app .cp-driving-environment-options button,.cp-app .cp-environment-close{min-height:44px}
 }
