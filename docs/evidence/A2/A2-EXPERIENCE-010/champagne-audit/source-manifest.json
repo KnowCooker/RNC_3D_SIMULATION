@@ -1,0 +1,15 @@
+{
+  "basis": "UTF-8 LF normalized; frozen A audit version",
+  "files": {
+    "src/team-a/lab/case-compare.ts": "6761105e57dd454f15c817226b809430e032e3db9884b792f0f55ac49ec1165a",
+    "src/team-a/lab/case-evidence.ts": "14f4fa4d7982ab57740d912d72ffc307c19b8b73e4c5a54e7424fd7cfa78004e",
+    "src/team-a/lab/case-review.ts": "b31250a987cc0656a3f47ecefbf049abdd24ce9535cc994e7df047d048c05d09",
+    "src/team-a/lab/champagne-shell.ts": "d20bedac6242de94502007042099b5a1c490559aea22279e5cf514ceff07c236",
+    "src/team-a/lab/champagne.css": "97178e29e59b730b80bd30780be28132702f45b0a81381f1e24ff7c42e34c7dd",
+    "src/team-a/lab/guide-state.ts": "420e36223117bb29492f61620a1096843a3df08d94063d7b8e43b5c4408b2379",
+    "src/team-a/lab/index.ts": "773012fad01d55167a65790345cdd493632bb47caf3825087bc68ff4b5bf07a3",
+    "src/team-a/viewer/lab-viewer.ts": "53cc5f0888c3930b63f7a3285f8fef71ea88fa35db47c1a74e1e3d5182ee0bf6",
+    "src/team-a/viewer/scenic-terrain.ts": "2eba336673a6d224c6b4fe5089711649936cf84877d7932a6039646ece32940d",
+    "tests/a2-champagne-acceptance.test.ts": "568d1696e4453bcfca2dc8a06a3d0432cd18d05d28faabdc9fda526809ea975f"
+  }
+}

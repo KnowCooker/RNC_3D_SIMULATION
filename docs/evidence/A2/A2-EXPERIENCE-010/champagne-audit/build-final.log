@@ -1,0 +1,64 @@
+Already up to date
+Done in 362ms using pnpm v11.19.0
+pnpm.cmd : $ tsc --noEmit && vite build
+At line:7 char:1
++ pnpm.cmd build *> test-results/cp-audit/build-final.log
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ tsc --noEmit && vite build:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+vite v7.1.7 building for production...
+transforming...
+✓ 84 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                          1.05 kB │ gzip:     0.57 kB
+dist/assets/engine.worker-Sv3u2Fdq.js                    4.29 kB
+dist/assets/gallery-desert-B0GsNK42.webp                19.07 kB
+dist/assets/gallery-mountain-B9cQlO9E.webp              19.91 kB
+dist/assets/gallery-snow-nXhd3GdG.webp                  22.82 kB
+dist/assets/gallery-coast-Dl7q4u_l.webp                 26.81 kB
+dist/assets/lab.worker-C7FgpgE2.js                      30.88 kB
+dist/assets/recorded-primary-BSu6qUp_.f32            1,280.02 kB
+dist/assets/aerial_grass_rock_diff_2k-BtlOO1j7.jpg   2,624.64 kB
+dist/assets/golden_browser_fixture-BhKaGSeS.json     3,414.19 kB │ gzip: 2,407.80 kB
+dist/assets/lakes_8k-Cpp28BEr.jpg                    4,742.10 kB
+dist/assets/asphalt_02_nor_gl_2k-UEyVbT-h.jpg        4,943.95 kB
+dist/assets/small_rural_road_8k-ClPSoVJX.jpg         5,415.67 kB
+dist/assets/goegap_2k-Jq4FxBej.hdr                   5,445.36 kB
+dist/assets/range-rover-sport-svr-4ykCwhl8.glb       5,726.33 kB
+dist/assets/lakes_2k-Cp9fVIm5.hdr                    5,918.43 kB
+dist/assets/goegap_8k-BpN4yx3b.jpg                   6,050.86 kB
+dist/assets/gravel_floor_nor_gl_2k-DtygZ1JK.jpg      6,139.01 kB
+dist/assets/tesla-model-y.meshopt-DxsAdN_g.glb      10,353.64 kB
+dist/assets/asphalt_02_diff_4k-ztmUkEFu.jpg         11,654.13 kB
+dist/assets/gravel_floor_diff_4k-B_Xe7M1M.jpg       18,167.19 kB
+dist/assets/lago_disola_4k-CMa_-4Rz.hdr             26,197.09 kB
+dist/assets/alps_field_4k-DL9vOQ3t.hdr              26,520.86 kB
+dist/assets/lago_disola_8k-C31ajjrJ.jpg             50,106.04 kB
+dist/assets/alps_field_8k-BrpRqQi6.jpg              53,871.22 kB
+dist/assets/index-Di_b5R-_.css                           6.73 kB │ gzip:     2.23 kB
+dist/assets/viewer-D4AW86Z9.css                         13.36 kB │ gzip:     3.20 kB
+dist/assets/index-BGbJ7xuz.css                          55.86 kB │ gzip:    12.98 kB
+dist/assets/contracts-nWp9BSjY.js                        0.09 kB │ gzip:     0.11 kB │ map:     2.22 kB
+dist/assets/preload-helper-PPVm8Dsz.js                   1.28 kB │ gzip:     0.75 kB │ map:     0.11 kB
+dist/assets/path-analysis-COwjqcbF.js                    1.48 kB │ gzip:     0.85 kB │ map:     5.33 kB
+dist/assets/index-BJJq3Ru5.js                            2.00 kB │ gzip:     1.05 kB │ map:     7.96 kB
+dist/assets/asset-inspection-Cz0-Kgtj.js                 2.47 kB │ gzip:     1.21 kB │ map:     9.50 kB
+dist/assets/lab-contracts-BIycLH2B.js                    3.25 kB │ gzip:     1.52 kB │ map:    16.22 kB
+dist/assets/index-D1zbOBok.js                            3.69 kB │ gzip:     1.82 kB │ map:     6.85 kB
+dist/assets/lab-engine-Ci4Y6_4r.js                       4.22 kB │ gzip:     1.90 kB │ map:    14.44 kB
+dist/assets/paths-C-m_HCM-.js                           11.02 kB │ gzip:     5.42 kB │ map:    28.76 kB
+dist/assets/index-CtZ-usB_.js                           17.96 kB │ gzip:     8.12 kB │ map:    71.51 kB
+dist/assets/index-B8lYuwKq.js                           20.53 kB │ gzip:     9.21 kB │ map:    53.78 kB
+dist/assets/xpeng-model-K4SQ-97b.js                     52.02 kB │ gzip:    21.17 kB │ map:   185.59 kB
+dist/assets/showroom-model-CtpF7KYW.js                  78.19 kB │ gzip:    23.60 kB │ map:   294.72 kB
+dist/assets/index-DJrSZ3bo.js                          266.05 kB │ gzip:    99.33 kB │ map:   765.28 kB
+dist/assets/viewer-DF2ofc_-.js                         599.22 kB │ gzip:   154.03 kB │ map: 2,915.38 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-m
+anualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.31s

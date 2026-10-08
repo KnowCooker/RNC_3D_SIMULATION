@@ -3,7 +3,7 @@ import { validateLabConfig } from './validation';
 export { validateLabConfig } from './validation';
 export { createLabStream, LAB_STREAM_CABIN_PREROLL_SAMPLES } from './stream';
 import type { Four } from '../../shared/contracts';
-import { LAB_WAVEFORM_SECONDS, MIC_POSITIONS, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabResult, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
+import { LAB_WAVEFORM_SECONDS, labLayout, type AcousticWeighting, type LabAnalysisOptions, type FieldFrame, type LabAnalysis, type LabConfig, type LabResult, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { meanPower, welchPsd } from '../analysis';
 import { applyPath, primaryPath, referencePath, secondaryPath, samplePath, type SparsePath } from './paths';
 import { createSources } from './sources';
@@ -28,12 +28,12 @@ export function calculateLab(config: LabConfig, runId: string, recording?: Recor
     for (let i = 0; i < 4; i++) applyPath(sources[i], referencePath(config, i, reference.position), values);
     return Float32Array.from(values);
   });
-  const d = four(MIC_POSITIONS.map(point => {
+  const d = four(labLayout(config).microphones.map(point => {
     const values = new Float64Array(count);
     for (let i = 0; i < 4; i++) applyPath(sources[i], primaryPath(config, i, point), values);
     return Float32Array.from(values);
   }));
-  const secondary = MIC_POSITIONS.map(point => [0, 1, 2, 3].map(i => secondaryPath(config, i, point)));
+  const secondary = labLayout(config).microphones.map(point => [0, 1, 2, 3].map(i => secondaryPath(config, i, point)));
   const blank = () => four(Array.from({ length: 4 }, () => new Float32Array(count)));
   const u = blank(), a = blank(), e = blank();
   const active = config.speakerEnabled.flatMap((enabled, i) => enabled ? [i] : []);

@@ -1,5 +1,7 @@
 # 写实外观范例资产
 
+2026-09-27 A2-FULL-017：ICE Range Rover 的同一 GLB 增加原位外壳透明/隐藏、部件点选与真实网格截线，可与其30组拆装共同使用。原文件未变；这仍不是机械实体认证或RNC同车物理配准。BEV及HEV/EREV外观能力不扩充。工程验证与待执行的浏览器步骤见[A2本批记录](../../../../docs/evidence/A2/A2-FULL-017/README.md)。
+
 `range-rover-sport-svr.glb` 是独立的 SUV 外观欣赏资源，**不**代表本项目 ICE/BEV/HEV/EREV 任一教学动力架构的实车结构、尺寸或声学安装点；外观模式隐藏教学标记和声场，返回结构实验后继续使用原创教学车。项目与 Land Rover 无关联。
 
 - 原作：[Land Rover Range Rover Sport SVR](https://sketchfab.com/3d-models/land-rover-range-rover-sport-svr-5462d65acb0e4dca8c20da82360261db)，Mona x Supercars / Sketchfab 用户 `Car2022`。

@@ -1,0 +1,25 @@
+{
+  "samples": [
+    {
+      "elapsed": 0.1,
+      "blend": 0.028000000000000046
+    },
+    {
+      "elapsed": 0.35,
+      "blend": 0.2817500000000001
+    },
+    {
+      "elapsed": 0.5,
+      "blend": 0.5
+    },
+    {
+      "elapsed": 0.75,
+      "blend": 0.84375
+    },
+    {
+      "elapsed": 0.99,
+      "blend": 0.999702
+    }
+  ],
+  "sliceHasTransition": true
+}

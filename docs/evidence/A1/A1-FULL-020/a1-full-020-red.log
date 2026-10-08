@@ -1,0 +1,80 @@
+✖ A1: one-second field cadence keeps moving past the old 350 ms plateau (9.5815ms)
+✖ A1: slices and volume share the same energy blend, including interrupted frames (2.7635ms)
+✖ A1: paused same-window quantity changes crossfade without replacing physical textures (1.0012ms)
+✖ A1: pause settles both slice textures and new identities cannot inherit a mode crossfade (1.0543ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 354.2303
+
+✖ failing tests:
+
+test at tests\a1-field-transition.test.ts:1:682
+✖ A1: one-second field cadence keeps moving past the old 350 ms plateau (9.5815ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(Math.abs(view.blend - .5) < 1e-9)
+
+      at TestContext.<anonymous> (D:\lzh\Desktop\RNC_3D\RNC_3D_SIMULATION_DEMO\tests\a1-field-transition.test.ts:19:35)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.start (node:internal/test_runner/test:1000:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\a1-field-transition.test.ts:1:1155
+✖ A1: slices and volume share the same energy blend, including interrupted frames (2.7635ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - {
+  -   value: 1
+  - }
+
+      at TestContext.<anonymous> (D:\lzh\Desktop\RNC_3D\RNC_3D_SIMULATION_DEMO\tests\a1-field-transition.test.ts:34:12)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { value: 1 },
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\a1-field-transition.test.ts:1:2145
+✖ A1: paused same-window quantity changes crossfade without replacing physical textures (1.0012ms)
+  TypeError: Cannot read properties of undefined (reading 'value')
+      at TestContext.<anonymous> (D:\lzh\Desktop\RNC_3D\RNC_3D_SIMULATION_DEMO\tests\a1-field-transition.test.ts:50:38)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7)
+
+test at tests\a1-field-transition.test.ts:1:3087
+✖ A1: pause settles both slice textures and new identities cannot inherit a mode crossfade (1.0543ms)
+  TypeError: Cannot read properties of undefined (reading 'value')
+      at TestContext.<anonymous> (D:\lzh\Desktop\RNC_3D\RNC_3D_SIMULATION_DEMO\tests\a1-field-transition.test.ts:70:95)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1103:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:785:18)
+      at Test.postRun (node:internal/test_runner/test:1232:19)
+      at Test.run (node:internal/test_runner/test:1160:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7)

@@ -1,0 +1,537 @@
+{
+  "role": "A1",
+  "task": "A1-FULL-021",
+  "date": "2026-10-05",
+  "method": "IAB read-only DOM inspection; selected fields and visible preview provenance; no mocked data",
+  "records": [
+    {
+      "name": "GX-primary",
+      "field": {
+        "mode": "primary",
+        "quantity": "primary",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "primary",
+          "fieldSlice": "y",
+          "fieldTime": "20"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "GX-slice-x",
+      "field": {
+        "mode": "primary",
+        "quantity": "primary",
+        "range": "45,85",
+        "rendering": "x",
+        "sampleCount": "1989",
+        "time": "20"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "primary",
+          "fieldSlice": "x",
+          "fieldTime": "20"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "GX-slice-y",
+      "field": {
+        "mode": "primary",
+        "quantity": "primary",
+        "range": "45,85",
+        "rendering": "y",
+        "sampleCount": "1989",
+        "time": "20"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "primary",
+          "fieldSlice": "y",
+          "fieldTime": "20"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "GX-slice-z",
+      "field": {
+        "mode": "primary",
+        "quantity": "primary",
+        "range": "45,85",
+        "rendering": "z",
+        "sampleCount": "1989",
+        "time": "20"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "primary",
+          "fieldSlice": "z",
+          "fieldTime": "20"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "GX-signed-improvement",
+      "field": {
+        "mode": "residual",
+        "quantity": "reduction",
+        "range": "-10,10",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "reduction",
+          "fieldSlice": "y",
+          "fieldTime": "20"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "GX-desktop-1440",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "GX-after-navigation",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "GX-mobile-390",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-mobile-residual",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-Z-weighting",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d96.1 dBZ残余 e77.2 dBZ改善 d − e18.9 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-Z-weighting-settled",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "Z"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "Z"
+        }
+      ],
+      "readings": "原声 d96.1 dBZ残余 e77.2 dBZ改善 d − e18.9 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "field-off",
+      "hudHidden": true,
+      "legendHidden": true,
+      "previewHidden": true
+    },
+    {
+      "name": "road-observation",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "Z"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "road",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "gallery-return",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-水平",
+      "field": {
+        "mode": "primary",
+        "quantity": "primary",
+        "range": "45,85",
+        "rendering": "y",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "primary",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-纵向",
+      "field": {
+        "mode": "primary",
+        "quantity": "primary",
+        "range": "45,85",
+        "rendering": "x",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "primary",
+          "fieldSlice": "x",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-横向",
+      "field": {
+        "mode": "primary",
+        "quantity": "primary",
+        "range": "45,85",
+        "rendering": "z",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "primary",
+          "fieldSlice": "z",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-signed-improvement",
+      "field": {
+        "mode": "residual",
+        "quantity": "reduction",
+        "range": "-10,10",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "reduction",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-paused-overview",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-paused-field-return",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "GX-to-X9-clear",
+      "readings": "原声 d—残余 e—改善 d − e—",
+      "legendHidden": true,
+      "previewHidden": true,
+      "selected": "x9"
+    },
+    {
+      "name": "final-X9-computed",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-x9",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.5 dBA残余 e68.1 dBA改善 d − e4.4 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-GX-after-mode-fix",
+      "field": {
+        "mode": "residual",
+        "quantity": "residual",
+        "range": "45,85",
+        "rendering": "volume",
+        "sampleCount": "1989",
+        "time": "20",
+        "weighting": "A"
+      },
+      "overflow": false,
+      "preview": [
+        {
+          "fieldAsset": "xpeng-gx",
+          "fieldQuantity": "residual",
+          "fieldSlice": "y",
+          "fieldTime": "20",
+          "fieldWeighting": "A"
+        }
+      ],
+      "readings": "原声 d72.0 dBA残余 e67.7 dBA改善 d − e4.3 dB",
+      "stage": "gallery",
+      "window": "左前座麦克风 · 20.00 s · 0.5 s 窗"
+    },
+    {
+      "name": "final-mode-highlight-after-change",
+      "asset": "gx",
+      "selectedMode": "field",
+      "field": "residual"
+    }
+  ],
+  "consoleWarningsAndErrors": []
+}

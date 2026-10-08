@@ -1,0 +1,17 @@
+{
+  "pausedLevels": "原声 d\n72.4 dBA\n残余 e\n66.8 dBA\n改善\n5.6 dB",
+  "pausedNote": "当前实验 · 左前座麦克风 · 27.32 s · 0.5 s 同窗 · 仿真",
+  "stateChecks": [
+    {
+      "page": "结构与布置",
+      "levels": "原声 d\n72.4 dBA\n残余 e\n66.8 dBA\n改善\n5.6 dB",
+      "time": "当前实验 · 左前座麦克风 · 27.32 s · 0.5 s 同窗 · 仿真"
+    },
+    {
+      "page": "方案对比",
+      "levels": "原声 d\n72.4 dBA\n残余 e\n66.8 dBA\n改善\n5.6 dB",
+      "time": "当前实验 · 左前座麦克风 · 27.32 s · 0.5 s 同窗 · 仿真"
+    }
+  ],
+  "caseState": "控制方案比较：配置未改变；这是同配置的重复运行。 A cae83859 → B 46f1d97d；后排残余变化 RL 0.0、RR 0.0 dB。"
+}

@@ -1,0 +1,117 @@
+{
+  "finalQaStart": "2026-10-08T17:43:00.522Z",
+  "checks": [
+    {
+      "name": "road-720p",
+      "measure": {
+        "bottom": 704.0000419616699,
+        "height": 52.66666793823242,
+        "scrollWidth": 1280,
+        "viewport": [
+          1280,
+          720
+        ],
+        "width": 1248
+      }
+    },
+    {
+      "name": "structure-720p-collapsed",
+      "measure": {
+        "bodyHidden": true,
+        "height": 46,
+        "width": 109.33333587646484,
+        "x": 1152.666748046875,
+        "y": 88
+      }
+    },
+    {
+      "name": "structure-720p-expanded",
+      "measure": {
+        "bodyHidden": false,
+        "bottom": 443.7708435058594,
+        "height": 355.7708435058594,
+        "width": 294,
+        "x": 968,
+        "y": 88
+      }
+    },
+    {
+      "name": "structure-mobile-collapsed",
+      "measure": {
+        "height": 844,
+        "scrollHeight": 874,
+        "scrollWidth": 375,
+        "width": 390
+      }
+    },
+    {
+      "name": "road-mobile-picker",
+      "measure": [
+        {
+          "name": "cp-mode-dock cp-glass",
+          "rect": {
+            "bottom": 836.0000228881836,
+            "height": 49.33333587646485,
+            "left": 12,
+            "right": 279.66668701171875,
+            "top": 786.6666870117188,
+            "width": 267.66668701171875,
+            "x": 12,
+            "y": 786.6666870117188
+          }
+        },
+        {
+          "name": "cp-environment-popover cp-glass",
+          "rect": {
+            "bottom": 779.3333435058594,
+            "height": 204.83334350585935,
+            "left": 12.666666984558104,
+            "right": 312.6666669845581,
+            "top": 574.5,
+            "width": 300,
+            "x": 12.666666984558104,
+            "y": 574.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "mobile-mode-panel-separation",
+      "measure": [
+        {
+          "name": "cp-mode-rail",
+          "rect": {
+            "bottom": 330.33333587646484,
+            "height": 45.33333587646485,
+            "left": 19,
+            "right": 230.33334350585935,
+            "top": 285,
+            "width": 211.33334350585935,
+            "x": 19,
+            "y": 285
+          }
+        },
+        {
+          "name": "cp-field-panel cp-glass cp-disclosure-panel",
+          "rect": {
+            "bottom": 333,
+            "height": 46,
+            "left": 262.3333435058594,
+            "right": 359.6666793823242,
+            "top": 287,
+            "width": 97.33333587646484,
+            "x": 262.3333435058594,
+            "y": 287
+          }
+        }
+      ]
+    },
+    {
+      "name": "environment-outside-close",
+      "closed": true
+    }
+  ],
+  "logs": [],
+  "experiment": "GX actual live experiment; 1989 field samples; paused at 50.95 seconds; road/environment selection retains paused run and controls",
+  "viewportRestored": true
+}

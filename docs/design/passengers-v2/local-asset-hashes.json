@@ -1,0 +1,32 @@
+[
+  {
+    "sha256": "d4d6e573112005d9d7cf71e46c2c0dabd90124136ba9d71f26bcdb7650591069",
+    "bytes": 5818416,
+    "file": "ayaka-driver.glb"
+  },
+  {
+    "sha256": "554f206254031338220b598ea344d9e1417267c2c90510729ca7e59560f8c862",
+    "bytes": 5818416,
+    "file": "ayaka-seated.glb"
+  },
+  {
+    "sha256": "e989bd9b69ba98dc9d22662bbf34fe26590f6f411cc7287787341e351b219025",
+    "bytes": 3175816,
+    "file": "luffy-driver.glb"
+  },
+  {
+    "sha256": "c2b94d1a31b903c3175d1ef557b287e3d7aa2896fd43ddb5e304982e5f243190",
+    "bytes": 3175812,
+    "file": "luffy-seated.glb"
+  },
+  {
+    "sha256": "44dd288e824c8888a9927b21232e9d6f5e34aa782460a75e58b5f788b18112d0",
+    "bytes": 4246156,
+    "file": "niulai-driver.glb"
+  },
+  {
+    "sha256": "8139080db6481d54827d4142327c8420411c726085e683808fee4a9994fc0445",
+    "bytes": 4246156,
+    "file": "niulai-seated.glb"
+  }
+]

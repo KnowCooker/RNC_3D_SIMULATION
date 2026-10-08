@@ -1,0 +1,10 @@
+Already up to date
+Done in 347ms using pnpm v11.19.0
+pnpm.cmd : $ node scripts/check-boundaries.mjs
+At line:5 char:1
++ pnpm.cmd check:boundaries *> test-results/cp-audit/boundaries.log
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ node scripts/check-boundaries.mjs:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+源码边界通过：A/B 互不导入；shared 独立；integration 负责装配。

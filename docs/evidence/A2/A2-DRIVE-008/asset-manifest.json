@@ -1,0 +1,56 @@
+[
+  {
+    "file": "asphalt_02_diff_4k.jpg",
+    "pixels": [
+      4096,
+      4096
+    ],
+    "bytes": 11654128,
+    "sha256": "d1601354507b6c4a46aa741b9134f9f23f738596a2bdcd20792e50ca554018e0"
+  },
+  {
+    "file": "asphalt_02_nor_gl_2k.jpg",
+    "pixels": [
+      2048,
+      2048
+    ],
+    "bytes": 4943950,
+    "sha256": "ffe49db71a0fd34c1e259625df66a302a237597d6ef655307987ec4e45bc6f21"
+  },
+  {
+    "file": "gravel_floor_diff_4k.jpg",
+    "pixels": [
+      4096,
+      4096
+    ],
+    "bytes": 18167189,
+    "sha256": "eca43189fbb274780a2d02be8551ac07bd505f2975e14f0ddedc0bb9abbcf71b"
+  },
+  {
+    "file": "gravel_floor_nor_gl_2k.jpg",
+    "pixels": [
+      2048,
+      2048
+    ],
+    "bytes": 6139007,
+    "sha256": "a0de44a5600edf5ede9efdef18c996a1c4c4a2326842ef9cd6a3e19356fa6af7"
+  },
+  {
+    "file": "small_rural_road_8k.jpg",
+    "pixels": [
+      8192,
+      4096
+    ],
+    "bytes": 5415674,
+    "sha256": "0de21923575d05752052622e21b110627529387233b795f55ed8f825c4e90a45"
+  },
+  {
+    "file": "aerial_grass_rock_diff_2k.jpg",
+    "pixels": [
+      2048,
+      2048
+    ],
+    "bytes": 2624635,
+    "sha256": "1a2ddfa4652adbe00447b940c40019d46f4b88245bc1b341cdf622c2110b7bc5"
+  }
+]

@@ -1,0 +1,94 @@
+/* Compact work controls. The vehicle owns the centre of the stage. */
+.cp-app:not([data-page=overview]) .cp-bottom-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;left:16px;right:16px;bottom:16px;z-index:9}
+.cp-app .cp-mode-dock{display:flex;align-items:center;gap:5px;flex:0 0 auto;width:max-content;max-width:100%;padding:4px;margin:0;border-radius:17px;background:rgba(249,244,235,.95);box-shadow:0 5px 20px #3e28151a}
+.cp-app .cp-dock-modes{display:flex;gap:3px}
+.cp-app .cp-dock-modes button,.cp-app .cp-drive-inspect,.cp-app .cp-environment-toggle{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;min-width:0;padding:7px 10px;border:0;border-radius:12px;background:transparent;color:#59422e;font-size:12px;line-height:1.3;white-space:nowrap;box-shadow:none}
+.cp-app .cp-dock-modes button{font-weight:600}
+.cp-app .cp-dock-modes button>svg,.cp-app .cp-drive-inspect>svg{width:17px;height:17px;flex:none}
+.cp-app .cp-dock-modes button[aria-pressed=true]{background:linear-gradient(110deg,#95704b,#b39065);color:white;box-shadow:0 2px 6px #78533220}
+.cp-app .cp-drive-inspect{border-left:1px solid #bba3854d;border-radius:0 10px 10px 0;font-weight:400}
+.cp-app .cp-drive-inspect[aria-pressed=true]{background:#dcece7;color:#235f59}
+.cp-app[data-page=overview] .cp-mode-dock,.cp-app[data-page=compare] .cp-mode-dock{display:none}
+.cp-app .cp-bottom-bar .lab-player{flex:1 1 600px;min-width:0;min-height:46px;padding:6px 10px;gap:7px;border-radius:17px;background:rgba(249,244,235,.93);font-size:11px}
+.cp-app .cp-bottom-bar .lab-player :is(button,select){min-height:32px;padding:6px 9px;border-radius:10px;font-size:12px}
+.cp-app .cp-bottom-bar .lab-player label{font-size:11px;gap:6px}
+.cp-app .cp-bottom-bar .lab-player input[type=range]{max-width:100%;accent-color:#a1794a}
+.cp-app .cp-driving-environments{position:relative;flex:none;min-width:0}
+.cp-app .cp-driving-environments[hidden],.cp-app .cp-environment-popover[hidden],.cp-app .cp-panel-body[hidden]{display:none!important}
+.cp-app .cp-environment-toggle{border:1px solid #ad8b6166;background:#fff9;padding:6px 9px}
+.cp-app .cp-environment-toggle small{font-size:10px;color:#877055}
+.cp-app .cp-environment-toggle svg{width:12px;height:12px;transform:rotate(-90deg)}
+.cp-app .cp-environment-toggle[aria-expanded=true]{border-color:#95704b;background:#eee0cc}
+.cp-app .cp-environment-toggle[aria-expanded=true] svg{transform:rotate(90deg)}
+.cp-app .cp-environment-popover{position:absolute;bottom:calc(100% + 12px);right:0;width:300px;max-width:calc(100vw - 32px);padding:12px;border-radius:18px;background:#f9f4ecf7;box-shadow:0 10px 30px #3e28152b;max-height:min(340px,65dvh);overflow:auto}
+.cp-app .cp-environment-popover header{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px}
+.cp-app .cp-environment-popover h2{font-size:14px;font-weight:600;margin:0}
+.cp-app .cp-environment-close{display:grid;place-items:center;min-width:32px;min-height:32px;padding:5px;border:0;border-radius:50%;background:transparent}
+.cp-app .cp-environment-close svg{width:16px;height:16px}
+.cp-app .cp-driving-environment-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cp-app .cp-driving-environment-options button{display:flex;align-items:center;gap:7px;min-width:0;min-height:44px;padding:6px;border:1px solid #b59b7a40;border-radius:10px;background:#fff7;color:#59422e;font-size:12px}
+.cp-app .cp-driving-environment-options button[aria-pressed=true]{border-color:#967042;background:#efdfc5;box-shadow:inset 0 0 0 1px #967042}
+.cp-app .cp-driving-environment-options .cp-landscape{display:block;flex:none;height:30px;width:38px;border-radius:5px;margin:0;background-size:cover;background-position:center}
+.cp-app [data-driving-env=coast] .cp-landscape{background-image:url('../viewer/assets/small_rural_road_8k.jpg');background-position:50% 68%}
+.cp-app .cp-driving-status{font-size:11px;line-height:1.5;color:#6b5849;margin:10px 0 3px}
+.cp-app .cp-environment-popover>small{display:block;font-size:10px;line-height:1.6;color:#867360}
+.cp-app .cp-disclosure-panel>.cp-card-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;position:relative;top:auto;min-height:32px;margin:0;padding:0 0 8px;background:transparent}
+.cp-app .cp-disclosure-panel>.cp-card-heading h2{flex:1;margin:0;font-size:15px;font-weight:600;white-space:nowrap}
+.cp-app .cp-disclosure-panel>.cp-card-heading .cp-settings-button{font-size:10px;padding:6px 8px;min-height:30px}
+.cp-app .cp-disclosure-panel>.cp-card-heading .cp-panel-toggle{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:30px;min-width:48px;width:auto;height:auto;padding:6px 7px;border:0;border-radius:9px;background:#fff6;color:#705333;font-size:11px;line-height:1.3;flex:none}
+.cp-app .cp-panel-toggle svg{width:13px;height:13px;transform:rotate(-90deg)}
+.cp-app .cp-disclosure-panel[data-collapsed=true]>.cp-card-heading{height:44px;min-height:0;margin:0;padding:0;position:static}
+.cp-app .cp-disclosure-panel[data-collapsed=true]>.cp-card-heading>:not(.cp-panel-toggle){display:none}
+.cp-app .cp-disclosure-panel[data-collapsed=true]>.cp-card-heading>.cp-panel-toggle{height:44px;min-height:44px;padding:10px 14px;font-size:12px;border-radius:999px;background:transparent}
+.cp-app .cp-disclosure-panel[data-collapsed=true] .cp-panel-toggle svg{transform:rotate(90deg)}
+.cp-app .cp-disclosure-panel[data-collapsed=true]{border-radius:999px;box-shadow:0 4px 15px #59412515}
+.cp-app .cp-panel-body{min-height:0}
+.cp-app button:focus-visible,.cp-app summary:focus-visible{outline:3px solid #397b85;outline-offset:2px}
+@media(min-width:1001px){
+  .cp-app:not([data-page=overview]) .cp-stage{height:calc(100dvh - var(--cp-header-height,78px));min-height:0}
+  .cp-app[data-page=field] .cp-field-panel,.cp-app[data-page=structure] .cp-structure-tools{top:16px;right:18px;left:auto;bottom:auto;width:320px;max-width:38%;height:auto;min-height:0;max-height:calc(100% - var(--cp-dock-clearance,110px) - 28px);padding:12px;border-radius:18px;overflow:auto}
+  .cp-app[data-page=structure] .cp-structure-tools{width:294px}
+  .cp-app .cp-comparison{bottom:var(--cp-dock-clearance,110px)}
+  .cp-app[data-page=structure] #lab-viewer .lab-assembly-panel{max-height:calc(100% - var(--cp-dock-clearance,110px) - 20px)}
+  .cp-app .lab-driving-location{bottom:var(--cp-dock-clearance,110px)}
+  .cp-app[data-page=field] .cp-environment-status{bottom:var(--cp-dock-clearance,110px)}
+  .cp-app .cp-disclosure-panel[data-collapsed=true]{right:18px;left:auto}
+}
+@media(min-width:1001px) and (max-width:1400px){
+  .cp-app .cp-drive-inspect{width:36px;padding:7px}
+  .cp-app .cp-drive-inspect span{display:none}
+  .cp-app .cp-bottom-bar #lab-audition-state{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}
+@media(max-width:1000px){
+  .cp-app{--cp-work-view-height:600px}
+  .cp-app:is([data-page=field],[data-page=structure]) .cp-stage{min-height:0;height:auto}
+  .cp-app:not([data-page=overview]) .cp-bottom-bar{position:relative;left:auto;right:auto;bottom:auto;margin:18px 15px 24px}
+  .cp-app[data-page=field]:has(.cp-field-panel[data-collapsed=true]) .cp-bottom-bar,.cp-app[data-page=structure]:has(.cp-structure-tools[data-collapsed=true]) .cp-bottom-bar{margin-top:calc(var(--cp-work-view-height) + 18px)}
+  .cp-app:not([data-page=overview]):not([data-page=compare]) .cp-mode-dock{position:fixed;z-index:20;left:12px;right:auto;bottom:max(8px,env(safe-area-inset-bottom));width:max-content;max-width:calc(100vw - 24px)}
+  .cp-app:not([data-page=overview]):not([data-page=compare]) .cp-bottom-bar{margin-bottom:78px}
+  .cp-app .cp-dock-modes button,.cp-app .cp-drive-inspect,.cp-app .cp-environment-toggle{min-height:40px}
+  .cp-app .cp-environment-popover{right:0;left:auto}
+  .cp-app[data-page=field] .cp-field-panel,.cp-app[data-page=structure] .cp-structure-tools{padding:12px;border-radius:18px}
+  .cp-app[data-page=field] .cp-field-panel[data-collapsed=true],.cp-app[data-page=structure] .cp-structure-tools[data-collapsed=true]{position:absolute;top:182px;right:15px;left:auto;margin:0}
+  .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel .cp-panel-body{display:flex;flex-direction:column}
+  .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel .cp-panel-body>strong{order:-2;font-size:12px}
+  .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel .cp-panel-body>.lab-asset-inspection{order:-1}
+}
+@media(max-width:600px){
+  .cp-app{--cp-work-view-height:540px}
+  .cp-app[data-page=field] .cp-mode-rail button{padding:7px 5px;gap:3px;font-size:10px}
+  .cp-app[data-page=field] .cp-mode-rail svg{width:14px;height:14px}
+  .cp-app .cp-dock-modes button{padding:7px 8px;font-size:11px;gap:4px}
+  .cp-app .cp-dock-modes button>svg{width:15px;height:15px}
+  .cp-app .cp-drive-inspect{width:36px;padding:7px}
+  .cp-app .cp-drive-inspect span{display:none}
+  .cp-app .cp-environment-toggle{gap:4px;padding:6px;font-size:11px}
+  .cp-app .cp-environment-toggle small{display:none}
+  .cp-app .cp-driving-environments{position:static}
+  .cp-app .cp-environment-popover{position:absolute;left:0;right:auto;bottom:calc(100% + 8px);width:300px}
+  .cp-app .cp-disclosure-panel>.cp-card-heading h2{font-size:14px}
+  .cp-app .cp-bottom-bar .lab-player{gap:6px;padding:8px}
+}
+@media(pointer:coarse){
+  .cp-app .cp-dock-modes button,.cp-app .cp-drive-inspect,.cp-app .cp-environment-toggle,.cp-app .cp-driving-environment-options button,.cp-app .cp-environment-close{min-height:44px}
+}

@@ -1,0 +1,90 @@
+{
+  "role": "A2",
+  "executor": "Codex代A2",
+  "task": "A2-ENV-011",
+  "identitySource": "user-declared",
+  "sourceBefore": {
+    "champagne-gallery.ts": "6b20886e5967c42e199fac77afb8bebb6030a340715985c9fcc763bf1f275be9",
+    "gallery-platform.ts": "8ad0d6e459cd99bc950d847d4ea9f5be007eb253271ed2444ab96d032eed3b73",
+    "scenic-terrain.ts": "86ccbfb512ecc692b4800dcf082baf0f0c2da9f3c57aa625c2eb87707bdbca37",
+    "gallery-landscape.ts": "765845771bc318c90bfc8e3ae8182d9c7fe91af0e066d6e164d73413977dba22",
+    "landscape-height.ts": "2babf84c2a46a96d03117d11141ecc936233e50ac89d40835481cdf6537388fd",
+    "panorama-sky.ts": "5a57da3dc3624f54d84281c2ea40ade3e01c4cb79fd6d8c189acfbf419227cd3"
+  },
+  "checks": [],
+  "errors": [],
+  "failed": [],
+  "responses": [],
+  "failure": "page.waitForFunction: Timeout 180000ms exceeded.\n    at C:\\Users\\Jiang\\Desktop\\RNC_3D\\RNC_3D_SIMULATION\\docs\\evidence\\A2\\A2-ENV-011\\lifecycle-browser.mjs:22:14",
+  "passed": false,
+  "pageState": {
+    "ready": true,
+    "html": "<html><head>\n  <script type=\"module\" src=\"/@vite/client\"></script>\n<meta charset=\"utf-8\"><link rel=\"icon\" href=\"data:,\"><title>A2 ENV-011 actual WebGL lifecycle fixture</title><style>body{margin:0;background:#ddd}canvas{display:block}</style></head><body><script type=\"module\" src=\"./lifecycle-fixture.ts?t=1791474232205\"></script>\n<canvas data-engine=\"three.js r180\" width=\"960\" height=\"600\" style=\"display: block; width: 960px; height: 600px;\"></canvas></body></html>",
+    "resources": [
+      {
+        "name": "http://127.0.0.1:5198/@vite/client",
+        "duration": 2.299999952316284
+      },
+      {
+        "name": "http://127.0.0.1:5198/docs/evidence/A2/A2-ENV-011/lifecycle-fixture.ts?t=1791474232205",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:5198/node_modules/.pnpm/vite@7.1.7_@types+node@24.7.2_tsx@4.20.6/node_modules/vite/dist/client/env.mjs",
+        "duration": 1.4000000953674316
+      },
+      {
+        "name": "http://127.0.0.1:5198/node_modules/.vite/deps/three.js?v=5d3a36ba",
+        "duration": 0
+      },
+      {
+        "name": "http://127.0.0.1:5198/src/team-a/viewer/champagne-gallery.ts",
+        "duration": 2.200000047683716
+      },
+      {
+        "name": "http://127.0.0.1:5198/node_modules/.vite/deps/chunk-D5SH7N4G.js?v=5d3a36ba",
+        "duration": 0
+      },
+      {
+        "name": "http://127.0.0.1:5198/node_modules/.vite/deps/three_addons_objects_Reflector__js.js?v=5d3a36ba",
+        "duration": 0
+      },
+      {
+        "name": "http://127.0.0.1:5198/src/team-a/viewer/panorama-sky.ts",
+        "duration": 1.9000000953674316
+      },
+      {
+        "name": "http://127.0.0.1:5198/src/team-a/viewer/scenic-terrain.ts",
+        "duration": 2.200000047683716
+      },
+      {
+        "name": "http://127.0.0.1:5198/src/team-a/viewer/gallery-platform.ts",
+        "duration": 3.200000047683716
+      },
+      {
+        "name": "http://127.0.0.1:5198/src/team-a/viewer/hdr-texture.ts",
+        "duration": 3.299999952316284
+      },
+      {
+        "name": "http://127.0.0.1:5198/node_modules/.vite/deps/three_addons_geometries_RoundedBoxGeometry__js.js?v=5d3a36ba",
+        "duration": 0
+      },
+      {
+        "name": "http://127.0.0.1:5198/node_modules/.vite/deps/three_addons_loaders_HDRLoader__js.js?v=5d3a36ba",
+        "duration": 0
+      },
+      {
+        "name": "http://127.0.0.1:5198/src/team-a/viewer/gallery-landscape.ts",
+        "duration": 1.2999999523162842
+      },
+      {
+        "name": "http://127.0.0.1:5198/src/team-a/viewer/landscape-height.ts",
+        "duration": 1
+      },
+      {
+        "name": "http://127.0.0.1:5198/src/team-a/viewer/driving-route.ts",
+        "duration": 1.2999999523162842
+      }
+    ]
+  }
+}

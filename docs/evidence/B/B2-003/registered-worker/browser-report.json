@@ -1,0 +1,2049 @@
+{
+  "ok": true,
+  "role": "B2",
+  "task": "B2-003",
+  "executor": "Codex",
+  "identitySource": "user-declared",
+  "date": "2026-10-05",
+  "sourceCommit": "382100930ca950adfed27390acbb6226e0af4afc",
+  "numericalModel": {
+    "id": "lab-v3-registered-batch-recipe-2",
+    "hashEncoding": "utf8-lf",
+    "files": {
+      "src/shared/contracts.ts": "77137200b54ee105b59f7ce615e79c5b4a79de8949e1b897a4576b93db450055",
+      "src/shared/lab-contracts.ts": "b1a0af463bbe9b3a2dbcacb800bc42cd5597f6ebfa8bdfd73bc08c11000d2d2a",
+      "src/team-b/analysis/index.ts": "bd63edf588a10572b75dbbfc6e22b58799cfa543692ba219ad380bb31f301969",
+      "src/team-b/engine/data.ts": "fd5312226e52ae83c3d4973fcaa91c1e4782f649164c9106d8b7cc6b175088e5",
+      "src/team-b/lab/a-weighting-fir.ts": "ec041bcf592429c12d11f76aaf51ba02fd6afd58905397b3d2a4d9dba7c87bcb",
+      "src/team-b/lab/divergence.ts": "4ec36d0f8f5bfad806c7ac9c7bd910b61e369676a60fe1e6da59008bff4a8330",
+      "src/team-b/lab/index.ts": "b789c28e3c9970d468979a2b69925a5043b31934095acce12a6a94e26a86dd67",
+      "src/team-b/lab/nfxlms.ts": "60a45b8e2e7ced2f3fe14541df43b9a19c342fc973eb627d314ca73646a06b6a",
+      "src/team-b/lab/path-analysis.ts": "cf42080784ae32c4191b08a43423c6f2442ff38c09a1386730a5a5d7bbba1f83",
+      "src/team-b/lab/paths.ts": "1157c7d1aca7685c074949f831a5f9f1593db6ff28bd51e4b7503b08c3321c52",
+      "src/team-b/lab/pressure-calibration.ts": "2bfb1f789d7a7bcfe52be81d2737c498e3996e9fa4733bcf2d85ba4d766cef3c",
+      "src/team-b/lab/recorded-noise.ts": "d19643aad467c2b5a0607093c51c1e51fd9ad484ef0522edd9bfbbf91b7d8e9c",
+      "src/team-b/lab/recorded-profile.ts": "3ad543e0c822a39133325a14b450ce15e1a9b9ba93ce4d4ad867630b4ed4e961",
+      "src/team-b/lab/sources.ts": "b848446ce7a4f61e3826f6ee196adcc9bb91e3f46604b9bee3c6a47f29d7ddd4",
+      "src/team-b/lab/stream.ts": "f57ab7ac38c7f2b2f350d78dd4774bc59fcd3a380884a54b1521648f2f51cf84",
+      "src/team-b/lab/validation.ts": "9f1bee6efaf34fa6fb0fde8b14e2a16408c63f3b2cb872dca3bb8d7b47952570",
+      "src/team-b/lab/weighting.ts": "83dcdede9e22ba10988dd0e727d2a6b1478c7396dcead979fb6daca14152af64"
+    }
+  },
+  "tests": [
+    {
+      "name": "Dedicated production module Worker with secure Web Crypto",
+      "passed": true
+    },
+    {
+      "name": "Original RNQ1 full-byte SHA and byte length",
+      "passed": true
+    },
+    {
+      "name": "Historical model-1 fixture full-byte SHA",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-1: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-4: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-8: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-1: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-4: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-8: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-1: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-4: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-8: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-1: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-4: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-8: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-1: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-1: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-1: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-1: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-1: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-1: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-1: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-4: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-4: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-4: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-4: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-4: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-4: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-4: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-8: matches committed Node Float32 hashes",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-8: sync/async container bytes identical",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-8: async exact result and verified metrics",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-8: sync exact result",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-8: sync adapter checks exact payload against real crypto digest",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-8: exact asset identity",
+      "passed": true
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-8: recipe recomputes exact signals and keeps layout/run association",
+      "passed": true
+    },
+    {
+      "name": "Historical model-1 preserves identity/default absence and is read-only",
+      "passed": true
+    },
+    {
+      "name": "Historical model-1 rejects recompute before asset access",
+      "passed": true
+    },
+    {
+      "name": "{\"layoutId\":\"unknown\"}: unsupported layout stays read-only",
+      "passed": true
+    },
+    {
+      "name": "{\"layoutId\":\"unknown\"}: encode rejects",
+      "passed": true
+    },
+    {
+      "name": "{\"layoutId\":\"unknown\"}: recompute rejects",
+      "passed": true
+    },
+    {
+      "name": "{\"layoutId\":\"xpeng-gx\"}: unsupported layout stays read-only",
+      "passed": true
+    },
+    {
+      "name": "{\"layoutId\":\"xpeng-gx\"}: encode rejects",
+      "passed": true
+    },
+    {
+      "name": "{\"layoutId\":\"xpeng-gx\"}: recompute rejects",
+      "passed": true
+    },
+    {
+      "name": "{\"vehicle\":\"bev\"}: unsupported layout stays read-only",
+      "passed": true
+    },
+    {
+      "name": "{\"vehicle\":\"bev\"}: encode rejects",
+      "passed": true
+    },
+    {
+      "name": "{\"vehicle\":\"bev\"}: recompute rejects",
+      "passed": true
+    },
+    {
+      "name": "Unsupported identities never invoke asset resolver or SHA",
+      "passed": true
+    },
+    {
+      "name": "Unknown layout still rejects bad seed before hashing",
+      "passed": true
+    },
+    {
+      "name": "Byte budget rejects before hashing",
+      "passed": true
+    },
+    {
+      "name": "Malformed and oversized files did not invoke crypto",
+      "passed": true
+    },
+    {
+      "name": "Finite payload tampering fails actual Web Crypto SHA",
+      "passed": true
+    },
+    {
+      "name": "Nonzero byteOffset view roundtrips",
+      "passed": true
+    },
+    {
+      "name": "Async import owns container before caller transfer",
+      "passed": true
+    },
+    {
+      "name": "Async export owns run/config/q/x before crypto wait",
+      "passed": true
+    },
+    {
+      "name": "Registered divergence remains an exact finite prefix",
+      "passed": true
+    }
+  ],
+  "passed": 218,
+  "cases": [
+    {
+      "name": "xpeng-p7plus-shaped-noise-1",
+      "layoutId": "xpeng-p7plus-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 1,
+      "signalHashes": [
+        "854ed797bb4e48aabc5818ddf01eca130a80b46601a4e94df6302d0b2d3c440c",
+        "0c7a7cbacc98128ece08ce842d26c334ecf1f698b03c66e47fb7e704392e28da",
+        "cb3b4248eb204d8cc61b7ff02defed71f198a99159ec0084cbda8726d756b95f",
+        "3c8dedb41af60a6e290221bb9b0ad0c0f3387c3a29cbcaa62e88721e3426bd17",
+        "5a4fc3835743526bd4327d2b37ffc104905bb24b84e832e1257baed1165d56e5",
+        "c4f06110bc703a822dc6b2b7df74e2bfd87d8f7db34b23c6ec4762507e136722",
+        "94289501244f22e9f07ae195da62f7fb88f76a6fe34b634e34e36c53feb9d8d6",
+        "e0096208414e7ba64ac1adcdba0757376492aeb772855050829f26898baf6933",
+        "e24e32401d2abd70384b3cd0aa38eedbec5e0babe32396fcf0a4921d4e767c71",
+        "435518872ca486a7cbe16390513f6fab11dbcf9f404b3ae7cbc8b5a99444e857",
+        "30c5c3880d26df35ceb57b8f250cacbfd0c38f75dfbb419f2038e719b6950308",
+        "bd9433efd5acfa64d10784ba0eb4875a4c41d9e213cd3c2210693c7d57f9a885",
+        "3459243559d082b2fbb514324a47b4e3ea75f5690690be9f5c41f1ac00bde676",
+        "73bf8ed8c7b948f5af4609f111346f359a708c1aa35ebd0ef646e9c0305456e1",
+        "8f6bf7498db0626daf5985a0564b7b4e2db21c29191ea66d4eaee4c8f54ca947",
+        "cb7d37800248ac33662d66382ae06c0bf1b3920348eee237e534024a8cecc3ed",
+        "9d7969578c666d328772db4f53e1ccb7dc68a7cedc4eff64876d5fd7586f2143",
+        "2a40e6e3e21f3ce6258044ff18b1d167daa200ef042a66ec18f56cddf767cb67",
+        "55d06f977760a201065eaa2bd2b4e033318672ff11a3bb337f6ffabca92050e4",
+        "2bb578c84ebf93e17d1fdc48330bdb192e767c603a6bd21e67cadae6eab544d7",
+        "21a19fb4d692f4202127170144ebb771e4c07ccfe20c6e382d2f0ba6487ec788"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174480,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-4",
+      "layoutId": "xpeng-p7plus-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 4,
+      "signalHashes": [
+        "05191ff280f33e3115710693a7b4866a166d8cdedd96d6a8455216b7eb87fd55",
+        "b8a14e7988d379f1ee77747895fb13780132ce3a9fd2797c43852425f26d50fe",
+        "75d2c8be9979b45bb56f99f49a9bd9a0643e7e867870409c15d4356d0a6d361a",
+        "8c2d1682c7a70c2dd457f54f2f948bdb07c3347e85fdcb4a7ea27e90b1849d52",
+        "650e437578ff2a9ff37f35b594819b0b339c1c173c1f8dd8a6e0c2c74346e810",
+        "a725c885506371b1994f3b2e5b80474a9c88e7046fbb2557f4898467109e60f7",
+        "cdf38b87a1f01b33788fc7faaae64d8297687c6826068cb7d150be0818c1b067",
+        "157d71ab351f9b296842869ecb98ac9b3dd82b893009e66125e0393a163b7f13",
+        "1fe5d91ffce49b81ea7a15ea0ebeda6998478bdba1837cfcdbe1b336c2e36efa",
+        "6e1a8cd93f37a225e31048248461fbf7c3ef795e73c864dd69fe50994ac7fb76",
+        "882baba748d942d73f833bbfb90ed47e690622bddedce1d3c68d08f5d66e3d97",
+        "6307ada07a07ad91419b28ec843a6d07675ee1fb99b724ee1580a53e42109d39",
+        "8d03b1ea9e9cc8bb6aac4dece15be10ee9d2eea6fbf3124f32ecebd66573a7b4",
+        "89a5d122b4ec44865454b5a811285a66ac642ce7bd34d24c852ab1cb60659704",
+        "d15da5737d0dd9b7198af38a16db261400627a64467a1120fb4f1ccca0e22eb7",
+        "b3febac65b37e3c0490d5100711fc5275922b4c5e69cdcc0c6fc200074cf8f12",
+        "3d7986d5e00118b6c1f5db1c9b9e6d50812aed7d8016ed8db6b760cddee68fb4",
+        "0af47c4ab2dfc7297f9c565c54d576b41e49c51c8def6fd5662c4de33d9d24a0",
+        "9a6f72760a3d58fcc3947fbcf879c105d2c00e9e70ba85592e0dacaaf8602a49",
+        "c1e8e1be4687435891c49b3ed5a6161810c055495a9506fe4bec56615b0f509b",
+        "13e4c72a9a54aa21a3af2eec812e083b154b2dc7a17305be3fef379a1f98e4ad",
+        "72a0623929034d9176895067940d9e58f0c31af9ac90feaa5699a2ec29c2333f",
+        "3773ed05c55c00378eb518f95867bf60f5e5eabbc44ae46db5f7c3a3b4f9ef2f",
+        "5c71fca2a41328e7f2a47a308b92244bce275a9c6d8cc1053341290a5dd36401"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199532,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-p7plus-shaped-noise-8",
+      "layoutId": "xpeng-p7plus-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 8,
+      "signalHashes": [
+        "75aab9c9349468f3739ac230598efe3b1d184a59a9fc3107e703454ffa69f58f",
+        "84a60d8403fa9aeaab6aa0130173f61dcb313b99a7ed72788bb5e7475fcb929c",
+        "8a31a768c38fb26559645a016433101d0d8e2e323ee90ad8097be032f1e82095",
+        "a808c45bba1ff414d02a8e03bf8a9ce5a7458866616cb15b3595e70f3c13c118",
+        "fcfbe02f55c6c0171bfa2bfeeac7b767f88b97b6470ddb52914009e9b9606cd4",
+        "598d8348c18a503144ff9a55b7155cf11360b1046ccc2b186a778e5b2752293f",
+        "3ab2b0afef20527edcacb49f2220016a7dad907f5b3a8b05e1fac48732402e0c",
+        "1fa24e7cd5b55fe82baff5cd840ab5297b54f03f112c6bb251faba898e7e05ff",
+        "fcfbe02f55c6c0171bfa2bfeeac7b767f88b97b6470ddb52914009e9b9606cd4",
+        "598d8348c18a503144ff9a55b7155cf11360b1046ccc2b186a778e5b2752293f",
+        "3ab2b0afef20527edcacb49f2220016a7dad907f5b3a8b05e1fac48732402e0c",
+        "1fa24e7cd5b55fe82baff5cd840ab5297b54f03f112c6bb251faba898e7e05ff",
+        "f343a77827222e4ce748e7601dd17a6f2b8a3c3b63ff9722a5dfa95b3e53014a",
+        "e27ff7eee99fd0230b1e07670a919e68723fb1cdd76f5eeafce4640b69fac0fc",
+        "2e0df1cd33bb7732096766ee38d7279cb64600d9920baaee0e7e93cbcbd21d4c",
+        "fa451ba0c0ff7b246953fedf913c1185f4e63b1e72a8eef04adc2a0b914c52b9",
+        "b767e60fa7f939c0575fa07ce7492b2b1976ba6738f54cfae11e171a0e38547e",
+        "abf1d5055b5e33a03547e3b14d9cc47818f00af59944f4e5bbd61641121963b1",
+        "674e1281cd30a40f07d39f7802aba7acc0e9f51060bfb34fef12ccf16daf2b88",
+        "dffabe2a0585ef170eff9f731508242481c4dfee427d6c87fd2fb9f2ff9eb689",
+        "95fd76a05c93bf8a05341a1ca45fd5f147e77633c29d56ddda884096af9f26d5",
+        "e3e51c54e17bc70b24d50e38ded144dbbe3a65087cb14bfeeec390da2286c472",
+        "7e780c9ca7f264c1c74d782eb902a4d58a75c29fb3bec29fdf9e366c5919cd20",
+        "60c74250f00891ad80c6f5c57f2b4b2074635893926b2649d7ee235eefa31472",
+        "ca2f77872b00914f866f8d7950177b9587cdc63e9993890b599f6a721e03ce98",
+        "5df1a3b7c9da84860fa318ae614b1285f9bf5ab944a4e3d70636074578edca0a",
+        "40a8176faf19add08ab1c822bacced653425424f2b6ec466f0198248fb4dd855",
+        "4c125deb104fcc0f3a9fa63b77aefde4c51b411e28d25cc9e25e71b4c5d55e9d"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 232944,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-1",
+      "layoutId": "xpeng-p7plus-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 1,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "cc00b14f4aac9c573343b7881916479823050a9303f8b21b63366d3ae866ce03",
+        "9712d95eafc2ee6f31dd4e3561de0eac7ed5c7e8ddb9382c0b700f4cc63f0457",
+        "35b4417f83d548b6c9327c1a733cdb0ef7bf87d0ba1873e843b59d57229e13f7",
+        "bc26c93b87235f7f6b0da68250b341268f3cadf8219039589ce133c268eda7e2",
+        "8e8f944e3605f79d64192336a0db1b6eb95722616c5ba398d4826899d89f44eb",
+        "ab7dad712d8dac2ed222ff4593e6ce93621870c099ffb1cb09fe210d242766e5",
+        "5cec3a0d330940b42879e2800a617d838d4ee7ef3c655579d39acf9de79b44b8",
+        "6d0ad46c223f6ddef46b817578ad7acf5ffdd1b5d7601591951592e7e181ed32",
+        "84c783ef0ca6947437bb5e20af9fe27e92ea2b6d2910d1ad8827c75c552ae00e",
+        "49f2ba9446ec182d968a78d7cfd71816e9dadd7f419724578cd762e05030d348",
+        "a6eae09127adc9e91b6597a987bcd208f745060c2fb03a0a8badf25e6bafbdd2",
+        "9808317c8f48f9d9d0f2b117325693f153158d4c193afda0bb9bb9016d3bdc30",
+        "03dee7738ea00b2efb870445c23dde5f6508dcb59ef1217622a15e738ca1d9c9",
+        "90a940b57d2ebb0f01bd4f0c592b1d9c7808ec67f13e9ca84b952212363d6a42",
+        "f035864f5e95fece6aee047f7a766fba769a0d82163ada4129108eb77c31747b",
+        "18d3d939e1d69ac4e96732d4ada9008940037e77bf316c5efa86394d87bd3304",
+        "606a3ed5dcd25090cb07b2fa680d547c09f13d6810b37b84437b0c29602e313c"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174820,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-4",
+      "layoutId": "xpeng-p7plus-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 4,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "cc00b14f4aac9c573343b7881916479823050a9303f8b21b63366d3ae866ce03",
+        "e055040a710a73937ca2980de166c18ff43c070bc4776aa713ed5739bcc89f3f",
+        "d11038adcc90c1ea119132e7a781f0fe1253adcbbc78d80b68887a72c0ce0df0",
+        "29044e198cfaa5d3c500ccca6fe803561cbafb5a63e8474570cafebf46c5d0e2",
+        "409fba264e4a9c15fafcaf6956bd4dceac70232bbfb9b20b7c4ae41351d3c7ea",
+        "fc09418926356acb81f86e2039d7ba6504ebfe2416aa7a66fb911b79185d9a6b",
+        "7c903b48e7aa7067ce47e5cf8374101e63cc8db3edf783052ea552d6f3c2d499",
+        "64b57df3d807c420df9427997620aba088c1824df6ea1fe77f1fa86996dcc585",
+        "ab7dad712d8dac2ed222ff4593e6ce93621870c099ffb1cb09fe210d242766e5",
+        "5cec3a0d330940b42879e2800a617d838d4ee7ef3c655579d39acf9de79b44b8",
+        "6d0ad46c223f6ddef46b817578ad7acf5ffdd1b5d7601591951592e7e181ed32",
+        "84c783ef0ca6947437bb5e20af9fe27e92ea2b6d2910d1ad8827c75c552ae00e",
+        "319029061d1c8fead67d4a02f525c54de1b7f4577ba56805f2ba367897dc80e7",
+        "f6c1dfcb8fffa65c7efeb8ee4c13bd0944c11bde0a59c9a77cb9820ff8801966",
+        "af14c4a734fa42a4e65cf86ffff85e5ed4ba704adc0938082eca9a2480d2ac0b",
+        "dbb56b87718c229f858e7dad8e872a0bac66cf9df104f1f3fa3cdcd3b86e4526",
+        "8207d8b72c61f82c3eb458168c9f1b28cb2c1a981ca29349e0bc87d00020d0fb",
+        "be9f0100e37b19dab7471e2463f784ce319cbcb3f12dacf0a921342c72b98285",
+        "1692869f2e5b256ddcc69099281e64f94ed3e140da741e80942995d357918c49",
+        "b5d7f1378f0a6ee954c39d61fddb8d9f0d7f93710ff5776176b950c310836ebd"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199860,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-p7plus-recorded-noise-8",
+      "layoutId": "xpeng-p7plus-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 8,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "cc00b14f4aac9c573343b7881916479823050a9303f8b21b63366d3ae866ce03",
+        "e055040a710a73937ca2980de166c18ff43c070bc4776aa713ed5739bcc89f3f",
+        "d11038adcc90c1ea119132e7a781f0fe1253adcbbc78d80b68887a72c0ce0df0",
+        "29044e198cfaa5d3c500ccca6fe803561cbafb5a63e8474570cafebf46c5d0e2",
+        "cc00b14f4aac9c573343b7881916479823050a9303f8b21b63366d3ae866ce03",
+        "e055040a710a73937ca2980de166c18ff43c070bc4776aa713ed5739bcc89f3f",
+        "d11038adcc90c1ea119132e7a781f0fe1253adcbbc78d80b68887a72c0ce0df0",
+        "29044e198cfaa5d3c500ccca6fe803561cbafb5a63e8474570cafebf46c5d0e2",
+        "4843fe7224b99026f41dfe4c8a40cecf24e178181bc2d24961dfd05faf8b3fd6",
+        "2bdb6d3b5f047ef69d3126dcf38ed73476aece0d4a22264f37af74b03d96ab65",
+        "6bce240f45de775954103a56480921f5d247ee1995876f5f7a7c0c7ba90222d7",
+        "c6a353c5a366f51c9910e1acc994c22cc8567f88865f000f005d148649818633",
+        "ab7dad712d8dac2ed222ff4593e6ce93621870c099ffb1cb09fe210d242766e5",
+        "5cec3a0d330940b42879e2800a617d838d4ee7ef3c655579d39acf9de79b44b8",
+        "6d0ad46c223f6ddef46b817578ad7acf5ffdd1b5d7601591951592e7e181ed32",
+        "84c783ef0ca6947437bb5e20af9fe27e92ea2b6d2910d1ad8827c75c552ae00e",
+        "bc1b362fdf58bbce28af531cdcd4ea60197c7d5708e7b227bab7a3c2537f2514",
+        "f69895c435334ed3c4517ace9f7d3cee55f67adf1e8dd208ad4c3cbcfe38897a",
+        "6dfa35b568f246fbe48a3c4b54178be673387cb1bb8133ff5755ba6452a6f921",
+        "1bbfcd9d68d4069d838fb36860e295d69f0cdb93539bc21c8f85e2c78842c2c4",
+        "c411fce9ea65fc7e64b4dad631e57222c0de63bf39d8bf2e6e9cb25e0eb9b0fa",
+        "5bf987fab2253172addfd2c110c9fbb89a3663543076e788f1b5da9a2b76057d",
+        "09b018bb8c8b8976de7386c584ea95115acd1e09a84b6bba2c0565e89de227e6",
+        "bb9adbd1ba77fd89d61c8f30577ac0ee9ec072502d9165eff79b1d6a321be20c"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 233280,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-1",
+      "layoutId": "xpeng-x9-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "shaped-noise",
+      "references": 1,
+      "signalHashes": [
+        "854ed797bb4e48aabc5818ddf01eca130a80b46601a4e94df6302d0b2d3c440c",
+        "0c7a7cbacc98128ece08ce842d26c334ecf1f698b03c66e47fb7e704392e28da",
+        "cb3b4248eb204d8cc61b7ff02defed71f198a99159ec0084cbda8726d756b95f",
+        "3c8dedb41af60a6e290221bb9b0ad0c0f3387c3a29cbcaa62e88721e3426bd17",
+        "455137888a8191051f763103a1ff64b62e1b96c8b4e48425b90b03c14c1b8a15",
+        "39445f2caf0f2e38dc64951577d2a21e17febfce5bd2492d570758a36516bb9a",
+        "98da0b1c2a5b45d2550d4692fd9a7507333b4a1bf4c47873abf4e4117abf485d",
+        "680563268681b3d066313d3c3d5591e899dfb5fb4dbd8334078578b3ce01c509",
+        "ebe9d8eabddcc6d5532fe35e3595dd1014392518eb17ab711242526bbbaf70fc",
+        "30d474770ab115592c77462d6c4177ecea7cd5a442551574789c4458fcd99bea",
+        "f96cc37118d019ad044f65b7e1d785c438f3b851c17498fadfde3f0c0ed7c449",
+        "053479dbf60ebe4fe3171c5f9812f9daf399fa6e6828d34351341d2a96d0fa47",
+        "05bb13487e57e46b4a199f383ed03aca633ac475a9d01b37975024fb31ce6268",
+        "36792155704a6cf0767446965236fafbe39215b99b58eb06315021b866667cf0",
+        "267dc7bee393169b67557d0a8be8c230a16445274a0f8bec2ce1a927fdd72033",
+        "5ddcfd54b811c5756bbcb82ead1c14d17e854073778cd82483d5dd2f9c3ac672",
+        "ffb27e181d89cab20b7d21a165902e8fbb062ab676872f9b886dc4fd41cf83bd",
+        "fe16a0761a8b2a8c1901b7f7fa4e3c04481cd704f93da7746550320c650bc6a5",
+        "9a4e2c8b9385d9f08cbf5c74751905ee1735bad68d75b3a4784940efdd5f3d49",
+        "19a0f735100f44d710abc7f825ef2a6a7b95297693e06d356e1ae8c5b1212fe8",
+        "1b961b989baa59ca23e2fe7436ac3e777937808456cfccb216dcd5047b5986e7"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174452,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-4",
+      "layoutId": "xpeng-x9-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "shaped-noise",
+      "references": 4,
+      "signalHashes": [
+        "05191ff280f33e3115710693a7b4866a166d8cdedd96d6a8455216b7eb87fd55",
+        "b8a14e7988d379f1ee77747895fb13780132ce3a9fd2797c43852425f26d50fe",
+        "75d2c8be9979b45bb56f99f49a9bd9a0643e7e867870409c15d4356d0a6d361a",
+        "8c2d1682c7a70c2dd457f54f2f948bdb07c3347e85fdcb4a7ea27e90b1849d52",
+        "225e1f906cf76b25722dbca3904929e258fb406dd9b477b8b59696f39bdcc46f",
+        "78dfe0267761f908d4c6467891971a5128fa06ac044faea70ab124fa20fc7900",
+        "1312ae625a6ee8a0c6b4629952514cf74e991d49d7d16a9b60f954cbb5c4bda4",
+        "2894572044b71069f58c3d927899b8015dff51498c95fa9728f4e788dbe34616",
+        "39029397c3f396c129b2a10c09a4d8edcbf0333531beb6f2db6fcf8d8f02bf82",
+        "dd51042e35c14740448ad3897b8317f42e93bb6be8091ebceaf3658ec99e03ae",
+        "b756c394b7d55cc16be6af3851861230fbec6c2bbf7aaf7e9e391005a5d5340b",
+        "246cdcfd8a83f3533345ffa338ee3b55dfe2c18dc4270a1b1ae066d00cb8ecdb",
+        "f61c2d699790667fa51d652d44349c85d02f04c3cba70f9aa2877011977a53d1",
+        "570b671f8b0eedc60736f6dc9b06a4c2d93ede19aed39ca29ad9495dc194a9da",
+        "76d07bd8539b2d2bb1a8188cd03323f42d37709644a62e0618cd64b560102773",
+        "05a84d032cb1380f653d04c10eae214543bf837cb23ccd57760927a4373cd166",
+        "74ee3ca0ace81adbc95036e47e6f1fdb2061e55830b63a5afbb1c833190db61f",
+        "22e57eac37b39b4715d99196bb793365d3b588afe9b60b1c1a50b126e8bb3bd3",
+        "e9c99ab2a66d7ddffe4c427d00e28f09e5148cdf9d4f08098cb1459745ce4446",
+        "b704b5ddc78d734535e036b11ba33e92aeac1f8a4b16c8eced409915901eaf08",
+        "a6adf6a134478c7f613afc68d85267189389ca7274408805d6cc598f55b7e73e",
+        "173a5c26bbf650fb248ed5627fb993ef5676059351f49e6665f43a0357db398b",
+        "b41082f43c199225e1420511777eae12ba82a8ed2fe0e532bce30a028a3b35c1",
+        "0a5adf6daf3234055078446cb18b63d95fbc25bae1edb68e86a5d6f3fb95b5ae"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199444,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-x9-shaped-noise-8",
+      "layoutId": "xpeng-x9-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "shaped-noise",
+      "references": 8,
+      "signalHashes": [
+        "75aab9c9349468f3739ac230598efe3b1d184a59a9fc3107e703454ffa69f58f",
+        "84a60d8403fa9aeaab6aa0130173f61dcb313b99a7ed72788bb5e7475fcb929c",
+        "8a31a768c38fb26559645a016433101d0d8e2e323ee90ad8097be032f1e82095",
+        "a808c45bba1ff414d02a8e03bf8a9ce5a7458866616cb15b3595e70f3c13c118",
+        "048fa5fcf7f530961da2811a8dd1049b6cced4a6b2cc06de1c8603c48550b4e6",
+        "d600cc7d7f7482ec58a10e86577d66640298f5429da2306421d4b223782c02c4",
+        "c1c259d1922703f1fb2230c4e09c57a7eb45da28ffc615f12390d6ae33073fc5",
+        "04f0294744330cd3e74c927872f0d1f69d5aeb0fb61ce179f21a0d00ca8becf6",
+        "048fa5fcf7f530961da2811a8dd1049b6cced4a6b2cc06de1c8603c48550b4e6",
+        "d600cc7d7f7482ec58a10e86577d66640298f5429da2306421d4b223782c02c4",
+        "c1c259d1922703f1fb2230c4e09c57a7eb45da28ffc615f12390d6ae33073fc5",
+        "04f0294744330cd3e74c927872f0d1f69d5aeb0fb61ce179f21a0d00ca8becf6",
+        "48b64e7ccce373ca0ab76e6dff59bfea0b38d2bcfea2f1cb0468bb01b567d4c7",
+        "bd1a63b0c123815793efcb4f9d9fbad22a36906d8eaa877f58eacdd6b71fc452",
+        "81fa7d005e4d120a2cf1f2c1d8df4ef4c7d0a240960bc1dc9e686494b3ccf3cf",
+        "fa70868c3a29d11437f78bb7930062b19ba155b0a3ae98a2fbb18dfb20ba7d97",
+        "104644bcc26698fd0df9661da6e7adb4123e8abb8e17b9fd3ff054eba50f951e",
+        "92a565f6e4483cf43d18ef625c9ce95d5e74f68ab4b9b7f49d515ed2b1356cd0",
+        "e67730ffa7fd686113d7088deb1bfb03f5452f4a63fdd13b0d39eca7021d909d",
+        "9d3271968297ebd16f6bdafa53f4475e048c65abd0ac79a3881d684921663fe2",
+        "9d894e4b3734326f6bdbfd6f13ae5e36183cb05154a851b81ce4851383d68ea8",
+        "b1adfd7cfd90d6ba195358ed1b7fa01839b8a5c90cccd9197385b5b97025669b",
+        "9bd055ba27ffd95b3d89cf46127e357b760cb58cd76fbba5ed1d2c0e38d1f59e",
+        "6fd6d1f7062df1ee2d8616ed2a95c76bb1253c1317f7bf7c18ede53fdd2c0f67",
+        "39e0a83e27e50adcee63d5165fd9ad5294ac501809bcf312ef111a027966898b",
+        "363f94b97e4451cd79c239cdbd21137c1d5da5e5fd484b09b5570a33b44b6eea",
+        "642d4f3cddd153ada1cfb35cb92fc1c42477960da1b73dbc2b43efa769b213cf",
+        "87db90e500ef169ef678a62b8f40af9ad06c350b24a72fbac80d55ce35954e3e"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 232768,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-1",
+      "layoutId": "xpeng-x9-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "recorded-noise",
+      "references": 1,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "8ebb35feab264159721740cedbb6795aca7f41d26f9ae349b0546ef3be490f04",
+        "c09f928d14fa70c350c83aefe923a0201a703919a8b68a74e15ccf9dccd82f45",
+        "d2373e16152337483d74baf322e5f24692029a5bfc0273cc69c11edcebebffbe",
+        "06f20cbdf95aac6711d322a2a37459b447b455353427e16314e311483ffe1309",
+        "6e3a85f9ebdd05ae85526ed4e42c525ae490c07b503a3405de3f9d128328d849",
+        "c558b27bf5cb3a613c9a8edb0ec7da2fcc3ce74db414fdaaedcfadba3d3dc222",
+        "6a65340eb53c81836f4b365afd13311e6cf089e58d88331c7127a4242fd7a6b0",
+        "c9ba940275cb9dce0d2d5e2e0c38463d9abb991557a193caa3673d1c3a48a78a",
+        "7079fbf19725b607605b885d7bef58705d7f6cf22313cc47f38e533a31cee7d2",
+        "9fe5ad419b54082efc87570bff73e5f51ab68fe2f4cbb43a51c9fc68a845606c",
+        "a0bb70d31397fb3c01d0508277d06b1d9415b316b4ea4dee7bf53e1ee6aa4960",
+        "328f344a0ed8d50c091d1ff5603be5fd9f555521699008e48ae7c1e4ffeded0b",
+        "c127a1525e1840a2f987d7d6507989cc02cfe1c3556e4a12e5f9e995da0339e0",
+        "bb212d3ee9596b39aff8024d551c3c3b5bf739febc164a910684ea3f268a9ff1",
+        "ff8a5c59fba494eac2719bc1072f1efe9be4dc4be6451c2a663b5d967e737345",
+        "4bb9198d7501b3512c70d084ee0df1ba194b33f1210bdc16ef9d393e87b450d1",
+        "6c4e26ba410cc57926fb3b4d5eaffa2886b0882dd5b685e8ade2082c151deee0"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174784,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-4",
+      "layoutId": "xpeng-x9-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "recorded-noise",
+      "references": 4,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "8ebb35feab264159721740cedbb6795aca7f41d26f9ae349b0546ef3be490f04",
+        "4bc607831e477a2ced53b538aee79e9f426135dab347f4ea6f15fcd36a1f8560",
+        "b635ceeb753b42fe43bd2b58f822b5ab5bfe56f1fd28e008a7a344a04a22f189",
+        "2cd3677484f5992567031a9b5e63d6f788d21e83f1fe591e91a004badbf029e5",
+        "5015eaf3503e91c18685faa39e5c7b941184630339318e093886947a2ed1f52f",
+        "9cd732e44d188a29f723a41b8b5ffab9cb7399a3efdc05625be19622dffb503f",
+        "2d4ecb2093db2c893af339a558b33c427ed43b21ecf22810ff6830374801075d",
+        "5b02b39b85245ea0a6a30ecf7c6e8bb880818848be886eb23b1bd5b05563e69e",
+        "c558b27bf5cb3a613c9a8edb0ec7da2fcc3ce74db414fdaaedcfadba3d3dc222",
+        "6a65340eb53c81836f4b365afd13311e6cf089e58d88331c7127a4242fd7a6b0",
+        "c9ba940275cb9dce0d2d5e2e0c38463d9abb991557a193caa3673d1c3a48a78a",
+        "7079fbf19725b607605b885d7bef58705d7f6cf22313cc47f38e533a31cee7d2",
+        "f5c0a831a781304960c9d2ad6b1496654fdd8f0880cf6675c402017cf1b7bfe0",
+        "6447be6f73cbe467a4a2fe818320da16a208c6b15bb574571f37048bec51b062",
+        "f23265dcecf227856a4b39777e284a97025252f18053a5bc06b1bffd092cc3fa",
+        "098ac502057b699a8494c77cd65cc99a41d71e3a65bf4227b331679a64d5df07",
+        "f5b339d45930628a7b54fbf4449b68276364cde1a9dfac53918130a17a849222",
+        "b40b724dec3579cb6627cbd63cd835149ae74c66fe12a5bc7ce2f95c912d271f",
+        "2a5c2c09b212ddda9361cda848c19c8496775452f45c6a67c1e4786d19ebfb84",
+        "2de208881a21cda43389f979cf533968ef8dab37efa23582c3966c8f5219775e"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199780,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-x9-recorded-noise-8",
+      "layoutId": "xpeng-x9-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "recorded-noise",
+      "references": 8,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "8ebb35feab264159721740cedbb6795aca7f41d26f9ae349b0546ef3be490f04",
+        "4bc607831e477a2ced53b538aee79e9f426135dab347f4ea6f15fcd36a1f8560",
+        "b635ceeb753b42fe43bd2b58f822b5ab5bfe56f1fd28e008a7a344a04a22f189",
+        "2cd3677484f5992567031a9b5e63d6f788d21e83f1fe591e91a004badbf029e5",
+        "8ebb35feab264159721740cedbb6795aca7f41d26f9ae349b0546ef3be490f04",
+        "4bc607831e477a2ced53b538aee79e9f426135dab347f4ea6f15fcd36a1f8560",
+        "b635ceeb753b42fe43bd2b58f822b5ab5bfe56f1fd28e008a7a344a04a22f189",
+        "2cd3677484f5992567031a9b5e63d6f788d21e83f1fe591e91a004badbf029e5",
+        "140c1d41e0d2a30b6aee61f2c00866fd2a38d0675c01f0e74b28b8586d193313",
+        "2ec7b9ec5483932a842f2838dc5d912872efeb2ab43dfd05e9178e851b263560",
+        "d3c7379e705c83a144509cc1d19aba8c9e56c6cbc28443a8eeb4793da836c801",
+        "719152cc986f643cf880dfbea05bc760acba0a1524936552d4035ba86f64288d",
+        "c558b27bf5cb3a613c9a8edb0ec7da2fcc3ce74db414fdaaedcfadba3d3dc222",
+        "6a65340eb53c81836f4b365afd13311e6cf089e58d88331c7127a4242fd7a6b0",
+        "c9ba940275cb9dce0d2d5e2e0c38463d9abb991557a193caa3673d1c3a48a78a",
+        "7079fbf19725b607605b885d7bef58705d7f6cf22313cc47f38e533a31cee7d2",
+        "0b9834f578018358ec7a638a86996c0793515d292a1ac49b9e3b7b1139f4777d",
+        "1588e54a7262f33231aeb4f2bf733af88bff633b200a8f899200d0ed0d2e17c7",
+        "f88192b0c1d50e07ce50468c05eb6c8bbd07e2fe778dbabc2dc3df79b21c73ca",
+        "39aedccd9082db10e45426ebcdc5ae68c7f34d399fd1a81e4dca7c030d74b064",
+        "27f65ac9e8f9880af4e4f5553a06a072cb505c580280d4a50d3be6f724822561",
+        "13a175299dfaf5c4c4ab0db6b65a9d094cefabe80b91c9d01d2036f2e24f0ee0",
+        "3c04101007284564e2d3c958968f59205bee79aa2f522771e3cb1a84e7a2fb0f",
+        "5cbabf1575800c8d6ab62b436a24a006d2bbde6c19df5e6e46ee823897f4ab1e"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 233108,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-1",
+      "layoutId": "xpeng-l03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 1,
+      "signalHashes": [
+        "854ed797bb4e48aabc5818ddf01eca130a80b46601a4e94df6302d0b2d3c440c",
+        "0c7a7cbacc98128ece08ce842d26c334ecf1f698b03c66e47fb7e704392e28da",
+        "cb3b4248eb204d8cc61b7ff02defed71f198a99159ec0084cbda8726d756b95f",
+        "3c8dedb41af60a6e290221bb9b0ad0c0f3387c3a29cbcaa62e88721e3426bd17",
+        "c98d1db357af3dda5a6116da1e40a2bec79c254cd1510db2dabd44cea61ea761",
+        "b8e80dd9821cf28e5b378d7f5cb88c7ec685fd670820c69bb538e75241da35cb",
+        "a60d3092579b647a1e521cd12bb0aef71415eef65118379aa56f41dd5d7f68b9",
+        "b964da3bb5a3f484dd3242c8ea6db6ae5e954e1969484b90af2f90acc344dcb6",
+        "8c51629660f8e322f68df89e16f42467c433500a2924196e42e06de90c7ecb6d",
+        "af99e4ad7be4621adb431aa3d969e90e2bc64645ad2b10e0212beb1c3756a8a3",
+        "c2edadb8d9b0560a0f566877358c0c2f6616ed96d1cd0dcaea7e819449171d8b",
+        "183163411225a0f0f04f5613176bd955fa98a1ffd25e3c049a7febb66e8950ca",
+        "6f28ec9bc928df7db6f8c1ed0ec28e15a92c3130595949e1ca3828c8c4ddd9c4",
+        "645fdf900535775060a17d384493c3104d10b11852024fb4d9cac031194f30ab",
+        "0a0ac5905284b5e1caf1c4d70cfb48327ee389c09c9967a89014b0a41dcee995",
+        "e015c91802d72199c52f3e783d4942c9e830dfee340ca319377354b2fc0c3717",
+        "351a212f804405421b50c186d5b291a77889a1af8eefac0d41851fc48551c398",
+        "4eb4d03e067a57019a2c2c1c9a64cb3522e3165db62e388296f185d1fcb555e7",
+        "2b39a340e1fcdd5fc14cb44a813cc267c16975c53e1536b1cb48e2fc2334d447",
+        "327d1679796140eacef87131c204c280fc5cad5d12fc0a129cbcab8d57676b65",
+        "35d013d2b9a8b7f33ce15d52fd787073dd244e864a2810e8949e6a0cc988147b"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174448,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-4",
+      "layoutId": "xpeng-l03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 4,
+      "signalHashes": [
+        "05191ff280f33e3115710693a7b4866a166d8cdedd96d6a8455216b7eb87fd55",
+        "b8a14e7988d379f1ee77747895fb13780132ce3a9fd2797c43852425f26d50fe",
+        "75d2c8be9979b45bb56f99f49a9bd9a0643e7e867870409c15d4356d0a6d361a",
+        "8c2d1682c7a70c2dd457f54f2f948bdb07c3347e85fdcb4a7ea27e90b1849d52",
+        "e4117ce9534c0ec33aae4e24e418e86439ff2c10bbc76cf4cecdc60f8ed7b48e",
+        "3048fe547890c705fc9234ec20307945fd9d4fbeebf894c8cbcfef0c35a60598",
+        "aa3357cb04c412c8294b6bc60b7fa75465b7365269007acf5523f0285e055afc",
+        "90adc5d546bc2ebd64f6ddeb825d97fbd4f4425aa6fa738e878ac264249694ed",
+        "ba32ef30aa385d02438d2a9cd4c6473d2df9d9b21dcb59ec5f05488074df1c71",
+        "2a846f9161716a11293e9f89b23df63ebe40a7454679ffd51ecc5250c8c94189",
+        "cc259d7cbe4f87b982ad242af40c207bd7564d67548c7c5257f09b6851f8a638",
+        "1f3c2f6ea72a9d867c4ffde665a32a10b301086f6c7ff59d1c296cc5f3c1fe56",
+        "37655460ae41cf0792522bc354d8e0048a08e26873e5e0f2fa645b690c58d716",
+        "48fb316af7fe0154e44a86e4559f041777135ce4aa3919bae02bacac4f5667c3",
+        "499c2b68e88d5f2d9be9db586bc7f194205416bfb48d725eaf38e1928c1121d1",
+        "c59b30c6936e9a49409a4a35e2407aaf053ccfbd3eaf933f5bda7ec0d2d05a8e",
+        "1ee658de6d64186880b532e51bd86354ca03321b5afa4d9b1bfd65ce2c49730d",
+        "b2086852a4325b675abbdcd3fe8e5e0fb77aa80621c558bcd8e708614fb7ba6e",
+        "bdffa972cb35b37158cdb0ad4eaa2cf4ddd00b34017405c23b9db175d819db9f",
+        "d9dac9c34a808f19756b49d46d273fcfc29dc7dc7d20164689d49e459fae479b",
+        "af19a233074f1791f49331819f499bfbdc27a4f05c08265efc7643a98bc42395",
+        "0a902d446170d97ee787245332542848711e5b1773c31f670a1f0cdb091d4e1a",
+        "4af59d92726d0285420eb26ca2779aa945baa117335b6768ea084d4a13200f87",
+        "7a5396326504e7e152fb49f38b35db393ebd462a589427724a580e07c492dfc2"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199444,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-l03-shaped-noise-8",
+      "layoutId": "xpeng-l03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 8,
+      "signalHashes": [
+        "75aab9c9349468f3739ac230598efe3b1d184a59a9fc3107e703454ffa69f58f",
+        "84a60d8403fa9aeaab6aa0130173f61dcb313b99a7ed72788bb5e7475fcb929c",
+        "8a31a768c38fb26559645a016433101d0d8e2e323ee90ad8097be032f1e82095",
+        "a808c45bba1ff414d02a8e03bf8a9ce5a7458866616cb15b3595e70f3c13c118",
+        "6db50b91e5a6b192c5803b5e739ae50c1b714f16f205cd6d1094e68a29123f54",
+        "723c61c059a002065cac3a4d3fc54361c36502c1752c1a69fef6c0f4fb13d550",
+        "07112a71d6430fc967337ed63497d30e19e3adc092bdd413d0a37bc660096589",
+        "a43f2ec929d02b56cd434abb33553fbdb55720f24774b163c200f3e08da200d1",
+        "6db50b91e5a6b192c5803b5e739ae50c1b714f16f205cd6d1094e68a29123f54",
+        "723c61c059a002065cac3a4d3fc54361c36502c1752c1a69fef6c0f4fb13d550",
+        "07112a71d6430fc967337ed63497d30e19e3adc092bdd413d0a37bc660096589",
+        "a43f2ec929d02b56cd434abb33553fbdb55720f24774b163c200f3e08da200d1",
+        "885b71cbfa9da76e97b11b2b5529adea5d88269627c3a5f901f7a23afa6402df",
+        "d435c962c9a6f5dc5e570b2e8f348fc8622c29bfa5525ce65df5d86fbd686786",
+        "a72509aac2944ac7f4dd0eed2bebb561a121d0efd74d8e1b94f89551bbc85e9f",
+        "a00725188049aeda7d76a78c5f547b74aa45d45645045b2d33abc067f8846746",
+        "864e09fb05634d6c5391f726243d89f8099305c4b818dcec37939b1edca3ae54",
+        "34d916071a8562aa9a02260e1930352517c7b2d98e327ba95147756136cd505c",
+        "05603269cf48c3840dec65ed176f5bd0bdf7809c5b619e91731953f982dbdf40",
+        "bfb4bb90ab1575dea941acfa368d13671e8d89cfdc5f0e5e30ba3087962b9d29",
+        "7d1e793b9903c33e5bf141bf408c756608aece4f952bfe1fef8765f3b9ff647e",
+        "cfd0cebd9e812862b83be27b2e2a4dedb971c6f8dde560e90e8f3d9f55c5afa8",
+        "d31912e1379a51beffb45d802c35deea65bc9f30fd31f2cf15e55250cc84ee3d",
+        "669bd7203e4500cbda428e71291bd84a4da0a11f126ee629d0182755515cbf6f",
+        "39a86f37d25e5a0e0562b788ca131685b77941ba1d4ac663a66509ed6b8e7550",
+        "294ba66f70fd95a96ded7681c17539ddb1785710b852d487d1cff94a53a2cca9",
+        "29bbd04b6c8d6df370de7290f31ab1a470578e6f77995cd4f6ab192dacece0a3",
+        "a8f1379b07bc270e2c743bfbd6c89b7e4221c665a6a17edf1a4ff2c279d8a8f9"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 232768,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-1",
+      "layoutId": "xpeng-l03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 1,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "e3b56f9abdfb7794fdc025d8f14ba6eac7889b3787707cb49695996ae5f8eda0",
+        "aa336b7ae57edb5c453438b157691b3463842b46ee981a770d72ecc65c3f9c3e",
+        "1d0231a6a19f86d0c1643d81ac862d59aea91c292f72ed2db9f7c41316e4a3dd",
+        "c8978c2b1f6b57bb9d5e3c74f665195d7de20725a6656c98f3a9f65d77fd0f1a",
+        "4a2c375dfe4c6d66505dfb8121e2330f71fb51b5d6a6af3ae82fa41085087b59",
+        "c4754a857368f3e67366a8465f83d934b092a1e16b1cbe29bde05231667249ea",
+        "9b84c514c1b64c1fe1355b10cad56012e302787a97eb43e876c250f6b789403d",
+        "a7a6531831f93fb8697c65ed93fec855272f215a8bf982b6fab5feb1d4a6593d",
+        "dc01264e4521df1ac5d6d0f64e238c0a42a33eeb853f1514023af8676a14bddc",
+        "a08e3499e6e5478651618d49610021b197d3910424f435e66e0b5df20c3aed04",
+        "2a4554104366e18c68e129d6d72569b749c85406577842f9be00e2e531622aa3",
+        "fd7b3afe9d5387bb2172dae35212733e1138242b9febbe5af6be00a2ee7852e2",
+        "30fa776a110358b551f8e94c1358acfd0fe8811be06c876a1f42336710401e05",
+        "75672aa313a5160d80b6416444bf5f5d375052867e5a182db837d1360598699a",
+        "604607a9b06238ba9165343478719dc243bc5b9914af87368ce3f44e1e368aaf",
+        "4dcd1334d924f31470a7c0954ca8c239d52827cb090dac2a490af166216cce94",
+        "397d97a42ff84d6c6ec7dd675adee0b8a542dbfd88142a753bf60489537cbb04"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174784,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-4",
+      "layoutId": "xpeng-l03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 4,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "e3b56f9abdfb7794fdc025d8f14ba6eac7889b3787707cb49695996ae5f8eda0",
+        "ab7c5d2f1543ccb71dd8472f2691fd60fb4bb02be47d6b6d1bae67b14f6e7490",
+        "ed6e0280e9af1a91848cfcc9f78beb0dda625ab6e512a1b0e66dc29483d7dc9e",
+        "4c564a8e30fc19a8a48497990b80773ee772e047d6216123d35936c3f67a5bc7",
+        "c3e598333fefb9d150e1b80cbed30f31446070202139567a41f62b2ca72ffcfa",
+        "20d9f4a9cbf41888877c4e1973bd24cd83c46eaa36456dc1d63ff4bf343637f4",
+        "12698c509fe29673d5527cf2c66fccd1bb85a191f810b7cd720c0180ed0de8b7",
+        "a369ab2539d2ac1817dea6a704704d73e63186c9e909f91ceb2f795fc12ba530",
+        "c4754a857368f3e67366a8465f83d934b092a1e16b1cbe29bde05231667249ea",
+        "9b84c514c1b64c1fe1355b10cad56012e302787a97eb43e876c250f6b789403d",
+        "a7a6531831f93fb8697c65ed93fec855272f215a8bf982b6fab5feb1d4a6593d",
+        "dc01264e4521df1ac5d6d0f64e238c0a42a33eeb853f1514023af8676a14bddc",
+        "7f60d835b20f4ee1764b4da5ed6e4935ab28e68833c18d223d624a9c5e142912",
+        "bbe59864e3a2b50386713ca854bb6844525e1539d623345c808657f6b919aa24",
+        "b84f327fafc76a73bb891b07c199d50d6e70f48244ea001b6af6d44927d1d5b5",
+        "5eb264c3a7b16b17d7ca13d53167de30e1d3014aa37ae600e880f7439becade2",
+        "65c7e9f97ed7ab8878b720fd4e1a467bf54234e7e32ac43c6f77e42e9ed41731",
+        "a3207ee3cc880f8ade28b17d8686de634782944aa025cd2195b3349f3f15ed02",
+        "7a8a2d9464e9e0571f0810c3b4b32a5437d92be85523f254948131613c23cceb",
+        "c6aa51a497624649977fb3598c32ea9be95f6ddca9c630be0e16d4564e0354e3"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199780,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-l03-recorded-noise-8",
+      "layoutId": "xpeng-l03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 8,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "e3b56f9abdfb7794fdc025d8f14ba6eac7889b3787707cb49695996ae5f8eda0",
+        "ab7c5d2f1543ccb71dd8472f2691fd60fb4bb02be47d6b6d1bae67b14f6e7490",
+        "ed6e0280e9af1a91848cfcc9f78beb0dda625ab6e512a1b0e66dc29483d7dc9e",
+        "4c564a8e30fc19a8a48497990b80773ee772e047d6216123d35936c3f67a5bc7",
+        "e3b56f9abdfb7794fdc025d8f14ba6eac7889b3787707cb49695996ae5f8eda0",
+        "ab7c5d2f1543ccb71dd8472f2691fd60fb4bb02be47d6b6d1bae67b14f6e7490",
+        "ed6e0280e9af1a91848cfcc9f78beb0dda625ab6e512a1b0e66dc29483d7dc9e",
+        "4c564a8e30fc19a8a48497990b80773ee772e047d6216123d35936c3f67a5bc7",
+        "6881954bea42398da3ce372707176f367b7be598bc2a27bcc8f1003f97b601c4",
+        "53836c48413d79eb713d776aa09349c6b07af877940494f943b8cd8b51c2de60",
+        "6eb7edafa5aacff5da4d4221b1e0a4ed0d57efe4ffc2e79a95174d9685f93695",
+        "5f69dc40a34c53dbdf7977fe09a0d8306354492ea3596053005d31699d67d229",
+        "c4754a857368f3e67366a8465f83d934b092a1e16b1cbe29bde05231667249ea",
+        "9b84c514c1b64c1fe1355b10cad56012e302787a97eb43e876c250f6b789403d",
+        "a7a6531831f93fb8697c65ed93fec855272f215a8bf982b6fab5feb1d4a6593d",
+        "dc01264e4521df1ac5d6d0f64e238c0a42a33eeb853f1514023af8676a14bddc",
+        "9a21fe1053c2cd4d786f0d703cafdc96b359aaec6ed1a81bd32e56739f9d20dd",
+        "9084812b7df0c3c1839fe868a4c8632ca1a4cf47db8123117151c71b0148cfb9",
+        "90935d2379d2ac5d3ac33ab2bbf3c6f5836847925ca50713a889334712d3777e",
+        "139250e94c818bb7452db71961bf23cc61360df66425359a53ab58af4544efb1",
+        "408be7dc4d91fa8741c85304513e1761cb9027a0d24a8c45ac87486b544623bc",
+        "1b99bf1e389405d477f12565cf7479da08fbb9b09fba9f98bb4497fb2401f42b",
+        "1645bbf94a60180e2e512b347fa494b433878b32e7924913abc3d9b774de04bf",
+        "3297aa3fb41bc8ad9b9c04c170e43c4e8a75673771adf041611a370fe1f5e6f7"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 233108,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-1",
+      "layoutId": "xpeng-m03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 1,
+      "signalHashes": [
+        "854ed797bb4e48aabc5818ddf01eca130a80b46601a4e94df6302d0b2d3c440c",
+        "0c7a7cbacc98128ece08ce842d26c334ecf1f698b03c66e47fb7e704392e28da",
+        "cb3b4248eb204d8cc61b7ff02defed71f198a99159ec0084cbda8726d756b95f",
+        "3c8dedb41af60a6e290221bb9b0ad0c0f3387c3a29cbcaa62e88721e3426bd17",
+        "2d0fba244921efd519a459419635fcc290d4c398896d7fbd64754ee788c1df29",
+        "1921ec841b5045b0474ef5b2b72a64f972bf9e5ca7cdff2dec93782ea41effa9",
+        "d091dd9115f0b85c3aaa36f8e31d7ecc6f7af7cdf4f0b2aff276f920ccfcaa8d",
+        "f3188a498658ee9798c1a3ab61d2b10c395eb3753a0572f3fa6e118a93ade53b",
+        "417cddf90fc8178d1ab201a13e907f8d15a28e3adce6cf6d29f0d92a1302ac21",
+        "18d592fd3ebb92caad25d5ee1ee75723a9c6c5d67bb71ba678c79ed712c36d74",
+        "b14b2a593cda00239475ea07ad3580678a62aeedbc71823d861e2ee5a66da077",
+        "3e368c010a98f334101bd8b6f7d2ca05e2a037136fa5eb937da5a7bcd9e267e6",
+        "70f25a711a26ee1b9dc16ec916bad4111f2fb751183df9dac11d28c12f566c5f",
+        "527c50921d12d3a73d74ee7b309b4396bda021125352d7a268a5cf635a5a7514",
+        "ceb4339e71631ddd8ff20550b19bb9487e7e1fa4e70c7a4d94b11d775d15c553",
+        "ebb23f43a0bf5598e9a932047b213b076083da18e4bc999671576315b22aa78e",
+        "75b15ae740dcc4ace4256a4ba8e42c1367df17ed2b80b6e5a9facf87f33ba188",
+        "14ee91ccafcc7c475e43787ba26a9426b5b3bd128930560987ab51650375fb00",
+        "4ba2472f940ca8b2e8528bc0a2581222e6e54bc65159a4812eda8c83b13ac447",
+        "ef9276154f88c3d394ac99a4da5d849f707a2781af9a98d154d3770e1c74268e",
+        "270ac74a091b25092a97e90e38713fb95c0ded96beb7725b1532a2a2f975e5ba"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174476,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-4",
+      "layoutId": "xpeng-m03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 4,
+      "signalHashes": [
+        "05191ff280f33e3115710693a7b4866a166d8cdedd96d6a8455216b7eb87fd55",
+        "b8a14e7988d379f1ee77747895fb13780132ce3a9fd2797c43852425f26d50fe",
+        "75d2c8be9979b45bb56f99f49a9bd9a0643e7e867870409c15d4356d0a6d361a",
+        "8c2d1682c7a70c2dd457f54f2f948bdb07c3347e85fdcb4a7ea27e90b1849d52",
+        "8e574dbaed640233a92186dd7faae840c42e9b98cf333f6d6ed34e12c8feba96",
+        "44107563535843504e369a47bffc09676ea1a32505c2fa81c5797d6d5d0600c6",
+        "3aa972e81163b2ee192e64e69e9c2a98229eef0b9957ddc3ddd690cb835c15fe",
+        "62bf539f2acc0107f1401cfaa2cc4a0fd21bf5aa819fdb666254d95a893ddfd1",
+        "951661e4489fed81ec2440ad271d5ad1da7ff302a33c63d14f5936930b7669be",
+        "ecb6ea96b6aa2f056d5b6d71551f4def8769e57141a82acfc68b40fc8cba6f7b",
+        "9014836b392b4c63352f3734ec35dcef3259795f067a7fd5bc86c76bdf85478b",
+        "c0613a754ff78349452c6b272311f3925195330a74d67679413f33b70cad9cc9",
+        "0e1f7805ccf61e5e3ad123b31da2b2b840e7dfd23ad1221a15432e33e5bad9e1",
+        "60a97b4ec19564687d0080d3a0f7129be423e59e3c4df8ff76ce54fdc53cab8a",
+        "1ccd4934a8b13649933f903f4af6e476662589d3892f6d5532c4b3235452c28b",
+        "599fb7d932bc2683385739726903538086c921494417b989ee2ad9db0168a89b",
+        "bb425e8c5cf5773bf12a038d0fe3f5ed732c8c6ce819fe56838f63dc355a87b5",
+        "f5a5235b3ff9568bdec673e9008be0bd835e10e8bfb98612d2393b4c71596cbc",
+        "ee1d24a20c3fd615de55932de5b52752eeac54a288513e62bd39d6001c786f2c",
+        "b5491a3053de04c81d53220202ed9e2bda4be9a0129229a595a27bde1fabdd89",
+        "13da7cd474562dac3a59cc5f0326a20fc2e4f42c77830a4766f4e8d45182f7f2",
+        "eab7948a4f2a26ba9390364e6d847a995e9a9812660aa5f064eb52d94aa6dcc5",
+        "e96893ae175de062416f28e29850b3d7bbb5470470bda5c8050a55266cb759e4",
+        "026c86656359ee4a938255ad2bd480746b22aa3a63b156e6fae31c6517f3ea4f"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199548,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-m03-shaped-noise-8",
+      "layoutId": "xpeng-m03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "shaped-noise",
+      "references": 8,
+      "signalHashes": [
+        "75aab9c9349468f3739ac230598efe3b1d184a59a9fc3107e703454ffa69f58f",
+        "84a60d8403fa9aeaab6aa0130173f61dcb313b99a7ed72788bb5e7475fcb929c",
+        "8a31a768c38fb26559645a016433101d0d8e2e323ee90ad8097be032f1e82095",
+        "a808c45bba1ff414d02a8e03bf8a9ce5a7458866616cb15b3595e70f3c13c118",
+        "bee0ca09b2fd4705bcdf28e8e9171f3d1f3cccb3dca5b3b963316ce1924a449f",
+        "183ca44f243afa26c71416fa0b7c347e3ffd4b88736ea4fc2d058cac2ea6fe96",
+        "c9e2d57fc6a963e350c3f5e34e6a015a0e996cf2568cc630fd73f92dc191190f",
+        "292be7e91a50d4b85c6dcbaa1209fe1ecf5797ef23cb5c44ed730de97646b232",
+        "bee0ca09b2fd4705bcdf28e8e9171f3d1f3cccb3dca5b3b963316ce1924a449f",
+        "183ca44f243afa26c71416fa0b7c347e3ffd4b88736ea4fc2d058cac2ea6fe96",
+        "c9e2d57fc6a963e350c3f5e34e6a015a0e996cf2568cc630fd73f92dc191190f",
+        "292be7e91a50d4b85c6dcbaa1209fe1ecf5797ef23cb5c44ed730de97646b232",
+        "2bc1a9ee210cb0547108353ccf734a035d2b1dc0a6dcd99a33dec597617191e9",
+        "1d7f110be3b1f48344c886b5010c9491129db2985ee249dd38859b2a70101c01",
+        "1050780e0bc8cb1898bd100eb27376b28277402d6929388a92cc65cc40da6cf1",
+        "8b77670ddebbde82eb1445d0dca3b3df885e65933ab5952c00e690dcc74aee2b",
+        "4b3cc987cfebc13f1b667a31bac31a45b9793a5d175195d9a145dde6d71ec935",
+        "a3afd71b683ca3533d2c35c4abaad3ef8d73da5943bef0333d03dd45ff42ae71",
+        "1f7b5af0f441ed23025b693c274ce16c6e4386df9b9f586d153fec3c0b3826e7",
+        "5f6e498ce7d7ff00c592d54fc26cb283f2bad65923ceec8fa1593093a54bc59a",
+        "b9b775314d8e39039ecf31a6eeeacf819ba8ccb24fbeab14bb6a57de9724315f",
+        "7abf5aabdae873791161a73ee5c654c4d335f38667df40a09aeab910ae20f1f8",
+        "038189b180267270f6fbce181717d552c4fac0245c92f5c9b8a85e7d370a7a43",
+        "64e1dcef75b21674ff40ec59b5ef2c19603506c43a9848ee3dd301f51fb6d08e",
+        "9c670c76961f3581cdd8405d1eb0ecc6bade105d645825ea26a6fbc4915737e5",
+        "cede1a0a99fedcd797adb140d4147adbd5789fd48b478800c576835356fff95b",
+        "51395194d199813aee13cf9b36f1617d75fa25b30d9a7e912155a4535690456d",
+        "b7988be88eec1d70ca0c38dd7dd33536cfadfefd3f089e54ef4e1c4fb463aea9"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 232976,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-1",
+      "layoutId": "xpeng-m03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 1,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "611b148283bdae85f5292a02fd80bbbdd599f8ddacbc56b3dc438b87c206768e",
+        "2f0693805b076bc88e42e764cbbedfc68a108a3963dd7f36c0163101c11c320d",
+        "11dc50aa57613c7ad54ec80d785bbab31b2030b101c81659f712d049be4a517d",
+        "dae2091a14a4b000ad07a04149fb0a5d95c81e54163f925c1f7098807ad4733f",
+        "280f7689274e3e1b58b06876b75a6ddfa1a77a9f7e5eecc92c191e9ee7ee906e",
+        "d5a13d0f6ec924a082440c783aba0965d82e153a8a371504266c1fc731448c46",
+        "89cc6d9882198379fa5a857640cfd1cbbda920dc73f5e3af4ba7f5289098a4c8",
+        "7966ce25eca3388cba54aaa59d10f8d2e37dad5a0ac06675760bfbc4961aefb0",
+        "7aa9cfdd79600fec9d7ec5817ced6faae738de4b71a7dc7ee4c66f1ba85239ca",
+        "426ac9b8bb1fad5aa877db55f88ab21d027cf28f58a037240ab23cb1a59ddfab",
+        "574c1e06c87871a4e89c6ee2d53618a8623a05dd3da6a7c0370f196ad3bcc9be",
+        "e0b267d5726e6a9f70f337bd57d18ac347851e2e8301f6dff212c811515d5626",
+        "9600848ed651192a266701058cde1a900ec363b72bcb7040014dc39d80105211",
+        "f50d0d88e79153e4a4a7c121a680fb854e33afa23d653a8f073609d89c7c113d",
+        "25c5a92526f519e51ec35ce56fd79c8c8a7c6c08bc1f21aa19ccd8f2521beabe",
+        "6e75b42db41de674bc5e9909cb944377c35531c4cfdd44b4ae3d2d91577c90de",
+        "40e3b9734b85dd8c9a1edd828021353b3a09bdafddfb6f45429f63651021ad56"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174808,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-4",
+      "layoutId": "xpeng-m03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 4,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "611b148283bdae85f5292a02fd80bbbdd599f8ddacbc56b3dc438b87c206768e",
+        "6bb65d3f832f4b5729bc950f845b754663b7e4066553603d55f9f3020d2dc06a",
+        "fe3835750f0a866fe56b1f9083f2368394d757a8b1b737c6d61167f604c05fa6",
+        "3eaa7aa1231399004ee5e30fae4e71a184cd6746a2c68691780d662fd177559f",
+        "b27e1607bc37f524a50709bdc19148a9b6a4af18ce493a0973472fde7634c714",
+        "eda74635d884e7197790c2328badfda01de24a13ce4d50199960938052beae11",
+        "3d4fa46f7833ce179c1532e2a17b136f689be81612aa7915667e9a2d3db5f7e9",
+        "0f2c883f9f57af6e4d71f8c54560af238484bc04610023b549dbc7e5a5bdb71b",
+        "d5a13d0f6ec924a082440c783aba0965d82e153a8a371504266c1fc731448c46",
+        "89cc6d9882198379fa5a857640cfd1cbbda920dc73f5e3af4ba7f5289098a4c8",
+        "7966ce25eca3388cba54aaa59d10f8d2e37dad5a0ac06675760bfbc4961aefb0",
+        "7aa9cfdd79600fec9d7ec5817ced6faae738de4b71a7dc7ee4c66f1ba85239ca",
+        "01cf451ef5fbe98aaff266f0b15dee88f6eb719c5faff040f541362c0ccfd537",
+        "25daaea7653c3052a848afe490bd1c19b3c1b75b1271545c52edc3085722140b",
+        "5bc094de0df6de3d52c08b7db0a2f4d07d50b48294862e61588a89cc88d1b60b",
+        "b302ee50203d937dd8c596891ad3721b397d7251de0dcfe24afb14a2b8f3048d",
+        "9ca94b929eb8579516ba60b8b5664b5069f856536261f6f280bcb2c52d0d6c78",
+        "ae4256b373583458da63d2763a2dede15e54ca07eab6938d5fa7057009a75438",
+        "e5ea8708573b08951ead45db097ae65fc551b3e9b6eb20de4add0edec6e5992b",
+        "4e9f871c1ec70da09d3a50a1bc9df49a12bc63c1d2346d48a10d1a54aabb9da1"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199888,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-m03-recorded-noise-8",
+      "layoutId": "xpeng-m03-bev-v1",
+      "vehicle": "bev",
+      "sourceMode": "recorded-noise",
+      "references": 8,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "611b148283bdae85f5292a02fd80bbbdd599f8ddacbc56b3dc438b87c206768e",
+        "6bb65d3f832f4b5729bc950f845b754663b7e4066553603d55f9f3020d2dc06a",
+        "fe3835750f0a866fe56b1f9083f2368394d757a8b1b737c6d61167f604c05fa6",
+        "3eaa7aa1231399004ee5e30fae4e71a184cd6746a2c68691780d662fd177559f",
+        "611b148283bdae85f5292a02fd80bbbdd599f8ddacbc56b3dc438b87c206768e",
+        "6bb65d3f832f4b5729bc950f845b754663b7e4066553603d55f9f3020d2dc06a",
+        "fe3835750f0a866fe56b1f9083f2368394d757a8b1b737c6d61167f604c05fa6",
+        "3eaa7aa1231399004ee5e30fae4e71a184cd6746a2c68691780d662fd177559f",
+        "670caba2891c7f71912577682cad833625bdb45910161c996e39cae4513f076c",
+        "83ea1d6d58d62e19adb2ef1510197d03f4cd46741d1a098570837a1c50bdc5d2",
+        "b8e9cf90dbdd39057edc7104554caf1c6970aba45cd0bb1355b5cc1729c6cf92",
+        "b9e0f39cc9a3a48a623f6d95650b054b11dff7d59d6701b15f275db980b1ae74",
+        "d5a13d0f6ec924a082440c783aba0965d82e153a8a371504266c1fc731448c46",
+        "89cc6d9882198379fa5a857640cfd1cbbda920dc73f5e3af4ba7f5289098a4c8",
+        "7966ce25eca3388cba54aaa59d10f8d2e37dad5a0ac06675760bfbc4961aefb0",
+        "7aa9cfdd79600fec9d7ec5817ced6faae738de4b71a7dc7ee4c66f1ba85239ca",
+        "f9a00f9c023df298ec8a92229658dfd1b418a30107363db71a1ab5f53d17dbfa",
+        "d9c7fa82c7e9b049b75d8374c1512875005d9dbe4763ce867942b63c45145cd4",
+        "8fc14d73a38b25890cff6a1ec60627b9d48135f28a3d18f134a494c683fb8348",
+        "866210777ba767d4cbf95dc6f760d0705e0cae27b6980b418997846b22d64080",
+        "2578669883e761c17b680766ffb8ad091138d457f6a5c8f855312e8981c4ff39",
+        "f4795a781795debd2ce684b50be3b8629c8b8aa6cee06f6aa2ddd0561fe2fec1",
+        "8b99b82ddab91ec1762bcce150b306f8fc9d1ca7d16d449198b25c1cadc0b4c2",
+        "c33589c70c0037f6af6890bc20e510470503fd59cd20dae60ead6140b669d1f1"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 233316,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-1",
+      "layoutId": "xpeng-gx-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "shaped-noise",
+      "references": 1,
+      "signalHashes": [
+        "854ed797bb4e48aabc5818ddf01eca130a80b46601a4e94df6302d0b2d3c440c",
+        "0c7a7cbacc98128ece08ce842d26c334ecf1f698b03c66e47fb7e704392e28da",
+        "cb3b4248eb204d8cc61b7ff02defed71f198a99159ec0084cbda8726d756b95f",
+        "3c8dedb41af60a6e290221bb9b0ad0c0f3387c3a29cbcaa62e88721e3426bd17",
+        "faa97a3d58ea3f2478b5c28c3dd31569dc3b7db369695389b2e2a4acba474605",
+        "52fc104dd69ffd73c617f3462caf2da1dc1367016c3ab742b3cae7186badd67d",
+        "4a5d4179cf1e4d3ae4287fad5bf0e6308c816f6a077c22bc5849d6e657ecede3",
+        "21ada1b4c893e02637491a472bef26d9d47d85be128c4446e6ec9daf4f47f56c",
+        "6e3161adc5f447240ec86e33261a33b295403629206916c75ad4c699e9855b0a",
+        "4ffc0cf6d5527af00083a64363665aec20cd19ee1fc5b941775994edfd49bdc5",
+        "85b96a9b005e1ae2124b844eb9bb5477e064608d97c40294a42ff90d0b0c8091",
+        "5797b3e29d24ba75b117c8e593139df37b611767ad62e710150465b46da0d13c",
+        "b9aef1c2c085173edcc5c281263a3e18b3a7850b9548dba9051d7f9f0034acab",
+        "c9b7d71f3277bbd9eeb983b05cd396bc115dbc1495a7e2fbdb9579d16b40841a",
+        "9fa763d9b1130ac971c4623dbe85adbd8bf0ca78487c22977cb0e82b5a56df2b",
+        "e23c41ea3795ffcbcea3c8075d8a7663a23abb2d2e02feffa8c539a0fa1fff36",
+        "d2755b62ee6f3e5f9cc789aa7cb5ed7ad0c604813f347e8e64216bf05ea9485e",
+        "85733587577f59cda1ab7b9dfc77441204607b4ffcb8d729ee7e9cb79be20ef8",
+        "a33c62685898741e998bd0b43d1f5f25609cf768010aaeae6b4cfea68f2a36da",
+        "1c266b1dd4fc3ec2dd62cb07813928bbdf4e96ba1b6cb08e01f775322797bf51",
+        "e702bdbb9a550691ce02b521312b93b6f100923eaf55f89f41abf8e12bd3d9ce"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174452,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-4",
+      "layoutId": "xpeng-gx-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "shaped-noise",
+      "references": 4,
+      "signalHashes": [
+        "05191ff280f33e3115710693a7b4866a166d8cdedd96d6a8455216b7eb87fd55",
+        "b8a14e7988d379f1ee77747895fb13780132ce3a9fd2797c43852425f26d50fe",
+        "75d2c8be9979b45bb56f99f49a9bd9a0643e7e867870409c15d4356d0a6d361a",
+        "8c2d1682c7a70c2dd457f54f2f948bdb07c3347e85fdcb4a7ea27e90b1849d52",
+        "3373601f63f24d8541bcaa3575bc922ad79340b4c1f354c8c4dd56f386fae4d5",
+        "7401e20cdfcc2791c02fd1027924490bb1bffcd1ddf41ad948a55716c8c95a0e",
+        "19da3c207697994c601ab286b08a34547f59bcb37a3f9e7b7e76fd4d60a6ee4e",
+        "692d298510ef46c1c4bca6f71f3aa3738d0d9ee33207069f3d7928bcd22cf42f",
+        "5d7695ccaec7c47ed06529c56e29227e2b5fb65f1edd13e50b41663c65213f05",
+        "9147ab356f6b247f2ba57604f1af1bda3b76ac6c89dc6412c4cb78c794111461",
+        "e9ddd39214da8cb14e3f664e10f347dfdb07a370879d7ff9b67c145401ae75ef",
+        "016053969bcb12d770cadfd696cf890617d3da4c1283b46844476d4cd9851dce",
+        "007ca3742c73755d750a22ef6e543d3070ba627e76b38cbf2ef0abc355f8ea1a",
+        "bdd7e364ad7462dc36c3e192b05a7f19736898287d2bd82650c22bea4974359d",
+        "969d6b19585ddfb09d2a92710221438fbc62f1077b0fa185b2487cb952fe8667",
+        "333c17bc0cb1d036957157d971fd50370fe3888758d0e1e949d2728821b9026e",
+        "be87d00a58e43c6e2b58d60963fb1d6f87cdeb291713fae74bd98a94c382d3a1",
+        "8ab73267ac51f407cf241f17613ceed2af2dafe8f003299b372d86fe9446c8f8",
+        "ee231ce60280fbd6f36380ab2e22cab5e344e3f000357c225fb7927842b9188f",
+        "cf14f2a53119dd673f4e3c8d6f2752658be5ce3f7517aa70cc69aa68d444c60b",
+        "8cdf3a1d1c2e8f7a1c6d01711aeb1107ae18c2b749e1c4ca7bc3a0529a053c27",
+        "b2becdfb631a1067ae86406e109ba743009f3470c8ba8526971a45f102211cea",
+        "c2fd13488e6e2405ab4e19d1d10ad9767fe69fce3e0027f189fb1f68627f8fc5",
+        "3bb385e73f52f0405c3c14a964daea67a7b4bca0c4d055b862f0957629c6ef5b"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199444,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-gx-shaped-noise-8",
+      "layoutId": "xpeng-gx-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "shaped-noise",
+      "references": 8,
+      "signalHashes": [
+        "75aab9c9349468f3739ac230598efe3b1d184a59a9fc3107e703454ffa69f58f",
+        "84a60d8403fa9aeaab6aa0130173f61dcb313b99a7ed72788bb5e7475fcb929c",
+        "8a31a768c38fb26559645a016433101d0d8e2e323ee90ad8097be032f1e82095",
+        "a808c45bba1ff414d02a8e03bf8a9ce5a7458866616cb15b3595e70f3c13c118",
+        "8e019ccb87f01cfaba8aa07d0682668083c7bb89e22d4fc217d8eb38a2c68538",
+        "2f9c309aeff0fd78203327b05c2dbc5017917d4845f2ed67e7fa9cc626d08396",
+        "182f3408c83b670982a63c4d769a679afd5885e30ece7d2951ed8e907d29122c",
+        "089e529c47a410a447981860f886d9bf7250ab78882f575a8b0bc45c331822c1",
+        "8e019ccb87f01cfaba8aa07d0682668083c7bb89e22d4fc217d8eb38a2c68538",
+        "2f9c309aeff0fd78203327b05c2dbc5017917d4845f2ed67e7fa9cc626d08396",
+        "182f3408c83b670982a63c4d769a679afd5885e30ece7d2951ed8e907d29122c",
+        "089e529c47a410a447981860f886d9bf7250ab78882f575a8b0bc45c331822c1",
+        "75cd3e3660383d155b3ca7cf3d642d5d4ce4043e896759f059a8122355c23ee1",
+        "b2e7f3083d64f367776b031f76b45b5e62519bbe4caf13b4cce0d472574a52dd",
+        "717191d9893e414f3a780f58e45762d7ae04bfc5ed56fd1c38cc8ec7fb9ca5a1",
+        "3789a459379c68146e83024040b59625359be65a74e3eb4cb87a1212298feb7e",
+        "92c52af70f9d6acca6d960643d46815c67debf5835026bead4239b068aa3989f",
+        "3c00c92186a34288a51ad1a46ae327aeac3801d2f9b58c13ae6c9a8f41abcf8f",
+        "7263d7addd4a4f1f5f2070e04c042f663932b7f297073e33c334300dd62a2368",
+        "b969657a6cd0f59b4c97030cc23656e2af5e54662881fcb4fa1995d4c2c13aca",
+        "143f9f8e9a2302c309a2d80a748b7f823bd8ac6e4138f0194957738b860264c8",
+        "f852723dcf552b31cb5f2117f4ff2f181ea84092f2830e5fd898f22da1aa9d80",
+        "a1a83db3fd919316c7d3e0b145b7a76cdf9d152b0716be36c61884037285c1aa",
+        "38241baeed9097a462d5628f6092c83e354128dfbae238db9764ac0ff6236ea4",
+        "ebbfc1a885a6ff3a91e094347948a5c28f29abdb41dce19a65b7c3e463d2371b",
+        "05a1ab9c61d3d39a137d82f42104ac413835fab51c828c3439c6271d967e3572",
+        "220219f6950c98070b7023fd158347cd12098ab7b21e9eca3c3b20f53c4d8bfd",
+        "c3f6450058fbb50c1a8e2a97e1bf8ea8dcdb2393861bc30a933ed58af0b382cb"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 232804,
+      "resolverCalls": 0
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-1",
+      "layoutId": "xpeng-gx-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "recorded-noise",
+      "references": 1,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "7d553aef871929932f09a1b09423b4d0f78950089819687d8639508d618e44b6",
+        "65bdbf97378ac2e658616f245cd7a2320d7d3328deec8178f1636996038024b1",
+        "7121334cae6c3a7a4917bb05d3df45d506bbd197c18290d9a852aa3d1eee111b",
+        "fcc2575b15b376d6c1a9837ad482754e6105aaea2df375b56ebdb94c8a2ff3a7",
+        "6b27836020c1fc760f5563113153ee2cb79dff2d19a1dc1ab6741532a9e7e04b",
+        "601be7a1accc1f5e5ef1e10f07c1d8f16b251b57a4d264bff4a9702594e3adae",
+        "c32aae2227399b6b2177a15266ca141d4b62ae06e06b4b0a4d5dd747fc9080c4",
+        "e61ddb76c316326612b3ae8e9279c52382355c00afd63b570b0a6d644dfe2503",
+        "18b1db9e6f94af2b2c63f359cddc402a2cb4240e0ada68f67ce2fc3ef9a3d446",
+        "73ef6c89743eaf7c17eabc07c3aa254930878a104eadea5f04dd671b41d4f307",
+        "219d6c18990d9ab4477c6625558dd1855e4ab17b540d1deb07bd42e3d9ed10f9",
+        "b1d5e9c6b8dd29ee3f69352366b318a4a237818a5ef5c66617c48b6c03cfd41d",
+        "c19a99c15b34cb04ee30cbc0574b91f8ae22d810b26b187c364b96c284322476",
+        "f4a5d8cf93886e38dffee8fcd60c6443af788cd6c6b92c1630bcb9ade4c823b7",
+        "33982faef2a411ba1b86b029fc117c20f6ef8b16f72dbe79f655235452bbf049",
+        "5217c58b34e4e6f08692d9724e1f40692b3422a0093e069c0327799f8bbaa138",
+        "58e9736774d426f72213ef97a763e6ae326f3283c094f783eb92d7722c2eddf9"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 42000,
+      "containerBytes": 174792,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-4",
+      "layoutId": "xpeng-gx-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "recorded-noise",
+      "references": 4,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "7d553aef871929932f09a1b09423b4d0f78950089819687d8639508d618e44b6",
+        "31ddbe24367b544968f70cc4a8e722b952b03b6f491581d548da7cc959a9171c",
+        "34dc3e114863b79289a3302971425e47231fc0c395e8540eb11329ab7bb0165c",
+        "5a28ed7574e8f6413cd8d03d1ab45d2a7e362b5168f9c16cfd04f19cecc39b69",
+        "31b00ee56fdfcae4435a386ad2f77282f33452309742817e5450fbf4a49c4f50",
+        "1980a553a545618fe2286edb6f5e6d4c931670d42cae3736a29b8a4c1d4f1b2f",
+        "13b0615f70bfbdddd8b6093d4712c339a24b975ded9ca79cafa5e0ae525bec8f",
+        "54c995f784efe1e6b14ee9e2bb42ee3c98e886831d796ff0a61035eb8b4b1c0b",
+        "601be7a1accc1f5e5ef1e10f07c1d8f16b251b57a4d264bff4a9702594e3adae",
+        "c32aae2227399b6b2177a15266ca141d4b62ae06e06b4b0a4d5dd747fc9080c4",
+        "e61ddb76c316326612b3ae8e9279c52382355c00afd63b570b0a6d644dfe2503",
+        "18b1db9e6f94af2b2c63f359cddc402a2cb4240e0ada68f67ce2fc3ef9a3d446",
+        "a5e305678d5304ea3dcfc39a7ddb279a99ad9dfdfbb59f1f82e2ba2da0fd0b9e",
+        "a37c2993c1e2f12b31b205869072297fa0a2f4210ddeee0bc29982fe37e7193b",
+        "81b65a9c701a968c5442a3e003f487e63816f9872e2cc763798c60de272835fc",
+        "046425cfb20639d4ac4d258789f9ac3d51797ac66a86e57810ce3d920a0845a4",
+        "369d3f51af3857e9ef607cb26809f242ca9c37570e23754834386fca3ada58d7",
+        "da85f55113ed22ee980caa1e5c545f042252d34f048038b324ecec6b7f9e9e99",
+        "70bdf500833bb3bb3120e3bbab754cce5c2a8e16cb10e17cef74a87778b378ee",
+        "e08e4c2ef871715251d6c7a274ad4227240a314d1c18ce2930c0648ffafa0c79"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 48000,
+      "containerBytes": 199796,
+      "resolverCalls": 1
+    },
+    {
+      "name": "xpeng-gx-recorded-noise-8",
+      "layoutId": "xpeng-gx-erev-v1",
+      "vehicle": "erev",
+      "sourceMode": "recorded-noise",
+      "references": 8,
+      "signalHashes": [
+        "362cbbadb90c956657971761d15bb32c7c6c9b9c200c60a1828dc611efa8a575",
+        "4690bfb6d70fb428d08899b8522b32c7baee378ea8e0bb1d8f121d9b4c405e1b",
+        "bc333b1cb4fbfc5a561fbc017b0f8b3011fb8be66c9bc687f97547dcc9095f08",
+        "f1d1f011c792880d9f7fb6bff727005c872d632e5b816ffb1e35e08248da5970",
+        "7d553aef871929932f09a1b09423b4d0f78950089819687d8639508d618e44b6",
+        "31ddbe24367b544968f70cc4a8e722b952b03b6f491581d548da7cc959a9171c",
+        "34dc3e114863b79289a3302971425e47231fc0c395e8540eb11329ab7bb0165c",
+        "5a28ed7574e8f6413cd8d03d1ab45d2a7e362b5168f9c16cfd04f19cecc39b69",
+        "7d553aef871929932f09a1b09423b4d0f78950089819687d8639508d618e44b6",
+        "31ddbe24367b544968f70cc4a8e722b952b03b6f491581d548da7cc959a9171c",
+        "34dc3e114863b79289a3302971425e47231fc0c395e8540eb11329ab7bb0165c",
+        "5a28ed7574e8f6413cd8d03d1ab45d2a7e362b5168f9c16cfd04f19cecc39b69",
+        "34254f65bf24309018d7956c37f574b06332dbc762a93defbfa1f80e01bfa887",
+        "5d4ad3ed1ae54d3ff884e64b45dad8c6ea79d0fd148b3bef1852506118f648aa",
+        "b2754b35d3d04e54487bd1e31cda8df3cda51daf9addd0a69578f091d36c5cd2",
+        "c3588d37300e51fd1ccdc8d2dd832b1e6c6a1d1eb46649ae6dc0c3ed2511814e",
+        "601be7a1accc1f5e5ef1e10f07c1d8f16b251b57a4d264bff4a9702594e3adae",
+        "c32aae2227399b6b2177a15266ca141d4b62ae06e06b4b0a4d5dd747fc9080c4",
+        "e61ddb76c316326612b3ae8e9279c52382355c00afd63b570b0a6d644dfe2503",
+        "18b1db9e6f94af2b2c63f359cddc402a2cb4240e0ada68f67ce2fc3ef9a3d446",
+        "3ad6944f6a4f13d4999f71323776a74ceb2d3ea34f78dd02235c6fe03c28aed3",
+        "f7447670dca340ae359d2032d3b1fb9ac1dd18ae0c7d92d91eb9160539b1be69",
+        "9b5f056f39c804c52a9030aad73324e0aa91e647538268c5c0adb9104979d39a",
+        "f4730363c80ecfd400c91d2243c3558b2db576536499540211e1314a82133362",
+        "d9e69b0e90f33ed3513f1414020083e2214c8733fa57398cd7c09eb677e96bd9",
+        "ad9b021a0e03c340a6a6c8b5ce62c1d0a56f66bc059eaf50d7ad9aa57f6b0071",
+        "6b59bb92000691e3ea592b46735644bfb68413277863776622bd5c5202b25ce8",
+        "e280341525930f549294fae4ca0408275dfcaca4415b4fbcf1c016aa41de99ae"
+      ],
+      "actualSamples": 2000,
+      "valuesPerComparison": 56000,
+      "containerBytes": 233128,
+      "resolverCalls": 1
+    }
+  ],
+  "samplesPerComparison": 1460000,
+  "comparisonKinds": [
+    "browser-vs-Node",
+    "sync-result-decode",
+    "async-result-decode",
+    "recipe-recompute"
+  ],
+  "workerGlobal": "DedicatedWorkerGlobalScope",
+  "secureContext": true,
+  "divergence": {
+    "requested": 6000,
+    "actual": 551
+  },
+  "peakMemoryMeasured": false,
+  "productIntegrationTested": false,
+  "targetDevicePerformanceAccepted": false,
+  "secondMachineTested": false,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+  "hardwareConcurrency": 14,
+  "elapsedMs": 2456.5
+}

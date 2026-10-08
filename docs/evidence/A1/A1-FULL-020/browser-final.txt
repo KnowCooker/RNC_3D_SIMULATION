@@ -1,0 +1,160 @@
+- link "汽车主动降噪数字孪生平台，总览":
+  - /url: "#overview"
+  - text: 汽车主动降噪数字孪生平台
+  - generic: RNC · A QUIETER WORLD
+- navigation "主导航":
+  - button "总览"
+  - button "声场实验"
+  - button "结构与布置"
+  - button "方案对比"
+- button "帮助与数据来源": •••
+- main:
+  - generic: 左键旋转 · 滚轮缩放 · 右击硬件查看信号
+  - generic "可旋转、剖切、改制的车辆三维视图"
+  - text: EXPLORE / UNDERSTAND / REFINE
+  - heading "探索更安静的旅程" [level=1]
+  - paragraph: 小鹏 X9 · 60 km/h · 平整沥青 · 实时连续仿真
+  - generic: 小鹏 X9 · 布局 xpeng-x9-erev-v1 · 实时 4×4×4 · 123dc54b
+  - group "车辆显示模式":
+    - button "外观":
+      - generic: 外观
+    - button "透明":
+      - generic: 透明
+    - button "声场" [pressed]:
+      - generic: 声场
+    - button "拆解":
+      - generic: 拆解
+  - text: 当前车辆
+  - combobox "展示车辆":
+    - option "小鹏 P7+ · 2026"
+    - option "小鹏 X9" [selected]
+    - option "MONA L03"
+    - option "MONA M03"
+    - option "小鹏 GX"
+  - generic: 同车声学实验 · 独立车型布局
+  - heading "声场实验" [level=2]
+  - button "工况设置"
+  - paragraph: 当前车型坐标 · 四轮激励 / 四扬声器 / 前两排四座测点。调整工况后运行，查看空间声场。
+  - button "启动 / 重启实时实验"
+  - button "结束 / 取消"
+  - status: 实时已暂停 · 22.8 s · 缓冲 1.25 s · 共同安全增益 0.067 · 补缓冲 0 次
+  - generic "实验观察模式":
+    - button "道路行驶"
+    - button "声场检视" [pressed]
+    - text: 行驶环境
+    - combobox "行驶环境":
+      - option "田野公路" [selected]
+      - option "山地"
+      - option "沙漠"
+      - option "雪山"
+  - region "行驶观察":
+    - strong: 行驶观察
+    - generic: 随实验播放 / 暂停
+    - button "车外跟随" [pressed]
+    - button "上帝视角"
+    - button "主驾"
+    - button "副驾"
+    - button "二排左座"
+    - button "二排右座"
+    - button "三排左座"
+    - button "三排右座"
+    - button "声场透视" [pressed]
+    - button "行驶中检视声场"
+    - paragraph: 60 km/h · 0.38 km · 22.75 s · 上坡 1.5%
+  - text: 声压场
+  - combobox "声压场":
+    - option "关闭"
+    - option "残余 e / SPL" [selected]
+    - option "原始 d / SPL"
+  - text: 声场 / 指标计权
+  - combobox "声场 / 指标计权":
+    - option "A 计权" [selected]
+    - option "Z（不计权）"
+  - text: 场显示
+  - combobox "场显示":
+    - option "连续三维声场" [selected]
+    - option "中央纵切片"
+    - option "头部水平切片"
+    - option "前排横切片"
+  - text: 传播路径
+  - combobox "传播路径":
+    - option "关闭" [selected]
+    - option "初级路径"
+    - option "次级路径"
+    - option "全部"
+  - checkbox "扬声器波前"
+  - text: 扬声器波前
+  - complementary "三维声场热力图图例":
+    - strong: 残余声 e · 车内声场
+    - text: 22.75 s / 采样范围 62.7–77.0 dBA
+    - generic: 45 dBA
+    - generic: 85 dBA
+    - paragraph: 最高采样值 77.0 dBA · (0.48, 0.65, 1.14) m
+    - paragraph: 点击声场读取最近采样点；切片可定位车内不同区域
+    - button "同窗改善分布"
+    - button "增强局部对比"
+    - button "俯视座舱"
+    - text: 不透明度
+    - slider "声场不透明度": "95"
+    - generic: 1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。
+  - strong: FL
+  - generic: 4.9 dB
+  - text: 73.3 → 68.4 dBA
+  - strong: FR
+  - generic: 2.8 dB
+  - text: 70.7 → 67.9 dBA
+  - strong: RL
+  - generic: 3.0 dB
+  - text: 72.3 → 69.2 dBA
+  - strong: RR
+  - generic: 2.2 dB
+  - text: 71.8 → 69.7 dBA
+  - generic: 小鹏 X9 同车声场截至 22.75 s · 参数化仿真
+  - region "空间采样点改善证据":
+    - strong: 空间改善证据
+    - text: 22.75 s · A 计权 · 0.5 s 窗
+    - paragraph: 1989/1989 有效采样点：改善 509 · 接近持平 13 · 变差 1467；改善量中位数 -2.8 dB，范围 -17.3～+5.4 dB。
+    - text: 正值＝原声−残余，负值表示该点变吵；仅统计本帧有效采样点，比例不是车厢体积占比或实车结论。
+  - article:
+    - heading "时域 · E FL" [level=3]
+    - generic "时域显示设置": 显示设置
+    - paragraph:
+      - generic: 原声 d · FL
+      - generic: E FL
+    - generic "时域图"
+  - article:
+    - heading "频谱 · E FL" [level=3]
+    - generic "频谱显示设置": 显示设置
+    - option "线性" [selected]
+    - option "对数"
+    - option "A 计权" [selected]
+    - option "Z（不计权）"
+    - paragraph:
+      - generic: 原声 d · FL
+      - generic: E FL
+    - generic "频谱图"
+  - article:
+    - heading "收敛 · FL" [level=3]
+    - generic "收敛显示设置": 显示设置
+    - option "A 计权" [selected]
+    - option "Z（不计权）"
+    - paragraph:
+      - generic: 原声 d
+      - generic: 残差 e
+    - generic "左前座 · FL总声压级收敛图"
+  - button "播放" [active]
+  - button "重新开始"
+  - generic: 累计 00:22.75
+  - text: 座位（图表 / 试听）
+  - combobox "座位（图表 / 试听）":
+    - option "左前座 · FL" [selected]
+    - option "右前座 · FR"
+    - option "左后座 · RL"
+    - option "右后座 · RR"
+  - button "RNC ON" [pressed]
+  - status: 实时试听：残差 e · 自适应控制
+  - text: 音量
+  - slider "音量": "0.15"
+  - button "静音"
+  - generic: 仿真道路 / 田野公路 · 环境仅改变景物，路面参数独立设置
+- status: 实时已暂停 · 22.8 s · 缓冲 1.25 s · 共同安全增益 0.067 · 补缓冲 0 次

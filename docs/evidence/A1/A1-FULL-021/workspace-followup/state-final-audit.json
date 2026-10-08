@@ -1,0 +1,8 @@
+{
+  "overviewBefore": "车内声场\n概念动效\n示意\n高\n低\n原声 d\n72.0 dBA\n残余 e\n68.6 dBA\n改善\n3.4 dB\n当前实验 · 左前座麦克风 · 20.00 s · 0.5 s 同窗 · 仿真",
+  "overviewAfter": "车内声场\n概念动效\n示意\n高\n低\n原声 d\n72.0 dBA\n残余 e\n68.6 dBA\n改善\n3.4 dB\n当前实验 · 左前座麦克风 · 20.00 s · 0.5 s 同窗 · 仿真",
+  "unchanged": true,
+  "allPathsText": "直线关系示意 · 轮端源 Q1 → 四误差点 · 高亮 4/32 条；全部交叉影响仍参与计算\n聚焦所选通道",
+  "focusedPathText": "直线关系示意 · 轮端源 Q1 → 四误差点 · 聚焦 4/32 条；全部交叉影响仍参与计算\n显示全部关联",
+  "exportStatus": "已导出 rnc-case-2026-10-04.json；浏览器下载回执工具超时，未验证下载文件内容。"
+}

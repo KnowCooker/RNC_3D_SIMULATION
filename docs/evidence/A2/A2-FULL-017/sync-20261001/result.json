@@ -1,0 +1,906 @@
+{
+  "date": "2026-10-01T02:57:27.141Z",
+  "browser": "153.0.8010.54",
+  "a2": "819ab708e028cc48d78d167dbc3605e99b7b84d6",
+  "a1": "67387f68c6a6c1d9ad0826794f61ebde74aa649c",
+  "checks": [
+    "current recorded-source disclosure survives composition",
+    "variable duration input survives composition",
+    "desktop controls initially collapsed",
+    "ice平整沥青 updates physical form",
+    "ice平整沥青 invalidates previous playback",
+    "ice平整沥青 reaches actual Worker",
+    "ice粗糙沥青 updates physical form",
+    "ice粗糙沥青 invalidates previous playback",
+    "ice粗糙沥青 reaches actual Worker",
+    "ice碎石路 updates physical form",
+    "ice碎石路 invalidates previous playback",
+    "ice碎石路 reaches actual Worker",
+    "ice source RMS follows roughness",
+    "iceprimary shows 280 computed points",
+    "iceresidual shows 280 computed points",
+    "ice section returns from underfloor in combined UI",
+    "bev平整沥青 updates physical form",
+    "bev平整沥青 invalidates previous playback",
+    "bev平整沥青 reaches actual Worker",
+    "bev粗糙沥青 updates physical form",
+    "bev粗糙沥青 invalidates previous playback",
+    "bev粗糙沥青 reaches actual Worker",
+    "bev碎石路 updates physical form",
+    "bev碎石路 invalidates previous playback",
+    "bev碎石路 reaches actual Worker",
+    "bev source RMS follows roughness",
+    "bevprimary shows 280 computed points",
+    "bevresidual shows 280 computed points",
+    "bev section returns from underfloor in combined UI",
+    "hev平整沥青 updates physical form",
+    "hev平整沥青 invalidates previous playback",
+    "hev平整沥青 reaches actual Worker",
+    "hev粗糙沥青 updates physical form",
+    "hev粗糙沥青 invalidates previous playback",
+    "hev粗糙沥青 reaches actual Worker",
+    "hev碎石路 updates physical form",
+    "hev碎石路 invalidates previous playback",
+    "hev碎石路 reaches actual Worker",
+    "hev source RMS follows roughness",
+    "hevprimary shows 280 computed points",
+    "hevresidual shows 280 computed points",
+    "hev section returns from underfloor in combined UI",
+    "erev平整沥青 updates physical form",
+    "erev平整沥青 invalidates previous playback",
+    "erev平整沥青 reaches actual Worker",
+    "erev粗糙沥青 updates physical form",
+    "erev粗糙沥青 invalidates previous playback",
+    "erev粗糙沥青 reaches actual Worker",
+    "erev碎石路 updates physical form",
+    "erev碎石路 invalidates previous playback",
+    "erev碎石路 reaches actual Worker",
+    "erev source RMS follows roughness",
+    "erevprimary shows 280 computed points",
+    "erevresidual shows 280 computed points",
+    "erev section returns from underfloor in combined UI",
+    "ICE same-asset seat disassembly in combined UI",
+    "narrow controls are collapsed for inspection",
+    "narrow collapsed inspection entry visible without scrolling",
+    "narrow assembly list returns when inspection closes",
+    "narrow expanded inspector has usable height",
+    "narrow assembly list does not cover open inspection",
+    "narrow same-asset inspector remains operable",
+    "narrow document has no horizontal overflow",
+    "mobile control drawer opens",
+    "mobile control drawer closes",
+    "fresh mobile page starts collapsed",
+    "no uncaught browser errors",
+    "no external runtime requests"
+  ],
+  "errors": [],
+  "external": [],
+  "experiments": [
+    {
+      "runId": "9593b086-dfde-4632-95b9-c9289d894291",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "ice",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 0.6,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 1.286669463147581
+    },
+    {
+      "runId": "eebb0b79-8de0-4a1b-9c7c-a7407a67fc20",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "ice",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1.2,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 1.8196254058233954
+    },
+    {
+      "runId": "aba3218e-fc8c-4711-96ad-6b2a068c0089",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "ice",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 2.2,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 2.463784445637375
+    },
+    {
+      "runId": "d8474a6d-8304-44a5-9923-bf315d8d5c63",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 0.6,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 1.286669463147581
+    },
+    {
+      "runId": "78a8b85d-ee2a-4b90-b400-c63664d53258",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1.2,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 1.8196254058233954
+    },
+    {
+      "runId": "966f5f04-c138-429e-b9f7-92dc96d017be",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "bev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 2.2,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 2.463784445637375
+    },
+    {
+      "runId": "2e6e705c-f2e6-48c4-b021-9f0000b3fc71",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "hev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 0.6,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 1.286669463147581
+    },
+    {
+      "runId": "b8ddd7fb-624b-4e90-9577-a72e0dd7b386",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "hev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1.2,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 1.8196254058233954
+    },
+    {
+      "runId": "acc11b72-af87-4fbd-8417-a4808f5c95a2",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "hev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 2.2,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 2.463784445637375
+    },
+    {
+      "runId": "9fdc9fbe-ed5d-4931-a340-4b1dc578431b",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "erev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 0.6,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 1.286669463147581
+    },
+    {
+      "runId": "8f1826be-c4cb-4da3-b8d3-0f89092e5659",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "erev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 1.2,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 1.8196254058233954
+    },
+    {
+      "runId": "60b20d80-eab1-4cbd-84da-6a6151c9095a",
+      "config": {
+        "schemaVersion": "lab-v3",
+        "layoutId": "teaching-fixed-v1",
+        "vehicle": "erev",
+        "sampleRateHz": 2000,
+        "durationSeconds": 20,
+        "adaptationStartsSeconds": 0,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08,
+        "rncEnabled": true,
+        "speedKph": 60,
+        "roadRoughness": 2.2,
+        "treadRoughness": 1,
+        "pressureKpa": 240,
+        "temperatureC": 20,
+        "references": [
+          {
+            "id": "ref-1",
+            "name": "REF FL",
+            "position": [
+              0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-2",
+            "name": "REF FR",
+            "position": [
+              -0.85,
+              0.67,
+              1.45
+            ]
+          },
+          {
+            "id": "ref-3",
+            "name": "REF RL",
+            "position": [
+              0.85,
+              0.67,
+              -1.45
+            ]
+          },
+          {
+            "id": "ref-4",
+            "name": "REF RR",
+            "position": [
+              -0.85,
+              0.67,
+              -1.45
+            ]
+          }
+        ],
+        "speakerEnabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceMode": "shaped-noise"
+      },
+      "rms": 2.463784445637375
+    }
+  ],
+  "passed": true,
+  "audit": {
+    "configs": [],
+    "results": [],
+    "fields": [],
+    "terminations": 0
+  },
+  "sourceSha256": {
+    "src/team-a/lab/index.ts": "018b3a6516465feb0190fceb963768ff54328de6da3e27e66c4c976d58de902f",
+    "src/team-a/lab/game-ui.css": "54287206153ed733ea88bc01730487e58f4efea1fe3c10c2db714b1416ac75cd",
+    "src/team-a/viewer/lab-viewer.ts": "fb2a29e8b86ffbc2e713246aa6b309ade1a0d6aa05434af19fd1b9aee77c57b1",
+    "src/team-a/viewer/viewer.css": "675c61ef8b417549da8d4dba32745a7eaacfa8872c16f75ed1db60d79e60abe2"
+  },
+  "buildSha256": {
+    "index.html": "4be0bdd14742191499395d143f3a19e8b273562e9ce846990149de505fdcacc2",
+    "assets/contracts-nWp9BSjY.js": "826899d2bbdc9958bfa5fcaa2b1df627ac1cc8dfa54f1de5caeadfc7db967f64",
+    "assets/engine.worker-Sv3u2Fdq.js": "fd4b0e075514bae0ff15b9d03cfe889ecc81c9449f11e4f95b850d39184617a4",
+    "assets/index-aYqvYyK2.js": "720acac80cf82d88294297ac27252925caec457d8398519c791dca8c73059857",
+    "assets/index-BJJq3Ru5.js": "9060fb587ce856893f89519a072f3e3cc0e21392c0f9d3b0ff308148f18b5717",
+    "assets/index-BlbNVDHQ.js": "dc37a0f80aced4f75ada564c3ef3e9417c4809b89dde3beb1aab3f754619d3d6",
+    "assets/index-C701Tmug.css": "b8265c6f12c8c41ea631e452ba7b07835adb4a6850862ab30ccb5f6a1a64dd7e",
+    "assets/index-Di_b5R-_.css": "66c70f92e4e5eec72295b48d16cd57db47c57e1aac9ee14ddee2b3f884b0eba8",
+    "assets/index-Djplo2u_.js": "7f2dc6dbe066b1f700b585262df4947a3d1cfc5db16a2198bb6976744105d6c9",
+    "assets/index-QKSeFwRF.js": "f684b4be8fd7114a9038c147e3788ce4a889cd7cf4817d752b52a7ba335b248b",
+    "assets/lab-contracts-Dt2BQu5g.js": "5095172d7f8d8afdc0dd3330f7c374281685f973c24bc08f4f8a0a85ab1830aa",
+    "assets/lab-engine-CgCV2due.js": "d0ebc690c57626a68d973b6c0bfb1361416359b12de91db08c27d08eeefe9319",
+    "assets/lab.worker-BgPsaBcn.js": "6ad4020ce68052b5c266b8b9d6edd6e42190b07dd8de70b6b357038263a24265",
+    "assets/path-analysis-DqKa-YPl.js": "e2e67b362693e6915d77e13339e7e70aece381d61b8064a1795b80cfa975ef0c",
+    "assets/paths-Cqn9th1C.js": "2a79242471d612bc3ed7fc61f422f07188347b59fd6cd228534cb170cf488df1",
+    "assets/preload-helper-PPVm8Dsz.js": "d3b90f5fc0ceb63a5f10ebfdb8ab7b39bf9da47ba642d152c27dda2f987fe421",
+    "assets/showroom-model-DrpsPiii.js": "e2fe1f1d3273dde416160ac9d965257189092048e97bc938640d519e3f7ea327",
+    "assets/viewer-fVf3wK00.css": "f5158b1c6f9c7c1088c8a53bf820030205e4f59bbe43962131c7302fd99a2ca9",
+    "assets/viewer-mZrjoHSy.js": "7f3770e6207293bb89a5de7115b4505b45a6a0d517feaba1cbc128a4cb35edfd"
+  }
+}

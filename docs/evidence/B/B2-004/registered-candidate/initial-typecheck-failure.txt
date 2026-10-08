@@ -1,0 +1,1 @@
+docs/evidence/B/B2-004/registered-candidate/run-audit.ts(104,75): error TS2339: Property 'knownResidentLowerBoundBytes' does not exist on type 'ExportEstimate'.

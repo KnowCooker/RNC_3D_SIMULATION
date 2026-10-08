@@ -1,0 +1,17 @@
+{
+  "fieldPoints": 1989,
+  "rafMeanMs": 15.183149832454296,
+  "rafP95Ms": 24.10000000000582,
+  "rafSchedulingHz": 65.86248644286441,
+  "fieldUpdates": 31,
+  "medianFieldIntervalMs": 1050.550000000001,
+  "pageErrors": [],
+  "audioUnderrunsObserved": [
+    0,
+    0,
+    0
+  ],
+  "pausedClockStable": true,
+  "highFrequencyPhysicalFieldAccepted": false,
+  "note": "RAF is a headless browser scheduling proxy. B acceleration is not applied; no target-device signoff."
+}

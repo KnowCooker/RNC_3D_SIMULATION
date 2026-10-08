@@ -1,0 +1,38 @@
+[
+  {
+    "file": "src\\team-a\\viewer\\assets\\lakes_8k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/lakes.jpg",
+    "bytes": 4742098,
+    "sha256": "4f4f9048e0ccd926caa75c04e1bc9c9ca983227c8c7a1e029559878556be7050"
+  },
+  {
+    "file": "src\\team-a\\viewer\\assets\\goegap_8k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/goegap.jpg",
+    "bytes": 6050862,
+    "sha256": "62919c5b11e78a52e0ce320b0d425bc44f9beb153bc6b0e561cc4115df60ddd1"
+  },
+  {
+    "file": "src\\team-a\\viewer\\assets\\alps_field_8k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/alps_field.jpg",
+    "bytes": 53871215,
+    "sha256": "bb653d6abf959bd0248853f59a146c9719c039307f8379f7a41ae428ac33b80c"
+  },
+  {
+    "file": "src\\team-a\\viewer\\assets\\lago_disola_8k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/lago_disola.jpg",
+    "bytes": 50106035,
+    "sha256": "547f7874c30830b9f3f19cf361d48fb3ba65b929adc468e20adccab5d2fd3e06"
+  },
+  {
+    "file": "src\\team-a\\viewer\\assets\\lakes_2k.hdr",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/lakes_2k.hdr",
+    "bytes": 5918432,
+    "sha256": "b2506e0ee912c4c599ff013566fbd3ecaac2f4b176319d450cce0de5758fed98"
+  },
+  {
+    "file": "src\\team-a\\viewer\\assets\\goegap_2k.hdr",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/goegap_2k.hdr",
+    "bytes": 5445362,
+    "sha256": "734bd0fa0ec0241a0fc08a2ffefd6f2f1180d53da51bb740c3bf70512e6679e0"
+  }
+]

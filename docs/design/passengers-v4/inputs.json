@@ -1,0 +1,63 @@
+[
+  {
+    "file": "robin-source.zip",
+    "page": "https://www.cadnav.com/3d-models/model-50655.html",
+    "downloadPage": "https://www.cadnav.com/plus/download.php?aid=50655&cid=3&open=0",
+    "sha256": "155bc5ecd72060aac3ca5e50ea06dd34dc803212afb60418192a2ce16f99f6f7",
+    "rights": "Page: non-commercial. Included readme allows project use but prohibits standalone redistribution. Local review cache only."
+  },
+  {
+    "file": "luffy/luffy.mtl",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/luffy.mtl",
+    "sha256": "157fda6c6810480e1178ef8e6adf6c1391efb36fc223af51eab19f50fbd29361",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  },
+  {
+    "file": "luffy/luffy.obj",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/luffy.obj",
+    "sha256": "50662f40985d0341fdfd4e77edc76e93cd5796c3960c947bef04791ee50fa181",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  },
+  {
+    "file": "luffy/T_Chr0060_body_C.png",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/T_Chr0060_body_C.png",
+    "sha256": "1a1be8321fa324ebbb45d242f366b7737bd72c71d816cfc1b06974dcd124de1d",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  },
+  {
+    "file": "luffy/T_Chr0060_cloth_C.png",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/T_Chr0060_cloth_C.png",
+    "sha256": "16cce85cff2f8be774fb33e86c1e04332e021d8c48944072c60ff143f557016e",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  },
+  {
+    "file": "luffy/T_Chr0060_eyeball_C.png",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/T_Chr0060_eyeball_C.png",
+    "sha256": "4083ea887800f07979d57b58f0f711db8c4a8821e8cd7e0d6d838eed74f16c45",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  },
+  {
+    "file": "luffy/T_Chr0060_face_C.png",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/T_Chr0060_face_C.png",
+    "sha256": "be57ec132e49cd8081bbf27f59b30223ec9ce86c45df2db0b1b22ec27ba5b453",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  },
+  {
+    "file": "luffy/T_Chr0060_fur_C_2.png",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/T_Chr0060_fur_C_2.png",
+    "sha256": "eed984d9f10f6a7655f8a5850a56a9c95cd72ff8a306c1a449882cc360d8fa2c",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  },
+  {
+    "file": "luffy/T_Chr0060_hair_C.png",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/T_Chr0060_hair_C.png",
+    "sha256": "dfcd00af72afb650f15cfd9de48d713a224049a1c8b87ce8331338162557a4fb",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  },
+  {
+    "file": "luffy/T_Chr0060_strow_C.png",
+    "url": "https://raw.githubusercontent.com/alexzamurca/webgl3DModels/4ae7269450dbd932dedf71ce8d0448bbdb160b79/models/luffy/T_Chr0060_strow_C.png",
+    "sha256": "277398444143ce1d4d5bcd2eadfb89dd9be477d4fbccad46991a7a8cbc6c5908",
+    "rights": "Model credited to Sketchfab 36a78e0a19d84b3bbf8ffa772385fe97; no standalone redistribution authorization verified. Local review cache only."
+  }
+]

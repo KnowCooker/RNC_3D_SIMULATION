@@ -1,0 +1,82 @@
+[
+  {
+    "name": "niulai",
+    "bytes": 1224088,
+    "meshes": 22,
+    "triangles": 57976,
+    "bounds": {
+      "min": [
+        -0.22244645655155182,
+        -0.2280000001192093,
+        -0.131999997317791
+      ],
+      "max": [
+        0.22244645655155182,
+        0.7457962834835052,
+        0.3919999897480011
+      ]
+    },
+    "textureMaps": "omitted in portable GLB only",
+    "pose": "seated static rig"
+  },
+  {
+    "name": "ayaka",
+    "bytes": 2242980,
+    "meshes": 21,
+    "triangles": 94428,
+    "bounds": {
+      "min": [
+        -0.2239599972963333,
+        -0.2280000001192093,
+        -0.18937999558448793
+      ],
+      "max": [
+        0.2239599972963333,
+        0.6757002079486847,
+        0.3919999897480011
+      ]
+    },
+    "textureMaps": "omitted in portable GLB only",
+    "pose": "seated static rig"
+  },
+  {
+    "name": "luffy",
+    "bytes": 2070028,
+    "meshes": 26,
+    "triangles": 88948,
+    "bounds": {
+      "min": [
+        -0.20053599774837494,
+        -0.23,
+        -0.1439628804922104
+      ],
+      "max": [
+        0.20053599774837494,
+        0.6569999957084656,
+        0.3985885895915374
+      ]
+    },
+    "textureMaps": "omitted in portable GLB only",
+    "pose": "seated static rig"
+  },
+  {
+    "name": "gx-cabin",
+    "bytes": 33856244,
+    "meshes": 323,
+    "triangles": 772024,
+    "bounds": {
+      "min": [
+        -1.2795000076293945,
+        -1.9073486123843963e-9,
+        -2.6720049381256104
+      ],
+      "max": [
+        1.2795000076293945,
+        1.7993031740188599,
+        2.6720049381256104
+      ]
+    },
+    "textureMaps": "omitted in portable GLB only",
+    "pose": "seated static rig"
+  }
+]

@@ -1,0 +1,17 @@
+✔ x9: P7-level structural coverage and correctly separated battery layers (3209.0687ms)
+✔ x9: interior ray picking and sampled disassembly restore world transforms (3634.6309ms)
+✔ l03: P7-level structural coverage and correctly separated battery layers (2855.9313ms)
+✔ l03: interior ray picking and sampled disassembly restore world transforms (3053.2012ms)
+✔ m03: P7-level structural coverage and correctly separated battery layers (3049.7299ms)
+✔ m03: interior ray picking and sampled disassembly restore world transforms (1240.4934ms)
+✔ gx: P7-level structural coverage and correctly separated battery layers (1112.7446ms)
+✔ gx: interior ray picking and sampled disassembly restore world transforms (1091.1633ms)
+✔ Verified drivetrain and suspension differences survive shared construction helpers (4151.2885ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24294.1394

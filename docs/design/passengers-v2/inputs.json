@@ -1,0 +1,7 @@
+[
+  {"file":"ayaka-official.zip","url":"https://activity.hdslb.com/blackboard/static/20210719/4d40bc4f98f94fbc71c235832ce3efd4/gs3LGNzzsM.zip","sha256":"40cfa6dd27685d57af15dd319ea8dfc225bca706b4875b0538d360c5050acab5","rights":"miHoYo / 观海. Read original model README: no redistribution, no commercial use."},
+  {"file":"luffy.fbx","url":"https://raw.githubusercontent.com/AlpaX-dev/luffy-3d/94ca97f5f22970b19b5cd9b746dd9c65c02f2e03/models/luffy_base.fbx","sha256":"23035af12c28406ff72efbde2ede57924014f754ec25e86fb5becbce662c018e","rights":"No explicit model redistribution license located; local review only."},
+  {"file":"niulai.mesh","url":"https://raw.githubusercontent.com/zicojiao/niulai-ai/adfb11c65b800be53055e93181e20e4513d34e3f/public/niulai-3d/niulai.mesh","sha256":"18ab5066e8e9ab25cba64000540f70642e5fe669a15243a58691d742c18b9673","rights":"Project MIT explicitly does not automatically cover third-party meshes; local review only."},
+  {"file":"cowPalette.json","url":"https://raw.githubusercontent.com/zicojiao/niulai-ai/adfb11c65b800be53055e93181e20e4513d34e3f/src/cow/cowPalette.json","sha256":"f4f8daf89fbf02b372a7f1f4173fd2eb50fa2da052ce4fff58e1a391e0a7f692","rights":"Code/palette source: Copyright (c) 2026 zicojiao, MIT; see THIRD_PARTY.md."},
+  {"file":"mmd-tools.zip","url":"https://github.com/MMD-Blender/blender_mmd_tools/releases/download/v4.5.14/mmd_tools-v4.5.14-bl4.2.zip","sha256":"ed3b78184ae9862be0df04e2e147803d011ad067edd8c31029c92fb719e19a6f","rights":"GPL importer used locally; never bundled into the web app."}
+]

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { sectionGeometry } from './section-geometry';
 
 /** CPU contours follow the actual source mesh, while the existing GPU plane clips its visible surface. */
-export function createSectionDisplay(modelRoot: THREE.Group) {
+export function createSectionDisplay(modelRoot: THREE.Group, allowSolidCaps = true) {
   const group = new THREE.Group(); group.name = 'vehicle-sections';
   const hatch = new Uint8Array(32 * 32 * 4);
   for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) {
@@ -37,7 +37,7 @@ export function createSectionDisplay(modelRoot: THREE.Group) {
         inverse.copy(row.source.matrixWorld).invert(); localPlane.copy(plane).applyMatrix4(inverse);
         state.set(localPlane.normal.x, localPlane.normal.y, localPlane.normal.z, localPlane.constant);
         if (Math.max(Math.abs(state.x - row.lastPlane.x), Math.abs(state.y - row.lastPlane.y), Math.abs(state.z - row.lastPlane.z), Math.abs(state.w - row.lastPlane.w)) > 1e-7) {
-          const section = sectionGeometry(row.source.geometry, localPlane, row.source.geometry.userData.sectionClosed === true);
+          const section = sectionGeometry(row.source.geometry, localPlane, allowSolidCaps && row.source.geometry.userData.sectionClosed === true);
           row.cap.geometry.dispose(); row.contour.geometry.dispose();
           row.cap.geometry = section.cap ?? new THREE.BufferGeometry(); row.contour.geometry = section.contour ?? new THREE.BufferGeometry();
           row.cap.userData.openChains = section.openChains; row.cap.userData.closedLoops = section.closedLoops;

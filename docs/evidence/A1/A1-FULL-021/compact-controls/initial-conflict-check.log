@@ -1,0 +1,25 @@
+$ pnpm typecheck && pnpm check:boundaries && pnpm test && pnpm build
+$ tsc --noEmit
+src/team-a/viewer/champagne-gallery.ts(56,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(86,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(104,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(111,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(114,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(116,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(127,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(146,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(148,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(156,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(160,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(162,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(178,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(180,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/champagne-gallery.ts(182,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/lab-viewer.ts(165,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/lab-viewer.ts(168,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/lab-viewer.ts(172,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/lab-viewer.ts(898,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/lab-viewer.ts(910,1): error TS1185: Merge conflict marker encountered.
+src/team-a/viewer/lab-viewer.ts(916,1): error TS1185: Merge conflict marker encountered.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.
