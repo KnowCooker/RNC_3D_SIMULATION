@@ -39,10 +39,10 @@ export function mountCabinFieldPanel(root: HTMLElement, viewer: ReturnType<typeo
     const ready=!hud.hidden&&viewer.hasValidField;
     empty.hidden=ready;canvases.forEach(canvas=>{canvas.hidden=!ready;});
     if(!ready){lastKey='';card.querySelector('.cp-cabin-frame')!.textContent='';return;}
-    if(root.dataset.page!=='field'||root.dataset.fieldPanel!=='field'||document.hidden)return;
+    if(root.dataset.page!=='field'||root.dataset.fieldPanel!=='field'||panel.dataset.collapsed==='true'||document.hidden)return;
     if(previewState().key===lastKey||pending)return;
     pending=requestAnimationFrame(()=>{
-      pending=0;if(disposed||document.hidden||root.dataset.page!=='field'||root.dataset.fieldPanel!=='field'||hud.hidden||!viewer.hasValidField){lastKey='';return;}
+      pending=0;if(disposed||document.hidden||panel.dataset.collapsed==='true'||root.dataset.page!=='field'||root.dataset.fieldPanel!=='field'||hud.hidden||!viewer.hasValidField){lastKey='';return;}
       // Selectors or weighting may change more than once before this paint.
       const {q,axis,key}=previewState();
       const nextCanvas=1-activeCanvas;
@@ -64,6 +64,7 @@ export function mountCabinFieldPanel(root: HTMLElement, viewer: ReturnType<typeo
   card.querySelector<HTMLButtonElement>('.cp-cabin-reset')!.onclick=()=>{viewer.setStage('gallery');viewer.setPresentationView('field');};
   const observer=new MutationObserver(sync);observer.observe(hud,{attributes:true,attributeFilter:['hidden','data-time','data-weighting','data-quantity','data-range','data-rendering']});
   observer.observe(root,{attributes:true,attributeFilter:['data-page','data-field-panel']});
+  observer.observe(panel,{attributes:true,attributeFilter:['data-collapsed']});
   document.addEventListener('visibilitychange',sync);
   sync();
   return {

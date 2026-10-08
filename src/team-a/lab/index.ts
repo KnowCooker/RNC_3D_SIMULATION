@@ -6,6 +6,7 @@ import { Player, prepareLabPlayback } from '../player';
 import { LivePlayer } from '../player/live-player';
 import { createLabViewer } from '../viewer/lab-viewer';
 import { captureCase, compareCases, comparisonLabel, type ComparisonPolicy, type CaseSnapshot } from './case-compare';
+import { caseVisualsMarkup } from './case-visuals';
 import { CASE_EVIDENCE_BOUNDARY, CASE_EVIDENCE_MAX_BYTES, createCaseEvidence, parseCaseEvidence } from './case-evidence';
 import { reviewCase } from './case-review';
 import { guideState, isFieldAtComparisonWindow, type GuideStage } from './guide-state';
@@ -120,7 +121,7 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
   function renderCase() {
     const mode = comparisonMode();
     $('case-policy').textContent = mode === 'control' ? '固定车型、声源、种子、路面、车速、轮胎/温度与时间窗；允许改变参考布置、扬声器启禁、系数数、步长和RNC开关。' : '允许工况不同，明确列出差异；仍固定车型/布局、采样率和时间窗。数值仅描述场景差异，不代表ANC净收益。';
-    presentation?.updateCases(caseBaseline, candidateCase());
+    presentation?.updateCases(caseBaseline, candidateCase(), mode);
     const state = $('case-state'), output = $('case-results');
     const reviewOutput = $('case-review-current'); reviewOutput.replaceChildren(); reviewOutput.hidden = true;
     const save = $<HTMLButtonElement>('case-save'), clear = $<HTMLButtonElement>('case-clear');
@@ -168,7 +169,9 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
     }
     const sourceNote = caseBaseline.config.sourceMode === 'recorded-noise' ? '实录仅为四轮等效声源' : '随机声源按实录谱形整形';
     const note = document.createElement('p'); note.textContent = `物理布局 ${labLayoutId(caseBaseline.config)}；原声/残余：dBA；改善/差值：dB。B−A 残余正值表示候选更吵，${mode === 'control' ? 'B−A 改善正值表示同工况下候选降噪量更大。' : 'B−A 改善仅表示各场景降噪量的差异，不归因于控制方案。'}A、B 均为末尾 ${caseBaseline.windowEndSeconds.toFixed(1)} s 的 0.5 秒窗，A 计权、0–1 kHz；${sourceNote}，声压为教学尺度。基线仅保存在当前页面，刷新后清除。`;
-    output.append(table, note); output.hidden = false;
+    const raw = document.createElement('details'); raw.className = 'cp-case-details';
+    const rawTitle = document.createElement('summary'); rawTitle.textContent = '逐座位原始数值与比较口径';
+    raw.append(rawTitle, table, note); output.append(raw); output.hidden = false;
   }
   function currentGuideStage(): ReturnType<typeof guideState> {
     return guideState({ realtime, busy, config, currentRunId: result?.runId ?? null, currentValid: !!result && !halted,
@@ -697,7 +700,13 @@ export function mountLab(root: HTMLElement, ports: LabPorts) {
       }
       const notes = document.createElement('p'); notes.className = 'lab-review-human'; notes.textContent = `人工观察：${evidence.observation || '未填写'}\n人工解释（待验证）：${evidence.interpretation || '未填写'}\n临时行动：${evidence.decision || '未填写'}\n待补测事项：${evidence.nextCheck || '未填写'}`;
       const boundary = document.createElement('p'); boundary.textContent = CASE_EVIDENCE_BOUNDARY;
-      output.append(heading, provenance, summary, reviewOutput, table, notes, boundary); output.hidden = false;
+      const graphics = document.createElement('section'); graphics.className = 'cp-case-imported-graphics';
+      graphics.setAttribute('aria-label', '导入文件自报的方案图表，未在本机重算');
+      graphics.innerHTML = caseVisualsMarkup(evidence.baseline, evidence.candidate, evidence.comparisonMode ?? 'legacy');
+      const graphSource = document.createElement('p'); graphSource.textContent = '以下图表使用导入文件自报数值，未在本机重算；不代表当前正在运行的实验。';
+      const raw = document.createElement('details'); raw.className = 'cp-case-details';
+      const rawTitle = document.createElement('summary'); rawTitle.textContent = '导入文件的原始数值';raw.append(rawTitle,table);
+      output.append(heading, provenance, graphSource, graphics, summary, reviewOutput, raw, notes, boundary); output.hidden = false;
       $('case-evidence-state').textContent = unknownLayout
         ? `已只读导入 ${file.name}；文件未经签名验证且含当前版本未接入的物理布局，仅显示文件自报读数，不复算或比较，不改变当前实验。`
         : `已导入 ${file.name}；文件内容未经签名验证，仅供只读复核，不改变当前实验。`;

@@ -1,6 +1,8 @@
 import { drawSignalComparison, plot } from './plots';
 import { registeredVehicleLayout, type LabAnalysis } from '../../shared/lab-contracts';
-import type { CaseSnapshot } from './case-compare';
+import type { CaseSnapshot, ComparisonPolicy } from './case-compare';
+import { caseVisualsMarkup } from './case-visuals';
+import { DRIVING_ENVIRONMENTS, drivingEnvironmentMarkup, mountPanelDisclosure, observationDockMarkup, observationMode } from './workspace-controls';
 import type { createLabViewer } from '../viewer/lab-viewer';
 import type { XPengId } from '../viewer/xpeng-catalog';
 import type { GalleryEnvironment } from '../viewer/champagne-gallery';
@@ -14,6 +16,8 @@ import './champagne-workspace.css';
 import { mountPassengerPanel } from './passenger-panel';
 import { mountCabinFieldPanel } from './cabin-field-panel';
 import './cabin-field.css';
+import './workspace-controls.css';
+import './case-visuals.css';
 
 type Page = 'overview' | 'field' | 'structure' | 'compare';
 /** Rehomes existing controls; one experiment, one viewer and one transport across pages. */
@@ -81,8 +85,11 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   const workflow=element('<div class="cp-case-workflow"><ol aria-label="方案比较步骤"><li>01 计算并保存 A</li><li>02 修改并计算 B</li><li>03 复核与导出</li></ol><div class="lab-case-actions"><button id="lab-case-run" class="lab-primary">结束实时并计算基线 A</button><button class="cp-case-configure">调整候选参数</button></div><small id="lab-case-next-note">实时记录不会直接作为比较基线；以当前配置重新计算完整实验。</small></div>');
   get('case').prepend(workflow);
   const caseCards = element('<div class="cp-case-pair"><article data-case="A"><span>方案 A / 基线</span><h3>等待保存基线</h3><div class="cp-case-seats"></div><small>运行一次预计算实验，再保存基线。</small></article><article data-case="B"><span>方案 B / 候选</span><h3>等待候选实验</h3><div class="cp-case-seats"></div><small>调整一个设计因素后，重新计算。</small></article></div>');
-  workflow.after(caseCards);
-  q<HTMLButtonElement>('.cp-case-configure').onclick=()=>{showSettingsPanel('algorithm');openDialog('.cp-settings');};
+  const caseGraphics=element('<div class="cp-case-graphics"></div>');
+  get('case-state').after(caseGraphics);
+  const caseDetails=element('<details class="cp-case-details"><summary>实验身份与数值摘要</summary></details>');caseDetails.append(caseCards);caseGraphics.after(caseDetails);
+  let caseMode:ComparisonPolicy='control';
+  q<HTMLButtonElement>('.cp-case-configure').onclick=()=>{showSettingsPanel(caseMode==='control'?'algorithm':'conditions');openDialog('.cp-settings');};
   q('.cp-bottom-bar').append(root.querySelector('.lab-player')!);
   const micReadings=element('<div class="cp-mic-readings" aria-label="四座位当前实验读数"></div>');micReadings.append(get('metrics'));q('.cp-field-tools').before(micReadings);
   q('.cp-readings').append(root.querySelector('.lab-field-note')!, get('field-evidence'));
@@ -90,15 +97,36 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   if(viewTools[0]) q('.cp-structure-controls').append(viewTools[0]);
   if(viewTools[1]) q('.cp-field-tools').append(viewTools[1]);
   q('.cp-readings').prepend(get('viewer').querySelector('.lab-field-hud')!);
-  const driveModes=element('<div class="cp-drive-modes" aria-label="实验观察模式"><button data-stage="gallery">展厅声场</button><button data-stage="road">道路行驶</button><button data-stage="inspect">行驶声场</button><label>行驶环境<select aria-label="行驶环境"><option value="coast">田野公路</option><option value="mountain">山地</option><option value="desert">沙漠</option><option value="snow">雪山</option></select></label></div>');
-  q('.cp-observation-panel').append(driveModes,get('viewer').querySelector('.lab-driving-controls')!);
+  const driveModes=element(observationDockMarkup()),drivingEnvironments=element(drivingEnvironmentMarkup());
+  q('.cp-bottom-bar').prepend(driveModes);q('.cp-stage').append(drivingEnvironments);
+  q('.cp-observation-panel').append(get('viewer').querySelector('.lab-driving-controls')!);
   const extraViews=element('<div class="lab-view-tools" aria-label="传播示意"></div>');extraViews.append(get('paths').closest('label')!,get('waves').closest('label')!);q('.cp-observation-panel').append(extraViews);
   root.dataset.fieldPanel='field';
   const showPanel=(name:string)=>{root.dataset.fieldPanel=name;shell.querySelectorAll<HTMLButtonElement>('[data-panel]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.panel===name)));requestAnimationFrame(redraw);};
   shell.querySelectorAll<HTMLButtonElement>('[data-panel]').forEach(button=>button.onclick=()=>showPanel(button.dataset.panel!));
-  driveModes.querySelectorAll<HTMLButtonElement>('[data-stage]').forEach(b=>b.onclick=()=>{if(b.dataset.stage==='gallery'){viewer.setStage('gallery');viewer.setPresentationView('field');}else if(b.dataset.stage==='inspect')q<HTMLButtonElement>('[data-drive-analysis]').click();else{const overlay=q<HTMLButtonElement>('[data-drive-overlay]');if(overlay.getAttribute('aria-pressed')==='true')overlay.click();viewer.setStage('road');q<HTMLButtonElement>('[data-view="orbit"]').click();}});
-  driveModes.querySelector<HTMLSelectElement>('select')!.onchange=e=>viewer.setEnvironment((e.target as HTMLSelectElement).value as GalleryEnvironment);
-  const driveObserver=new MutationObserver(()=>{const stage=get('viewer').dataset.stage;sceneSettings.querySelector<HTMLSelectElement>('[aria-label="道路材质与声学预设"]')!.value=get('viewer').dataset.roadSurface??'smooth';root.dataset.stage=stage??'';q('.cp-footer-note').firstChild!.textContent=stage==='road'?'仿真道路 / ':'湖畔展厅 / ';sceneSettings.querySelector<HTMLSelectElement>('[aria-label="展示场景"]')!.value=stage??'gallery';driveModes.querySelectorAll<HTMLButtonElement>('[data-stage]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.stage==='gallery'?stage==='gallery':stage==='road'&&(b.dataset.stage==='inspect')===(get('viewer').dataset.drivingOverlay==='true'))));});
+  driveModes.querySelectorAll<HTMLButtonElement>('[data-observation]').forEach(b=>b.onclick=()=>{
+    navigate('field');
+    if(b.dataset.observation==='gallery'){viewer.setStage('gallery');viewer.setPresentationView('field');showPanel('field');}
+    else if(b.dataset.observation==='inspect'){q<HTMLButtonElement>('[data-drive-analysis]').click();showPanel('field');}
+    else{const overlay=q<HTMLButtonElement>('[data-drive-overlay]');if(overlay.getAttribute('aria-pressed')==='true')overlay.click();viewer.setStage('road');q<HTMLButtonElement>('[data-view="orbit"]').click();showPanel('observe');}
+    syncDriveControls();
+  });
+  drivingEnvironments.querySelectorAll<HTMLButtonElement>('[data-driving-env]').forEach(b=>b.onclick=()=>viewer.setEnvironment(b.dataset.drivingEnv as GalleryEnvironment));
+  function syncDriveControls(){
+    const data=get('viewer').dataset,stage=data.stage,mode=observationMode(stage,data.drivingOverlay),env=data.environment??'coast';
+    root.dataset.stage=stage??'';
+    root.dataset.environment=env;
+    sceneSettings.querySelector<HTMLSelectElement>('[aria-label="道路材质与声学预设"]')!.value=data.roadSurface??'smooth';
+    sceneSettings.querySelector<HTMLSelectElement>('[aria-label="展示场景"]')!.value=stage??'gallery';
+    q('.cp-footer-note').firstChild!.textContent=stage==='road'?'仿真道路 / ':'湖畔展厅 / ';
+    driveModes.querySelectorAll<HTMLButtonElement>('[data-observation]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.observation==='road'?stage==='road':b.dataset.observation===mode)));
+    drivingEnvironments.hidden=root.dataset.page!=='field'||stage!=='road';
+    drivingEnvironments.querySelectorAll<HTMLButtonElement>('[data-driving-env]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.drivingEnv===env)));
+    const name=DRIVING_ENVIRONMENTS.find(([id])=>id===env)?.[1]??'田野公路';
+    drivingEnvironments.querySelector('.cp-driving-current')!.textContent=`${name} · ${data.environmentFailed==='true'?'基础景物 / 高清加载失败':data.environmentReady?'当前环境':'加载中…'}`;
+    drivingEnvironments.setAttribute('aria-busy',String(!data.environmentReady&&data.environmentFailed!=='true'));
+  }
+  const driveObserver=new MutationObserver(syncDriveControls);
   const driveSeat=(e:Event)=>{const channel=(e as CustomEvent<{channel:number|null}>).detail.channel;if(channel!==null){get<HTMLSelectElement>('seat').value=String(channel);get('seat').dispatchEvent(new Event('change'));}};
   get('viewer').addEventListener('driving-view-change',driveSeat);
   driveObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-stage','data-road-surface','data-driving-overlay']});
@@ -106,6 +134,12 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   get<HTMLSelectElement>('field-slice').options[0].textContent='连续三维声场';
   q('.cp-charts').append(root.querySelector('.lab-plots')!);
   const cabinField=mountCabinFieldPanel(root,viewer);
+  const disclosures=[mountPanelDisclosure(q('.cp-field-panel'),'声场实验','cp-field-panel-body',redraw),mountPanelDisclosure(get('viewer').querySelector<HTMLElement>('.lab-showroom-panel')!,'结构与布置','cp-structure-panel-body',redraw),mountPanelDisclosure(q('.cp-structure-tools'),'结构工具','cp-structure-tools-body',redraw)];
+  const dockResize=new ResizeObserver(()=>{
+    const height=q('.cp-bottom-bar').getBoundingClientRect().height;
+    if(height>0)root.style.setProperty('--cp-dock-clearance',`${Math.ceil(height)+40}px`);
+    root.style.setProperty('--cp-header-height',`${Math.ceil(q('.cp-header').getBoundingClientRect().height)}px`);
+  });dockResize.observe(q('.cp-bottom-bar'));dockResize.observe(q('.cp-header'));
   // Preserve hidden controls referenced by existing event closures without duplicate IDs.
   const retained = element('<div hidden></div>');
   for (const id of ['controls-toggle','controls-close']) retained.append(get(id));
@@ -164,7 +198,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     if(next==='field' && viewer.acousticAvailable) { get<HTMLSelectElement>('field').value=rememberedField; get('field').dispatchEvent(new Event('change')); }
     if(next==='field') shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='field')));
     if(next==='overview') shell.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String((el as HTMLElement).dataset.mode==='solid')));
-    navigating=false; syncAsset(); requestAnimationFrame(redraw);
+    navigating=false; syncAsset();syncDriveControls(); requestAnimationFrame(redraw);
     if(changed&&navigated){const selectors=next==='overview'?['.cp-hero','.cp-field-card','.cp-summary-cards','.cp-environments']:next==='field'?['.cp-work-title','.cp-field-panel']:next==='structure'?['.cp-structure-tools']:['.cp-work-title','.cp-comparison'];selectors.forEach((selector,i)=>animatePanel(q(selector),false,i*25));}
     navigated=true;
   }
@@ -172,7 +206,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
   shell.querySelectorAll<HTMLButtonElement>('.cp-header [data-page]').forEach(b=>b.onclick=()=>navigate(b.dataset.page as Page));
   shell.querySelectorAll<HTMLButtonElement>('[data-go]').forEach(b=>b.onclick=()=>openRealField());
   q<HTMLAnchorElement>('.cp-brand').onclick = e => { e.preventDefault(); navigate('overview'); };
-  shell.querySelectorAll<HTMLButtonElement>('.cp-settings-button').forEach(b=>b.onclick=()=>{showSettingsPanel('conditions');openDialog('.cp-settings');});
+  shell.querySelectorAll<HTMLButtonElement>('.cp-settings-button').forEach(b=>b.onclick=()=>{showSettingsPanel(b.closest('.cp-structure-tools')?'algorithm':'conditions');openDialog('.cp-settings');});
   q<HTMLButtonElement>('.cp-more').onclick=()=>openDialog('.cp-help');
   shell.querySelectorAll<HTMLButtonElement>('[data-close]').forEach(b=>b.onclick=()=>closeDialog(b.closest('dialog')!));
   shell.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog=>dialog.addEventListener('cancel',event=>{event.preventDefault();closeDialog(dialog);}));
@@ -261,7 +295,7 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     environmentStatus.hidden=ready&&!failed;retryEnvironment.hidden=!failed;
     environmentStatus.querySelector('span')!.textContent=failed?'高清环境加载失败，当前使用基础景物。':'正在加载高清环境…';
     q('.cp-environments').setAttribute('aria-busy',String(!ready&&!failed));
-    const env=get('viewer').dataset.environment as GalleryEnvironment|undefined;if(env){driveModes.querySelector<HTMLSelectElement>('select')!.value=env;shell.querySelectorAll<HTMLButtonElement>('[data-env]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.env===env)));q('.cp-footer-note span').textContent=({coast:get('viewer').dataset.stage==='road'?'田野公路':'海岸',mountain:'山地',desert:'沙漠',snow:'雪山'})[env];}
+    const env=get('viewer').dataset.environment as GalleryEnvironment|undefined;if(env){shell.querySelectorAll<HTMLButtonElement>('[data-env]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.env===env)));q('.cp-footer-note span').textContent=({coast:get('viewer').dataset.stage==='road'?'田野公路':'海岸',mountain:'山地',desert:'沙漠',snow:'雪山'})[env];}syncDriveControls();
   });environmentObserver.observe(get('viewer'),{attributes:true,attributeFilter:['data-environment-ready','data-environment-failed','data-environment','data-stage']});
   q<HTMLButtonElement>('.cp-stop').disabled = true;
   q('.cp-run-status').textContent = get('status').textContent;
@@ -275,7 +309,8 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
     showSignal() { openDialog('.cp-paths-dialog'); },
     showPage(next: Page) {shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());navigate(next);},
     showSettings() {shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());showSettingsPanel('conditions');openDialog('.cp-settings');},
-    updateCases(base: CaseSnapshot | null, candidate: CaseSnapshot | null) {
+    updateCases(base: CaseSnapshot | null, candidate: CaseSnapshot | null, mode:ComparisonPolicy='control') {
+      caseMode=mode;caseGraphics.innerHTML=caseVisualsMarkup(base,candidate,mode);
       [base,candidate].forEach((value,index)=>{
         const card=caseCards.children[index] as HTMLElement;
         card.dataset.ready=String(!!value);
@@ -285,6 +320,6 @@ export function createChampagneShell(root: HTMLElement, viewer: ReturnType<typeo
         card.querySelector('article>small')!.textContent=value ? `dBA · ${registeredVehicleLayout(value.config.layoutId)?.name ?? value.config.vehicle} · ${value.config.speedKph} km/h · 实验 ${value.runId.slice(0,8)}` : index ? '调整一个设计因素后，重新计算。' : '运行一次预计算实验，再保存基线。';
       });
     },
-    dispose() {passengerPanel?.dispose();cabinField.dispose();previewResize.disconnect();overviewMotion.dispose();events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
+    dispose() {disclosures.forEach(d=>d.dispose());dockResize.disconnect();passengerPanel?.dispose();cabinField.dispose();previewResize.disconnect();overviewMotion.dispose();events.abort();get('viewer').removeEventListener('driving-view-change',driveSeat);driveObserver.disconnect();uiAnimations.forEach(a=>a.cancel());uiAnimations.clear();observer.disconnect();environmentObserver.disconnect();shell.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(d=>d.close());},
   };
 }
