@@ -271,7 +271,7 @@ export function createP7PlusModel(): ShowroomModel {
   const floor = part('platform', 'P7+ 乘员舱地板 / 门槛纵梁', [0, .04, -1.25]);
   box(floor, [1.65, .055, 4.30], [0, .378, -.03], lining, .025);
   for (const side of [-1, 1]) box(floor, [.09, .085, 3.20], [side * .65, .31, 0], gunmetal);
-  for (const [row, count, z] of [[1, 2, .48], [2, 3, -.72]]) for (let n = 0; n < count; n++) {
+  for (const [row, count, z] of [[1, 2, .34], [2, 3, -.72]]) for (let n = 0; n < count; n++) {
     const x = count === 2 ? (n ? -.465 : .465) : (1 - n) * .49, w = count === 2 ? .475 : .455;
     const seat = part(`seat-${row}-${n + 1}`, `P7+ ${row}排 ${n + 1}座`, [x * 1.8, .9 + .3 * (row - 1), -.13 * (row - 1)]); seat.userData.seatRow = row;
     const cushion=mesh(seat,upholsterySurface(w,.13,.49,'cushion'),leather,[x,.565,z]);cushion.name='contoured-seat-cushion';

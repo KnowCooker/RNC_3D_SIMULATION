@@ -293,7 +293,9 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
   const floor = part('platform', '地板 / 纵梁 · 结构示意', [0, .04, -1.3]);
   box(floor, [s.width - .26, .05, s.length - .72], [0, .405, -.12], black, .02).name='cabin-floor';
   for (const side of [-1, 1]) box(floor, [.09, .1, s.wheelbase + .25], [side * .765, .30, 0], darkAlloy);
-  const rowZ = id==='x9'?[.83,-.43,-1.52]:id==='gx'?[.66,-.48,-1.50]:[.45,-.72];
+  // Keep a seated torso behind the steering wheel; GX's old .66 placed the hip beside it.
+  const frontSeatZ = s.screenFront - .92;
+  const rowZ = id==='x9'?[frontSeatZ,-.43,-1.52]:id==='gx'?[frontSeatZ,-.48,-1.50]:[frontSeatZ,-.72];
   s.rows.forEach((count, row) => {
     for (let seat = 0; seat < count; seat++) {
       const x = count === 2 ? (seat ? -.48 : .48) : (1 - seat) * .48;
@@ -321,7 +323,8 @@ function createDetailedXPengModel(id: Exclude<XPengId,'p7plus'>): ShowroomModel 
         tube(chair,[[x-w*.28,yy,z-.149],[x,yy+.006,z-.139],[x+w*.28,yy,z-.149]],.0014,seam);
       }
       box(chair,[.035,.07,.024],[x-w*.55,.68,z-.14],black,.007);
-      if(s.rows.length===3&&row===1){const leg=box(chair,[w*.87,.075,.29],[x,.555,z+.29],leather,.027);leg.rotation.x=-.16;}
+      // Upright travel pose: the leg support is stowed under the cushion, clear of shins.
+      if(s.rows.length===3&&row===1)box(chair,[w*.87,.075,.29],[x,.51,z+.06],leather,.027).name='stowed-leg-support';
 
     }
   });

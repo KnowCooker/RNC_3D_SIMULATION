@@ -20,8 +20,9 @@ for(const spec of xpengCatalog.filter(s=>s.id!=='p7plus')){
   });
   test(`${spec.id}: interior ray picking and sampled disassembly restore world transforms`,()=>{
     const model=createXPengModel(spec.id);model.group.updateMatrixWorld(true);
-    const seat=model.group.getObjectByName('seat-1-1')!,centre=new THREE.Box3().setFromObject(seat).getCenter(new THREE.Vector3());
-    const ray=new THREE.Raycaster(new THREE.Vector3(centre.x,3,centre.z-.06),new THREE.Vector3(0,-1,0));
+    const seat=model.group.getObjectByName('seat-1-1')!,centre=seat.getObjectByName('contoured-seat-cushion')!.getWorldPosition(new THREE.Vector3());
+    // Aim at the actual cushion; an assembly-box offset can fall on the roof crossmember after seat adjustment.
+    const ray=new THREE.Raycaster(new THREE.Vector3(centre.x,3,centre.z+.05),new THREE.Vector3(0,-1,0));
     model.inspection.setBody('hidden');const picked=model.inspection.pick(ray);assert.ok(picked);assert.equal(model.partForObject(picked.object),'seat-1-1');
     model.inspection.setSection('x',centre.x+.1);assert.equal(model.inspection.pick(ray),undefined);
     model.inspection.setSection('none',0);model.inspection.setBody('solid');

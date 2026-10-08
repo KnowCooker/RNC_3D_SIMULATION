@@ -3,7 +3,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 /** Lightweight authored fallback silhouettes; detailed local assets replace these asynchronously.
  * Rigid head/eye animation only. These meshes are not a deformable facial rig. */
-export function createCrewPassenger(id: 'chopper' | 'nami' | 'zoro', driver: boolean) {
+export function createCrewPassenger(id: 'chopper' | 'nami' | 'zoro' | 'robin', driver: boolean) {
   const group = new THREE.Group(); group.name = `passenger-${id}`;
   group.userData = { passengerId: id, visualOnly: true, driver, assetStatus: 'basic' };
   const body = new THREE.Group(), head = new THREE.Group(), clothing = new THREE.Group();
@@ -12,8 +12,9 @@ export function createCrewPassenger(id: 'chopper' | 'nami' | 'zoro', driver: boo
   type V = [number, number, number];
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.MeshStandardMaterial>();
   const mat = (color: string, roughness = .7) => { const m = new THREE.MeshStandardMaterial({ color, roughness }); materials.add(m); return m; };
-  const skin = mat(id === 'chopper' ? '#cd9c58' : id === 'nami' ? '#f1cdb6' : '#d9ae89');
-  const hair = mat(id === 'nami' ? '#d87d26' : '#678e48'), dark = mat('#383632'), white = mat('#f8f3e8');
+  const female = id === 'nami' || id === 'robin';
+  const skin = mat(id === 'chopper' ? '#cd9c58' : female ? '#f1cdb6' : '#d9ae89');
+  const hair = mat(id === 'robin' ? '#242d3b' : id === 'nami' ? '#d87d26' : '#678e48'), dark = mat('#383632'), white = mat('#f8f3e8');
   const blue = mat('#4c83ab'), green = mat('#448a70'), pink = mat('#cb7397'), gold = mat('#bf9341', .4);
   const sphere = new THREE.SphereGeometry(1, 24, 18); geometries.add(sphere);
   function mesh(parent: THREE.Object3D, geo: THREE.BufferGeometry, material: THREE.Material, p: V = [0,0,0]) {
@@ -35,6 +36,11 @@ export function createCrewPassenger(id: 'chopper' | 'nami' | 'zoro', driver: boo
     ell(clothing, [0,.21,0], [.133,.17,.08], white);
     ell(clothing, [0,.073,.013], [.13,.041,.095], green);
     for (const y of [.05,.067,.084]) strand(clothing, [[-.115,y,.06],[0,y,.107],[.115,y,.06]], .0015, dark);
+  }
+  if (id === 'robin') {
+    for (const s of [-1,1]) ell(clothing,[s*.08,.24,0],[.058,.13,.08],blue);
+    ell(clothing,[0,.025,.105],[.145,.048,.18],pink);
+    for (const s of [-1,1]) strand(clothing,[[s*.075,.05,.20],[s*.08,-.09,.255],[s*.08,-.15,.28]],.053,pink);
   }
   for (const s of [-1,1]) {
     const y = deer ? .23 : .33, elbow: V = [s * .166,driver ? .19 : .135,.13], wrist: V = [s * .12,driver ? .28 : .07,driver ? .30 : .24];
@@ -72,10 +78,11 @@ export function createCrewPassenger(id: 'chopper' | 'nami' | 'zoro', driver: boo
     ell(head,[0,-.018,.091],[.008,.016,.009],skin);
     strand(head,[[-.022,-.062,.084],[0,-.066,.094],[.022,-.060,.084]],.002,mat('#a96758'));
     const cap = mesh(head,new THREE.SphereGeometry(1,28,20,0,Math.PI*2,0,Math.PI*.55),hair,[0,.024,-.008]);cap.scale.set(.115,.143,.102);
-    if (id === 'nami') {
+    if (female) {
       for (let i=0;i<11;i++) {const a=i/10*Math.PI;strand(head,[[Math.cos(a)*.10,.08,-.01-Math.sin(a)*.06],[Math.cos(a)*.125,-.075,-.03-Math.sin(a)*.07],[Math.cos(a)*.115,-.23,-.02-Math.sin(a)*.07]],.018,hair);}
       for (let i=0;i<5;i++) strand(head,[[.065-i*.022,.13,.04],[-.008-i*.021,.078,.086],[-.035-i*.015,.008,.083]],.014,hair);
-      const tattoo=mat('#465995');strand(body,[[.14,.31,.026],[.155,.275,.036],[.137,.257,.035]],.003,tattoo);
+      if(id === 'nami'){const tattoo=mat('#465995');strand(body,[[.14,.31,.026],[.155,.275,.036],[.137,.257,.035]],.003,tattoo);}
+      else for(const s of [-1,1]){const lens=ell(head,[s*.05,.133,.076],[.04,.018,.008],gold);lens.rotation.z=s*-.2;}
     } else {
       for (let i=0;i<14;i++) {const a=i/14*Math.PI*2; const geo=new THREE.ConeGeometry(.024,.07,5);const o=mesh(head,geo,hair,[Math.cos(a)*.078,.145,Math.sin(a)*.06]);o.rotation.z=-Math.cos(a)*.3;}
       for (let i=0;i<3;i++) {const ring=mesh(head,new THREE.TorusGeometry(.009,.0025,5,12),gold,[.111+i*.006,-.035-i*.006,.008]);ring.rotation.y=.4;}

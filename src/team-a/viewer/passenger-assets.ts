@@ -8,7 +8,7 @@ export type PassengerModel = ReturnType<typeof createPassengerModel>;
  * Instances own geometry/materials; textures belong to the library until disposal. */
 export function createPassengerAssetLibrary(loadSource: (key: string) => Promise<THREE.Group> = async key => {
   const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
-  return (await new GLTFLoader().loadAsync(`${import.meta.env.BASE_URL}passengers-local/${key}.glb`)).scene;
+  return (await new GLTFLoader().loadAsync(`${import.meta.env.BASE_URL}passengers-local/${key}.glb?v=crew4`)).scene;
 }) {
   const cache = new Map<string, Promise<THREE.Group>>();
   let disposed = false;

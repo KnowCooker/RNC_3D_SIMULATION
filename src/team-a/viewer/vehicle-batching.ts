@@ -6,6 +6,22 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
  */
 export function batchVehicleParts(root:THREE.Group,shell:THREE.Mesh[],resources:Set<THREE.BufferGeometry>) {
   const exterior=new Set(shell);
+  // Capture individual solid interior envelopes before disconnected pieces are merged.
+  // They remain in assembled vehicle coordinates, independent of explode/display state.
+  for (const part of root.children) {
+    const boxes: { min: number[]; max: number[]; name: string; torus?: { radius:number; tube:number; inverse:number[]; scale:number } }[] = [];
+    part.updateWorldMatrix(true, true);
+    part.traverse(o => {
+      if (!(o instanceof THREE.Mesh) || exterior.has(o) || o.geometry.type === 'TubeGeometry') return;
+      const box = new THREE.Box3().setFromBufferAttribute(o.geometry.getAttribute('position') as THREE.BufferAttribute);
+      const matrix = part.matrixWorld.clone().invert().multiply(o.matrixWorld); box.applyMatrix4(matrix);
+      const size = box.getSize(new THREE.Vector3());
+      if (Math.min(size.x,size.y,size.z) < .012) return;
+      const torus=o.geometry instanceof THREE.TorusGeometry?{radius:o.geometry.parameters.radius,tube:o.geometry.parameters.tube,inverse:matrix.clone().invert().toArray(),scale:matrix.getMaxScaleOnAxis()}:undefined;
+      boxes.push({ min: box.min.toArray(), max: box.max.toArray(), name: o.name || o.geometry.type, torus });
+    });
+    part.userData.passengerClearance = boxes;
+  }
   for(const part of root.children){
     const buckets=new Map<string,THREE.Mesh[]>();
     for(const object of part.children){

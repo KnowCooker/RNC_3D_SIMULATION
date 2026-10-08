@@ -45,7 +45,7 @@ test('A1 passengers: independent seats allow duplicates; per-vehicle preferences
   assert.equal(Object.values(state.assignments).filter(v => v === 'niulai').length, 2);
   assert.equal(state.choose('seat-1-1', 'luffy'), false); assert.equal(state.choose(seats[0].id, 'unknown' as never), false);
   state.bind('m03', seats); assert.deepEqual(Object.values(state.assignments), [null, null]);
-  state.choose(seats[0].id, 'ayaka'); state.bind('gx', seats); assert.deepEqual(Object.values(state.assignments), ['niulai', 'niulai']);
+  state.choose(seats[0].id, 'robin'); state.bind('gx', seats); assert.deepEqual(Object.values(state.assignments), ['niulai', 'niulai']);
   const snapshot = state.assignments as Record<string, unknown>; snapshot[seats[0].id] = 'luffy'; assert.equal(state.assignments[seats[0].id], 'niulai');
   state.bind('gx', seats.slice(0, 1)); assert.equal(Object.keys(state.assignments).length, 1);
   state.clear(); assert.equal(state.assignments[seats[0].id], null);
@@ -54,7 +54,7 @@ test('A1 passengers: independent seats allow duplicates; per-vehicle preferences
 test('A1 passengers: swap, empty, detach and clip preserve the car and acoustic layout', () => {
   const model = createXPengModel('gx'), cabin = createPassengerCabin(), config = defaultXPengConfig('xpeng-gx');
   const physics = JSON.stringify({ config, layout: labLayout(config) }); cabin.attach(model);
-  const seats = cabin.seats; cabin.setAssignments({ [seats[0].id]: 'niulai', [seats[1].id]: 'ayaka' });
+  const seats = cabin.seats; cabin.setAssignments({ [seats[0].id]: 'niulai', [seats[1].id]: 'robin' });
   const occupant = model.group.getObjectByName('passenger-niulai')!; const parent = occupant.parent!;
   const start = occupant.getWorldPosition(new THREE.Vector3());
   model.setPartProgress(seats[0].id, 1); assert.ok(occupant.getWorldPosition(new THREE.Vector3()).distanceTo(start) > .5);
@@ -62,7 +62,7 @@ test('A1 passengers: swap, empty, detach and clip preserve the car and acoustic 
   cabin.setSection('x', .04); occupant.traverse(o => { if (o instanceof THREE.Mesh) assert.equal((o.material as THREE.Material).clippingPlanes?.[0].constant, -.04); });
   cabin.setVisible(false); assert.equal(occupant.visible, false); cabin.setVisible(true);
   assert.throws(() => cabin.setAssignments({ invalid: 'luffy' })); assert.equal(occupant.parent, parent);
-  cabin.setAssignments({ [seats[0].id]: 'luffy' }); assert.equal(occupant.parent, null); assert.ok(!model.group.getObjectByName('passenger-ayaka'));
+  cabin.setAssignments({ [seats[0].id]: 'luffy' }); assert.equal(occupant.parent, null); assert.ok(!model.group.getObjectByName('passenger-robin'));
   cabin.setAssignments({}); assert.ok(!model.group.getObjectByName('passenger-luffy'));
   assert.equal(JSON.stringify({ config, layout: labLayout(config) }), physics);
   cabin.dispose(); model.dispose();

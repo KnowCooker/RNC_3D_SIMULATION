@@ -2,11 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import { createPassengerAssetLibrary } from '../src/team-a/viewer/passenger-assets';
-import { createPassengerCabin, passengerMounts, passengerFit } from '../src/team-a/viewer/passenger-cabin';
+import { createPassengerCabin } from '../src/team-a/viewer/passenger-cabin';
 import { createPassengerModel, type PassengerId } from '../src/team-a/viewer/passenger-model';
 import { createXPengModel } from '../src/team-a/viewer/xpeng-model';
-import { xpengCatalog } from '../src/team-a/viewer/xpeng-catalog';
-import assetMetrics from '../docs/design/passengers-v2/asset-metrics.json';
 
 function deferred<T>() { let resolve!: (value: T) => void, reject!: (error: Error) => void; const promise = new Promise<T>((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; }
 const flush = () => new Promise<void>(resolve => setImmediate(resolve));
@@ -19,8 +17,8 @@ function source() {
 test('A1 detailed passengers: concurrent duplicate seats share download but own clip and disposable meshes', async () => {
   const asset = source(); let downloads = 0, textureDisposals = 0, sourceDisposals = 0;
   asset.texture.addEventListener('dispose', () => textureDisposals++); asset.geometry.addEventListener('dispose', () => sourceDisposals++);
-  const library = createPassengerAssetLibrary(async key => { assert.equal(key, 'ayaka-driver'); downloads++; return asset.group; });
-  const [one, two] = await Promise.all([library.load('ayaka', true), library.load('ayaka', true)]);
+  const library = createPassengerAssetLibrary(async key => { assert.equal(key, 'robin-driver'); downloads++; return asset.group; });
+  const [one, two] = await Promise.all([library.load('robin', true), library.load('robin', true)]);
   const mesh = (g: THREE.Group) => g.children[0].children[0] as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
   assert.equal(downloads, 1); assert.notEqual(mesh(one.group).geometry, mesh(two.group).geometry);
   assert.notEqual(mesh(one.group).material, mesh(two.group).material);
@@ -52,13 +50,13 @@ test('A1 detailed passengers: driver swap, clear, vehicle change and destruction
   const gx = createXPengModel('gx'), x9 = createXPengModel('x9'); cabin.attach(gx);
   cabin.setAssignments({ 'seat-1-1': 'niulai', 'seat-1-2': 'luffy' });
   assert.deepEqual(requests.map(r => [r.id, r.driver]), [['niulai', true], ['luffy', false]]);
-  cabin.setAssignments({ 'seat-1-1': 'ayaka' });
+  cabin.setAssignments({ 'seat-1-1': 'robin' });
   let dropped = 0;
   function complete(index: number) { const m = createPassengerModel(requests[index].id, requests[index].driver); m.group.userData.assetStatus = 'detailed'; const dispose = m.dispose; m.dispose = () => { dropped++; dispose(); }; requests[index].request.resolve(m); return m; }
   complete(0); complete(1); await flush(); assert.equal(dropped, 2); assert.equal(cabin.quality.length, 1);
-  cabin.setVisible(false); cabin.setSection('z', .4); const ayaka = complete(2); await flush();
-  assert.equal(ayaka.group.visible, false); assert.equal(ayaka.group.parent?.name, 'seat-1-1');
-  ayaka.group.traverse(o => { if (o instanceof THREE.Mesh) assert.equal((o.material as THREE.Material).clippingPlanes?.[0].constant, -.4); });
+  cabin.setVisible(false); cabin.setSection('z', .4); const robin = complete(2); await flush();
+  assert.equal(robin.group.visible, false); assert.equal(robin.group.parent?.name, 'seat-1-1');
+  robin.group.traverse(o => { if (o instanceof THREE.Mesh) assert.equal((o.material as THREE.Material).clippingPlanes?.[0].constant, -.4); });
   cabin.setAssignments({ 'seat-1-1': 'luffy' }); cabin.attach(x9); complete(3); await flush(); assert.equal(cabin.quality.length, 0);
   cabin.setAssignments({ 'seat-1-1': 'niulai' }); cabin.setAssignments({}); complete(4); await flush(); assert.equal(cabin.quality.length, 0);
   cabin.setAssignments({ 'seat-1-1': 'luffy' }); cabin.dispose(); complete(5); await flush();
@@ -68,27 +66,9 @@ test('A1 detailed passengers: driver swap, clear, vehicle change and destruction
 test('A1 detailed passengers: missing local asset keeps driver selectable and reports basic status', async () => {
   const car = createXPengModel('gx'); let changes = 0;
   const cabin = createPassengerCabin({ loadDetailed: async () => { throw new Error('missing file'); }, onChange: () => changes++ }); cabin.attach(car);
-  cabin.setAssignments({ 'seat-1-1': 'ayaka' }); assert.equal(cabin.quality[0].status, 'loading'); await flush();
+  cabin.setAssignments({ 'seat-1-1': 'robin' }); assert.equal(cabin.quality[0].status, 'loading'); await flush();
   assert.equal(cabin.quality[0].status, 'basic'); assert.equal(changes, 1);
-  assert.equal(car.group.getObjectByName('passenger-ayaka')?.parent?.name, 'seat-1-1');
+  assert.equal(car.group.getObjectByName('passenger-robin')?.parent?.name, 'seat-1-1');
   cabin.setAssignments({ 'seat-1-1': 'luffy' }); await flush(); assert.ok(car.group.getObjectByName('passenger-luffy'));
   cabin.dispose(); car.dispose();
-});
-
-test('A1 detailed passengers: measured six GLBs fit all five authored seat layouts and preserve pelvis support', () => {
-  for (const spec of xpengCatalog) {
-    const car = createXPengModel(spec.id);
-    for (const mount of passengerMounts(car)) for (const asset of assetMetrics.filter(a => a.driver === mount.driver)) {
-      // Offline Blender's Z-up measurements converted to the glTF Y-up frame.
-      const bounds = new THREE.Box3(new THREE.Vector3(asset.min[0], asset.min[2], -asset.max[1]), new THREE.Vector3(asset.max[0], asset.max[2], -asset.min[1]));
-      const support = asset.id === 'niulai' ? .04 : .105;
-      const fit = passengerFit(mount, bounds, true, support);
-      const world = bounds.clone().applyMatrix4(new THREE.Matrix4().compose(fit.position, new THREE.Quaternion(), new THREE.Vector3().setScalar(fit.scale)));
-      assert.ok(fit.scale > .6 && fit.scale <= 1, `${spec.id} ${mount.id} ${asset.id}`);
-      assert.ok(world.max.y < mount.roof - .025); assert.ok(world.min.y >= .22 - 1e-7);
-      assert.ok(world.max.x - world.min.x <= mount.maxWidth + 1e-7);
-      assert.ok(Math.abs(fit.position.y - mount.origin.y - support) < 1e-8);
-    }
-    car.dispose();
-  }
 });

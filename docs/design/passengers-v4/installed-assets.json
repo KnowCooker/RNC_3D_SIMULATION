@@ -1,0 +1,62 @@
+[
+  {
+    "file": "chopper-driver.glb",
+    "bytes": 774712,
+    "sha256": "8393db9354f50dcee056c35ffdc7811ac27b531b4267faec814b76acdddeda20"
+  },
+  {
+    "file": "chopper-seated.glb",
+    "bytes": 774648,
+    "sha256": "284d288878aa1cc0ac81792b61cc15d344393900e6793b2a69e323ee7fd4df9b"
+  },
+  {
+    "file": "luffy-driver.glb",
+    "bytes": 13529328,
+    "sha256": "84443936bcc9e99aaaddeba2d645a1d9793e6750fc5f717fdb1e3dea9a796cb0"
+  },
+  {
+    "file": "luffy-seated.glb",
+    "bytes": 13529356,
+    "sha256": "139c38302cf6faee9f906e5bdaf46c036775b9e77c032126df5cbad7f776dca8"
+  },
+  {
+    "file": "nami-driver.glb",
+    "bytes": 10101476,
+    "sha256": "12ff658f6a6f0c2f9b859b1e8667e49d0870f12cb5383b464217ec2a1ee941bb"
+  },
+  {
+    "file": "nami-seated.glb",
+    "bytes": 10101472,
+    "sha256": "87687e87b3a10b24b5beb75dcadb74f73a999a50469df63d47a4732052caa8ed"
+  },
+  {
+    "file": "niulai-driver.glb",
+    "bytes": 4246156,
+    "sha256": "44dd288e824c8888a9927b21232e9d6f5e34aa782460a75e58b5f788b18112d0"
+  },
+  {
+    "file": "niulai-seated.glb",
+    "bytes": 4246156,
+    "sha256": "8139080db6481d54827d4142327c8420411c726085e683808fee4a9994fc0445"
+  },
+  {
+    "file": "robin-driver.glb",
+    "bytes": 591312,
+    "sha256": "eef6ecda85e7b9de2e3c752f795ae3d6f567062e362a70aefee98e73a4a83ee1"
+  },
+  {
+    "file": "robin-seated.glb",
+    "bytes": 591312,
+    "sha256": "3f64e8119044c94caa194ebe5dc70668bb5ce032d47189bbcc6388c5df79cbd0"
+  },
+  {
+    "file": "zoro-driver.glb",
+    "bytes": 1237156,
+    "sha256": "676b923c33ce9c41339e49dcaf5b548fdb6e1dcbe2ecc0ec6af1da38696741c1"
+  },
+  {
+    "file": "zoro-seated.glb",
+    "bytes": 1237168,
+    "sha256": "3116ea1b13638693c6fba49085f2d4184f3e802fb9d0738251a1e9c195a73628"
+  }
+]
