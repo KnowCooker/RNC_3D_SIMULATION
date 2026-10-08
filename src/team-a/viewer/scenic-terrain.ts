@@ -1,29 +1,85 @@
 import * as THREE from 'three';
-import { galleryHeight } from './landscape-height';
+import { createGalleryTerrainGeometry, galleryLandscapePlacements, GALLERY_LANDSCAPE_RADIUS, GALLERY_SHORE_INNER_RADIUS, GALLERY_WATER_LEVEL } from './gallery-landscape';
 import type { GalleryEnvironment } from './champagne-gallery';
 
-/** Original procedural terrain surrounding the pavilion; the HDR is only the
- * distant sky/light source. Every azimuth has actual lit, depth-tested geometry. */
+/** Continuous authored shore and receding foothills. Photography supplies the distant skyline. */
 export function createScenicTerrain() {
   const group=new THREE.Group();group.name='scenic-terrain-360';
   const textureUrl=new URL('./assets/aerial_grass_rock_diff_2k.jpg',import.meta.url).href;
-  const groundMaterial=new THREE.MeshStandardMaterial({color:'#ffffff',vertexColors:true,roughness:.92});
-  const waterMaterial=new THREE.MeshPhysicalMaterial({color:'#254f5a',roughness:.30,metalness:.48,clearcoat:.35,clearcoatRoughness:.19});
-  const rockMaterial=new THREE.MeshStandardMaterial({color:'#929082',roughness:.95});
-  const treeMaterial=new THREE.MeshStandardMaterial({color:'#405843',roughness:1});
+  const groundMaterial=new THREE.MeshStandardMaterial({color:'#ffffff',vertexColors:true,roughness:.94});
+  const waterMaterial=new THREE.MeshPhysicalMaterial({color:'#537e7a',roughness:.25,metalness:.23,clearcoat:.75,clearcoatRoughness:.21,envMapIntensity:.8});
+  const rockMaterial=new THREE.MeshStandardMaterial({color:'#aaa293',roughness:.95});
+  const treeMaterial=new THREE.MeshStandardMaterial({color:'#60725a',roughness:1});
+  const trunkMaterial=new THREE.MeshStandardMaterial({color:'#756956',roughness:1});
+  const grassMaterial=new THREE.MeshStandardMaterial({color:'#93916b',roughness:1,side:THREE.DoubleSide});
+  const panoramaUniforms:Record<string,THREE.IUniform>={
+    galleryPrevious:{value:null},galleryNext:{value:null},galleryHasPrevious:{value:0},galleryHasNext:{value:0},galleryBlend:{value:1},
+    galleryPreviousYaw:{value:0},galleryNextYaw:{value:0},galleryHaze:{value:0},galleryHorizon:{value:new THREE.Color('#c6d1cf')},galleryZenith:{value:new THREE.Color('#9dbbd0')},
+  };
+  // Blend to the same photo ray as the sky, after lighting/tone mapping and before
+  // output encoding. Sharing uniforms also shares transitions and texture lifetime.
+  const scenicMaterials=[groundMaterial,waterMaterial,rockMaterial,treeMaterial,trunkMaterial,grassMaterial];
+  for(const material of scenicMaterials){
+    material.fog=false;
+    material.onBeforeCompile=shader=>{
+      Object.assign(shader.uniforms,panoramaUniforms);
+      shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vGalleryWorld;').replace('#include <begin_vertex>',`#include <begin_vertex>
+        vec4 galleryVertex=vec4(transformed,1.);
+        #ifdef USE_INSTANCING
+          galleryVertex=instanceMatrix*galleryVertex;
+        #endif
+        vGalleryWorld=(modelMatrix*galleryVertex).xyz;
+      `);
+      shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
+        varying vec3 vGalleryWorld;
+        uniform sampler2D galleryPrevious,galleryNext;
+        uniform float galleryHasPrevious,galleryHasNext,galleryBlend,galleryPreviousYaw,galleryNextYaw,galleryHaze;
+        uniform vec3 galleryHorizon,galleryZenith;
+        vec2 galleryPanoUV(vec3 d,float yaw){float c=cos(yaw),s=sin(yaw);d=vec3(c*d.x-s*d.z,d.y,s*d.x+c*d.z);return vec2(fract(atan(d.z,-d.x)/6.28318530718),asin(clamp(d.y,-1.,1.))/3.14159265359+.5);}
+        vec3 galleryPanoSample(sampler2D image,vec2 uv){vec2 dx=dFdx(uv),dy=dFdy(uv);dx.x-=floor(dx.x+.5);dy.x-=floor(dy.x+.5);return texture2DGradEXT(image,uv,dx,dy).rgb;}
+      `).replace('#include <colorspace_fragment>',`
+        ${material===waterMaterial?`
+        // The authored lake reflects the same panorama as the background. Its
+        // normal map bends the reflected ray; grazing views carry more reflection.
+        // This supplies distant reflections without a second full-scene render.
+        if(galleryHasNext>.5){
+          vec3 incident=normalize(vGalleryWorld-cameraPosition);
+          vec3 worldNormal=inverseTransformDirection(normal,viewMatrix);
+          vec3 reflected=reflect(incident,worldNormal);
+          vec3 reflectedA=galleryHasPrevious>.5?galleryPanoSample(galleryPrevious,galleryPanoUV(reflected,galleryPreviousYaw)):galleryHorizon;
+          vec3 reflectedB=galleryPanoSample(galleryNext,galleryPanoUV(reflected,galleryNextYaw));
+          vec3 reflection=mix(reflectedA,reflectedB,galleryBlend);
+          float fresnel=pow(1.-clamp(dot(-incident,worldNormal),0.,1.),5.);
+          gl_FragColor.rgb=mix(gl_FragColor.rgb,reflection, .2+.65*fresnel);
+        }
+        `:''}
+        float galleryFade=smoothstep(240.,590.,length(vGalleryWorld.xz));
+        if(galleryHasNext>.5&&galleryFade>0.){
+          vec3 d=normalize(vGalleryWorld-cameraPosition),fallback=mix(galleryHorizon,galleryZenith,smoothstep(0.,.8,d.y));
+          vec3 a=galleryHasPrevious>.5?galleryPanoSample(galleryPrevious,galleryPanoUV(d,galleryPreviousYaw)):fallback;
+          vec3 b=galleryPanoSample(galleryNext,galleryPanoUV(d,galleryNextYaw));
+          vec3 photo=mix(a,b,galleryBlend);photo=mix(photo,galleryHorizon,galleryHaze*(1.-smoothstep(-.12,.16,d.y)));
+          gl_FragColor.rgb=mix(gl_FragColor.rgb,photo,galleryFade);
+        }
+        #include <colorspace_fragment>
+      `);
+    };
+    material.customProgramCacheKey=()=>material===waterMaterial?'gallery-photographic-water-v2':'gallery-photographic-distance-v1';
+  }
   let disposed=false,texture:THREE.Texture|null=null,environment:GalleryEnvironment|null=null;
-  new THREE.TextureLoader().load(textureUrl,t=>{if(disposed){t.dispose();return;}texture=t;t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;groundMaterial.map=t;groundMaterial.bumpMap=t;groundMaterial.bumpScale=.18;groundMaterial.needsUpdate=true;rockMaterial.map=t;rockMaterial.bumpMap=t;rockMaterial.bumpScale=.32;rockMaterial.needsUpdate=true;});
-  const terrain=new THREE.Mesh(new THREE.BufferGeometry(),groundMaterial);terrain.receiveShadow=true;group.add(terrain);
-  const waterG=new THREE.RingGeometry(28,510,192,12);waterG.rotateX(-Math.PI/2);
-  const water=new THREE.Mesh(waterG,waterMaterial);water.position.y=-.45;group.add(water);
+  function applyTexture(){groundMaterial.map=environment==='snow'||environment==='desert'?null:texture;groundMaterial.bumpMap=texture;groundMaterial.bumpScale=.07;groundMaterial.needsUpdate=true;rockMaterial.map=environment==='snow'?null:texture;rockMaterial.bumpMap=texture;rockMaterial.bumpScale=.14;rockMaterial.needsUpdate=true;}
+  new THREE.TextureLoader().load(textureUrl,t=>{if(disposed){t.dispose();return;}texture=t;t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;applyTexture();});
+  const terrain=new THREE.Mesh(new THREE.BufferGeometry(),groundMaterial);terrain.name='continuous-gallery-shore';terrain.receiveShadow=true;group.add(terrain);
+  const waterG=new THREE.RingGeometry(GALLERY_SHORE_INNER_RADIUS,GALLERY_LANDSCAPE_RADIUS+20,256,1);waterG.rotateX(-Math.PI/2);
+  const water=new THREE.Mesh(waterG,waterMaterial);water.name='level-gallery-lake';water.position.y=GALLERY_WATER_LEVEL;group.add(water);
   const waveData=new Uint8Array(128*128*4);
   for(let y=0;y<128;y++)for(let x=0;x<128;x++){
     const a=x/128*Math.PI*2,b=y/128*Math.PI*2,i=(y*128+x)*4;let dx=0,dy=0;
     for(let k=0;k<9;k++){const fx=[7,13,-17,23,31,-37,41,47,-53][k],fy=[11,-5,19,-29,13,23,-37,41,17][k],w=9/(1+k*.4),c=Math.cos(a*fx+b*fy+k*1.7);dx+=w*c;dy+=w*Math.sin(a*fy-b*fx+k*.9);}
     waveData[i]=128+Math.round(dx);waveData[i+1]=128+Math.round(dy);waveData[i+2]=250;waveData[i+3]=255;
   }
-  const wave=new THREE.DataTexture(waveData,128,128);wave.wrapS=wave.wrapT=THREE.RepeatWrapping;wave.minFilter=wave.magFilter=THREE.LinearFilter;wave.repeat.set(18,18);wave.needsUpdate=true;waterMaterial.normalMap=wave;waterMaterial.normalScale.setScalar(.16);
-  const rockG=new THREE.IcosahedronGeometry(1,3),rp=rockG.getAttribute('position');
+  const wave=new THREE.DataTexture(waveData,128,128);wave.wrapS=wave.wrapT=THREE.RepeatWrapping;wave.generateMipmaps=true;wave.minFilter=THREE.LinearMipmapLinearFilter;wave.magFilter=THREE.LinearFilter;wave.anisotropy=8;wave.repeat.set(34,34);wave.needsUpdate=true;waterMaterial.normalMap=wave;waterMaterial.normalScale.set(.13,.08);
+  const rockG=new THREE.IcosahedronGeometry(1,2),rp=rockG.getAttribute('position');
   for(let i=0;i<rp.count;i++){const x=rp.getX(i),y=rp.getY(i),z=rp.getZ(i),n=1+.10*Math.sin(x*9+y*3)+.07*Math.sin(z*13-y*5);rp.setXYZ(i,x*n,y*n,z*n);}rockG.computeVertexNormals();
   // Intersecting needle-bearing branch planes give porous crowns and real depth,
   // rather than stacking solid cones in front of the photographic horizon.
@@ -38,38 +94,41 @@ export function createScenicTerrain() {
     for(const [u,v] of [[0,0],[1,0],[1,1],[0,1]]){tv.push(...base.clone().addScaledVector(radial,length*v).addScaledVector(across,(u-.5)*length*.66).toArray());tu.push(u,v);}ti.push(n,n+1,n+2,n,n+2,n+3);
   }
   const treeG=new THREE.BufferGeometry();treeG.setAttribute('position',new THREE.Float32BufferAttribute(tv,3));treeG.setAttribute('uv',new THREE.Float32BufferAttribute(tu,2));treeG.setIndex(ti);treeG.computeVertexNormals();
-  const rocks=new THREE.InstancedMesh(rockG,rockMaterial,90),trees=new THREE.InstancedMesh(treeG,treeMaterial,200);
-  for(const mesh of [rocks,trees]){mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);}
+  const trunkG=new THREE.CylinderGeometry(.011,.025,.84,7);trunkG.translate(0,.37,0);
+  const grassVertices:number[]=[],grassIndices:number[]=[];
+  for(let blade=0;blade<9;blade++){
+    const a=blade*2.399,h=.48+(blade%4)*.14,r=.04+(blade%3)*.07,start=grassVertices.length/3;
+    for(let k=0;k<=3;k++)for(const sign of [-1,1]){const t=k/3,w=.03*(1-t);grassVertices.push(Math.sin(a)*(r+t*t*.26)+Math.cos(a)*w*sign,t*h,Math.cos(a)*(r+t*t*.26)-Math.sin(a)*w*sign);}
+    for(let k=0;k<3;k++){const i=start+k*2;grassIndices.push(i,i+1,i+2,i+1,i+3,i+2);}
+  }
+  const grassG=new THREE.BufferGeometry();grassG.setAttribute('position',new THREE.Float32BufferAttribute(grassVertices,3));grassG.setIndex(grassIndices);grassG.computeVertexNormals();
+  const rocks=new THREE.InstancedMesh(rockG,rockMaterial,180),trees=new THREE.InstancedMesh(treeG,treeMaterial,240);
+  const trunks=new THREE.InstancedMesh(trunkG,trunkMaterial,240),grasses=new THREE.InstancedMesh(grassG,grassMaterial,360);
+  rocks.name='gallery-shore-rocks';trees.name='gallery-distant-crowns';trunks.name='gallery-distant-trunks';grasses.name='gallery-shore-grasses';
+  for(const mesh of [rocks,trees,trunks,grasses]){mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);}
   const dummy=new THREE.Object3D();
-  const height = galleryHeight;
   function setEnvironment(env:GalleryEnvironment){
     if(environment===env)return;environment=env;
-    const positions:number[]=[],colours:number[]=[],uv:number[]=[],indices:number[]=[];
-    const radial=112,angular=256,green=new THREE.Color('#839570'),stone=new THREE.Color('#85877f'),snow=new THREE.Color('#e6edf0'),sand=new THREE.Color('#c7a275');
-    for(let r=0;r<=radial;r++)for(let a=0;a<=angular;a++){
-      const radius=29+Math.pow(r/radial,1.5)*470,angle=a/angular*Math.PI*2,x=Math.sin(angle)*radius,z=Math.cos(angle)*radius,y=height(x,z,env);
-      positions.push(x,y,z);uv.push(x/18,z/18);
-      const slope=Math.hypot(height(x+1,z,env)-y,height(x,z+1,env)-y);
-      const color=(env==='desert'?sand:green).clone().lerp(stone,Math.min(.85,slope*.7));
-      if(env==='snow')color.lerp(snow,THREE.MathUtils.smoothstep(y,8,45)*(1-Math.min(.7,slope*.12)));
-      else if(env==='mountain')color.lerp(snow,THREE.MathUtils.smoothstep(y,83,108));
-      color.multiplyScalar(.92+.08*Math.sin(x*.17+z*.13));colours.push(color.r,color.g,color.b);
+    terrain.geometry.dispose();terrain.geometry=createGalleryTerrainGeometry(env);
+    water.visible=env==='coast'||env==='mountain';waterMaterial.color.set(env==='coast'?'#537e7a':'#426d71');
+    rockMaterial.color.set(env==='desert'?'#bda17d':env==='snow'?'#c7d0cf':'#aaa293');treeMaterial.color.set(env==='snow'?'#929e91':'#60725a');grassMaterial.color.set(env==='snow'?'#b9b5a2':'#93916b');applyTexture();
+    for(const [kind,mesh,count] of [['rock',rocks,180],['tree',trees,240],['grass',grasses,360]] as const){
+      const rows=galleryLandscapePlacements(env,kind,count);mesh.count=rows.length;
+      rows.forEach((row,i)=>{
+        dummy.position.set(row.x,row.y+(kind==='rock'?row.scale*.03:-.025),row.z);
+        // Trees stay upright; roots and rock bases enter the continuous terrain.
+        dummy.rotation.set(0,row.angle,0);dummy.scale.set(row.scale,row.scale*(kind==='rock'?.55:1),row.scale*(kind==='rock'?.8:1));
+        dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);if(kind==='tree')trunks.setMatrixAt(i,dummy.matrix);
+      });
+      mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();
+      if(kind==='tree'){trunks.count=rows.length;trunks.instanceMatrix.needsUpdate=true;trunks.computeBoundingSphere();}
     }
-    for(let r=0;r<radial;r++)for(let a=0;a<angular;a++){const i=r*(angular+1)+a,j=i+angular+1;indices.push(i,j,i+1,i+1,j,j+1);}
-    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.setAttribute('color',new THREE.Float32BufferAttribute(colours,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();terrain.geometry.dispose();terrain.geometry=g;
-    water.visible=env==='coast'||env==='mountain';waterMaterial.color.set(env==='coast'?'#254f5a':'#285b60');
-    rockMaterial.color.set(env==='desert'?'#b28a62':env==='snow'?'#b4bdc1':'#939080');treeMaterial.color.set(env==='snow'?'#7b928a':'#38543d');trees.visible=env!=='desert';
-    let seed=9741;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
-    for(let i=0;i<90;i++){
-      const a=random()*Math.PI*2,r=80+random()*270,x=Math.sin(a)*r,z=Math.cos(a)*r,y=height(x,z,env),s=.35+random()*1.5;
-      dummy.position.set(x,y+s*.15,z);dummy.rotation.set(random(),random()*6,random());dummy.scale.set(y<-.5?0:s,y<-.5?0:s*.65,y<-.5?0:s*.9);dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);
-    }
-    for(let i=0;i<200;i++){
-      const a=random()*Math.PI*2,r=95+random()*250,x=Math.sin(a)*r,z=Math.cos(a)*r,y=height(x,z,env),h=5+random()*9;
-      dummy.position.set(x,y,z);dummy.rotation.set(0,a,0);dummy.scale.set(y<-.5?0:h,h,y<-.5?0:h);dummy.updateMatrix();trees.setMatrixAt(i,dummy.matrix);
-    }
-    rocks.instanceMatrix.needsUpdate=true;trees.instanceMatrix.needsUpdate=true;rocks.computeBoundingSphere();trees.computeBoundingSphere();
-    group.userData.environment=env;group.userData.coverageDegrees=360;
+    group.userData.environment=env;group.userData.coverageDegrees=360;group.userData.shoreRadius=GALLERY_SHORE_INNER_RADIUS;group.userData.waterLevel=GALLERY_WATER_LEVEL;
   }
-  return {group,setEnvironment,dispose(){disposed=true;group.removeFromParent();texture?.dispose();wave.dispose();needles.dispose();terrain.geometry.dispose();waterG.dispose();rockG.dispose();treeG.dispose();groundMaterial.dispose();waterMaterial.dispose();rockMaterial.dispose();treeMaterial.dispose();}};
+  return {group,setEnvironment,
+    connectPanorama(material:THREE.ShaderMaterial){
+      for(const [local,source] of Object.entries({galleryPrevious:'previous',galleryNext:'next',galleryHasPrevious:'hasPrevious',galleryHasNext:'hasNext',galleryBlend:'blend',galleryPreviousYaw:'previousYaw',galleryNextYaw:'nextYaw',galleryHaze:'haze',galleryHorizon:'horizon',galleryZenith:'zenith'}))panoramaUniforms[local]=material.uniforms[source];
+      scenicMaterials.forEach(material=>{material.needsUpdate=true;});
+    },
+    dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const instances of [rocks,trees,trunks,grasses])instances.dispose();texture?.dispose();wave.dispose();needles.dispose();terrain.geometry.dispose();waterG.dispose();rockG.dispose();treeG.dispose();trunkG.dispose();grassG.dispose();groundMaterial.dispose();waterMaterial.dispose();rockMaterial.dispose();treeMaterial.dispose();trunkMaterial.dispose();grassMaterial.dispose();}};
 }

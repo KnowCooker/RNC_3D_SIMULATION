@@ -135,6 +135,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   function applyStage() {
     host.dataset.stage=stage.mode;
+    updateDrawingResolution();
+    contactShade.position.y=stage.mode==='gallery'?-.020:-.032;
+    contactShade.renderOrder=stage.mode==='gallery'?2:0;
     driving?.enable(stage.mode==='road'&&!!showroomModel?.assetId.startsWith('xpeng-'));
     scene.fog=stage.mode==='road'?new THREE.Fog('#c6d1cf',230,360):null;
     stage.setClearBay(showroomActive && !!showroomModel?.assetId.startsWith('xpeng-'));
@@ -840,11 +843,23 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   function focusPresentationCamera() {
     const compact=host.clientWidth<1000,page=host.dataset.presentationPage;
     if(page==='field'){focusCamera(compact?[5.8,4.6,6.6]:[4.4,4.6,4.7],compact?[0,1.0,0]:[1.0,.8,-.6]);return;}
+    // A near eye-level overview leaves the distant skyline in frame, rather than
+    // pointing the whole panorama at the paving immediately around the vehicle.
+    if(page==='overview'&&!compact){focusCamera([6.7,2.0,7.6],[1.6,.85,-.9]);return;}
     focusCamera(compact?[7.4,3.1,8.2]:[6.7,2.6,7.6],compact?[0,1.15,0]:page==='overview'?[1.6,-.08,-.9]:[.75,.3,-.55]);
   }
   let presentationCompact=host.clientWidth<1000;
   let wasNarrow = host.clientWidth < 600;
   let wasP7Compact = host.clientWidth < 900;
+  function updateDrawingResolution() {
+    const width=Math.max(1,host.clientWidth),height=Math.max(1,host.clientHeight);
+    // Gallery prioritises still-scene detail. Keep native pixels on very large screens;
+    // supersampling uses the 8.4 MP budget, and driving retains its 1.5x policy.
+    const pixelRatio=Math.min(Math.max(stage.mode==='gallery'?2:1.5,window.devicePixelRatio||1),2,Math.max(1,Math.sqrt(8_400_000/(width*height))));
+    if(renderer.getPixelRatio()!==pixelRatio)renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(width,height,false);stage.gallery.resize(width,height);
+    host.dataset.renderResolution=`${renderer.domElement.width}x${renderer.domElement.height}`;
+  }
   function resizeViewer() {
     const width = Math.max(1, host.clientWidth), height = Math.max(1, host.clientHeight);
     const isNarrow = width < 600;
@@ -852,11 +867,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     wasNarrow = isNarrow;
     if (width < 900 && !wasP7Compact && showroomActive && showroomModel?.assetId === 'xpeng-p7plus') showroomAssemblyPanel.open = false;
     wasP7Compact = width < 900;
-    // Native CSS resolution on every screen; up to 2× supersampling within an 8.4 MP budget.
-    const pixelRatio = Math.min(Math.max(1.5, window.devicePixelRatio || 1), 2, Math.max(1, Math.sqrt(8_400_000 / (width * height))));
-    renderer.setPixelRatio(pixelRatio);
-    renderer.setSize(width, height, false);
-    stage.gallery.resize(width,height);
+    updateDrawingResolution();
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     if(presentationCompact!==(width<1000)&&stage.mode==='road')driving?.focus();

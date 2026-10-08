@@ -7,7 +7,7 @@ export type RoadSurface = 'smooth' | 'coarse' | 'gravel';
 
 /** Geometry-only environments; the vehicle and acoustic scene stay at the same origin. */
 export function createSceneStage(scene: THREE.Scene, anisotropy = 8) {
-  const gallery = createChampagneGallery(); scene.add(gallery.group);
+  const gallery = createChampagneGallery(anisotropy); scene.add(gallery.group);
   const driving = createDrivingRoad(anisotropy), road = driving.group; scene.add(road);
   gallery.protectBackground(driving.usesBackground);
   const workshop = new THREE.Group(); workshop.name = 'rnc-workshop-stage'; scene.add(workshop);

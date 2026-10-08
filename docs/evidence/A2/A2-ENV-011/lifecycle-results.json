@@ -1,0 +1,4248 @@
+{
+  "role": "A2",
+  "executor": "Codex代A2",
+  "task": "A2-ENV-011",
+  "identitySource": "user-declared",
+  "sourceBefore": {
+    "champagne-gallery.ts": "6b20886e5967c42e199fac77afb8bebb6030a340715985c9fcc763bf1f275be9",
+    "gallery-platform.ts": "8ad0d6e459cd99bc950d847d4ea9f5be007eb253271ed2444ab96d032eed3b73",
+    "scenic-terrain.ts": "4e588981a8981795bf55d45241f736a0940a17004df9385b91e0fb6d3a0d4906",
+    "gallery-landscape.ts": "d263fb50343e8ee8c68028a8d4edc365743867218ee00e12ef7813cfa335f16d",
+    "landscape-height.ts": "2babf84c2a46a96d03117d11141ecc936233e50ac89d40835481cdf6537388fd",
+    "panorama-sky.ts": "5a57da3dc3624f54d84281c2ea40ade3e01c4cb79fd6d8c189acfbf419227cd3"
+  },
+  "checks": [
+    {
+      "name": "zero real browser/GLSL errors",
+      "pass": true
+    },
+    {
+      "name": "zero resource request failures",
+      "pass": true
+    },
+    {
+      "name": "production source unchanged throughout fixture",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "responses": [],
+  "main": {
+    "checks": [
+      {
+        "name": "14 real instanced meshes are present (4 scenery + 8 pavilion crowns + 2 platform)",
+        "pass": true,
+        "detail": [
+          {
+            "uuid": "7209832a-2c59-4635-bfa7-9acd31ac6bfe",
+            "name": "gallery-shore-rocks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "7271db30-9e0b-4039-bea9-c55d732b9355",
+            "name": "gallery-distant-crowns",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "9d9d41f9-9392-46d9-9021-0fb06bda386c",
+            "name": "gallery-distant-trunks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "3bcdaf03-9a56-476d-a4d8-f6036630dd50",
+            "name": "gallery-shore-grasses",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "06500f4a-8e45-463a-b593-28f38235f0f6",
+            "name": "drain-grate-slats",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "a4bb8c50-1b02-437e-9863-03571cbc99a6",
+            "name": "coping-expansion-joints",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "37d5c823-f228-4c49-a3f1-158a8a37a6da",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "ee238b1b-ce9f-4bd4-a3b5-46c13c390003",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "accd355c-e462-416d-942f-a5fea5ca0520",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "ad0335eb-0da1-4830-a811-c0edcad84f1b",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "555eb4ff-dbd1-4da6-b4a0-90aaff8602be",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "820df294-524c-4c69-8aac-30131fa525cf",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "1dca58cd-4d88-46be-9f8a-da62f33e8fed",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "86e24bd2-ddde-48f1-b879-2bc31f12fec2",
+            "name": "",
+            "parent": "",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "name": "all four scenery instanced meshes present",
+        "pass": true
+      },
+      {
+        "name": "round 1 coast: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 1 coast: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 1 coast: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 1 mountain: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 1 mountain: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 1 mountain: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 1 desert: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 1 desert: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 1 desert: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 1 snow: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 1 snow: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 1 snow: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 2 coast: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 2 coast: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 2 coast: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 2 mountain: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 2 mountain: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 2 mountain: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 2 desert: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 2 desert: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 2 desert: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 2 snow: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 2 snow: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 2 snow: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "all 14 instanced mesh dispose events fire exactly once after double dispose",
+        "pass": true,
+        "detail": [
+          {
+            "uuid": "7209832a-2c59-4635-bfa7-9acd31ac6bfe",
+            "name": "gallery-shore-rocks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "7271db30-9e0b-4039-bea9-c55d732b9355",
+            "name": "gallery-distant-crowns",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "9d9d41f9-9392-46d9-9021-0fb06bda386c",
+            "name": "gallery-distant-trunks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "3bcdaf03-9a56-476d-a4d8-f6036630dd50",
+            "name": "gallery-shore-grasses",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "06500f4a-8e45-463a-b593-28f38235f0f6",
+            "name": "drain-grate-slats",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "a4bb8c50-1b02-437e-9863-03571cbc99a6",
+            "name": "coping-expansion-joints",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "37d5c823-f228-4c49-a3f1-158a8a37a6da",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "ee238b1b-ce9f-4bd4-a3b5-46c13c390003",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "accd355c-e462-416d-942f-a5fea5ca0520",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "ad0335eb-0da1-4830-a811-c0edcad84f1b",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "555eb4ff-dbd1-4da6-b4a0-90aaff8602be",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "820df294-524c-4c69-8aac-30131fa525cf",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "1dca58cd-4d88-46be-9f8a-da62f33e8fed",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "86e24bd2-ddde-48f1-b879-2bc31f12fec2",
+            "name": "",
+            "parent": "",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "name": "gallery detached from scene",
+        "pass": true
+      },
+      {
+        "name": "retained background photo released once on final disposal",
+        "pass": true
+      },
+      {
+        "name": "all tracked textures are disposed no more than once",
+        "pass": true
+      }
+    ],
+    "samples": [
+      {
+        "round": 0,
+        "environment": "coast",
+        "resolution": "8192x4096",
+        "memory": {
+          "geometries": 119,
+          "textures": 8
+        },
+        "programs": 27
+      },
+      {
+        "round": 0,
+        "environment": "mountain",
+        "resolution": "8192x4096",
+        "memory": {
+          "geometries": 119,
+          "textures": 11
+        },
+        "programs": 29
+      },
+      {
+        "round": 0,
+        "environment": "desert",
+        "resolution": "8192x4096",
+        "memory": {
+          "geometries": 118,
+          "textures": 11
+        },
+        "programs": 46
+      },
+      {
+        "round": 0,
+        "environment": "snow",
+        "resolution": "8192x4096",
+        "memory": {
+          "geometries": 119,
+          "textures": 11
+        },
+        "programs": 50
+      },
+      {
+        "round": 1,
+        "environment": "coast",
+        "resolution": "8192x4096",
+        "memory": {
+          "geometries": 119,
+          "textures": 11
+        },
+        "programs": 50
+      },
+      {
+        "round": 1,
+        "environment": "mountain",
+        "resolution": "8192x4096",
+        "memory": {
+          "geometries": 119,
+          "textures": 11
+        },
+        "programs": 50
+      },
+      {
+        "round": 1,
+        "environment": "desert",
+        "resolution": "8192x4096",
+        "memory": {
+          "geometries": 118,
+          "textures": 11
+        },
+        "programs": 50
+      },
+      {
+        "round": 1,
+        "environment": "snow",
+        "resolution": "8192x4096",
+        "memory": {
+          "geometries": 119,
+          "textures": 11
+        },
+        "programs": 50
+      }
+    ],
+    "instances": [
+      {
+        "uuid": "7209832a-2c59-4635-bfa7-9acd31ac6bfe",
+        "name": "gallery-shore-rocks",
+        "parent": "scenic-terrain-360",
+        "count": 1
+      },
+      {
+        "uuid": "7271db30-9e0b-4039-bea9-c55d732b9355",
+        "name": "gallery-distant-crowns",
+        "parent": "scenic-terrain-360",
+        "count": 1
+      },
+      {
+        "uuid": "9d9d41f9-9392-46d9-9021-0fb06bda386c",
+        "name": "gallery-distant-trunks",
+        "parent": "scenic-terrain-360",
+        "count": 1
+      },
+      {
+        "uuid": "3bcdaf03-9a56-476d-a4d8-f6036630dd50",
+        "name": "gallery-shore-grasses",
+        "parent": "scenic-terrain-360",
+        "count": 1
+      },
+      {
+        "uuid": "06500f4a-8e45-463a-b593-28f38235f0f6",
+        "name": "drain-grate-slats",
+        "parent": "gallery-built-platform",
+        "count": 1
+      },
+      {
+        "uuid": "a4bb8c50-1b02-437e-9863-03571cbc99a6",
+        "name": "coping-expansion-joints",
+        "parent": "gallery-built-platform",
+        "count": 1
+      },
+      {
+        "uuid": "37d5c823-f228-4c49-a3f1-158a8a37a6da",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "ee238b1b-ce9f-4bd4-a3b5-46c13c390003",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "accd355c-e462-416d-942f-a5fea5ca0520",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "ad0335eb-0da1-4830-a811-c0edcad84f1b",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "555eb4ff-dbd1-4da6-b4a0-90aaff8602be",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "820df294-524c-4c69-8aac-30131fa525cf",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "1dca58cd-4d88-46be-9f8a-da62f33e8fed",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "86e24bd2-ddde-48f1-b879-2bc31f12fec2",
+        "name": "",
+        "parent": "",
+        "count": 1
+      }
+    ],
+    "textureRows": [
+      {
+        "uuid": "1a12392b-7e05-4f0e-a83a-17f2ecc06ea4",
+        "type": "_Texture",
+        "label": "http://127.0.0.1:5198/src/team-a/viewer/assets/aerial_grass_rock_diff_2k.jpg",
+        "count": 1,
+        "width": 2048,
+        "height": 2048,
+        "firstSeen": 300.6999999284744,
+        "disposedAt": [
+          28174.799999952316
+        ]
+      },
+      {
+        "uuid": "a483a768-8974-4719-9bb7-15df4e786f02",
+        "type": "_Texture",
+        "label": "sky-previous",
+        "count": 1,
+        "width": 8192,
+        "height": 4096,
+        "firstSeen": 554.1999999284744,
+        "disposedAt": [
+          28176.699999928474
+        ]
+      },
+      {
+        "uuid": "3b145d46-c52a-4763-ba76-3c3fb187af76",
+        "type": "DataTexture",
+        "label": "active-HDR",
+        "count": 1,
+        "width": 4096,
+        "height": 2048,
+        "firstSeen": 1218.5,
+        "disposedAt": [
+          8977.399999976158
+        ]
+      },
+      {
+        "uuid": "3a3921f6-c4a9-4fed-a2e4-df550b051e41",
+        "type": "_Texture",
+        "label": "sky-previous",
+        "count": 1,
+        "width": 8192,
+        "height": 4096,
+        "firstSeen": 5734.399999976158,
+        "disposedAt": [
+          12528.299999952316
+        ]
+      },
+      {
+        "uuid": "196bd57b-c8eb-40c6-9abb-b3e1ea1afbf3",
+        "type": "DataTexture",
+        "label": "active-HDR",
+        "count": 1,
+        "width": 4096,
+        "height": 2048,
+        "firstSeen": 6646.299999952316,
+        "disposedAt": [
+          14144.399999976158
+        ]
+      },
+      {
+        "uuid": "f0fa8dd4-09d0-47e9-8ce5-5e8d6cd08d99",
+        "type": "_Texture",
+        "label": "sky-previous",
+        "count": 1,
+        "width": 8192,
+        "height": 4096,
+        "firstSeen": 8737,
+        "disposedAt": [
+          17367.799999952316
+        ]
+      },
+      {
+        "uuid": "457880c2-41a7-4803-b93f-7c2472c4f6c1",
+        "type": "DataTexture",
+        "label": "active-HDR",
+        "count": 1,
+        "width": 2048,
+        "height": 1024,
+        "firstSeen": 8978.600000023842,
+        "disposedAt": [
+          19289.600000023842
+        ]
+      },
+      {
+        "uuid": "8e37fb58-dc0f-4e20-babc-3f8043eb7472",
+        "type": "_Texture",
+        "label": "sky-previous",
+        "count": 1,
+        "width": 8192,
+        "height": 4096,
+        "firstSeen": 12818.799999952316,
+        "disposedAt": [
+          21200.399999976158
+        ]
+      },
+      {
+        "uuid": "b9f7fc75-be6c-4f4b-a60c-0081696fcbd3",
+        "type": "DataTexture",
+        "label": "active-HDR",
+        "count": 1,
+        "width": 4096,
+        "height": 2048,
+        "firstSeen": 14758.299999952316,
+        "disposedAt": [
+          21046.299999952316
+        ]
+      },
+      {
+        "uuid": "257fc8b3-e22a-4c81-b22d-613a8f0211ea",
+        "type": "DataTexture",
+        "label": "active-HDR",
+        "count": 1,
+        "width": 4096,
+        "height": 2048,
+        "firstSeen": 19293.199999928474,
+        "disposedAt": [
+          23518.799999952316
+        ]
+      },
+      {
+        "uuid": "ff013735-55f7-40e4-9be0-c8ae330604fe",
+        "type": "_Texture",
+        "label": "sky-previous",
+        "count": 1,
+        "width": 8192,
+        "height": 4096,
+        "firstSeen": 20110.299999952316,
+        "disposedAt": [
+          24722.899999976158
+        ]
+      },
+      {
+        "uuid": "1406ff81-699e-403e-9ae4-34b3f772c8e5",
+        "type": "DataTexture",
+        "label": "active-HDR",
+        "count": 1,
+        "width": 4096,
+        "height": 2048,
+        "firstSeen": 21228.100000023842,
+        "disposedAt": [
+          26098.399999976158
+        ]
+      },
+      {
+        "uuid": "477eef4a-e97f-4af3-ad47-9e8c800fc081",
+        "type": "_Texture",
+        "label": "sky-previous",
+        "count": 1,
+        "width": 8192,
+        "height": 4096,
+        "firstSeen": 23248.100000023842,
+        "disposedAt": [
+          27847.899999976158
+        ]
+      },
+      {
+        "uuid": "3661b8a4-e99d-4d8c-9bdb-a643adb3e1a9",
+        "type": "DataTexture",
+        "label": "active-HDR",
+        "count": 1,
+        "width": 2048,
+        "height": 1024,
+        "firstSeen": 23519.399999976158,
+        "disposedAt": [
+          28176.600000023842
+        ]
+      },
+      {
+        "uuid": "531c5f4d-5480-4607-8ed7-c97ff92e6f4e",
+        "type": "_Texture",
+        "label": "sky-next",
+        "count": 1,
+        "width": 8192,
+        "height": 4096,
+        "firstSeen": 25007.899999976158,
+        "disposedAt": [
+          28176.699999928474
+        ]
+      },
+      {
+        "uuid": "63421b2b-2d9a-4333-844f-9b5e718ff40f",
+        "type": "DataTexture",
+        "label": "active-HDR",
+        "count": 1,
+        "width": 4096,
+        "height": 2048,
+        "firstSeen": 26209.299999952316,
+        "disposedAt": [
+          28176.600000023842
+        ]
+      },
+      {
+        "uuid": "f17ad634-2f50-487c-95af-d1ce7be3935a",
+        "type": "DataTexture",
+        "label": "",
+        "count": 1,
+        "width": 128,
+        "height": 128,
+        "firstSeen": 28174.899999976158,
+        "disposedAt": [
+          28174.899999976158
+        ]
+      },
+      {
+        "uuid": "34f95171-8510-46b0-a8e3-012444bc4928",
+        "type": "CanvasTexture",
+        "label": "",
+        "count": 1,
+        "width": 128,
+        "height": 128,
+        "firstSeen": 28174.899999976158,
+        "disposedAt": [
+          28174.899999976158
+        ]
+      }
+    ],
+    "renderer": {
+      "isWebGL2": true,
+      "precision": "highp",
+      "logarithmicDepthBuffer": false,
+      "reversedDepthBuffer": false,
+      "maxTextures": 16,
+      "maxVertexTextures": 16,
+      "maxTextureSize": 16384,
+      "maxCubemapSize": 16384,
+      "maxAttributes": 16,
+      "maxVertexUniforms": 4095,
+      "maxVaryings": 30,
+      "maxFragmentUniforms": 1024,
+      "vertexTextures": true,
+      "maxSamples": 8
+    },
+    "programs": [
+      {
+        "name": "SphericalGaussianBlur",
+        "runnable": null
+      },
+      {
+        "name": "EquirectangularToCubeUV",
+        "runnable": null
+      }
+    ],
+    "totalLoadedImages": 8
+  },
+  "late": {
+    "checks": [
+      {
+        "name": "14 real instanced meshes are present (4 scenery + 8 pavilion crowns + 2 platform)",
+        "pass": true,
+        "detail": [
+          {
+            "uuid": "7209832a-2c59-4635-bfa7-9acd31ac6bfe",
+            "name": "gallery-shore-rocks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "7271db30-9e0b-4039-bea9-c55d732b9355",
+            "name": "gallery-distant-crowns",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "9d9d41f9-9392-46d9-9021-0fb06bda386c",
+            "name": "gallery-distant-trunks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "3bcdaf03-9a56-476d-a4d8-f6036630dd50",
+            "name": "gallery-shore-grasses",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "06500f4a-8e45-463a-b593-28f38235f0f6",
+            "name": "drain-grate-slats",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "a4bb8c50-1b02-437e-9863-03571cbc99a6",
+            "name": "coping-expansion-joints",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "37d5c823-f228-4c49-a3f1-158a8a37a6da",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "ee238b1b-ce9f-4bd4-a3b5-46c13c390003",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "accd355c-e462-416d-942f-a5fea5ca0520",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "ad0335eb-0da1-4830-a811-c0edcad84f1b",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "555eb4ff-dbd1-4da6-b4a0-90aaff8602be",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "820df294-524c-4c69-8aac-30131fa525cf",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "1dca58cd-4d88-46be-9f8a-da62f33e8fed",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "86e24bd2-ddde-48f1-b879-2bc31f12fec2",
+            "name": "",
+            "parent": "",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "name": "all four scenery instanced meshes present",
+        "pass": true
+      },
+      {
+        "name": "round 1 coast: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 1 coast: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 1 coast: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 1 mountain: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 1 mountain: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 1 mountain: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 1 desert: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 1 desert: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 1 desert: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 1 snow: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 1 snow: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 1 snow: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 2 coast: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 2 coast: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 2 coast: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 2 mountain: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 2 mountain: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 2 mountain: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 2 desert: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 2 desert: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 2 desert: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "round 2 snow: sky and HDR stayed alive through real frames",
+        "pass": true
+      },
+      {
+        "name": "round 2 snow: real programs compiled",
+        "pass": true,
+        "detail": [
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "EquirectangularToCubeUV",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "ReflectorShader",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "honed-limestone-paving",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "",
+            "runnable": null
+          },
+          {
+            "name": "SphericalGaussianBlur",
+            "runnable": null
+          }
+        ]
+      },
+      {
+        "name": "round 2 snow: external background guard retains first photo",
+        "pass": true
+      },
+      {
+        "name": "all 14 instanced mesh dispose events fire exactly once after double dispose",
+        "pass": true,
+        "detail": [
+          {
+            "uuid": "7209832a-2c59-4635-bfa7-9acd31ac6bfe",
+            "name": "gallery-shore-rocks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "7271db30-9e0b-4039-bea9-c55d732b9355",
+            "name": "gallery-distant-crowns",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "9d9d41f9-9392-46d9-9021-0fb06bda386c",
+            "name": "gallery-distant-trunks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "3bcdaf03-9a56-476d-a4d8-f6036630dd50",
+            "name": "gallery-shore-grasses",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "06500f4a-8e45-463a-b593-28f38235f0f6",
+            "name": "drain-grate-slats",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "a4bb8c50-1b02-437e-9863-03571cbc99a6",
+            "name": "coping-expansion-joints",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "37d5c823-f228-4c49-a3f1-158a8a37a6da",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "ee238b1b-ce9f-4bd4-a3b5-46c13c390003",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "accd355c-e462-416d-942f-a5fea5ca0520",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "ad0335eb-0da1-4830-a811-c0edcad84f1b",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "555eb4ff-dbd1-4da6-b4a0-90aaff8602be",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "820df294-524c-4c69-8aac-30131fa525cf",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "1dca58cd-4d88-46be-9f8a-da62f33e8fed",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "86e24bd2-ddde-48f1-b879-2bc31f12fec2",
+            "name": "",
+            "parent": "",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "name": "gallery detached from scene",
+        "pass": true
+      },
+      {
+        "name": "retained background photo released once on final disposal",
+        "pass": true
+      },
+      {
+        "name": "all tracked textures are disposed no more than once",
+        "pass": true
+      },
+      {
+        "name": "both real delayed image responses finish after gallery disposal",
+        "pass": true,
+        "detail": [
+          {
+            "uuid": "4b83bde3-7388-44dd-96a7-33cb08140838",
+            "url": "http://127.0.0.1:5198/src/team-a/viewer/assets/aerial_grass_rock_diff_2k.jpg",
+            "returnedAt": 28201.399999976158,
+            "loadedAt": 29508.5
+          },
+          {
+            "uuid": "9031e02a-18d8-4e91-97fe-b61e73291081",
+            "url": "http://127.0.0.1:5198/src/team-a/viewer/assets/qwantani_sunset_8k.jpg",
+            "returnedAt": 28428.799999952316,
+            "loadedAt": 30365.799999952316
+          }
+        ]
+      },
+      {
+        "name": "late image textures dispose exactly once",
+        "pass": true
+      },
+      {
+        "name": "late HDR DataTexture dispose exactly once",
+        "pass": true
+      },
+      {
+        "name": "second gallery instances also dispose exactly once",
+        "pass": true,
+        "detail": [
+          {
+            "uuid": "208455bb-975f-42fa-899c-210fa1ff68e8",
+            "name": "gallery-shore-rocks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "41cf2cc4-a1c1-4d8b-b04d-0228119aa58b",
+            "name": "gallery-distant-crowns",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "c528dc8b-5a7a-4e0f-8546-4616431e5456",
+            "name": "gallery-distant-trunks",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "595521e5-f691-4334-a4eb-b61c70857bee",
+            "name": "gallery-shore-grasses",
+            "parent": "scenic-terrain-360",
+            "count": 1
+          },
+          {
+            "uuid": "8dad878f-1a2b-4310-8a73-68d93fb5d05b",
+            "name": "drain-grate-slats",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "deb5c07e-b736-4389-863b-81fa65dc9c15",
+            "name": "coping-expansion-joints",
+            "parent": "gallery-built-platform",
+            "count": 1
+          },
+          {
+            "uuid": "d8bb2c40-df67-4d9c-8f93-232ac1306e3d",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "1bb5193a-6557-4b9e-ae29-2492b202d836",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "a1360477-13a2-4fa4-bad8-d87b858d91cd",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "92bd267c-724c-4930-9746-a26d6769ade3",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "14888b74-f7e6-4f67-b62e-0cf6c3094242",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "28f91005-2dfd-49c0-8ea0-9a27ad6a43fe",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "552dbac5-4881-4221-b72f-01f60f666038",
+            "name": "",
+            "parent": "",
+            "count": 1
+          },
+          {
+            "uuid": "807b2fed-ff9f-44bb-af44-1f8bac117fcf",
+            "name": "",
+            "parent": "",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "name": "all late-created tracked textures dispose exactly once",
+        "pass": true,
+        "detail": [
+          {
+            "uuid": "4b83bde3-7388-44dd-96a7-33cb08140838",
+            "type": "_Texture",
+            "label": "http://127.0.0.1:5198/src/team-a/viewer/assets/aerial_grass_rock_diff_2k.jpg",
+            "count": 1,
+            "width": 2048,
+            "height": 2048,
+            "firstSeen": 28201.399999976158,
+            "disposedAt": [
+              29508.600000023842
+            ]
+          },
+          {
+            "uuid": "9031e02a-18d8-4e91-97fe-b61e73291081",
+            "type": "_Texture",
+            "label": "http://127.0.0.1:5198/src/team-a/viewer/assets/qwantani_sunset_8k.jpg",
+            "count": 1,
+            "width": 8192,
+            "height": 4096,
+            "firstSeen": 28428.799999952316,
+            "disposedAt": [
+              30365.799999952316
+            ]
+          },
+          {
+            "uuid": "6dc1b921-62f2-4c36-bb99-c4f912f6ee94",
+            "type": "DataTexture",
+            "label": "",
+            "count": 1,
+            "width": 128,
+            "height": 128,
+            "firstSeen": 28429.5,
+            "disposedAt": [
+              28429.5
+            ]
+          },
+          {
+            "uuid": "eeac7bca-fa3a-4947-a53c-a7f57632022d",
+            "type": "CanvasTexture",
+            "label": "",
+            "count": 1,
+            "width": 128,
+            "height": 128,
+            "firstSeen": 28429.5,
+            "disposedAt": [
+              28429.5
+            ]
+          },
+          {
+            "uuid": "3cff40c2-c2f1-41be-815f-af5c0b2685fb",
+            "type": "DataTexture",
+            "label": "",
+            "count": 1,
+            "width": 4096,
+            "height": 2048,
+            "firstSeen": 30315.199999928474,
+            "disposedAt": [
+              30315.299999952316
+            ]
+          }
+        ]
+      }
+    ],
+    "lateRows": [
+      {
+        "uuid": "4b83bde3-7388-44dd-96a7-33cb08140838",
+        "type": "_Texture",
+        "label": "http://127.0.0.1:5198/src/team-a/viewer/assets/aerial_grass_rock_diff_2k.jpg",
+        "count": 1,
+        "width": 2048,
+        "height": 2048,
+        "firstSeen": 28201.399999976158,
+        "disposedAt": [
+          29508.600000023842
+        ]
+      },
+      {
+        "uuid": "9031e02a-18d8-4e91-97fe-b61e73291081",
+        "type": "_Texture",
+        "label": "http://127.0.0.1:5198/src/team-a/viewer/assets/qwantani_sunset_8k.jpg",
+        "count": 1,
+        "width": 8192,
+        "height": 4096,
+        "firstSeen": 28428.799999952316,
+        "disposedAt": [
+          30365.799999952316
+        ]
+      },
+      {
+        "uuid": "6dc1b921-62f2-4c36-bb99-c4f912f6ee94",
+        "type": "DataTexture",
+        "label": "",
+        "count": 1,
+        "width": 128,
+        "height": 128,
+        "firstSeen": 28429.5,
+        "disposedAt": [
+          28429.5
+        ]
+      },
+      {
+        "uuid": "eeac7bca-fa3a-4947-a53c-a7f57632022d",
+        "type": "CanvasTexture",
+        "label": "",
+        "count": 1,
+        "width": 128,
+        "height": 128,
+        "firstSeen": 28429.5,
+        "disposedAt": [
+          28429.5
+        ]
+      },
+      {
+        "uuid": "3cff40c2-c2f1-41be-815f-af5c0b2685fb",
+        "type": "DataTexture",
+        "label": "",
+        "count": 1,
+        "width": 4096,
+        "height": 2048,
+        "firstSeen": 30315.199999928474,
+        "disposedAt": [
+          30315.299999952316
+        ]
+      }
+    ],
+    "lateImages": [
+      {
+        "uuid": "4b83bde3-7388-44dd-96a7-33cb08140838",
+        "url": "http://127.0.0.1:5198/src/team-a/viewer/assets/aerial_grass_rock_diff_2k.jpg",
+        "returnedAt": 28201.399999976158,
+        "loadedAt": 29508.5
+      },
+      {
+        "uuid": "9031e02a-18d8-4e91-97fe-b61e73291081",
+        "url": "http://127.0.0.1:5198/src/team-a/viewer/assets/qwantani_sunset_8k.jpg",
+        "returnedAt": 28428.799999952316,
+        "loadedAt": 30365.799999952316
+      }
+    ],
+    "instances": [
+      {
+        "uuid": "208455bb-975f-42fa-899c-210fa1ff68e8",
+        "name": "gallery-shore-rocks",
+        "parent": "scenic-terrain-360",
+        "count": 1
+      },
+      {
+        "uuid": "41cf2cc4-a1c1-4d8b-b04d-0228119aa58b",
+        "name": "gallery-distant-crowns",
+        "parent": "scenic-terrain-360",
+        "count": 1
+      },
+      {
+        "uuid": "c528dc8b-5a7a-4e0f-8546-4616431e5456",
+        "name": "gallery-distant-trunks",
+        "parent": "scenic-terrain-360",
+        "count": 1
+      },
+      {
+        "uuid": "595521e5-f691-4334-a4eb-b61c70857bee",
+        "name": "gallery-shore-grasses",
+        "parent": "scenic-terrain-360",
+        "count": 1
+      },
+      {
+        "uuid": "8dad878f-1a2b-4310-8a73-68d93fb5d05b",
+        "name": "drain-grate-slats",
+        "parent": "gallery-built-platform",
+        "count": 1
+      },
+      {
+        "uuid": "deb5c07e-b736-4389-863b-81fa65dc9c15",
+        "name": "coping-expansion-joints",
+        "parent": "gallery-built-platform",
+        "count": 1
+      },
+      {
+        "uuid": "d8bb2c40-df67-4d9c-8f93-232ac1306e3d",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "1bb5193a-6557-4b9e-ae29-2492b202d836",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "a1360477-13a2-4fa4-bad8-d87b858d91cd",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "92bd267c-724c-4930-9746-a26d6769ade3",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "14888b74-f7e6-4f67-b62e-0cf6c3094242",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "28f91005-2dfd-49c0-8ea0-9a27ad6a43fe",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "552dbac5-4881-4221-b72f-01f60f666038",
+        "name": "",
+        "parent": "",
+        "count": 1
+      },
+      {
+        "uuid": "807b2fed-ff9f-44bb-af44-1f8bac117fcf",
+        "name": "",
+        "parent": "",
+        "count": 1
+      }
+    ],
+    "pendingImages": 0,
+    "programs": [
+      {
+        "name": "SphericalGaussianBlur",
+        "runnable": null
+      },
+      {
+        "name": "EquirectangularToCubeUV",
+        "runnable": null
+      }
+    ]
+  },
+  "sourceAfter": {
+    "champagne-gallery.ts": "6b20886e5967c42e199fac77afb8bebb6030a340715985c9fcc763bf1f275be9",
+    "gallery-platform.ts": "8ad0d6e459cd99bc950d847d4ea9f5be007eb253271ed2444ab96d032eed3b73",
+    "scenic-terrain.ts": "4e588981a8981795bf55d45241f736a0940a17004df9385b91e0fb6d3a0d4906",
+    "gallery-landscape.ts": "d263fb50343e8ee8c68028a8d4edc365743867218ee00e12ef7813cfa335f16d",
+    "landscape-height.ts": "2babf84c2a46a96d03117d11141ecc936233e50ac89d40835481cdf6537388fd",
+    "panorama-sky.ts": "5a57da3dc3624f54d84281c2ea40ade3e01c4cb79fd6d8c189acfbf419227cd3"
+  },
+  "passed": true
+}

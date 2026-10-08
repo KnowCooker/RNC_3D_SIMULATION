@@ -2,25 +2,26 @@ import * as THREE from 'three';
 import { Reflector } from 'three/addons/objects/Reflector.js';
 import { createPanoramaSky } from './panorama-sky';
 import { createScenicTerrain } from './scenic-terrain';
+import { createGalleryPlatform } from './gallery-platform';
 import { loadHDRTexture } from './hdr-texture';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 export type GalleryEnvironment = 'coast' | 'mountain' | 'desert' | 'snow';
 export const galleryEnvironments = {
-  coast: { url:new URL('./assets/lakes_2k.hdr',import.meta.url).href, rotation:1.7, exposure:.98, intensity:.8, sun:'#ffe2af', strength:2.5, stone:'#d5c8b6' },
+  coast: { url:new URL('./assets/qwantani_sunset_4k.hdr',import.meta.url).href, rotation:1.3, exposure:.98, intensity:.8, sun:'#ffe2af', strength:2.5, stone:'#d5c8b6' },
   mountain: { url:new URL('./assets/alps_field_4k.hdr',import.meta.url).href, rotation:.98, exposure:.87, intensity:.55, sun:'#fff1da', strength:2.5, stone:'#d5cec0' },
   desert: { url:new URL('./assets/goegap_2k.hdr',import.meta.url).href, rotation:.65, exposure:.95, intensity:.7, sun:'#fff0d5', strength:2.7, stone:'#deccb2' },
   snow: { url:new URL('./assets/lago_disola_4k.hdr',import.meta.url).href, rotation:.47, exposure:.84, intensity:.5, sun:'#fff8ef', strength:2.3, stone:'#d8d5ce' },
 } as const;
 const scenicBackdrops:Record<GalleryEnvironment,string>={
-  coast:new URL('./assets/lakes_8k.jpg',import.meta.url).href,
+  coast:new URL('./assets/qwantani_sunset_8k.jpg',import.meta.url).href,
   mountain:new URL('./assets/alps_field_8k.jpg',import.meta.url).href,
   desert:new URL('./assets/goegap_8k.jpg',import.meta.url).href,
   snow:new URL('./assets/lago_disola_8k.jpg',import.meta.url).href,
 };
 
 /** One open pavilion shared by all pages. Landscape and light do not alter acoustic state. */
-export function createChampagneGallery() {
+export function createChampagneGallery(anisotropy = 8) {
   let disposed=false, environment:GalleryEnvironment='coast';
   const panoramas=new Map<GalleryEnvironment,THREE.DataTexture>(), pending=new Set<GalleryEnvironment>();
   const backdrops=new Map<GalleryEnvironment,THREE.Texture>(),backdropPending=new Set<GalleryEnvironment>();
@@ -36,56 +37,43 @@ export function createChampagneGallery() {
   function rod(a:THREE.Vector3,b:THREE.Vector3,r:number,m:THREE.Material,parent:THREE.Object3D=group){const d=b.clone().sub(a),o=mesh(new THREE.CylinderGeometry(r*.7,r,d.length(),9),m,a.clone().add(b).multiplyScalar(.5).toArray(),parent);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());o.castShadow=true;return o;}
   let seed=20931;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
   const floor=new THREE.Group();floor.name='gallery-stone-floor';group.add(floor);
-  mesh(new THREE.CylinderGeometry(27.2,27.2,.19,192),stone,[0,-.16,0],floor);
-  const reflectorGeometry=new THREE.CircleGeometry(27.15,192);geometries.add(reflectorGeometry);
+  const platform=createGalleryPlatform();floor.add(platform.group);
+  const reflectorGeometry=new THREE.CircleGeometry(26.68,192);geometries.add(reflectorGeometry);
   // Rough-polished stone: filtered real reflections, not a crisp upside-down duplicate.
   // three exposes this shader at runtime; its examples declaration omits the static member.
   const baseReflectorShader=(Reflector as typeof Reflector & {ReflectorShader:{uniforms:Record<string,THREE.IUniform>;vertexShader:string;fragmentShader:string}}).ReflectorShader;
   const reflectShader={...baseReflectorShader,
     uniforms:{...THREE.UniformsUtils.clone(baseReflectorShader.uniforms),texel:{value:new THREE.Vector2(1/1536,1/1024)}},
     fragmentShader:baseReflectorShader.fragmentShader.replace('varying vec4 vUv;','varying vec4 vUv; uniform vec2 texel;').replace('vec4 base = texture2DProj( tDiffuse, vUv );',`
-      vec2 uv=vUv.xy/vUv.w; vec2 r=texel*2.2;
+      vec2 uv=vUv.xy/vUv.w; vec2 r=texel*4.0;
       vec4 base=texture2D(tDiffuse,uv)*.28;
       base+=(texture2D(tDiffuse,uv+vec2(r.x,0.))+texture2D(tDiffuse,uv-vec2(r.x,0.))+texture2D(tDiffuse,uv+vec2(0.,r.y))+texture2D(tDiffuse,uv-vec2(0.,r.y)))*.12;
       base+=(texture2D(tDiffuse,uv+r)+texture2D(tDiffuse,uv-r)+texture2D(tDiffuse,uv+vec2(r.x,-r.y))+texture2D(tDiffuse,uv+vec2(-r.x,r.y)))*.06;
-    `)};
+    `).replace('gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );', 'gl_FragColor = vec4( blendOverlay( base.rgb, color ), .12 );')};
   const mirror=new Reflector(reflectorGeometry,{textureWidth:1536,textureHeight:1024,color:0x9c968d,clipBias:.003,shader:reflectShader});
-  mirror.rotation.x=-Math.PI/2;mirror.position.y=-.062;mirror.name='gallery-reflection';floor.add(mirror);
-  const glaze=new THREE.MeshStandardMaterial({color:'#aaa08e',roughness:.30,metalness:.04,transparent:true,opacity:.86,depthWrite:false,envMapIntensity:.4});materials.add(glaze);
-  glaze.onBeforeCompile=shader=>{
-    shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec2 vStone;').replace('#include <begin_vertex>','#include <begin_vertex>\nvStone=position.xy;');
-    shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
-      varying vec2 vStone;
-      float stoneHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-      float stoneNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(stoneHash(i),stoneHash(i+vec2(1,0)),f.x),mix(stoneHash(i+vec2(0,1)),stoneHash(i+vec2(1,1)),f.x),f.y);}
-      float stoneFbm(vec2 p){float n=0.,a=.5;for(int i=0;i<5;i++){n+=a*stoneNoise(p);p=p*2.07+1.4;a*=.48;}return n;}
-    `).replace('#include <color_fragment>',`#include <color_fragment>
-      vec2 p=vStone*.42;float warp=stoneFbm(p*1.6);float veins=pow(1.-abs(sin(p.x*1.5+p.y*.8+warp*7.)),12.);
-      float cloud=stoneFbm(p*.9);diffuseColor.rgb*=.91+.16*cloud-.12*veins;
-    `);
-  };
-  const top=mesh(new THREE.CircleGeometry(27.2,192),glaze,[0,-.058,0],floor);top.rotation.x=-Math.PI/2;
-  const seam=mat('#bdb09c',.65);
-  for(let x=-22.5;x<=22.5;x+=4.5)box([.004,.001,2*Math.sqrt(27.1**2-x*x)],[x,-.055,0],seam,floor);
-  for(let z=-22.5;z<=22.5;z+=4.5)box([2*Math.sqrt(27.1**2-z*z),.001,.004],[0,-.055,z],seam,floor);
+  mirror.rotation.x=-Math.PI/2;mirror.position.y=-.022;mirror.name='gallery-reflection';
+  const mirrorMaterial=mirror.material as THREE.ShaderMaterial;
+  mirrorMaterial.transparent=true;mirrorMaterial.depthWrite=false;mirror.renderOrder=1;floor.add(mirror);
   // All azimuths share the same open-air architectural finish and planted perimeter.
   const canopyMat=mat('#e4d9c5',.72);canopyMat.side=THREE.DoubleSide;
   const roofG=new THREE.RingGeometry(24,28,192,3);roofG.rotateX(-Math.PI/2);
-  mesh(roofG,canopyMat,[0,5.25,0]).name='continuous-pavilion-canopy';
+  mesh(roofG,canopyMat,[0,7.65,0]).name='continuous-pavilion-canopy';
+  // A continuous fascia gives the roof a real section instead of a paper-thin ring.
+  for(const r of [24,28]){const fascia=new THREE.CylinderGeometry(r,r,.22,192,1,true);mesh(fascia,canopyMat,[0,7.65,0]);}
+  const soffit=roofG.clone();mesh(soffit,canopyMat,[0,7.54,0]);
   const glow=new THREE.MeshStandardMaterial({color:'#fff0d0',emissive:'#ffdfad',emissiveIntensity:1.4,roughness:.45});materials.add(glow);
-  const edgeG=new THREE.TorusGeometry(24,.024,6,192);edgeG.rotateX(Math.PI/2);mesh(edgeG,glow,[0,5.23,0]);
-  const edgeStone=mat('#b3a791',.65);
+  const edgeG=new THREE.TorusGeometry(24,.024,6,192);edgeG.rotateX(Math.PI/2);mesh(edgeG,glow,[0,7.515,0]);
   for(let i=0;i<12;i++){
     const a=i*Math.PI/6,x=Math.sin(a)*26,z=Math.cos(a)*26;
-    mesh(new THREE.CylinderGeometry(.065,.09,5.3,20),bronze,[x,2.55,z]);
-    mesh(new THREE.CylinderGeometry(.19,.23,.09,24),bronze,[x,-.012,z]);
+    mesh(new THREE.CylinderGeometry(.095,.12,7.54,24),bronze,[x,3.75,z]);
+    mesh(new THREE.CylinderGeometry(.23,.23,.055,24),bronze,[x,7.50,z]);
+    mesh(new THREE.CylinderGeometry(.22,.25,.07,32),bronze,[x,.011,z]);
     if(i%3===1){
       const seat=new THREE.Group();seat.position.set(Math.sin(a)*21.5,0,Math.cos(a)*21.5);seat.rotation.y=a;group.add(seat);
       rounded([3,.16,1],[0,.47,0],ivory,.075,seat);rounded([3,.5,.22],[0,.79,.38],ivory,.08,seat);
       for(const dx of [-1.1,1.1])box([.075,.42,.7],[dx,.19,0],bronze,seat);
     }
   }
-  const curb=mesh(new THREE.TorusGeometry(27.2,.12,8,192),edgeStone,[0,-.10,0]);curb.rotation.x=Math.PI/2;
   const plants=new THREE.Group();plants.name='pavilion-olive-trees';group.add(plants);
   for(const [x,z,s] of Array.from({length:8},(_,i)=>[Math.sin(i*Math.PI/4+.2)*23,Math.cos(i*Math.PI/4+.2)*23,.9+(i%3)*.1])){
     const tree=new THREE.Group();tree.position.set(x,0,z);tree.scale.setScalar(s);plants.add(tree);
@@ -97,20 +85,22 @@ export function createChampagneGallery() {
     leaves.castShadow=true;leaves.instanceMatrix.needsUpdate=true;tree.add(leaves);
   }
   const sky=createPanoramaSky('landscape-panorama-360');group.add(sky.mesh);
+  landscape.connectPanorama(sky.mesh.material);
   group.userData.panoramaCoverage=360;
   let activeLighting:THREE.DataTexture|null=null, backgroundGuard: (texture:THREE.Texture)=>boolean=()=>false;
   function activate(){
     const style=galleryEnvironments[environment],texture=panoramas.get(environment),backdrop=backdrops.get(environment);
     group.userData.environment=environment;group.userData.environmentReady=texture&&backdrop?environment:'';
+    group.userData.panoramaResolution=backdrop?`${backdrop.image.width}x${backdrop.image.height}`:'';
     sky.set(backdrop??null,style.rotation);if(texture)activeLighting=texture;
-    stone.color.set(style.stone);glaze.color.set(style.stone).multiplyScalar(.52);
+    stone.color.set(style.stone);platform.setEnvironment(environment);
     plants.visible=environment!=='desert';foliage.color.set(environment==='snow'?'#89958c':'#576044');
   }
   function trimCache(){for(const cache of [panoramas,backdrops])for(const [id,texture] of cache){if(cache.size<=2)break;if(id!==environment&&texture!==activeLighting&&!sky.uses(texture)&&!backgroundGuard(texture)){cache.delete(id);texture.dispose();}}}
   function setEnvironment(value:GalleryEnvironment){
     environment=value;landscape.setEnvironment(value);group.userData.panoramaFailed=false;
     const cachedBackdrop=backdrops.get(value);if(cachedBackdrop){backdrops.delete(value);backdrops.set(value,cachedBackdrop);}
-    if(scenicBackdrops[value]&&!backdrops.has(value)&&!backdropPending.has(value)){backdropPending.add(value);new THREE.TextureLoader().load(scenicBackdrops[value]!,texture=>{backdropPending.delete(value);if(disposed){texture.dispose();return;}texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=THREE.RepeatWrapping;texture.anisotropy=4;backdrops.set(value,texture);trimCache();if(value===environment)activate();},undefined,()=>{backdropPending.delete(value);if(!disposed&&value===environment)group.userData.panoramaFailed=true;});}
+    if(scenicBackdrops[value]&&!backdrops.has(value)&&!backdropPending.has(value)){backdropPending.add(value);new THREE.TextureLoader().load(scenicBackdrops[value]!,texture=>{backdropPending.delete(value);if(disposed){texture.dispose();return;}texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=THREE.RepeatWrapping;texture.anisotropy=Math.min(16,anisotropy);texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;backdrops.set(value,texture);trimCache();if(value===environment)activate();},undefined,()=>{backdropPending.delete(value);if(!disposed&&value===environment)group.userData.panoramaFailed=true;});}
     const cached=panoramas.get(value);if(cached){panoramas.delete(value);panoramas.set(value,cached);}activate();if(cached||pending.size>0)return;pending.add(value);
     void loadHDRTexture(galleryEnvironments[value].url).then(texture=>{pending.delete(value);if(disposed){texture.dispose();return;}texture.mapping=THREE.EquirectangularReflectionMapping;panoramas.set(value,texture);trimCache();if(value===environment)activate();else setEnvironment(environment);},()=>{pending.delete(value);if(!disposed&&value===environment){group.userData.panoramaFailed=true;activate();}else if(!disposed)setEnvironment(environment);});
   }
@@ -119,6 +109,6 @@ export function createChampagneGallery() {
     protectBackground(guard:(texture:THREE.Texture)=>boolean){backgroundGuard=guard;},
     update(dt:number){sky.update(dt);trimCache();},
     resize(width:number,height:number){const w=Math.min(2048,Math.max(768,Math.round(width))),h=Math.min(1440,Math.max(512,Math.round(height)));const target=mirror.getRenderTarget();if(target.width!==w||target.height!==h){target.setSize(w,h);(mirror.material as THREE.ShaderMaterial).uniforms.texel.value.set(1/w,1/h);}},
-    dispose(){disposed=true;sky.dispose();landscape.dispose();group.removeFromParent();mirror.dispose();panoramas.forEach(t=>t.dispose());panoramas.clear();backdrops.forEach(t=>t.dispose());backdrops.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());},
+    dispose(){if(disposed)return;disposed=true;sky.dispose();landscape.dispose();platform.dispose();group.removeFromParent();group.traverse(o=>{if(o instanceof THREE.InstancedMesh)o.dispose();});mirror.dispose();panoramas.forEach(t=>t.dispose());panoramas.clear();backdrops.forEach(t=>t.dispose());backdrops.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());},
   };
 }
