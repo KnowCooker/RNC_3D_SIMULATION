@@ -164,6 +164,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     host.dataset.stage=stage.mode;
     camera.clearViewOffset();
     if(stage.mode==='gallery'&&host.dataset.presentationPage==='field'&&host.clientWidth>=1000)camera.setViewOffset(host.clientWidth,host.clientHeight,host.clientWidth*.16,0,host.clientWidth,host.clientHeight);
+    updateDrawingResolution();
+    contactShade.position.y=stage.mode==='gallery'?-.020:-.032;
+    contactShade.renderOrder=stage.mode==='gallery'?2:0;
     driving?.enable(stage.mode==='road'&&!!showroomModel?.assetId.startsWith('xpeng-'));
     scene.fog=stage.mode==='road'?new THREE.Fog('#c6d1cf',230,360):null;
     stage.setClearBay(showroomActive && !!showroomModel?.assetId.startsWith('xpeng-'));
@@ -904,6 +907,15 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   let presentationCompact=host.clientWidth<1000;
   let wasNarrow = host.clientWidth < 600;
   let wasP7Compact = host.clientWidth < 900;
+  function updateDrawingResolution() {
+    const width=Math.max(1,host.clientWidth),height=Math.max(1,host.clientHeight);
+    // Gallery prioritises still-scene detail. Keep native pixels on very large screens;
+    // supersampling uses the 8.4 MP budget, and driving retains its 1.5x policy.
+    const pixelRatio=Math.min(Math.max(stage.mode==='gallery'?2:1.5,window.devicePixelRatio||1),2,Math.max(1,Math.sqrt(8_400_000/(width*height))));
+    if(renderer.getPixelRatio()!==pixelRatio)renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(width,height,false);stage.gallery.resize(width,height);
+    host.dataset.renderResolution=`${renderer.domElement.width}x${renderer.domElement.height}`;
+  }
   function resizeViewer() {
     const width = Math.max(1, host.clientWidth), height = Math.max(1, host.clientHeight);
     const isNarrow = width < 600;
@@ -912,11 +924,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     wasNarrow = isNarrow;
     if (width < 900 && !wasP7Compact && showroomActive && showroomModel?.assetId === 'xpeng-p7plus') showroomAssemblyPanel.open = false;
     wasP7Compact = width < 900;
-    // Native CSS resolution on every screen; up to 2× supersampling within an 8.4 MP budget.
-    const pixelRatio = Math.min(Math.max(1.5, window.devicePixelRatio || 1), 2, Math.max(1, Math.sqrt(8_400_000 / (width * height))));
-    renderer.setPixelRatio(pixelRatio);
-    renderer.setSize(width, height, false);
-    stage.gallery.resize(width,height);
+    updateDrawingResolution();
     camera.aspect = width / height;
     if(host.dataset.presentationPage==='overview'&&stage.mode==='gallery'){
       if(width>=1000)camera.setViewOffset(width,height,width*.04,height*.075,width,height);

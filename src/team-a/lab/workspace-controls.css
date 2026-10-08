@@ -54,8 +54,16 @@
   .cp-app[data-page=field] .cp-environment-status{bottom:var(--cp-dock-clearance,110px)}
   .cp-app .cp-disclosure-panel[data-collapsed=true]{right:18px;left:auto}
 }
+@media(min-width:1001px) and (max-width:1400px){
+  .cp-app .cp-drive-inspect{width:36px;padding:7px}
+  .cp-app .cp-drive-inspect span{display:none}
+  .cp-app .cp-bottom-bar #lab-audition-state{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}
 @media(max-width:1000px){
+  .cp-app{--cp-work-view-height:600px}
+  .cp-app:is([data-page=field],[data-page=structure]) .cp-stage{min-height:0;height:auto}
   .cp-app:not([data-page=overview]) .cp-bottom-bar{position:relative;left:auto;right:auto;bottom:auto;margin:18px 15px 24px}
+  .cp-app[data-page=field]:has(.cp-field-panel[data-collapsed=true]) .cp-bottom-bar,.cp-app[data-page=structure]:has(.cp-structure-tools[data-collapsed=true]) .cp-bottom-bar{margin-top:calc(var(--cp-work-view-height) + 18px)}
   .cp-app:not([data-page=overview]):not([data-page=compare]) .cp-mode-dock{position:fixed;z-index:20;left:12px;right:auto;bottom:max(8px,env(safe-area-inset-bottom));width:max-content;max-width:calc(100vw - 24px)}
   .cp-app:not([data-page=overview]):not([data-page=compare]) .cp-bottom-bar{margin-bottom:78px}
   .cp-app .cp-dock-modes button,.cp-app .cp-drive-inspect,.cp-app .cp-environment-toggle{min-height:40px}
@@ -67,6 +75,9 @@
   .cp-app #lab-viewer .lab-showroom-panel.cp-disclosure-panel .cp-panel-body>.lab-asset-inspection{order:-1}
 }
 @media(max-width:600px){
+  .cp-app{--cp-work-view-height:540px}
+  .cp-app[data-page=field] .cp-mode-rail button{padding:7px 5px;gap:3px;font-size:10px}
+  .cp-app[data-page=field] .cp-mode-rail svg{width:14px;height:14px}
   .cp-app .cp-dock-modes button{padding:7px 8px;font-size:11px;gap:4px}
   .cp-app .cp-dock-modes button>svg{width:15px;height:15px}
   .cp-app .cp-drive-inspect{width:36px;padding:7px}

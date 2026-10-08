@@ -24,10 +24,23 @@ export function landscapeRelief(x: number, z: number, env: GalleryEnvironment) {
   return amplitude * (broad * .82 + ridge * ridge * .18) + detail;
 }
 export function galleryHeight(x: number, z: number, env: GalleryEnvironment) {
-  const radius = Math.hypot(x, z), coast = env === 'coast';
-  const edge = smooth(radius, coast ? 180 : 75, coast ? 340 : 260);
-  // Low, receding foothills leave space for the captured distant mountain skyline.
-  return -2.2 + edge * landscapeRelief(x, z, env) * (env === 'mountain' ? .7 : env === 'snow' ? .8 : 1);
+  const radius = Math.hypot(x, z), angle = Math.atan2(z, x);
+  const lake = env === 'coast' || env === 'mountain';
+  // The pavilion sits in a continuous island, rather than over a missing annulus.
+  // A restrained, irregular shore reveals real depth without obscuring the photo skyline.
+  const shoreline = 37 + 2.4 * Math.sin(angle * 3 + .7) + 1.5 * Math.sin(angle * 5 - .3);
+  const beach = smooth(radius, 27.2, shoreline);
+  const shelf = mix(-.13, -.45, beach);
+  // The two ±X stairs end at y=-.36. Their foundations enter this dry landing soil.
+  const stair = (1 - smooth(Math.abs(z), 2.15, 3.6)) * (1 - smooth(radius, 31.1, 33.5));
+  const landing = mix(shelf, -.405, stair);
+  const basin = smooth(radius, shoreline, shoreline + 11);
+  const near = mix(landing, lake ? -2.6 : -.72, basin);
+  const relief = landscapeRelief(x, z, env);
+  const foothill = smooth(radius, lake ? 115 : 62, lake ? 420 : 345);
+  const distant = relief * (env === 'coast' ? .65 : env === 'mountain' ? .38 : env === 'snow' ? .32 : .45);
+  const smallRelief = (landscapeNoise(x / 19, z / 19) - .5) * .85;
+  return near + foothill * (distant + smallRelief);
 }
 
 export const ROAD_WATER_LEVEL = -16;

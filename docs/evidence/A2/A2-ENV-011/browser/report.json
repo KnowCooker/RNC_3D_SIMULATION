@@ -1,0 +1,170 @@
+{
+  "role": "A2",
+  "task": "A2-ENV-011",
+  "identitySource": "user-declared",
+  "executor": "Codex",
+  "sourceBefore": {
+    "champagne-gallery.ts": "6b20886e5967c42e199fac77afb8bebb6030a340715985c9fcc763bf1f275be9",
+    "gallery-platform.ts": "8ad0d6e459cd99bc950d847d4ea9f5be007eb253271ed2444ab96d032eed3b73",
+    "gallery-landscape.ts": "d263fb50343e8ee8c68028a8d4edc365743867218ee00e12ef7813cfa335f16d",
+    "landscape-height.ts": "2babf84c2a46a96d03117d11141ecc936233e50ac89d40835481cdf6537388fd",
+    "scenic-terrain.ts": "4e588981a8981795bf55d45241f736a0940a17004df9385b91e0fb6d3a0d4906",
+    "scene-stage.ts": "9a0a58314999b276c9944e3bd806623d206462506f21cf763c8c4799304f4696",
+    "lab-viewer.ts": "1b1272a61d27d07c0ee12c6b2b0302be384c3467ec139693d783e67ec01723f5"
+  },
+  "sourceAfter": {
+    "champagne-gallery.ts": "6b20886e5967c42e199fac77afb8bebb6030a340715985c9fcc763bf1f275be9",
+    "gallery-platform.ts": "8ad0d6e459cd99bc950d847d4ea9f5be007eb253271ed2444ab96d032eed3b73",
+    "gallery-landscape.ts": "d263fb50343e8ee8c68028a8d4edc365743867218ee00e12ef7813cfa335f16d",
+    "landscape-height.ts": "2babf84c2a46a96d03117d11141ecc936233e50ac89d40835481cdf6537388fd",
+    "scenic-terrain.ts": "4e588981a8981795bf55d45241f736a0940a17004df9385b91e0fb6d3a0d4906",
+    "scene-stage.ts": "9a0a58314999b276c9944e3bd806623d206462506f21cf763c8c4799304f4696",
+    "lab-viewer.ts": "1b1272a61d27d07c0ee12c6b2b0302be384c3467ec139693d783e67ec01723f5"
+  },
+  "gpu": {
+    "maxTextureSize": 16384,
+    "maxRenderbufferSize": 16384
+  },
+  "checks": [
+    {
+      "name": "overview renders at 2x pixels",
+      "pass": true,
+      "detail": {
+        "width": 3840,
+        "height": 2004,
+        "cssWidth": 1920,
+        "cssHeight": 1002
+      }
+    },
+    {
+      "name": "mountain backdrop and HDR ready",
+      "pass": true
+    },
+    {
+      "name": "desert backdrop and HDR ready",
+      "pass": true
+    },
+    {
+      "name": "snow backdrop and HDR ready",
+      "pass": true
+    },
+    {
+      "name": "coast backdrop and HDR ready",
+      "pass": true
+    },
+    {
+      "name": "coast orbit 0 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "coast orbit 1 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "coast orbit 2 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "coast orbit 3 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "mountain orbit 0 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "mountain orbit 1 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "mountain orbit 2 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "mountain orbit 3 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "desert orbit 0 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "desert orbit 1 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "desert orbit 2 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "desert orbit 3 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "snow orbit 0 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "snow orbit 1 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "snow orbit 2 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "snow orbit 3 stays above platform",
+      "pass": true
+    },
+    {
+      "name": "same-size switch restores road 1.5x pixels",
+      "pass": true,
+      "detail": {
+        "width": 2880,
+        "height": 1503,
+        "cssWidth": 1920,
+        "cssHeight": 1002
+      }
+    },
+    {
+      "name": "same-size return restores gallery 2x pixels",
+      "pass": true,
+      "detail": {
+        "width": 3840,
+        "height": 2004,
+        "cssWidth": 1920,
+        "cssHeight": 1002
+      }
+    },
+    {
+      "name": "1440p supersampling stays within budget",
+      "pass": true,
+      "detail": {
+        "width": 4005,
+        "height": 2096,
+        "cssWidth": 2560,
+        "cssHeight": 1340
+      }
+    },
+    {
+      "name": "390px no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "no page or shader errors",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "no failed requests",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "tested source unchanged",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

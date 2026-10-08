@@ -1,0 +1,9 @@
+{
+  "destination": "test-results/B2-004-registered/audit.json",
+  "bindings": 5,
+  "cases": 10,
+  "valuesPerComparison": 7680000,
+  "analysisFramesPerDecode": 600,
+  "frozenFiles": 8,
+  "phase": "registered-candidate-report-addendum"
+}
