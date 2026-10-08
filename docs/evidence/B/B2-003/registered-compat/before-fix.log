@@ -1,0 +1,140 @@
+✔ B2-003 async: Web Crypto produces the same container and detached data as sync API (43.5823ms)
+✔ B2-003 async: encoding snapshots config, run identity, samples and budgets before awaiting (29.303ms)
+✔ B2-003 async: decode owns a snapshot across Buffer mutation, offset views and transfer (42.6022ms)
+✔ B2-003 async: hash rejections and invalid digests propagate without a partial result (51.3631ms)
+✔ B2-003 async: malformed, nonfinite and over-budget inputs reject before invoking crypto (10.5265ms)
+✔ B2-003: default binary roundtrip, recipe recompute and Python oracle (571.6498ms)
+✔ B2-003: seed29 binary roundtrip, recipe recompute and Python oracle (516.4764ms)
+✔ B2-003: seed47 binary roundtrip, recipe recompute and Python oracle (605.6393ms)
+✔ B2-003: taps32 binary roundtrip, recipe recompute and Python oracle (368.9744ms)
+✔ B2-003: mu0 binary roundtrip, recipe recompute and Python oracle (347.8431ms)
+✔ B2-003: registered source hashes match the numerical implementation (2.497ms)
+✔ B2-003: preserve reference identity, little-endian edge bits and offset views (199.6966ms)
+✔ B2-003: silent and zero-denominator metrics retain nonfinite tags and unavailable measurements (102.5661ms)
+✔ B2-003: genuine zero/negative reductions and tagged negative zero stay distinct from silence (76.1464ms)
+✔ B2-003: malformed/truncated headers, overflow lengths, trailing bytes and padding are rejected (18.7157ms)
+✔ B2-003: schema, channel mapping, units, metadata, normalized config and metrics are validated (55.6676ms)
+✔ B2-003: integrity mismatch and hash-correct nonfinite payload cannot import (13.5558ms)
+✔ B2-003: budgets refuse before hashing/large output and count UTF-8 bytes (9.1043ms)
+✔ B2-003: unknown numerical models are read-only; recipe recompute revalidates identity and fresh id (15.1509ms)
+✔ B2-003: recipes reject extra scripts/URLs/arrays, bad text/config and different schemas (28.1521ms)
+✔ B2-003: live snapshots, partial results, bad dimensions and invalid samples are not batches (31.3287ms)
+✔ B2-003 lab recipe: ice, both sources and 1/4/8 reference topology (720.4396ms)
+✔ B2-003 lab recipe: bev, both sources and 1/4/8 reference topology (538.4944ms)
+✔ B2-003 lab recipe: hev, both sources and 1/4/8 reference topology (532.3098ms)
+✔ B2-003 lab recipe: erev, both sources and 1/4/8 reference topology (526.967ms)
+✖ B2-003 lab recipe: model/source/recording identities match current files (33.8083ms)
+✔ B2-003 lab recipe: preserve legacy absence and normalize shaped/layout/offset defaults explicitly (87.9786ms)
+✔ B2-003 lab recipe: RNC off, zero step, speaker disable, seed/taps changes and negative gains retain exact behavior (156.5181ms)
+✔ B2-003 lab recipe: actual divergence is a finite prefix, never padded or called complete (122.4731ms)
+✖ B2-003 lab recipe: unknown layouts cannot encode/recompute and unknown model is only parsed (27.595ms)
+✔ B2-003 lab recipe: recording asset is mandatory, full-byte hash checked, never random fallback (7.5986ms)
+✔ B2-003 lab recipe: snapshot config/id/budget and asset before await, propagate resolver/hash failures (77.0617ms)
+✔ B2-003 lab recipe: reject bad config, dimensions, identities, extra scripts, live mode and altered defaults (1.6452ms)
+✔ B2-003 lab recipe: byte and recompute budgets reject before asset loading or calculation (0.7986ms)
+✔ B2-003 lab result: ice, both sources and 1/4/8 references sync/async exact roundtrip (348.0006ms)
+✔ B2-003 lab result: bev, both sources and 1/4/8 references sync/async exact roundtrip (323.5564ms)
+✔ B2-003 lab result: hev, both sources and 1/4/8 references sync/async exact roundtrip (288.7813ms)
+✔ B2-003 lab result: erev, both sources and 1/4/8 references sync/async exact roundtrip (406.2371ms)
+✔ B2-003 lab result: divergence, disabled RNC/output, mu0 and legacy absence retain status and identities (202.7881ms)
+✔ B2-003 lab result: tagged invalid metrics survive, disagreeing summary is quarantined (41.005ms)
+✔ B2-003 lab result: silence and empty divergence never become valid zero dB, real mu0 does (12.156ms)
+✔ B2-003 lab result: finite edge bits and offset views survive with independent arrays (44.7301ms)
+✖ B2-003 lab result: unknown model/layout remain read-only without verified metrics (21.6741ms)
+✔ B2-003 lab result: hostile manifest identities, dimensions, units, clocks, state and scalar tags reject before hashing (18.4824ms)
+✔ B2-003 lab result: truncation, trailing data, lengths, padding, UTF-8 and nonfinite samples reject (35.1647ms)
+✔ B2-003 lab result: explicit batch, complete/prefix rules, array shape, UTF-8 identity and budgets reject before crypto (50.5577ms)
+✔ B2-003 lab result: async encoder captures all signals/metadata/limits before await (16.2543ms)
+✔ B2-003 lab result: async import owns Buffer/offset views across mutation or transfer; SHA failures propagate (34.3991ms)
+✔ Hann Welch one-sided PSD integrates to tone mean-square and has the correct peak (3.132ms)
+✔ B2-002: RMS uses exactly the trailing 1000 samples, including first and final windows (3.6467ms)
+✔ B2-002: same-window reduction preserves negative gains and aggregates powers before dB (3.6226ms)
+✔ B2-002: silence and near-floor pressure never report valid zero-dB benefit (10.5203ms)
+✔ B2-002: non-finite pressure is unavailable, never a valid analysis frame (11.9724ms)
+✔ B2-002: power rejects invalid ranges and PSD clamps finite sample cursors to actual data (1.0049ms)
+✔ B2-002: PSD rejects non-finite samples in its complete windows and ignores future samples (0.7196ms)
+✔ B2-002: non-finite PSD cursors cannot trap a caller in an unbounded loop (232.4946ms)
+✔ B2-002: shared PSD preserves lab pressure weighting and vibration/drive/source units (10.7238ms)
+✔ B2-002: asymmetric signal Welch bins match direct DFT, 50% overlap and incomplete-tail handling (82.9472ms)
+✔ B2-002: DC and Nyquist are not doubled; PSD scales as signal-unit squared per Hz (11.4127ms)
+✔ analysis warming-up, window boundary, channel identity and pressure calibration (0.6834ms)
+ℹ tests 60
+ℹ suites 0
+ℹ pass 57
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9522.4063
+
+✖ failing tests:
+
+test at tests\helpers\lab-recipe-tests.ts:1:1308
+✖ B2-003 lab recipe: model/source/recording identities match current files (33.8083ms)
+  AssertionError [ERR_ASSERTION]: src/shared/lab-contracts.ts
+  + actual - expected
+
+  + 'b1a0af463bbe9b3a2dbcacb800bc42cd5597f6ebfa8bdfd73bc08c11000d2d2a'
+  - '4cddd97edd7716a3ce63e22eff16118f93ea14bb630d9b21f5aa03d45fb280b5'
+
+      at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\helpers\lab-recipe-tests.ts:19:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'b1a0af463bbe9b3a2dbcacb800bc42cd5597f6ebfa8bdfd73bc08c11000d2d2a',
+    expected: '4cddd97edd7716a3ce63e22eff16118f93ea14bb630d9b21f5aa03d45fb280b5',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\helpers\lab-recipe-tests.ts:1:3532
+✖ B2-003 lab recipe: unknown layouts cannot encode/recompute and unknown model is only parsed (27.595ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+
+  Caught error:
+
+  ExportError: Invalid lab batch configuration
+      at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\helpers\lab-recipe-tests.ts:48:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: ExportError: Invalid lab batch configuration
+        at fail (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-recipe.ts:42:70)
+        at readConfig (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-recipe.ts:85:46)
+        at encodeLabRecipe (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-recipe.ts:143:18)
+        at <anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\helpers\lab-recipe-tests.ts:48:23)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\helpers\lab-recipe-tests.ts:48:10)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1382:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:960:18),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tests\helpers\lab-result-tests.ts:1:5843
+✖ B2-003 lab result: unknown model/layout remain read-only without verified metrics (21.6741ms)
+  Error [ExportError]: Invalid lab batch configuration
+      at fail (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-recipe.ts:42:70)
+      at readConfig (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-recipe.ts:85:46)
+      at validated (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-recipe.ts:129:18)
+      at decodeLabRecipe (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-recipe.ts:158:10)
+      at inspect (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-result.ts:188:18)
+      at decodeLabResult (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\src\team-b\export\lab-result.ts:239:21)
+      at TestContext.<anonymous> (C:\Users\12562\Desktop\123123\03 AI\RNC_3D_SIMULATION_B2\tests\helpers\lab-result-tests.ts:72:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18) {
+    code: 'INVALID_DATA'
+  }

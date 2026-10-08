@@ -1,0 +1,886 @@
+{
+  "role": "B2",
+  "task": "B2-003",
+  "identitySource": "user-declared",
+  "executor": "Codex",
+  "date": "2026-10-01",
+  "baseline": "67387f68c6a6c1d9ad0826794f61ebde74aa649c",
+  "scope": "demo-v2 batch only",
+  "sourceHashes": {
+    "src/team-b/export/index.ts": "fc5d9a3482907be77820e0c81073d4e5d1392e37477dc6cb526d7f09969e4793",
+    "src/team-b/export/model.ts": "dd1e60a33c2e36787916f2e69b70a13eb44e81fc7fa72bd251d857948ac92d34",
+    "tests/helpers/export-audit.ts": "0ccd47065d17d67250dc12927e281b04b0e54202ffeac12876e23d68346860f1",
+    "tests/helpers/export-tests.ts": "b6e9991705f7daf5be55496beefcd4a77d3a79544bcef94201f2acb04a3d88b3"
+  },
+  "samplesPerVerification": 3200000,
+  "cases": [
+    {
+      "name": "default",
+      "config": {
+        "schemaVersion": "demo-v2",
+        "vehicleId": "teaching-bev-rwd",
+        "pathProfileId": "synthetic-4x4x4-v1",
+        "algorithm": "fxlms",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "road": "asphalt",
+        "speedKph": 60,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0.08
+      },
+      "samplesCompared": 640000,
+      "payloadBytes": 2560000,
+      "manifestBytes": 4234,
+      "containerBytes": 2564252,
+      "minimumResidentSignalBytes": 5124252,
+      "recipeUtf8Bytes": 1356,
+      "roundTripExact": true,
+      "recomputeExact": true,
+      "maxRelativeRms": 0,
+      "maxAbsoluteError": 0,
+      "maxMetricDifferenceDb": 5.539799730058803e-9,
+      "inputUnchanged": true,
+      "channelHashes": [
+        {
+          "signal": "x",
+          "channel": 0,
+          "sha256": "2b415e0f71f02589ea17093f703230a27992fda8323c9b5953380ae956435642",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 1,
+          "sha256": "d8bbeca3d4297789a6fcf155602db55b61368bf200a39fe980c24038c7dab647",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 2,
+          "sha256": "e872d9f97ee410d24d8751723b61dacab43318b0153af1ffe924d9a5673e1952",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 3,
+          "sha256": "df8335f62169a9e0d970e20ca4dfff3ee809cdf387205bed494c4eafc2039ff4",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 0,
+          "sha256": "4637200a3e3027ce441bd7c7670de6ced6f5a5161228751e497779570cbcce52",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 1,
+          "sha256": "2d055dc4d654924c158719384a5d8e015a28c29bb0ff08731a2cb1f3ceabb99f",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 2,
+          "sha256": "6bcfb2e8401b0341bf404a2c4da876163975afaec0665373f2c5382fd31d8c4c",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 3,
+          "sha256": "ed51e5bbd7164be07aed33ab3163995d81fb8d3d77fe6367527e56f624cba90f",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 0,
+          "sha256": "bfc2b1d95b44e68430ba90d408954e28f24e936370ae7cf0eeb44c257ca83440",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 1,
+          "sha256": "b0ef2dd08bf928818cd90e7e6735ccd3c8cab98bed4e2c349837d1ed17c2ad63",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 2,
+          "sha256": "3b42e32df41342262fd962af2b5bb89ddff62a2a4ecc0b371ced791bf4c7381d",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 3,
+          "sha256": "cda9bbe00abaaab02e92fcc13b4d364383c7cb945a03c5b1f48450477e330a13",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 0,
+          "sha256": "7c1d1ca2a4adddce0a97825b4617644305e198d6f31bce49f0eccb8c6473f00f",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 1,
+          "sha256": "5ed20be733f338f7c759bcb812a2c598b181ce027781ffa3cce0ab9dadd5c41f",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 2,
+          "sha256": "dafaab21fd13523daa077dada6b75d8f83c7e132df24e80d96cc41ffef53f69b",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 3,
+          "sha256": "e8e59bf9c05bed658de4c2d89c8b00c9fc4e82a9499e76a77f8abc2132d3c06c",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 0,
+          "sha256": "26aa6b2b50c2af56c852c3b516b6318a83298ba3ac7475ccab08c395d9a5a2be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 1,
+          "sha256": "f142e7f331c716968255ad0f8324171e026b5072deeee7d5c0d4c0493e6a345d",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 2,
+          "sha256": "67e7f56e163e565c15904f1a42732bebc981261c7ad9512a9a13856bc9e438af",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 3,
+          "sha256": "a52b523ee8d254fa2f112e3fac72646714298d61914270d1e868fdec45b1baf7",
+          "roundTripExact": true,
+          "recomputeExact": true
+        }
+      ]
+    },
+    {
+      "name": "seed29",
+      "config": {
+        "schemaVersion": "demo-v2",
+        "vehicleId": "teaching-bev-rwd",
+        "pathProfileId": "synthetic-4x4x4-v1",
+        "algorithm": "fxlms",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "road": "asphalt",
+        "speedKph": 60,
+        "seed": 29,
+        "taps": 64,
+        "stepSize": 0.08
+      },
+      "samplesCompared": 640000,
+      "payloadBytes": 2560000,
+      "manifestBytes": 4230,
+      "containerBytes": 2564248,
+      "minimumResidentSignalBytes": 5124248,
+      "recipeUtf8Bytes": 1355,
+      "roundTripExact": true,
+      "recomputeExact": true,
+      "maxRelativeRms": 1.141575313177605e-14,
+      "maxAbsoluteError": 2.842170943040401e-14,
+      "maxMetricDifferenceDb": 9.258897648578568e-9,
+      "inputUnchanged": true,
+      "channelHashes": [
+        {
+          "signal": "x",
+          "channel": 0,
+          "sha256": "54a076813fb2cf21b29575c881d5eff25c658194d22ab45480a6e980a8aaa58f",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 1,
+          "sha256": "be8d9247a7b5c83f415c9daab6d2bbdb34da7b9b8b95be7885b8219aaeed182d",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 2,
+          "sha256": "c52a5dbb60e2fc179763e17f989393a9f1d261b7198632d682951608ed29baf9",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 3,
+          "sha256": "64de19bee0f01007a2e2ca0850567455e380713fdc3697558f12b55a2319dbdf",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 0,
+          "sha256": "8e61c91a0bc001fc378a606a357933c16190dfb25a3a0d413afa28936ac3faff",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 1,
+          "sha256": "26a47bf1e1480b46b481fca6413add79bc45304778a4563a872cfa665fbe301e",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 2,
+          "sha256": "8c6b663389dd48d113aa9db53d09dc7128f7aa4c390b2d381c1a1a3373e341ab",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 3,
+          "sha256": "b2037ed32bd8cddce0605281e65018f8d0705c4df7164f9a9a255f7fe3c3d75e",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 0,
+          "sha256": "dbaca2a4b4e12c7c637af0f095cd017f15fa148a3bc59ccd9303759e14b08224",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 1,
+          "sha256": "02649b87f8c9d6aa8a2dad19be1e4465b8ab9643f2438d1057836ba00653072f",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 2,
+          "sha256": "02a0ececab2f74abd37cdb620400fc71e34743deca629824e19a7da2d0e96676",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 3,
+          "sha256": "d39772862ebc8c51d6ea9f5627cc57d78b27d85d29795c8965f55ee007425416",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 0,
+          "sha256": "f9c5e0b5d1c8a48082bfa89986479515832b3b065bdebf2d2a490500cf8baebe",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 1,
+          "sha256": "460c88b07f6650516fb8bafcd5992e964b1c23a9d183e9be923066751a483398",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 2,
+          "sha256": "9148afb0510b908cb10f3dc6c1e599d997f673be5a599287e35d0ab2cc3180a8",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 3,
+          "sha256": "389a270b3b373a6aa3c38234de2d0a02767f0298c4533589108b915604084338",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 0,
+          "sha256": "b1be3fc50f1aa7e8b05ca053fa7cf3e7cd0cc1f71e3d9a009b46326d6e441395",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 1,
+          "sha256": "b3904d2d473b32d78e6dc1e94fe1c69e69ca6adaa223f2045ae405fb6f48f2a2",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 2,
+          "sha256": "6df59d27bf90577bf062e6460a1360673a0176bfad227fd96f2062efe28f3791",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 3,
+          "sha256": "7e2bd1684ee9277124f06069aef5d419fba20bbf66d706b2536441e52e4774ab",
+          "roundTripExact": true,
+          "recomputeExact": true
+        }
+      ]
+    },
+    {
+      "name": "seed47",
+      "config": {
+        "schemaVersion": "demo-v2",
+        "vehicleId": "teaching-bev-rwd",
+        "pathProfileId": "synthetic-4x4x4-v1",
+        "algorithm": "fxlms",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "road": "asphalt",
+        "speedKph": 60,
+        "seed": 47,
+        "taps": 64,
+        "stepSize": 0.08
+      },
+      "samplesCompared": 640000,
+      "payloadBytes": 2560000,
+      "manifestBytes": 4244,
+      "containerBytes": 2564260,
+      "minimumResidentSignalBytes": 5124260,
+      "recipeUtf8Bytes": 1355,
+      "roundTripExact": true,
+      "recomputeExact": true,
+      "maxRelativeRms": 0,
+      "maxAbsoluteError": 0,
+      "maxMetricDifferenceDb": 7.548379699073848e-9,
+      "inputUnchanged": true,
+      "channelHashes": [
+        {
+          "signal": "x",
+          "channel": 0,
+          "sha256": "230093e2cf6ab4de733429a6298d0c54e7813e0b50aaa13ee3e7419535e011d1",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 1,
+          "sha256": "9975426fce2a21f20457a977e337d4d69bf32a0e5ea0d41f54d6986229c3189e",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 2,
+          "sha256": "b3c524b145ac4038089a22e75ae1aa7519a428f91b751c5b6b16dbb10396280d",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 3,
+          "sha256": "7f5c8d2f7a33f449e1fd69f462b71eea0d34ca18a4e466faaea3880affefb2c1",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 0,
+          "sha256": "6a66c1cb462251648bb0a47ce607a56e7fb30f4d3d26456e44317b655f8a3899",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 1,
+          "sha256": "50844b72eedcf96f784c57666abaa27a4fa4c5b0c29ac3acb41eb1358f52416c",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 2,
+          "sha256": "f592f295226ce38f5adc509badbe552ad1bbfc1618472a5e84451d21657f33a3",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 3,
+          "sha256": "4c638d4741bac5ad155b66c93a0e1b839228b21de32a98204ef113b621411084",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 0,
+          "sha256": "3023718777f18c86570e211aea894db2139cd915ccb10339836901b03e1f95eb",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 1,
+          "sha256": "01ccac7eaa8ca22feb2ef74619c7a9b7a2b254fea7af509ecad89e1ee1a25cb5",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 2,
+          "sha256": "af9ce36af7de6cc92495f6f64cc133e4d23ab543756144c40b7d3e63d7ebfb3d",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 3,
+          "sha256": "d96d82844550f4bdd5e594689d12aae469b27fd12cebec80253a5034f736c2cc",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 0,
+          "sha256": "2c3de0dbd5702d945e5ceae1845cad711a19c0cb9a7f5ce6a31cb2334ed5db38",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 1,
+          "sha256": "7804da47537a5a04f5cf1230d18712ff102f59455641da3d40347f246aff2c22",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 2,
+          "sha256": "8834a5f65c9729ff4020e02e7795e2bf18b510e30adf6d44fe2ddcb9f277cf63",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 3,
+          "sha256": "61c95ee147e7a2f196c086d23f9add9a8501a5c51b4cae0272c21af3ac20875e",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 0,
+          "sha256": "2ce35f153a2975986ee7047e7d8f8a7cff1e4eeffafd5c75566104909e008499",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 1,
+          "sha256": "c75fffd8b75ec46b92c7c49a47ac1c078ed9043b1d5e7362ee1a3dd7973ea9f5",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 2,
+          "sha256": "7344346acccd2592519106fb23ceec6092040905d6ab0815c800dd094d7ecf06",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 3,
+          "sha256": "ed70b2c4a07071726a4f596b02250b91af11934e9eade699dc736726233e9c64",
+          "roundTripExact": true,
+          "recomputeExact": true
+        }
+      ]
+    },
+    {
+      "name": "taps32",
+      "config": {
+        "schemaVersion": "demo-v2",
+        "vehicleId": "teaching-bev-rwd",
+        "pathProfileId": "synthetic-4x4x4-v1",
+        "algorithm": "fxlms",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "road": "asphalt",
+        "speedKph": 60,
+        "seed": 11,
+        "taps": 32,
+        "stepSize": 0.08
+      },
+      "samplesCompared": 640000,
+      "payloadBytes": 2560000,
+      "manifestBytes": 4241,
+      "containerBytes": 2564260,
+      "minimumResidentSignalBytes": 5124260,
+      "recipeUtf8Bytes": 1355,
+      "roundTripExact": true,
+      "recomputeExact": true,
+      "maxRelativeRms": 0,
+      "maxAbsoluteError": 0,
+      "maxMetricDifferenceDb": 5.8499409760770504e-9,
+      "inputUnchanged": true,
+      "channelHashes": [
+        {
+          "signal": "x",
+          "channel": 0,
+          "sha256": "2b415e0f71f02589ea17093f703230a27992fda8323c9b5953380ae956435642",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 1,
+          "sha256": "d8bbeca3d4297789a6fcf155602db55b61368bf200a39fe980c24038c7dab647",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 2,
+          "sha256": "e872d9f97ee410d24d8751723b61dacab43318b0153af1ffe924d9a5673e1952",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 3,
+          "sha256": "df8335f62169a9e0d970e20ca4dfff3ee809cdf387205bed494c4eafc2039ff4",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 0,
+          "sha256": "733747a70c6424542e4ddc7c5a4c48f78a909a674c66be2b6cd79e902f288dec",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 1,
+          "sha256": "dce42f538bdb48e416d3bc8e649a0d6e5ceeeef9976a1e6f7c79fd0521b64847",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 2,
+          "sha256": "23a7ad9d620e7d8d7cf84f43ed6178d445c6d15b88099dd1aa03acd635227ad0",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 3,
+          "sha256": "0591a7469f23a2ee38a6108351ee89e2dc0aaea30e9c46718c7c39f35e96c3c6",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 0,
+          "sha256": "bfc2b1d95b44e68430ba90d408954e28f24e936370ae7cf0eeb44c257ca83440",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 1,
+          "sha256": "b0ef2dd08bf928818cd90e7e6735ccd3c8cab98bed4e2c349837d1ed17c2ad63",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 2,
+          "sha256": "3b42e32df41342262fd962af2b5bb89ddff62a2a4ecc0b371ced791bf4c7381d",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 3,
+          "sha256": "cda9bbe00abaaab02e92fcc13b4d364383c7cb945a03c5b1f48450477e330a13",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 0,
+          "sha256": "56218231197f5ca494d994b9d037439ee1ecc995ed17aaa1ddc183a02b71767c",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 1,
+          "sha256": "64ec6f0991f606408204e9742ae720972a24c0f038c8bc853e1c3bea54b152da",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 2,
+          "sha256": "f1b6928e6b99214220eb579f10be57a814c1fceaafc56859a2a2e14fd65a3a0a",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 3,
+          "sha256": "0fa5ce1152c814807c22b5f92aed602d56036bb703eec68fe146521ebf7a349f",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 0,
+          "sha256": "f355c46c06950ac98750db7972d44fe2e483013618b120c9bcdd50cef4da5ae7",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 1,
+          "sha256": "06bca97e6cb289158120e6d55b8866812d1135d5530c7985a17e614d61a2660f",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 2,
+          "sha256": "c54da2cbf73cd5888deab7374f241c8d02a37b97376be5bbd60733796142feed",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 3,
+          "sha256": "830d7889c2c11b157c049c84b33c70249ef1aba113925f9d8ea4c4611d17df04",
+          "roundTripExact": true,
+          "recomputeExact": true
+        }
+      ]
+    },
+    {
+      "name": "mu0",
+      "config": {
+        "schemaVersion": "demo-v2",
+        "vehicleId": "teaching-bev-rwd",
+        "pathProfileId": "synthetic-4x4x4-v1",
+        "algorithm": "fxlms",
+        "sampleRateHz": 2000,
+        "durationSeconds": 16,
+        "adaptationStartsSeconds": 2,
+        "road": "asphalt",
+        "speedKph": 60,
+        "seed": 11,
+        "taps": 64,
+        "stepSize": 0
+      },
+      "samplesCompared": 640000,
+      "payloadBytes": 2560000,
+      "manifestBytes": 4150,
+      "containerBytes": 2564168,
+      "minimumResidentSignalBytes": 5124168,
+      "recipeUtf8Bytes": 1346,
+      "roundTripExact": true,
+      "recomputeExact": true,
+      "maxRelativeRms": 0,
+      "maxAbsoluteError": 0,
+      "maxMetricDifferenceDb": 0,
+      "inputUnchanged": true,
+      "channelHashes": [
+        {
+          "signal": "x",
+          "channel": 0,
+          "sha256": "2b415e0f71f02589ea17093f703230a27992fda8323c9b5953380ae956435642",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 1,
+          "sha256": "d8bbeca3d4297789a6fcf155602db55b61368bf200a39fe980c24038c7dab647",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 2,
+          "sha256": "e872d9f97ee410d24d8751723b61dacab43318b0153af1ffe924d9a5673e1952",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "x",
+          "channel": 3,
+          "sha256": "df8335f62169a9e0d970e20ca4dfff3ee809cdf387205bed494c4eafc2039ff4",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 0,
+          "sha256": "eec19bc6af0b3b6dfb97a08782c65f4bb3c3203e789a015d2008b0d689ad08be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 1,
+          "sha256": "eec19bc6af0b3b6dfb97a08782c65f4bb3c3203e789a015d2008b0d689ad08be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 2,
+          "sha256": "eec19bc6af0b3b6dfb97a08782c65f4bb3c3203e789a015d2008b0d689ad08be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "u",
+          "channel": 3,
+          "sha256": "eec19bc6af0b3b6dfb97a08782c65f4bb3c3203e789a015d2008b0d689ad08be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 0,
+          "sha256": "bfc2b1d95b44e68430ba90d408954e28f24e936370ae7cf0eeb44c257ca83440",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 1,
+          "sha256": "b0ef2dd08bf928818cd90e7e6735ccd3c8cab98bed4e2c349837d1ed17c2ad63",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 2,
+          "sha256": "3b42e32df41342262fd962af2b5bb89ddff62a2a4ecc0b371ced791bf4c7381d",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "d",
+          "channel": 3,
+          "sha256": "cda9bbe00abaaab02e92fcc13b4d364383c7cb945a03c5b1f48450477e330a13",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 0,
+          "sha256": "eec19bc6af0b3b6dfb97a08782c65f4bb3c3203e789a015d2008b0d689ad08be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 1,
+          "sha256": "eec19bc6af0b3b6dfb97a08782c65f4bb3c3203e789a015d2008b0d689ad08be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 2,
+          "sha256": "eec19bc6af0b3b6dfb97a08782c65f4bb3c3203e789a015d2008b0d689ad08be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "a",
+          "channel": 3,
+          "sha256": "eec19bc6af0b3b6dfb97a08782c65f4bb3c3203e789a015d2008b0d689ad08be",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 0,
+          "sha256": "bfc2b1d95b44e68430ba90d408954e28f24e936370ae7cf0eeb44c257ca83440",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 1,
+          "sha256": "b0ef2dd08bf928818cd90e7e6735ccd3c8cab98bed4e2c349837d1ed17c2ad63",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 2,
+          "sha256": "3b42e32df41342262fd962af2b5bb89ddff62a2a4ecc0b371ced791bf4c7381d",
+          "roundTripExact": true,
+          "recomputeExact": true
+        },
+        {
+          "signal": "e",
+          "channel": 3,
+          "sha256": "cda9bbe00abaaab02e92fcc13b4d364383c7cb945a03c5b1f48450477e330a13",
+          "roundTripExact": true,
+          "recomputeExact": true
+        }
+      ]
+    }
+  ],
+  "frozenFixtures": {
+    "fixtures/reference/decoder_check.json": "0b4c0f72a358f6d8561d702a0c5df6b5d5c2a0a92470033f71ba97b8c81c49a0",
+    "fixtures/reference/driver_primary.wav": "602b6fde9c1d81e73ad6fad2be91978f2dbe6e4da54f7c90c159a38493905eb7",
+    "fixtures/reference/driver_residual.wav": "4cada47b49b8a27f6c9d0309ac0473dd03baac455fde6287d48876dc993d04e8",
+    "fixtures/reference/golden_4x4x4.npz": "50c27ec884aaf7c8562b40de0dfe94089536102eabb57b7554ecf1f756caf8b6",
+    "fixtures/reference/golden_browser_fixture.json": "a84793dd6134347c06bf4729fcd3cfec672f06688d6a2c4cab4e9ae31481fde2",
+    "fixtures/reference/initial_256_samples.csv": "72898a5ee3484f7025a990ca525ca1dd9f6dbea47ffeb68abd79c3ac7c47b260",
+    "fixtures/reference/reference_mimo.py": "e368d0090dfb56e72eb0317d6dfaf9e34535b162d8f97022bc8f83aab88a9817",
+    "fixtures/reference/verification.json": "7cc90b0fb8f529bccc1d844a78d55378f501e86a9a6e26ad01c29ca441f98d90"
+  },
+  "frozenUnchanged": true,
+  "browserWorkerMemoryMeasured": false,
+  "labV3Implemented": false
+}

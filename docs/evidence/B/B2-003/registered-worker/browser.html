@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>B2 注册布局 Worker 验证</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:32px auto;padding:0 16px;background:#f6f8fa}pre{white-space:pre-wrap;word-break:break-word}h1{font-size:24px}</style>
+<h1>B2-003 五注册布局导出与配方复算</h1><p id="status">正在独立生产 Worker 中验证……</p><pre id="report"></pre>
+<script type="module">
+const started = performance.now();
+const worker = new Worker(new URL('./browser-worker.ts', import.meta.url), { type: 'module' });
+const finish = data => {
+  const report = { ...data, userAgent: navigator.userAgent, secureContext: isSecureContext,
+    hardwareConcurrency: navigator.hardwareConcurrency, elapsedMs: performance.now() - started };
+  document.querySelector('#status').textContent = data.ok ? '通过：浏览器 Worker 验证完成' : '失败：查看报告';
+  document.querySelector('#report').textContent = JSON.stringify(report, null, 2); worker.terminate();
+};
+worker.onmessage = ({ data }) => {
+  if(data.kind === 'progress') document.querySelector('#status').textContent = `已验证 ${data.cases}/30 组……`;
+  else finish(data.report);
+};
+worker.onerror = event => finish({ ok: false, error: event.message });
+const fetchFile = async url => { const response = await fetch(url); if(!response.ok) throw new Error(`HTTP ${response.status} ${url}`); return response; };
+try {
+  const [assetResponse, legacyResponse, comparisonResponse, provenanceResponse] = await Promise.all([
+    fetchFile(new URL('../../../../../src/team-b/lab/data/recorded-primary.f32', import.meta.url)),
+    fetchFile(new URL('../registered-compat/legacy-model-1.rncrs', import.meta.url)),
+    fetchFile(new URL('../registered-compat/comparison.json', import.meta.url)),
+    fetchFile(new URL('../registered-compat/legacy-model-1.provenance.json', import.meta.url)),
+  ]);
+  const [asset, legacy, comparison, provenance] = await Promise.all([
+    assetResponse.arrayBuffer(), legacyResponse.arrayBuffer(), comparisonResponse.json(), provenanceResponse.json(),
+  ]);
+  worker.postMessage({ asset, legacy, expected: comparison.results, legacySha256: provenance.files['legacy-model-1.rncrs'].sha256 }, [asset, legacy]);
+} catch(error) { finish({ ok: false, error: String(error) }); }
+</script></html>

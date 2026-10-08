@@ -1,0 +1,36 @@
+{
+  "task": "B2-003",
+  "date": "2026-10-01",
+  "browserErrors": [],
+  "sourceHashEncoding": "utf8-lf",
+  "sourceHashes": {
+    "src/team-b/export/model.ts": "dd1e60a33c2e36787916f2e69b70a13eb44e81fc7fa72bd251d857948ac92d34",
+    "tests/helpers/export-tests.ts": "7d30bf4a307954ea35aa48dc2494ac30cf1c843586fe75f4452ab389a426b7a6",
+    "docs/evidence/B/B2-003/async-api/browser.html": "e31270fb0ab5c4436e9f141868ed397d3ee4bd45e68aa726cfb6c54c14f39ed4",
+    "docs/evidence/B/B2-003/async-api/vite-audit.config.ts": "5a63f1ae47858f0b522500f79e655eed548e7feafee8d00f609f55148f829142",
+    "docs/evidence/B/B2-003/async-api/browser-worker.ts": "144153a7bd6151ae75b28c76bcda9442bb30a2d769830c01079b61003c33c92c",
+    "src/team-b/export/index.ts": "5d6af829cc7d035cb94d6dec540bae3fb6daa126871bb1d8a5bca41f6e1da273"
+  },
+  "browserPeakMemoryMeasured": false,
+  "executor": "Codex",
+  "frozenFixtures": {
+    "fixtures/reference/verification.json": "7cc90b0fb8f529bccc1d844a78d55378f501e86a9a6e26ad01c29ca441f98d90",
+    "fixtures/reference/initial_256_samples.csv": "72898a5ee3484f7025a990ca525ca1dd9f6dbea47ffeb68abd79c3ac7c47b260",
+    "fixtures/reference/golden_4x4x4.npz": "50c27ec884aaf7c8562b40de0dfe94089536102eabb57b7554ecf1f756caf8b6",
+    "fixtures/reference/golden_browser_fixture.json": "a84793dd6134347c06bf4729fcd3cfec672f06688d6a2c4cab4e9ae31481fde2",
+    "fixtures/reference/decoder_check.json": "0b4c0f72a358f6d8561d702a0c5df6b5d5c2a0a92470033f71ba97b8c81c49a0",
+    "fixtures/reference/reference_mimo.py": "e368d0090dfb56e72eb0317d6dfaf9e34535b162d8f97022bc8f83aab88a9817",
+    "fixtures/reference/driver_residual.wav": "4cada47b49b8a27f6c9d0309ac0473dd03baac455fde6287d48876dc993d04e8",
+    "fixtures/reference/driver_primary.wav": "602b6fde9c1d81e73ad6fad2be91978f2dbe6e4da54f7c90c159a38493905eb7"
+  },
+  "identitySource": "user-declared",
+  "role": "B2",
+  "baseline": "c2b0f43abff449e25a87eb3dba35ce188ff1057f",
+  "browserChecks": 20,
+  "currentBuildArtifacts": {
+    "test-results/B2-003-async-browser/docs/evidence/B/B2-003/async-api/browser.html": "eaa82e5627058cccfd4e23cf479ed57bda5071771e6c4da9a1bc7fb1c4ed5b17",
+    "test-results/B2-003-async-browser/assets/browser-CDwty6ht.js": "932a25f2f0c58b6aad0e39b00cc6e258a2ae33eb3766def8a3fc4de9745b8394",
+    "test-results/B2-003-async-browser/assets/browser-worker-BSzkMOoD.js": "b2fe83becda0ca71d5f818cd8e3e6278810afa1de843e33b8a67cb8dc1d3ecbe"
+  },
+  "frozenUnchanged": true
+}

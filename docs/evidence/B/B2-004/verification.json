@@ -1,0 +1,29 @@
+{
+  "role": "B2",
+  "task": "B2-004",
+  "identitySource": "user-declared",
+  "executor": "Codex",
+  "date": "2026-10-01",
+  "baseline": "93ed882861e07f23a604cb446fe6dce391f892c7",
+  "sourceHashEncoding": "utf8-lf",
+  "auditSourceHashMatches": true,
+  "frozenFiles": 8,
+  "frozenFilesUnchangedAfterFullChecks": true,
+  "currentSourceFiles": 14,
+  "localLinksChecked": 26,
+  "testB": 117,
+  "fullTests": 207,
+  "strictAuditTypecheckExitCode": 0,
+  "numericalSourceUnchanged": true,
+  "hashes": {
+    "audit-command.txt": "8a6df6b8d7cd0748533458307c95eb39bd22770d1efa9bad95494ddbc830c4f4",
+    "audit-typecheck.txt": "e2c450a20a89678f7f78e03ec3c577586de502d08f452a51c27d6a2086c21c7b",
+    "audit.json": "efa6d4bd919fbe849377872dd24ee1c34a9ed0ca26660c54a2a7628deec26baa",
+    "check.txt": "ccba168dcb2f3398f04cad974842348d4ff7004c675af5689a0d5ddf3a103437",
+    "DATA_CONTRACT.md": "cd0c0ad91302770f196caa0c04f719a15cf1377321f9ea68fac33a0ed5a360f3",
+    "README.md": "11bb3236e46fb31ee6b3a1a0f024de0bb2ea44d84dbe9686c9dbcfc0cb082601",
+    "run-audit.ts": "70682ce7a6cee8ce18c46f4ac76d5cc4eed04b712ea349019a44d12ffda9931f",
+    "SECOND_WINDOWS.md": "4f73dfdbbc08e45a3cd401fe69f3736cf0944569232298cef6b74c525fb809db",
+    "test-b.txt": "c0ccc0f0c2f2f455ddc25dc31c31c87559fe9c9ba0dfa08aa6d5d80df6b28514"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "basis": "UTF-8 LF; current uncommitted volume-field batch; B/integration unchanged",
+  "files": {
+    "src/team-a/viewer/field-grid.ts": "e1cda3060e3e639f9c89bca8cafd31f0b5333153ce46ec20185c5a30898ed7f7",
+    "src/team-a/viewer/field-slices.ts": "2094e80d700a9e74c85e46444a3a4d3a05ce9839f375934754cf3a8c036a0f62",
+    "src/team-a/viewer/field-display-data.ts": "6f566d46cb71ba2a99d20fe98417cc1614d90536a03f063c2e49b304c9677feb",
+    "src/team-a/viewer/field-display.ts": "9c59b9ff82562e9460e7cc3d9032250d489d2254bf9c34ac24c34d2bdec8962a",
+    "src/team-a/viewer/lab-viewer.ts": "8594e71db4aa0aa38317cdbd22dbc5d0a00a39a553459a759a84bb61120db171",
+    "src/team-a/viewer/driving-view.ts": "4ca167c81b31a76ee5b95584a8a6d118b99d0bef7771f93d6e42ccb78ba08626",
+    "src/team-a/lab/index.ts": "e1604f7d32371362692ccc5bd4175e534519fd50395e5ed08790ccab3e9dfbda",
+    "src/team-a/lab/field-query.ts": "ce9b8cc0a75b879e913b2b270900c7a01603bce775c3c8451a85a70c239a326c",
+    "tests/a2-dense-volume.test.ts": "d2c2efb1eaf1112d90e7973de5e8c29f24f7e9a737b1cd2b8082a56f915dd838",
+    "tests/a2-field-query.test.ts": "2a3ae543c484957d6923ad6e6304084351ddb22a37a4d281774b81f5b649acbe"
+  },
+  "builtSourceCount": 67,
+  "buildMismatches": []
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "command": "test-a",
+    "exit": 0
+  },
+  {
+    "command": "typecheck",
+    "exit": 0
+  },
+  {
+    "command": "boundaries",
+    "exit": 0
+  },
+  {
+    "command": "check",
+    "exit": 1
+  }
+]

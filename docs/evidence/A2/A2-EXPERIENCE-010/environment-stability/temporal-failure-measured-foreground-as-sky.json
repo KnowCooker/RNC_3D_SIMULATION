@@ -1,0 +1,30 @@
+{
+  "error": "Error: coast/0.00 no full sky flash across road chunk boundary",
+  "checks": [
+    {
+      "name": "sky pixels identical under camera translation from 0 to 4 km",
+      "pass": true,
+      "detail": [
+        602451624,
+        602451624,
+        602451624,
+        602451624
+      ]
+    },
+    {
+      "name": "paused road is pixel-stable over 80 renders",
+      "pass": true
+    },
+    {
+      "name": "coast/0.00 no full sky flash across road chunk boundary",
+      "pass": false,
+      "detail": {
+        "maxMeanPixelDelta": 7.379671052631275,
+        "blackFraction": 0.04760964912280702
+      }
+    }
+  ],
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "panorama-sky.ts",
+    "match": true,
+    "sha256": "5a57da3dc3624f54d84281c2ea40ade3e01c4cb79fd6d8c189acfbf419227cd3"
+  },
+  {
+    "file": "landscape-height.ts",
+    "match": true,
+    "sha256": "0b522d4b71f41ec3d09f99fa1c9af0058001d65fab52e4fd02c04b88e7f2b560"
+  },
+  {
+    "file": "driving-road.ts",
+    "match": true,
+    "sha256": "864dc8bf793cad363edda8760aed38b7fa1d5d6c6a93da3d2caecb057b730f3a"
+  },
+  {
+    "file": "scenic-terrain.ts",
+    "match": true,
+    "sha256": "3b0ea63320e14d408b8965b25136d5b485d994c81b08bb18cc28f05b5251f9df"
+  }
+]

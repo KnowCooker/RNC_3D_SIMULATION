@@ -1,0 +1,38 @@
+[
+  {
+    "sourceMode": "shaped-noise",
+    "weighting": "A",
+    "points": 1989,
+    "oldMs": 1821.5354000000002,
+    "firstMs": 149.95540000000028,
+    "cachedMs": 115.02659999999969,
+    "maxDb": 7.62939453125e-06
+  },
+  {
+    "sourceMode": "shaped-noise",
+    "weighting": "Z",
+    "points": 1989,
+    "oldMs": 1332.9679999999998,
+    "firstMs": 127.16200000000026,
+    "cachedMs": 120.35639999999967,
+    "maxDb": 0
+  },
+  {
+    "sourceMode": "recorded-noise",
+    "weighting": "A",
+    "points": 1989,
+    "oldMs": 727.4498000000003,
+    "firstMs": 308.17019999999957,
+    "cachedMs": 219.8819999999996,
+    "maxDb": 7.62939453125e-06
+  },
+  {
+    "sourceMode": "recorded-noise",
+    "weighting": "Z",
+    "points": 1989,
+    "oldMs": 361.4400000000005,
+    "firstMs": 241.91390000000047,
+    "cachedMs": 250.20089999999982,
+    "maxDb": 0
+  }
+]

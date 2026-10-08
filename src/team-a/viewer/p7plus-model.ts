@@ -29,7 +29,7 @@ export const p7Surface = {
 
 /** Dedicated P7+ exterior. Other XPeng factories deliberately remain untouched. */
 export function createP7PlusModel(): ShowroomModel {
-  const group = new THREE.Group(); group.name = 'xpeng-p7plus'; group.userData.revision = 'p7plus-photo-v5';
+  const group = new THREE.Group(); group.name = 'xpeng-p7plus'; group.userData.revision = 'p7plus-photo-v6';
   const parts: { id: string; name: string; object: THREE.Group; offset: THREE.Vector3 }[] = [];
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), shell: THREE.Mesh[] = [];
   function material(color: string, roughness: number, metalness = 0) {
@@ -39,7 +39,7 @@ export function createP7PlusModel(): ShowroomModel {
   const gloss = material('#11161c', .22, .34), rubber = material('#141619', .92), metal = material('#b5bdc5', .24, .9);
   const gunmetal = material('#3c4349', .42, .8), lining = material('#252c35', .9);
   const glass = material('#0b1721', .13, .02); glass.transparent = true; glass.opacity = .97; glass.depthWrite = false;
-  glass.envMapIntensity = .7; glass.name = 'p7-window-glass';
+  glass.envMapIntensity = .38; glass.roughness=.18; glass.name = 'p7-window-glass';
   const lampHousing=material('#080c11',.40,.09);lampHousing.envMapIntensity=.20;
   const lens = material('#17222b', .12, .55), leather = material('#c2b6a2', .68), leatherDark = material('#736a60', .79);
   const ivory = material('#c9c7ba', .65), display = material('#18252f', .24, .22), stitch = material('#879099', .9);
@@ -156,7 +156,7 @@ export function createP7PlusModel(): ShowroomModel {
   }
   // Front bumper is a rounded wraparound surface, not a planar box.
   const nose = part('bumper-front', 'P7+ 2026 星翼灯 / 分体前灯 / 双段格栅', [0, .15, 1.15]);
-  const noseZ = (x: number, y: number) => { const t = Math.abs(x) / sideX(2.22, y); return 2.22 + .313 * Math.sqrt(Math.max(0, 1 - t ** 3.3)) - .025*((y-.53)/.37)**2*(1-t*t) - .10 * Math.pow(THREE.MathUtils.clamp((.43 - y) / .22, 0, 1), 2) * (1 - t) ** 2 - .016 * Math.exp(-Math.pow((y - .69) / .075,2)) * (1 - t * t) - .022*THREE.MathUtils.smoothstep(Math.abs(x),.58,.64)*(1-THREE.MathUtils.smoothstep(Math.abs(x),.88,.93))*THREE.MathUtils.smoothstep(y,.545,.585)*(1-THREE.MathUtils.smoothstep(y,.66,.70)); };
+  const noseZ = (x: number, y: number) => { const t = Math.abs(x) / sideX(2.22, y); return 2.22 + .313 * Math.sqrt(Math.max(0, 1 - t ** 3.3)) - .025*((y-.53)/.37)**2*(1-t*t) - .10 * Math.pow(THREE.MathUtils.clamp((.43 - y) / .22, 0, 1), 2) * (1 - t) ** 2 - .016 * Math.exp(-Math.pow((y - .69) / .075,2)) * (1 - t * t) - .022*THREE.MathUtils.smoothstep(Math.abs(x),.58,.64)*(1-THREE.MathUtils.smoothstep(Math.abs(x),.88,.93))*THREE.MathUtils.smoothstep(y,.585,.615)*(1-THREE.MathUtils.smoothstep(y,.66,.70)); };
   const noseTopWidth = sideX(2.22, .872);
   const noseY = (x: number) => .756 + .116 * Math.pow(Math.abs(x) / noseTopWidth, 2.5);
   surface(nose, (u, v) => { const t = u * 2 - 1, y = lerp(.205, noseY(t * noseTopWidth), v), x = t * sideX(2.22, y); return [x, y, noseZ(x, y)]; }, paint, true, 100, 28);
@@ -167,11 +167,11 @@ export function createP7PlusModel(): ShowroomModel {
   for (const side of [-1, 1]) {
     // Tapered separate headlight pockets below the continuous upper light.
     // Rounded, swept trapezoids traced from official front/detail photos, not rectangular emissive blocks.
-    const outline = new THREE.CatmullRomCurve3([[.592,.662],[.76,.687],[.899,.697],[.921,.663],[.929,.55],[.90,.546],[.648,.567],[.62,.585]].map(([x,y])=>new THREE.Vector3(side*x,y,0)),true,'centripetal');
-    surface(nose,(u,v)=>{const p=outline.getPoint(u),x=lerp(side*.77,p.x,v),y=lerp(.62,p.y,v);return [x,y,noseZ(x,y)+.010+.002*v];},lampHousing,true,96,10).name='front-lamp-pocket';
+    const outline = new THREE.CatmullRomCurve3([[.602,.658],[.76,.684],[.906,.702],[.925,.685],[.928,.595],[.903,.588],[.657,.604],[.625,.620]].map(([x,y])=>new THREE.Vector3(side*x,y,0)),true,'centripetal');
+    surface(nose,(u,v)=>{const p=outline.getPoint(u),x=lerp(side*.77,p.x,v),y=lerp(.645,p.y,v);return [x,y,noseZ(x,y)+.010+.002*v];},lampHousing,true,96,10).name='front-lamp-pocket';
     const pocketEdge=outline.getPoints(96).map(p=>[p.x,p.y,noseZ(p.x,p.y)+.015] as V);
     tube(nose,pocketEdge,.0035,gunmetal,true,true);
-    const guide:V[]=Array.from({length:36},(_,i)=>{const t=i/35,x=side*lerp(.639,.914,t),y=.579-.025*t+.011*Math.exp(-t*15);return [x,y,noseZ(x,y)+.020];});
+    const guide:V[]=Array.from({length:36},(_,i)=>{const t=i/35,x=side*lerp(.639,.914,t),y=.608-.014*t+.003*Math.exp(-t*15);return [x,y,noseZ(x,y)+.020];});
     tube(nose,guide,.0065,led,true);
     for(let i=0;i<3;i++){
       const x=side*(.664+i*.085),y=.637+i*.009;

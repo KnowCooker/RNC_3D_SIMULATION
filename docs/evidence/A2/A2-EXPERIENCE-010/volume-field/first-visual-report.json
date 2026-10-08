@@ -1,0 +1,21 @@
+{
+  "errors": [],
+  "hud": "同窗改善 d − e · 车内声场\n10.00 s / 采样范围 -9.9–3.8 dB\n-10 dB\n10 dB\n\n蓝绿为改善 · 红色为变差；最大改善 3.8 dB · (0.24, 1.13, 0.18) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+  "state": {
+    "stage": "road",
+    "drivingView": "orbit",
+    "drivingEye": "",
+    "roadSurface": "smooth",
+    "presentationPage": "field",
+    "drivingOverlay": "true",
+    "routeGrade": "-0.015654584714711883",
+    "routeHeading": "-0.40332646711746284",
+    "environmentReady": "coast",
+    "environment": "coast",
+    "environmentFailed": "false",
+    "cameraTransition": "idle",
+    "asset": "xpeng-p7plus",
+    "travelDistance": "166.667",
+    "roadReady": "true"
+  }
+}

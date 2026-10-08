@@ -1,0 +1,70 @@
+{
+  "checks": [
+    {
+      "name": "coast 360 orbit rendered",
+      "pass": true
+    },
+    {
+      "name": "mountain 360 orbit rendered",
+      "pass": true
+    },
+    {
+      "name": "desert 360 orbit rendered",
+      "pass": true
+    },
+    {
+      "name": "snow 360 orbit rendered",
+      "pass": true
+    },
+    {
+      "name": "mountain road resources ready",
+      "pass": true
+    },
+    {
+      "name": "coast road resources ready",
+      "pass": true
+    },
+    {
+      "name": "desert road resources ready",
+      "pass": true
+    },
+    {
+      "name": "snow road resources ready",
+      "pass": true
+    },
+    {
+      "name": "390px native-or-better buffer",
+      "pass": true
+    },
+    {
+      "name": "390px no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "1366px native-or-better buffer",
+      "pass": true
+    },
+    {
+      "name": "1366px no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "2560px native-or-better buffer",
+      "pass": true
+    },
+    {
+      "name": "2560px no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "no JS/Shader errors",
+      "pass": true
+    },
+    {
+      "name": "no resource failures",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "failures": []
+}

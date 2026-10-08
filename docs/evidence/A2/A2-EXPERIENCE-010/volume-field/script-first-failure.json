@@ -1,0 +1,5 @@
+{
+  "error": "Error: page.evaluate: TypeError: document.querySelector(...).innerText is not a function\n    at eval (eval at evaluate (:290:30), <anonymous>:1:164)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+  "errors": [],
+  "samples": []
+}

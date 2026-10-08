@@ -1,5 +1,21 @@
 # B1/B2 共同任务与串行交接
 
+**2026-10-05 / B2 最新状态**：Role:B2；Task:B2-004；Identity-Source:user-declared；Executor:Codex。#60/#61均已合入A2 #57候选 `795d9095eb8996da2938a7513bbcaa435a18d8e8`，main仍b968d92。注册候选报告增补 [PR #62](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/62) 实现e8965a5已推送待合并：十组默认16秒、每种对照768万值、600帧A/Z分析通过，B125/125、全仓295/295及类型/边界/构建通过。B1已停止，本批只新增报告/审计及双日志；完整003/004仍待产品、独立数值与设备验收。[候选报告](../evidence/B/B2-004/registered-candidate/README.md)。下方旧状态保留历史时点。
+
+**2026-10-05 / B2 最新批次**：B2-003五注册布局浏览器Worker验证完成本地检查，[PR #61](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/61)已发布待合并（实现a0dfa3b）；218/218真实Worker检查、30组逐路Node哈希对照、B125/125及全仓295/295通过。#60已合入A2 #57，合并SHA `382100930ca950adfed27390acbb6226e0af4afc`，尚未进入main。B1已停止；本批只新增证据与双日志。完整003/004产品与设备门槛仍待验。Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex；[新浏览器证据](../evidence/B/B2-003/registered-worker/README.md)。下方发布状态均保留其历史时点。
+
+**2026-10-05 / B2 当前批次**：B2-003 注册布局导出兼容已发布待合并，原仓库 [PR #60](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/60)；实现 `c2d6aa1bd72b58e6cdacf1b1fe2459e54b52fe67`，base 为 A2 #57 分支。B1 已停止，本批 B2 源码写入结束。B2-004 报告准备 #55 已合并 main `b968d92`；完整003的产品/设备门槛及004最终报告仍待验。Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。证据见[本批报告](../evidence/B/B2-003/registered-compat/README.md)，CI按PR最新head核对。下方各历史条目保留其记录时点。
+
+**2026-10-02 / A2-EXPERIENCE-010 / GitHub同步完成**：Role:A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared；Executor:Codex代A2。实现提交7653e8c及日志格式修正945021780b4b85ee20b8ba05248fb5803de994b3已推送origin/a/a2-driving-experience，GitHub PR head与本地一致，账号jiangchun526-cloud；草稿PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/57 ，base为A2集成分支，未合并main。220项全仓及78项Chrome检查通过，65个构建源码/18个变更文件哈希一致；最终差异检查无错误。远端verify在本条记录时仍运行，尚未宣称CI通过。全部本轮项目源码、景观生成资源、28张验收截图及报告已同步；依赖缓存/临时输出不作为项目资源上传。外观实拍一致性仍未通过，后续为授权高精几何、逐车人工视觉及实车标定；无基准修改。此发布交接为文档后续提交，源码仍为上述已验版本。
+
+**2026-10-02 / A2-EXPERIENCE-010 / 最终验证与发布准备**：Role:A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared；Executor:Codex代A2。最终源码pnpm check：220/220、类型/边界/构建通过；Chrome实时行驶与五车拆装62/62，四环境全周/道路/390至2560布局16/16，零JS/Shader/资源失败。28张截图、报告、复验脚本及18文件源码清单见docs/evidence/A2/A2-EXPERIENCE-010。五车独立布局、弯坡道路/转向、360景观、行驶中场检视已接通；用户明确授权的shared注册/B两处roof选择保持旧P7、16交叉路径与fixture。未达到官网实拍一模一样，参数仍非实车标定；视觉细节与授权高精几何是后续工作，不将功能通过冒充外观验收。下一步按既有上传授权提交推送至a/a2-driving-experience并更新草稿#57，不合并main；发布SHA与远端结果另记。
+
+**2026-10-02 / A2-EXPERIENCE-010 / 连续实时验证通过**：Chrome62项通过：五车实录连续运行、移动中检视不离开道路/时钟持续、声场持续更新、坡度和朝向演进、暂停与座位切换冻结距离、切车/停止清除旧场、五车逐件拆回装；零JS/Shader/资源失败。发现环境setter每帧重复重置全景角度，改为环境/纹理变化才更新，防止暂停后天空朝向漂移；检视/道路选中态按真实透视状态同步。最新景观/该修复待最终检查。Role:A2；Codex代A2；证据test-results/experience-refine/live/report.json。
+
+**2026-10-02 / A2-EXPERIENCE-010 / 全景立体地形与专项通过**：弧长修正后20项专项全部通过（五车两声源批量/流式逐样本、耳旁声场功率、16交叉路径、拆件/观察点、旧P7回归）。展厅新增完整360度原创程序地形、湖水、岩石、山脊积雪与分层针叶林，使用真实光照/遮挡，不依赖单面背景板；四环境独立起伏与配色。新增地形尚待构建/浏览器视觉检查，未声明照片一致。Role:A2；Codex代A2；跨组数值验证记录同步B交接。
+
+**2026-10-02 / A2-EXPERIENCE-010 / 用户授权跨组首批待验**：用户明确回复“授权本次最小跨组修改”。shared新增X9/L03/M03/GX独立车型布局，与各车轮距/轴距/前两排座位/门板扬声器坐标对应；X9/GX仍四受控点，第三排仅作空间查询，不伪称额外控制通道。B路径仅两处车顶高度选择改用已注册车型roof，未改DSP、交叉路径或旧P7参数。viewer使用实际布局身份匹配、总成挂接与场采样范围。当前未运行检查；下一步接通切车清理、全布局数值回归及浏览器验证。Role:A2；Executor:Codex代A2；Task:A2-EXPERIENCE-010；Identity-Source:user-declared。
+
 **2026-10-01 / A2-P7-004 / 已发布 GitHub，待审查**：Role: A2；Identity-Source: user-declared；执行者 Codex 代 A2。当前版本代码提交 `8f2d80ee5db5d86714170f4edd13114bd5ed717b` 已推送 `origin/a/a2-xpeng-reconstruction`，`ls-remote` 核对一致；提交作者和推送账号均为 `jiangchun526-cloud`。草稿 PR：[#56](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/56)，以原 A2 分支为 base、依赖 #30；两个 PR 尚未合并 main。此前“仅本地/待上传指令”条目保留为历史，本次用户已明确授权上传。验证：本次提交前 `pnpm check` 185/185，类型/边界/构建通过；Git 提交钩子边界/开发记录检查通过，源码与最终浏览器 69+12 项版本一致；发布只补记录，没有再改代码。初次直连 GitHub 超时，使用本机已有代理后成功，未改变全局代理配置。跨组影响与 110 个修改文件见代码提交及本批 README，未改 fixture。下一步：PR 审查、#30 后续集成、与 main 新增 B 导出功能组合验证，以及实车/目标设备/第二机验收；本条不声称云端 CI 已通过。此交接文档将随下一提交推送。
 
 **2026-10-01 / A2-P7-004 / 当前版本发布准备**：Role: A2；Identity-Source: user-declared；执行者 Codex 代 A2。用户本轮明确要求“提交当前版本至github”，本次上传已获授权。当前状态：发布 A2-XPENG-001、A2-P7-002、A2-CP-003、A2-P7-004 累计成果；作者及 GitHub API 身份均为 jiangchun526-cloud。验证：提交前重新执行 pnpm check，185/185 测试及类型、边界、生产构建全部通过，见 docs/evidence/A2/A2-P7-004/publish-check.log；68 个源码/资源哈希与最终浏览器验证版本一致，保留既有 69+12 项浏览器证据，未修改 fixture。跨组影响沿用用户整页/P7 声场明确授权，shared/B 改动已在本批证据登记。远端 main 已到 b968d92；开放 PR 仅原 A2 #30，头部 4c097d4 与本批基线一致。下一步：提交当前完整快照，推送 a/a2-xpeng-reconstruction，以原 A2 分支 a/a2-full-017-asset-inspection 为基线创建依赖 #30 的增量草稿 PR，避免把两个待审任务重复列入同一差异；不合并 main，不更新旧 PR。本条尚未提交/推送，发布 SHA 与 PR 结果由后续交接补记。未完成项仍为实车标定、OEM 隐藏结构、目标设备及第二机验收，未声称产品最终验收。
@@ -200,8 +216,8 @@ Role: B1；Identity-Source: local-config；执行者Codex；基线6a5a71b加本�
 | 任务 ID | 状态 | 工作与完成条件 | 原验收 / 依赖 |
 | --- | --- | --- | --- |
 | B1-001 | 已合并（#48，fa805e2） | [五算例证据](../evidence/B/B1-001/README.md)已补齐：100路320万样本、两端重复一致；61/61 B组、151/151全仓检查通过。原完成条件：默认、seed29、seed47、taps32、μ0五算例的x/u/d/a/e逐样本对照；默认已有640000样本基准。其余Python输出写新目录；每路相对RMS≤1e-3，近零数组绝对误差≤1e-6；记录每点指标差≤0.2dB、四点改善、重复一致 | B01/B02/B03/B05；基准只读；B2协助汇总报告 |
-| B1-002 | 待合并（[PR #50](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/50)） | [验证证据](../evidence/B/B1-002/README.md)；4项专项及组合69/159项通过。 完整矩阵与时序：核对W/S/P索引、16条S及12条交叉路径、e=d+a、当前误差仅更新下一样本权重、前2s关闭控制；补能发现符号/延时/交叉项错误的有效验证，保留现有脉冲测试 | B01/B06；使用B1-001对照结果 |
-| B1-003 | 待合并（[PR #50](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/50)） | [验证与修复证据](../evidence/B/B1-003/README.md)；128组坏配置/12组合法/7组故障，修复数组形状校验，组合69/159项通过。 参数与数值失败：复核32/64、三种子、μ0/0.08；非法tap/NaN/固定配置异常返回明确错误；结果尺寸/有限性有效；μ0满足u=a=0及e=d；不把u限幅为1。页面保留旧实验和取消UI由A1负责 | B04/B07；沿用现有错误契约 |
+| B1-002 | 已合并（[PR #50](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/50)，67387f6） | [验证证据](../evidence/B/B1-002/README.md)；4项专项及组合69/159项通过。 完整矩阵与时序：核对W/S/P索引、16条S及12条交叉路径、e=d+a、当前误差仅更新下一样本权重、前2s关闭控制；补能发现符号/延时/交叉项错误的有效验证，保留现有脉冲测试 | B01/B06；使用B1-001对照结果 |
+| B1-003 | 已合并（[PR #50](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/50)，67387f6） | [验证与修复证据](../evidence/B/B1-003/README.md)；128组坏配置/12组合法/7组故障，修复数组形状校验，组合69/159项通过。 参数与数值失败：复核32/64、三种子、μ0/0.08；非法tap/NaN/固定配置异常返回明确错误；结果尺寸/有限性有效；μ0满足u=a=0及e=d；不把u限幅为1。页面保留旧实验和取消UI由A1负责 | B04/B07；沿用现有错误契约 |
 | B1-004 | 待认领 | 性能与基线冻结：在约定目标设备测核心计算及Worker往返总耗时，默认16s片段目标≤5s；记录CPU/GPU/浏览器、代码SHA、配置及样本分布。确有性能失败再优化并复跑数值对照；冻结B组计算版本与未验收项 | B08/I03/I07；B1-001～003；无目标设备标待测 |
 
 ## 5. B2 任务队列
@@ -210,8 +226,8 @@ Role: B1；Identity-Source: local-config；执行者Codex；基线6a5a71b加本�
 | --- | --- | --- | --- |
 | B2-001 | 已合并 | 合成源/路径及复现说明：[证据](../evidence/B/B2-001/README.md)；[PR #29](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/29)，合并`8724b09` | 原B需求第2/3/6节；不替代lab-v3或设备验收 |
 | B2-002 | 已合并 | 指标与频谱边界及非有限测量修复；专项12/12、B组54/54、合入新main后全仓116/116，最终CI成功；[PR #33](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/33)，合并`6a5a71b`；[证据](../evidence/B/B2-002/README.md) | 原B需求第3节；analyzeAt契约保持；不替代设备验收 |
-| B2-003 | 阻塞（设计已交付待审；实现待B1-001） | [设计与字节核算](../evidence/B/B2-003/README.md)、[PR #44](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/44)；正式要求仍为无DOM兼容API、配置/模型/路径/seed/runId/来源/单位/顺序/样本数/指标导出及结果还原/配方复算一致性，禁止单独归一化信号。设计不等于API实现或整项完成 | B1-001尚待完整逐样本证据；B2-002已满足；API交给A1接UI，B组不代写页面 |
-| B2-004 | 待认领 | 数据适配与最终报告：核对RunResult维度、时标、来源及分析/导出接口；整理B01～B08矩阵、固定配置、运行方法、代码SHA、真实验证、待测项与A1联调请求；协助第二台Windows离线复现。Worker/common修改须先协调，不能凭A组旧证据声称新引擎通过 | B2-001～003；汇总B1结果；设备条件不可用单列待测 |
+| B2-003 | demo #51、异步 #52、lab配方 #53、lab结果 #54 已合并main；注册兼容#60/真实Worker#61已合入#57候选795d909，未进入main；完整产品验收待办 | 教学lab结果/配方、原配置与缺省/素材/源码身份、动态通道、发散前缀、原指标标签及有效性；29案例同步/异步各2789816值一致，生产Worker15/15，B117/117、全仓207/207；[lab结果证据](../evidence/B/B2-003/lab-result/README.md)。B接口阶段可供A1接入，UI/峰值内存/设备待办，整项未完成 | B1-001、B2-002已满足；无shared/integration修改；B1布局审查与A1正式产品接入/设备验收独立 |
+| B2-004 | 旧报告#55已合并main b968d92；注册候选增补[PR #62](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/62)待合并；最终签收待办 | 数据适配与最终报告：核对RunResult维度、时标、来源及分析/导出接口；整理B01～B08矩阵、固定配置、运行方法、代码SHA、真实验证、待测项与A1联调请求；协助第二台Windows离线复现。Worker/common修改须先协调，不能凭A组旧证据声称新引擎通过 | B2-001～003；汇总B1结果；设备条件不可用单列待测 |
 
 B2-003是当前A1等待的跨组导出接口。B2可以先核对设计与格式；涉及共享契约变更必须与A1+B1协调。B1主责完整数值正确性，B2主责数据和报告整理，避免两人重复维护两套算法或两套指标公式。
 
@@ -286,3 +302,161 @@ B1/B2串行共用文件，确认前任已停止并保存工作后，继续我负
 **2026-09-30 / B1 / B1-002、003 发布准备**：Role: B1，Identity-Source: local-config，执行者Codex。用户明确要求推送PR。已核对当前运行/测试文件SHA与final-integrity记录一致、冻结8文件未变；69/69 B组、159/159全仓证据有效。远端API确认main新增A1 #49至b209262，开放PR仅A2 #30。先提交保存本批，再合入最新main复验，避免覆盖A1内容。范围仍为002/003及必要合入交接；下一步推送并创建PR，不合并main。
 
 **2026-09-30 / B1 / B1-002、003 已发布 PR #50，合入最新 main**：Role: B1，Identity-Source: local-config，执行者Codex。实现dc9628fa800221b4645862e4f5d2091d8132a323已推送origin/b/b1-coordination，[PR #50](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/50)已创建为可审查、未合并。已无冲突合入main b209262（A1 #49设计素材/文档）；相对实现提交，src/tests/依赖/冻结fixture无变化。测试源码哈希及8个冻结文件再次核对一致，69/69 B组、159/159全仓和构建证据保持适用；合入后另跑类型/目录边界通过，无需重复相同数值测试。此次合并提交回填发布状态，最新SHA/CI以PR head为准；此前未提交/上传描述为历史。本批结束停止写入，下一步评审合并及B1-004/布局接口后续任务，不自动合并PR。
+
+## B2-003 API 接班（2026-10-01）
+
+- Role: B2；Identity-Source: user-declared；执行者 Codex，延续固定 B2 会话。用户授权“是否能继续B2任务，可以就继续”。基线原仓库 main `67387f68c6a6c1d9ad0826794f61ebde74aa649c`；分支 `b/b2-003-export-api`。工作区原先干净；开放 PR 仅 A2 #30，B1 #50 最新交接明确结束停止写入。
+- 核对合并事实：设计 #44 已合并 `83ee77a`，B1-001 #48 已合并 `fa805e2`，B1-002/003 #50 已合并 `67387f6`。五算例 100 路/320 万样本独立 Python 对照已进入 main；本批不修改 B1 历史或接管其布局审查。
+- 本批认领 demo-v2 导出 API：结果二进制往返、配置配方从零复算、模型身份、通道单位、来源、指标无效值及严格坏输入验证。仅 `src/team-b/export/**`、B 组已有测试入口/必要帮助文件、B 说明/证据、本页和根记录；不改共享契约、integration、A 源码、根配置或冻结 fixture。
+- 先推送认领并建立草稿 PR，再改功能。lab-v3 布局/素材版本及实时状态仍待独立协调，首批明确拒绝 lab/live；A1 后续接 UI。当前未开始功能修改/验收，认领远端发布待完成。
+
+### 2026-10-01 / B2 / B2-003 / demo-v2 API 批次完成
+
+- Role: B2；Identity-Source: user-declared；执行者 Codex。认领 `fd6404c`、原仓库草稿 [PR #51](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/51) 已发布，复查仅 #51/#30；之后实现功能。分支 `hgyong:b/b2-003-export-api`，基线 `67387f6`。
+- 变更：B export 模块提供结果编码/解码/字节估算、配方编码/解码/显式复算及本地模型源码哈希清单；B 测试挂入现有 analysis 入口，补说明与 [demo API 证据](../evidence/B/B2-003/demo-api/README.md)。原引擎公式、shared/integration、A、根配置和冻结 fixture 未改。
+- 实际验证：专项 28/28（新增导出 16 项）；`pnpm test:b` 85/85；最终 `pnpm check` 175/175、类型/边界/生产构建全部通过，既有大块提示保留。五工况各 640000 值，往返与复算分别共 320 万样本逐位一致；复算对独立 B1 Python 最大相对 RMS 1.1416e-14、最大绝对误差 2.8422e-14、最大指标差 9.2589e-9 dB，8 个冻结文件未变。逐通道哈希、输入不变、独立数组、坏输入和模式边界均有证据；未测浏览器/设备。
+- API 边界：只接受完整 demo-v2 batch；固定单位/通道/时间、来源/runId/配置/模型、非有限原指标和测量无效原因均保留。未知模型结果只读、无已验证指标，未知模型配方拒复算。新 runId 不冒充原运行。同步 SHA-256 由调用方注入，异步浏览器适配/Worker 接入仍需协调。
+- 当前状态：demo-v2 阶段已验证、待提交推送/合并，不标整项完成；lab-v3 的布局/实录素材版本、动态参考、发散前缀、实时状态、A1 文件 UI/取消/内存与第二机尚未完成。跨组影响仅后续 API 请求，本批不改共享接口或页面。
+- 下一步：提交推送本批、核对 PR 最新 head/CI/冲突并转可审查；本批结束停止写入，不自动合并。维护者审查 #51；B1/指定集成者核定 lab-v3 版本和素材身份，B2 再按同一任务接续。B2-004 仍待完整 003 及汇总设备条件，不提前签收。
+
+**2026-10-01 发布回填**：Role: B2；Identity-Source: user-declared；执行者 Codex。实现及全部验证证据提交 `d6d4603` 已推送 `hgyong:b/b2-003-export-api`；[PR #51](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/51)已转可审查，正文重写为实际 demo-v2 API 范围。推送前 fetch 确认 main 仍 `67387f6`，差异限本任务 B 文件与日志，提交钩子/证据源码哈希/diff检查通过。最新 PR head、可合并性及云端 CI 正在按最终提交核对，未声称通过、未合并 main。下方/上方“待提交推送”为此前时点；当前本批写入结束，待维护者审查，完整003的lab/UI/设备待办保持。
+
+### 2026-10-01 / B2 / B2-003 / 异步哈希与浏览器 Worker 验收接班
+
+Role: B2；Identity-Source: user-declared；执行者 Codex。用户授权继续工作；main `c2b0f43abff449e25a87eb3dba35ce188ff1057f` 已合并 #51，上一 demo 批次云端 verify 成功（36812481040）。开放 PR 仅 A2 #30，B1 最近交接仍停止写入，无 B 重复占用。新分支 `b/b2-003-async-export` 从 main 建立，工作区干净。
+
+本批只认领 B 导出接口的异步 SHA-256 适配及真实浏览器 Worker 验证，保留同步 API/格式/数值行为。等待哈希期间输入变化或失效不能改变保存的样本/身份；预算在复制或调用哈希前核对，异步拒绝可传达。本批范围 B export、B 测试/说明/证据、B/根记录，不改 A/shared/integration/配置/冻结 fixture，不代写页面。lab-v3 与实时状态仍待协调。先推送认领/草稿 PR、复查重复，再修改功能；当前功能和本批新验收未开始。
+
+### 2026-10-01 / B2 / B2-003 / 异步接口批次完成
+
+- Role: B2；Identity-Source: user-declared；执行者 Codex。认领 `260d99a` 与[草稿 PR #52](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/52)先发布，复查仅#52/#30后实现。基线 main `c2b0f43` 已合并#51；分支 `hgyong:b/b2-003-async-export`。
+- 变更：B export 新增 `encodeResultAsync` / `decodeResultAsync`、Promise型SHA-256适配；编码在等待前捕获信号/元信息，解码先检查预算边界再保存独立容器，在结构/有限性/哈希通过后还原。同步格式保持，配方与估算仅需源码commit。新增5项B专项、B用法和[异步证据](../evidence/B/B2-003/async-api/README.md)，无shared/integration/A/根配置/冻结fixture或计算公式改动。
+- 实际验证：专项33/33、B90/90、最终`pnpm check`180/180及类型/边界/生产构建通过。只读提取#51旧API对照，新旧完整文件逐字节一致且互相可读。独立生产构建在Windows Chromium154 module Worker使用真实Web Crypto，20/20，包括五工况往返/复算各320万值逐位一致、等待时输入修改/转移、坏哈希/预算拒绝；最终重载error/warn为0。源码/产物SHA和8个冻结文件未改见source-integrity.json。首次沙箱dev启动被esbuild访问限制拒绝，首次页连接失败；改用授权独立生产构建后通过，未改根配置。
+- 当前状态：本批已验证、待提交推送/审查；#51已合并是事实，旧“待合并”记录保留历史含义。异步解码增加容器副本，未测浏览器峰值/目标设备耗时/取消/第二机；独立Worker验证不代替A1正式产品接入。lab-v3布局/素材版本/动态参考/发散及实时状态仍待协调，完整003未签收，004未认领。
+- 跨组影响：A1可使用异步Web Crypto适配器接B接口，但正式产品文件UI/Worker、实验隔离和内存验收仍由A1/指定集成者实现。本批只提供B API与请求，不修改或批准共管接口。
+- 下一步：提交推送并核对#52最终head/CI/冲突，转可审查；本批结束停止写入，不自动合并。维护者审查后由A1接入、B1核定lab-v3门槛，B2按串行接续。
+
+**2026-10-01 / B2 / B2-003 异步发布回填**：Role: B2；Identity-Source: user-declared；执行者 Codex。实现/测试/证据 `7a99315` 已推送 `hgyong:b/b2-003-async-export`，[PR #52](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/52)已转可审查并更新真实范围/验证/未验项。推送前fetch确认main仍`c2b0f43`，提交钩子/差异和证据版本核对通过。本批现在已远端同步、待审/未合并，原“待提交推送”是历史时点；最终交接提交与最新云端CI以PR head为准，尚未声称通过。180/180全仓、90/90 B组和生产Worker20/20证据已上传；lab/UI/内存/设备待办保持，本批停止写入，下一步维护者审查及接口协调，不自动合并。
+
+### 2026-10-01 / B2 / B2-003 / lab-v3 批量配方接班认领
+
+Role: B2；Identity-Source: user-declared；执行者 Codex。用户继续授权；main `181952687d6fb303e540e9f1b3981d228b52e744` 已合并#52，最新开放仅A2#30，B1最新交接停止写入，无B重复任务。新分支 `b/b2-003-lab-recipe` 从main建立。
+
+本批认领B本地lab-v3批量配方编码/严格解码/从零复算：沿用已经合并的teaching-fixed-v1、现有引擎与实录素材，入口独立校验布局/模型/素材身份，保留原配置及明确缺省，不更换算法、不宣称B1已批准写实布局。两类源、四车型、动态参考、开关/发散与坏输入复验；复算采用新runId，拒实时续算。范围仅B export、B测试/说明/证据、B/根记录；无shared/integration/A/根配置/冻结fixture变化。lab完整结果容器和产品UI仍待后续，独立B配方接口不需要改共管契约；跨组布局审查仍由B1执行。
+
+先发布认领和草稿PR，复查重复后改功能。当前本批尚未修改功能或执行新验收，远端认领待发布。
+
+### 2026-10-01 / B2 / B2-003 / lab 配方批次完成
+
+- Role: B2；Identity-Source: user-declared；执行者 Codex。main1819526已合并#52，B1停止写入；认领efdc0d8及[草稿PR#53](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/53)先发布，复查开放仅#53/#30后实现；分支hgyong:b/b2-003-lab-recipe。
+- 修改：B export新增lab-v3批量配方编码/只读严格解析/显式异步复算、独立错误类与模型/录音版本清单；原配置和历史缺省并存，新runId与原ID分开。未知布局/模型先拒，实录完整字节SHA通过后才解码，缺素材不随机回退；异步配置/预算/素材快照、发散有限前缀和坏输入预算均验证。B测试/说明/证据及两份日志同步，无A/shared/integration/根配置/正常算法/冻结fixture改动，不声称B1已批准写实布局。
+- 实际验证：专项46/46（新增13项）、B103/103、pnpm check193/193及类型/边界/构建通过。四车型×双源×1/4/8参考24配置，加μ2发散，25案例共2405816值及指标/元信息严格一致；发散请求6000实际2909，8冻结基准未改。Windows Chromium154生产Worker/WebCrypto15/15，四车型双源768000值一致，最终控制台error/warn为空；见[lab配方证据](../evidence/B/B2-003/lab-recipe/README.md)。这是确定性复算，不能替代lab独立数值/物理对照。首次类型检查数组推断失败已修正，最终检查通过。
+- 当前状态：本批本地验收完成，待提交推送/转可审查；#51/#52已合并事实更新表格，保留旧历史条目。lab完整结果容器、A1正式文件/Worker/取消/隔离、峰值内存/目标设备/第二机未做，完整003未签收，004未认领。64MiB信号预算不代表堆峰值；B1正式布局审查仍独立。
+- 下一步：推送并核对#53最终head/云端CI/可合并性；本批结束停止写入，不自动合并。维护者合并后按B串行接续完整结果API；跨组影响为给A1提供配方接口使用说明，不修改或批准共享契约。
+
+**2026-10-01 / B2 / B2-003 lab配方发布回填**：Role: B2；Identity-Source: user-declared；执行者Codex。实现/测试/证据f2fcb8f06f29da4a662c50d2b0807bd1d48773d1已推送hgyong:b/b2-003-lab-recipe，[PR#53](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/53)已转可审查，正文更新实际范围/验证/未验项。推送前fetch确认main仍1819526，开放仅#53/#30，提交钩子/差异检查通过。报告文本哈希补充明确UTF-8/LF规则，与Git换行规范化一致，保留原日志内容和数值结果；源码与最终生产产物哈希保持。当前已远端同步、待审未合并，此前“待提交推送”为历史时点；最终交接提交/云端CI及可合并性按PR最新head核对，尚未声称通过。本批写入结束，维护者合并后按B串行接续lab完整结果API，不自动合并；完整003/UI/内存/设备与B1正式布局审查待办保持。
+
+### 2026-10-01 / B2 / B2-003 / lab-v3 完整结果接口接班认领
+
+Role: B2；Identity-Source: user-declared；执行者Codex。用户已合并#53并授权继续；核对main33fbddca6b605b521f38a4bcfee7dc828f43fc04、#53 merged、开放仅A2#30，B1仍停止写入。工作区干净，从main新建b/b2-003-lab-result。
+
+本批认领lab-v3结果二进制保存/严格只读导入及同步/异步哈希接口：复用已合并配方身份规则，保存q4/x1～8/u/d/a/e各4的原始Float32、原配置/缺省、来源/运行/时间/单位/通道/完整或明确发散前缀；非有限原指标显式标签并另给有效性，未知模型/布局仅只读。保持demo文件格式/接口不变，拒实时快照和续算，不伪造实车标定。范围B export/B测试/说明/证据及两日志，无shared/integration/A/根配置/正常计算公式/冻结fixture变化；A1正式UI/Worker、B1布局审查与设备/峰值内存保持独立待办。先推送认领/草稿PR并复查再开发，当前新实现/验收未开始。
+
+### 2026-10-01 / B2 / B2-003 / lab 结果接口批次完成
+
+- Role: B2；Identity-Source: user-declared；执行者Codex。main33fbddc已合并#53，认领2d5271d/[草稿PR#54](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/54)先发布；复查仅#54/#30后实现，B1仍停止写入；分支hgyong:b/b2-003-lab-result。
+- 修改：B export新增lab结果同步/异步编码、严格只读解码和字节估算，复用已合并配方身份/缺省规则，保存q/x动态参考/u/d/a/e原始Float32、来源/runId/单位/时间/完整或发散状态/原指标标签。核对末尾最多4秒Z与历史底限语义，另给有效性和rawMetricsMatch；自报不一致或非有限原指标隔离，不改原值。未知模型/布局无verifiedMetrics，首版不接受实时快照/续算。B测试/说明/证据及两日志同步；无运行引擎/数值注册表/shared/integration/A/根配置/冻结fixture变化，demo格式保持。
+- 实际验证：最终专项60/60（新增14项，含5秒指标窗及999点warming-up）、B117/117、pnpm check207/207及类型/目录边界/构建通过。29案例同步与异步每项2789816值逐位一致、编码字节一致，身份/元信息/指标保留、输入不变/数组独立；请求6000发散实际2909，人工空前缀及静音无有效0dB。17模型源码哈希、素材及8冻结文件未变。Windows Chromium154生产Worker/WebCrypto15/15，四车型双源1/4/8参考776000值及元信息一致，控制台error/warn为空；见[lab结果证据](../evidence/B/B2-003/lab-result/README.md)。首次浏览器脚本误用JSON字符串比较配置键顺序而失败，修正字段比较后通过，原失败报告保留；API/数值容差未改。
+- 当前：本地验收完成待提交推送/转审；#53已合并事实更新表格，旧待审条目保留历史含义。B demo/lab结果与配方接口已提供，完整003仍待A1正式文件UI/Worker/取消/隔离、峰值内存/目标设备/第二机；B1正式布局审查独立，004未认领。字节限制/内存下界不是堆峰值或性能测量，不宣称lab独立物理对照完成。
+- 下一步：推送核对#54最新head/CI/可合并性，本批结束停止写入，不自动合并main；维护者合并后由A1接入正式产品流程并完成组合验收，B2按B串行继续剩余验收/报告，不自动进入004。
+
+### A1 接入请求 / B2-003（关联 PR #54）
+
+目标A1：独立完整结果文件流程使用B export入口，与现有案例摘要分开。由integration/可信构建注入真实源码commit、SHA/已知录音字节和Worker；不在B模块读取文件。导入保持原source/runId和只读状态，检查modelSupported/layoutSupported/verifiedMetrics及每项valid/reason；rawMetricsMatch=false明确隔离自报摘要，NaN/静音/短前缀不可变成假收益。未知版本不自动运行当前声场；显式配方复算创建新runId，实录缺失直接报错，不回退随机源。
+
+验收条件：demo与四lab车型/两源/1～8参考的文件下载/只读导入与显式复算、发散状态展示/禁止续算、坏文件或超预算不改当前实验，任务失败/取消/重复导入身份隔离；记录产品Worker/转移所有权和实际峰值内存/目标设备/第二机。模块用法见src/team-b/export/README.md。此请求未修改/批准共管接口、未给其他会话发消息，不代表A1已接班或通过验收。
+
+**2026-10-01 / B2 / B2-003 lab结果发布回填**：Role: B2；Identity-Source: user-declared；执行者Codex。实现/测试/证据e1c1a5e30093541d949996dacbf1910243962159已推送hgyong:b/b2-003-lab-result，[PR#54](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/54)已转可审查，正文更新实际范围/验证/未验项。推送前main仍33fbddc，开放仅#54/#30，提交钩子/差异检查通过。最终专项60/60、B117/117、全仓207/207与生产Worker15/15通过；5秒指标窗及999点warming-up已复验，最终29案例报告保留先前本地输出后重跑生成，源码/报告采用UTF-8/LF哈希与Git一致。当前已远端同步、待审未合并；旧“待提交推送”为历史时点，最新交接head/云端CI/可合并性以PR最终核对为准，尚未声称通过。本批结束停止写入，不自动合并main；维护者审查后由A1按B页请求接正式产品文件/Worker流程，设备/内存/实验隔离和B1布局审查仍待验，完整003未签收，004未认领。
+
+## 当前接班：B2-004 / 报告准备（2026-10-01）
+
+- Role: B2；Task: B2-004；Identity-Source: user-declared；执行者 Codex，延续固定B2会话。用户要求继续；B1已结束写入。原仓库开放PR仅A2 #30，无B组活动任务。#54已合并，main `93ed882861e07f23a604cb446fe6dce391f892c7`；从该版本建立 `b/b2-004-report-preparation`。
+- 本批认领B2-004的独立报告准备，状态进行中。范围为 `docs/evidence/B/B2-004/**`、本页及根开发记录：B01～B08证据矩阵、demo/lab维度/时标/来源与分析导出边界、合并SHA与证据版本核对、可重跑的数据契约审计、第二台Windows复现步骤和待测记录模板。
+- B2-003接口阶段已合并；完整003的A1文件UI/Worker/取消/实验隔离、实际峰值内存及设备验收仍待办。本批仅推进不依赖这些条件的报告准备，不签收完整003或最终004。B1布局审查/目标性能和新车资产同版验收保留原主责；不修改运行源码、A组、shared/integration、配置或冻结fixture。
+- 先推送本认领并建立草稿PR，再复查开放任务后整理报告/审计。当前未跑本批验证，第二机/目标设备不可用，明确待测。下一步登记远端PR链接、执行实际审计和全仓检查，按结果更新报告并提交推送；不自动合并。
+
+### B2-004 报告准备完成 / 待合并（2026-10-01）
+
+- 认领 `ef311386ac6fd0e4c61b3191d824221a5c10a141` 已推送并建立 [PR #55](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/55)；复查开放仅#55/#30，无重复B任务。#50/#54实际合并状态已回填队列；旧“待合并/004未认领”保留原历史时点。
+- [阶段报告](../evidence/B/B2-004/README.md)汇总B01～B08与合并版本，[数据契约](../evidence/B/B2-004/DATA_CONTRACT.md)核对demo/lab维度、单位、通道ID、时标、来源、分析窗口/有效性和导出边界；[第二Windows步骤](../evidence/B/B2-004/SECOND_WINDOWS.md)给复现/真实断网/性能记录模板，所有设备行明确未测。
+- 新审计绑定8份历史报告与对应合并提交，核对#54的14项源码/测试/夹具哈希、5/17模型文件、录音及8冻结文件；2demo/3lab共1545816值往返和导入前后分析一致。默认叠加误差1.234002411365509e-8 Pa，μ0恒等，真实发散2909/6000不补零；各通道单位/稳定ID、0/999/1000/1024点与末端时标通过。原始JSON、命令和检查日志已在报告目录。
+- 实际验证：审计通过、审计独立严格类型检查通过；pnpm test:b 117/117，pnpm check 207/207及类型/边界/生产构建通过；既有viewer大块提示保留。本批未重跑历史浏览器Worker、未测实际峰值内存/目标设备/第二机。仅改B证据/说明和两份协作记录；B运行算法、A/shared/integration/根配置及冻结fixture均未改。
+- 下一步提交推送本报告准备，核对#55最终head的CI/可合并性，再由维护者审查；本批停止写入，不自动合并。A1按前述#54请求接正式文件/Worker/取消/实验隔离；B1仍负责布局审查和B1-004目标性能。依赖就绪后B2汇总同版设备/第二机、新布局导出证据，完整003/最终004继续保持待签收。
+
+**B2-004 发布回填（2026-10-01）**：Role: B2；Task: B2-004；Identity-Source: user-declared；执行者Codex。报告/审计/真实检查日志提交 `85fcf54ed0224583ee7b35f32857c348df7080d4` 已推送hgyong:b/b2-004-report-preparation，交付 [PR #55](https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/55)。本批26个本地报告链接、最终审计源码/报告哈希及全检查后的8冻结文件复核通过，见 [verification.json](../evidence/B/B2-004/verification.json)。首轮报告范围检查误把Git转义的中文路径当成不同文件，改用NUL分隔文件清单后通过；不涉及运行源码或数值修复。推送前main仍93ed882，提交钩子/差异检查通过。报告准备已远端同步、待维护者审查合并；本回填提交之后的最终head/云端CI/冲突状态以PR最终核对为准，本条不预先宣称其通过。本批结束停止写入；设备/正式产品接入仍待，完整003/最终004未签收。
+
+## 2026-10-04 B2-003 注册布局导出兼容认领
+
+- 角色：B2；执行者：Codex；身份来源：user-declared；状态：进行中。用户已明确继续 B2；B1 已停止，当前开放 PR 无另一 B 组认领。
+- 分支：`b/b2-003-registered-compat`。原仓库 main 为 `b968d926ce343cb4568e00bdb14da4e87bdd6fc6`（#55 已合并）；修复基于 A2 #57 候选 `5be0802beec22be171e36c5b0d754b3799e09e21`，以 `a/a2-driving-experience` 为 PR base，保持 B 组差异独立。#58/#59 依赖 #57，A1 最新交接将三项 B2 兼容失败留给独立处理。
+- 范围：`src/team-b/export/**`、B 组导出测试、`docs/evidence/B/B2-003/registered-compat/**`、本页及根开发记录。只更新真实模型身份及只读解析/执行校验边界；不修改 shared、integration、A 源码、计算算法、既有 fixtures 或旧断言/容差。
+- 验收：复现三项失败；五种已注册教学布局的合成/录音结果与配方往返；旧模型及未知/错配布局只读、禁止复算；配置与素材校验继续严格；B 测试、类型、边界、完整 check 及冻结基准检查。
+- 下一步：推送认领并创建原仓库草稿 PR，再查重复占用，然后复现、修复、验证和记录。PR URL 在下一批补录。完整 B2-003 的 A1 产品文件/Worker/取消及真实设备、第二机验收仍独立待办，本批不签收物理标定或最终交付。
+
+## 2026-10-04 B2-003 注册布局导出兼容实现与验证
+
+- Role: B2；Task: B2-003；Identity-Source: user-declared；Executor: Codex。用户已继续本角色任务；认领 `68ef6f71c1fcce67fdf63013f99905eeb1c08f09`，原仓库 PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/60 。版本为 A2 #57 候选 `5be0802beec22be171e36c5b0d754b3799e09e21` 加本批实现；源码/测试哈希绑定见 `docs/evidence/B/B2-003/registered-compat/comparison.json`。
+- 修改：B 导出登记 `lab-v3-registered-batch-recipe-2` 和六项实际变化的数值文件哈希；结构解析保留原布局身份，实际导出/复算独立校验注册布局与动力类型；补五车型和历史模型真实文件验证及 API 说明。旧断言/容差、shared、integration、A 源码、数值算法与 fixtures 均未修改。
+- 实际验证：修改前 analysis 57/60、三项失败；修改后68/68；`pnpm test:b`125/125；`pnpm typecheck`、`pnpm check:boundaries`及独立证据 strict tsc 通过；`pnpm check`295/295、类型/边界/构建通过。30组矩阵在配方复算/同步解码/异步解码各核对1460000个Float32值，全部逐位一致，同步/异步文件字节相同；模型17哈希与RNQ1身份一致；八份冻结基准与main b968d92一致。未知/别名/动力错配布局只读、执行先拒绝；实际旧model-1文件只读、不请求素材、不自动升级模型。原始命令日志及每路哈希已保存新证据目录，旧证据不改写。
+- 状态：本批实现完成，提交并推送准备中；远端最终 SHA/CI 尚待发布后核对，未宣称已合并。下一步推送、核对 PR #60 最终检查，由维护者审查并向 #57 集成；A1 #58/#59 随后同步该依赖并复验。B1已停止，无重复 B 认领；本批结束后停止 B 源码写入。完整003的A1正式文件/Worker/取消、真实峰值内存/目标设备/第二机及004最终报告仍待验，不以本批教学兼容验证签收物理标定或最终交付。
+2026-10-05 发布前复核：#57 base head 仍为5be0802；无另一B组开放认领。#59前移至5899827，属于A1分支后续，本批未在该head运行组合验收，仍须A1集成B修复后复验。发布继续使用#60与独立B差异。
+
+## 2026-10-05 B2-003 注册布局导出兼容发布交接
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。实现提交 `c2d6aa1bd72b58e6cdacf1b1fe2459e54b52fe67` 已推送 fork 分支 `b/b2-003-registered-compat`，原仓库 PR #60 的 base 保持 #57 候选5be0802。提交范围仅 B export、B测试、新证据和双日志；本地源码哈希与 comparison.json 一致，暂存历史文件原字节SHA已复核，Git差异空白检查通过。发布前#59新增5899827仅改A1交接和根日志，无另一B认领。
+
+本批状态待合并，B2源码写入结束。上述实际验证仍对应已发布实现；此交接提交不改代码。后续CI以#60最新head为准，不使用认领head的旧失败或其他分支结果替代。本批提供给维护者审查并集成至#57，再由A1同步#58/#59依赖且复验；不自动合并A分支/main。完整003的产品/设备门槛、注册布局B1独立审查及004最终报告仍待验，下一轮B角色先查PR合并状态与串行交接后取无阻塞任务。
+## 2026-10-05 B2-003 注册布局浏览器 Worker 验证认领
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。用户要求继续本角色；B1已停止、开放PR无另一B任务。#60已合并到A2 #57分支，合并SHA `382100930ca950adfed27390acbb6226e0af4afc`，尚未进入main（仍b968d92）；先前待合并状态保留为历史。本批从3821009建立 `b/b2-003-registered-worker`，以 `a/a2-driving-experience` 为PR base。
+
+认领范围仅 `docs/evidence/B/B2-003/registered-worker/**`、本页和根开发记录；新独立生产构建Worker夹具与真实浏览器报告，补新模型五布局的Web Crypto、完整结果/配方复算、异步数据所有权及只读/拒绝行为。旧浏览器证据不改写；不修改运行算法、产品Worker、A/shared/integration、根配置或冻结基准。验收为实际浏览器Worker执行、构建源码/产物/报告哈希、B测试和完整check；真实峰值内存、目标核显性能、第二机、A1正式产品文件/取消等仍独立待验。
+
+状态进行中；先推送认领创建草稿PR并复查重复，再实现验证夹具，运行并记录实际结果，提交推送。PR链接在下一批回填，不自动合并。
+
+## 2026-10-05 B2-003 五注册布局浏览器 Worker 实现与验证
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。认领 `71fc8e985cff89a450539ebaa3205640db17b156`，原仓库PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/61 ，base为#57候选3821009。新增独立生产module Worker/page/config、可重跑证据核验脚本、实际报告/控制台/截图和源码产物哈希；无运行源码、原测试、旧证据、A/shared/integration或冻结fixture修改。
+
+实际验证：Windows内嵌Chromium154安全上下文 DedicatedWorkerGlobalScope，218/218检查，五布局×两声源×1/4/8参考共30组，浏览器对Node、同步/异步解码、配方复算每种对照1460000个Float32值全部逐位/哈希一致。同步摘要适配器仅复用实际Web Crypto对相同载荷的缓存，不信任manifest自报；异步与篡改校验直接调用Web Crypto。旧model-1只读/复算先拒绝；未知/别名/动力错配只读且素材访问0次；坏seed、预算、篡改、offset、buffer转移和输入修改拒绝/隔离通过；GX真实发散551/6000有限点前缀保持。控制台error/warn为空，夹具观测2456.5ms不作为B1目标性能；峰值内存/产品集成/目标设备/第二机标志均false。
+
+命令：证据strict tsc、Vite生产构建、verify.ts均通过；pnpm test:b125/125、pnpm check295/295及类型/边界/构建通过。核验报告30组Node哈希、17数值源码、8冻结文件、源码/产物/报告绑定见docs/evidence/B/B2-003/registered-worker/verification.json；源码/测试相对3821009无改动。旧证据只读，日志保存新目录。
+
+发布前复查#61 base仍3821009；#59已更新09ef1bc，A1报告最终309/309及集成B2 #60，本批没有验收该A1候选或其产品文件回读。状态：本批完成待提交推送；下一步同步实现/记录、核对#61最终云端CI并转待审查，由维护者集成至#57；本批B2写入结束。完整003的正式B文件/产品Worker/取消/实验隔离、新布局B1独立审查、真实峰值内存/目标设备/第二机及004最终报告仍按各角色同版证据待验，不自动合并。
+## 2026-10-05 B2-003 注册布局浏览器 Worker 发布交接
+
+Role:B2；Task:B2-003；Identity-Source:user-declared；Executor:Codex。实际浏览器证据实现提交 `a0dfa3b03954d969ee6350c42e76d2539690081c` 已推送 `hgyong:b/b2-003-registered-worker`，原仓库PR #61；#60已经合入候选3821009但未进main。218/218真实浏览器及B125/全仓295验证、源码/构建/报告/冻结哈希已在新目录保存；此后续只补发布信息和相应报告哈希，不改变Worker或B源码。
+
+本批状态已发布待合并，B2写入结束。PR最终head与CI发布后准确核对，不能用旧head结果替代；维护者审查并集成#61至#57。A1当前#59的309项与页面证据是其独立版本，本批未重做其组合流程。正式产品文件/取消/实验隔离、新布局B1审查、真实峰值内存/目标设备/第二机、最终004继续按同版证据待验；下一轮先同步开放PR、串行交接及可执行节点，不自动合并main。
+## 2026-10-05 B2-004 注册模型候选报告增补认领
+
+Role:B2；Task:B2-004；Identity-Source:user-declared；Executor:Codex。用户要求继续B2；B1已停止，无另一B开放任务。#61已合入#57，合并SHA `795d9095eb8996da2938a7513bbcaa435a18d8e8`，#60同在该父链；main仍 `b968d926ce343cb4568e00bdb14da4e87bdd6fc6`。本批分支 `b/b2-004-registered-report`，base为 `a/a2-driving-experience`。
+
+认领B2-004可独立完成的候选报告增补：将#55旧教学报告、#60注册模型Node证据及#61真实Worker证据按不可变提交绑定；在当前候选核对五布局×两声源的默认16秒/R4结果、维度/单位/时标、同步/异步文件、配方复算和A/Z分析一致性，给新版数据交付及第二机复现入口。范围仅 `docs/evidence/B/B2-004/registered-candidate/**`、B.md及根日志；旧报告/证据保持原版本，不改变B/A/shared/integration/测试/配置/冻结基准。
+
+状态进行中；先提交推送认领及草稿PR，再复查重复任务，实际审计、B测试、类型/边界/完整check与新报告记录同批发布。本批不是最终004签收，不代替B1新布局/目标设备、A1正式B文件/产品生命周期、真实峰值内存或第二机验证；不自动合并。
+
+## 2026-10-05 B2-004 注册候选报告增补实现与验证
+
+Role:B2；Task:B2-004；Identity-Source:user-declared；Executor:Codex。认领3d8bdb17157acd32479e8876a56f4d7550d79614，原仓库PR https://github.com/KnowCooker/RNC_3D_SIMULATION/pull/62 ，base为A2 #57候选795d909。范围仅新docs/evidence/B/B2-004/registered-candidate目录与双日志；运行源码/原测试/旧证据/fixtures/共管文件无改动。
+
+实际审计五注册布局×两声源，各默认16秒/R4、32000点、24路：同步导入、异步导入、配方从零复算各7680000个Float32值完全一致；同步/异步容器逐字节相等。单位、通道ID、原可选缺省、规范化值、来源/身份、[0,16)时标、末4秒原指标与600帧A/Z分析在两种导入结果上一致；录音素材完整身份不变，实际旧model-1只读，复算拒绝前素材访问0次。实际容器3079412～3079864字节，原信号+文件下界6151412～6151864字节；后者不是峰值测量。
+
+五份#55/#60/#61报告与其不可变提交逐份核对，旧报告自带文件哈希、Worker源码/报告哈希、demo5项/新lab17项数值源码及8冻结文件均通过。新增verify.ts核验11报告哈希、14本地链接、审计脚本和保存日志；strict tsc通过；pnpm test:b125/125，pnpm check295/295及类型/边界/构建通过。首轮脚本误用不存在的估算字段被strict tsc检出，改用minimumResidentSignalBytes；原诊断已保留，未改B接口或容差。构建既有大chunk提示保留。
+
+当前本地完成准备发布，源码/数据/检查记录同批提交；提交SHA与远端同步回执另记。下一步审查#62并集成至#57，再进行同版产品/设备验收；不自动合并。旧浏览器矩阵未在本批重跑，未生成新离线包或进行第二机/物理断网。B1已停止，新布局独立数值与目标设备性能、A1正式B文件/Worker/取消/实验身份、实际峰值内存及最终003/004签收继续待验。
+## 2026-10-05 B2-004 注册候选报告发布交接
+
+Role:B2；Task:B2-004；Identity-Source:user-declared；Executor:Codex。实现提交e8965a52ce99e0f1fed40eb56670c707d3b2e033已推送hgyong:b/b2-004-registered-report，原仓库PR #62，base为A2 #57候选795d909。本批十组16秒数据、B125/全仓295及strict证据检查通过，哈希和第二机入口保存在新registered-candidate目录。审计JSON保留执行时认领HEAD，不改写旧证据或声称浏览器重跑。
+
+当前状态待合并，B2本批写入结束；本回执只补发布信息及报告哈希，不改变计算或审计。后续CI按#62最终head读取，结果补PR正文。下一步维护者审查并集成#57；main尚未包含本候选。完整003/004、新布局独立B1审查、A1正式产品文件/取消/身份、真实峰值及目标设备/第二机仍待验；B1已停止，不自动接替其任务或合并其他角色分支。

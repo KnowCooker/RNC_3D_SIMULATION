@@ -8,16 +8,19 @@ import type { AssetBodyMode, AssetSectionAxis } from './asset-inspection';
 import { createSectionDisplay } from './section-display';
 import { createSceneStage, type RoadSurface, type StageMode } from './scene-stage';
 import type { GalleryEnvironment } from './champagne-gallery';
-import { labLayout, P7_LAYOUT_ID, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
+import { labLayout, P7_LAYOUT_ID, registeredVehicleLayout, type FieldFrame, type LabConfig, type LabSelection, type Vec3 } from '../../shared/lab-contracts';
 import { placeLabLabels } from './labels';
 import { describeVehiclePart, featuredVehicleParts } from './part-guide';
 import { createFieldPoints, createFieldPointsForSlice, fieldFrameMatchesPoints, type SliceAxis } from './field-slices';
+import { DENSE_FIELD_GRID } from './field-grid';
 import { createFieldDisplay } from './field-display';
 import { fieldValues, improvementFieldRange, pairedFieldRange, pressureColors, reductionColors, type FieldQuantity } from './field-display-data';
 import { createCameraMotion } from './camera-motion';
 import { createDrivingView } from './driving-view';
 import { createWheelMotion } from './wheel-motion';
+import { sampleDrivingRoute } from './driving-route';
 import { travelDistance } from './driving-state';
+import { constrainEnvironmentCamera } from './environment-camera';
 import './viewer.css';
 
 export function createLabViewer(host: HTMLElement, callbacks: {
@@ -119,7 +122,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       : `路面材质预览 · 声学计算仍按左侧粗糙度 ${config?.roadRoughness.toFixed(2) ?? '—'}`;
   }
   function focusStageCamera() {
-    if(stage.mode==='road'&&driving&&showroomModel?.assetId==='xpeng-p7plus'){driving.focus();return;}
+    if(stage.mode==='road'&&driving&&showroomModel?.assetId.startsWith('xpeng-')){driving.focus();return;}
     if (stage.mode === 'gallery') { focusCamera([6.7, 2.6, 7.6], [0, .8, 0]); return; }
     if (showroomActive && showroomModel?.assetId === 'xpeng-p7plus') {
       const compact = host.clientWidth < 900;
@@ -132,15 +135,16 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   function applyStage() {
     host.dataset.stage=stage.mode;
-    driving?.enable(stage.mode==='road'&&showroomModel?.assetId==='xpeng-p7plus');
-    scene.fog=stage.mode==='road'?new THREE.Fog('#c6d1cf',140,370):null;
+    driving?.enable(stage.mode==='road'&&!!showroomModel?.assetId.startsWith('xpeng-'));
+    scene.fog=stage.mode==='road'?new THREE.Fog('#c6d1cf',230,360):null;
     stage.setClearBay(showroomActive && !!showroomModel?.assetId.startsWith('xpeng-'));
     stage.road.visible = stage.mode === 'road'; stage.workshop.visible = stage.mode === 'workshop';
     ground.visible = false; stripes.visible = false;
     scene.background = new THREE.Color(stage.mode === 'gallery' ? '#ead8bf' : stage.mode === 'road' ? '#bbd3dc' : '#263744');
+    key.position.set(4,7,5);fill.position.set(-5,4,-5);
     const gallery=stage.mode==='gallery',light=stage.gallery.lighting;
     scene.environmentIntensity = gallery ? light.intensity : stage.mode === 'road' ? 1 : 0.8;
-    scene.environmentRotation.y=gallery?light.rotation:0;
+    scene.environmentRotation.set(0,gallery?light.rotation:0,0);
     renderer.toneMappingExposure = gallery ? light.exposure : stage.mode === 'road' ? .93 : 1.0;
     key.color.set(gallery?light.sun:'#fff0d7');key.intensity=gallery?light.strength:2.7;
     key.position.set(...(gallery?[-10,8,-9]:[4,7,5]) as [number,number,number]);
@@ -227,8 +231,9 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   function focusCockpit() { focusCamera([0.05, 1.85, -0.25], [0.1, 1.25, 1.15]); }
   let showroomModel: ShowroomModel | null = null;
-  const p7Layout = () => config?.layoutId === P7_LAYOUT_ID;
-  const acousticAsset = () => !showroomActive || (p7Layout() && showroomModel?.assetId === 'xpeng-p7plus');
+  const vehicleLayout = () => registeredVehicleLayout(config?.layoutId);
+  const p7Layout = () => !!vehicleLayout();
+  const acousticAsset = () => !showroomActive || (!!vehicleLayout() && showroomModel?.assetId === vehicleLayout()?.assetId);
   let hardwareOverlay = false;
   const hardwareVisible = () => acousticAsset() && (!host.dataset.presentationPage || host.dataset.presentationPage === 'field' || host.dataset.presentationPage === 'structure' && (hardwareOverlay || editMode));
   let showroomActive = false, showroomRequest = 0, disposed = false;
@@ -255,10 +260,10 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   xpengPicker.textContent = '小鹏车型';
   const xpengSelect = document.createElement('select'); xpengSelect.setAttribute('aria-label', '选择小鹏车型');
   for (const spec of xpengCatalog) xpengSelect.add(new Option(spec.name, spec.id));
-  xpengSelect.onchange = () => { void enterShowroom(xpengSelect.value as XPengId); };
+  xpengSelect.onchange = () => { host.dispatchEvent(new CustomEvent('xpeng-vehicle-change',{bubbles:true,detail:xpengSelect.value})); };
   xpengPicker.append(xpengSelect); showroomPanel.prepend(xpengPicker);
   const xpengLaunch = document.createElement('button'); xpengLaunch.type = 'button'; xpengLaunch.className = 'lab-xpeng-launch';
-  xpengLaunch.textContent = '小鹏 · 五车重建'; xpengLaunch.onclick = () => { void enterShowroom(xpengSelect.value as XPengId); }; host.append(xpengLaunch);
+  xpengLaunch.textContent = '小鹏 · 五车重建'; xpengLaunch.onclick = () => { host.dispatchEvent(new CustomEvent('xpeng-vehicle-change',{bubbles:true,detail:xpengSelect.value})); }; host.append(xpengLaunch);
   const xpengActions = document.createElement('div'); xpengActions.className = 'lab-xpeng-actions'; xpengActions.hidden = true;
   const xpengExplode = document.createElement('button'); xpengExplode.type = 'button'; xpengExplode.textContent = '展开全部';
   xpengExplode.onclick = () => { showroomDetached.clear(); showroomModel?.parts.forEach(p => showroomDetached.add(p.id)); showroomAuto = null; refreshShowroomAssembly(); focusCamera([10.5,5.1,12.4],[0,-.4,0]); };
@@ -469,11 +474,11 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const bodyMaterials = new Map<THREE.Material, { opacity: number; transparent: boolean; depthWrite: boolean }>();
   const sourceAnchor = (i: number): Anchor => ({ origin: labLayout(config!).sources[i], mountPart: p7Layout() ? `wheel-${i<2?1:-1}-${i%2===0?1:-1}` : `wheel-${corners[i]}` });
   const speakerAnchor = (i: number): Anchor => ({ origin: labLayout(config!).speakers[i], mountPart: p7Layout() ? `${i<2?'front':'rear'}-door-${i%2===0?1:-1}` : `door-${i < 2 ? 'front' : 'rear'}-${i % 2 === 0 ? 1 : -1}` });
-  const micAnchor = (i: number): Anchor => ({ origin: labLayout(config!).microphones[i], mountPart: p7Layout() ? `seat-${i<2?1:2}-${i<2?i+1:i===2?1:3}` : `seat-${[1, 2, 3, 5][i]}` });
+  const micAnchor = (i: number): Anchor => ({ origin: labLayout(config!).microphones[i], mountPart: p7Layout() ? `seat-${i<2?1:2}-${i<2?i+1:i===2?1:vehicleLayout()?.secondRowSeats??3}` : `seat-${[1, 2, 3, 5][i]}` });
   const markerRows: { mesh: THREE.Mesh; button: HTMLButtonElement; line: SVGLineElement; selection: LabSelection; source: boolean; anchor: Anchor }[] = [];
   const waveRows: THREE.Mesh[] = [];
   const pathRows: { line: THREE.Line; dot: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; start: Anchor; end: Anchor; primary: boolean; channel: number; mic: number }[] = [];
-  let fieldPoints = createFieldPoints();
+  let fieldPoints = createFieldPoints(DENSE_FIELD_GRID);
   const fieldDisplay=createFieldDisplay(fieldPoints,renderer.extensions.has('OES_texture_float_linear'));
   field.add(fieldDisplay.group);field.visible=false;
   const sliceMeshes=fieldDisplay.slices;
@@ -486,7 +491,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   fieldHud.setAttribute('aria-label', '三维声场热力图图例');
   const fieldHudTitle = document.createElement('strong'), fieldHudRange = document.createElement('span');
   const fieldHudScale = document.createElement('div'); fieldHudScale.className = 'lab-field-scale';
-  fieldHudScale.innerHTML = '<span>30 dB</span><i></i><span>80 dB</span>';
+  fieldHudScale.innerHTML = '<span>45 dB</span><i></i><span>85 dB</span>';
   const fieldHudHotspot = document.createElement('p'), fieldHudProbe = document.createElement('p');
   fieldHud.append(fieldHudTitle, fieldHudRange, fieldHudScale, fieldHudHotspot, fieldHudProbe); host.append(fieldHud);
   const fieldControls=document.createElement('div');fieldControls.className='lab-field-display-controls';
@@ -496,7 +501,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   rangeButton.onclick=()=>{if(!frame?.valid)return;const lock=!lockedFieldRange;lockedFieldRange=lock?pairedFieldRange(frame):null;lockedImprovementRange=lock?improvementFieldRange(frame):null;rangeButton.setAttribute('aria-pressed',String(!!lockedFieldRange));rangeButton.textContent=lockedFieldRange?'恢复标准色标':'增强局部对比';paintField();};
   const overheadButton=document.createElement('button');overheadButton.type='button';overheadButton.textContent='俯视座舱';overheadButton.onclick=()=>focusCamera(host.clientWidth<1000?[.01,8,.02]:[1,8,.02],host.clientWidth<1000?[0,.8,-.12]:[1,.8,-.12]);
   const densityLabel=document.createElement('label');densityLabel.textContent='不透明度';const density=document.createElement('input');density.type='range';density.min='25';density.max='100';density.value='95';density.step='5';density.setAttribute('aria-label','声场不透明度');density.oninput=()=>{fieldOpacity=Number(density.value)/100;fieldDisplay.setOpacity(fieldOpacity);};densityLabel.append(density);
-  const fieldDisplayNote=document.createElement('small');fieldDisplayNote.textContent='280 点空间插值 · 当前帧；增强后锁定同一色标，原声与残余共用。';
+  const fieldDisplayNote=document.createElement('small');fieldDisplayNote.textContent='1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。';
   fieldControls.append(improvementButton,rangeButton,overheadButton,densityLabel,fieldDisplayNote);fieldHud.append(fieldControls);
 
   const fieldFocusButton = document.createElement('button'); fieldFocusButton.type = 'button';
@@ -520,7 +525,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
 
   function displayPosition(anchor: Anchor, target: THREE.Vector3) {
     target.set(...anchor.origin);
-    if (p7Layout() && showroomActive && showroomModel?.assetId === 'xpeng-p7plus') {
+    if (p7Layout() && showroomActive && showroomModel && acousticAsset()) {
       const object = anchor.mountPart ? showroomModel.group.getObjectByName(anchor.mountPart) : null;
       if (object) target.add(object.position);
       return target;
@@ -586,14 +591,14 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     host.append(button); markerRows.push({ mesh, button, line, selection, source, anchor });
   }
   function setConfig(next: LabConfig) {
-    if (config && config.vehicle !== next.vehicle) leaveShowroom();
+    if (config && config.vehicle !== next.vehicle && !registeredVehicleLayout(next.layoutId)) leaveShowroom();
     config = structuredClone(next);
     stage.setRoadSurface(next.roadRoughness>=1.7?'gravel':next.roadRoughness>=.9?'coarse':'smooth');
     refreshRoadSurface();
     const key = JSON.stringify([next.layoutId, next.vehicle, next.references, next.speakerEnabled]);
     if (key === signature) return;
     signature = key;
-    frame = null; paintField();
+    frame = null; lockedFieldRange=null;lockedImprovementRange=null;rangeButton.setAttribute('aria-pressed','false');rangeButton.textContent='增强局部对比';paintField();
     if (sections) { scene.remove(sections.group); sections.dispose(); }
     if (model) { scene.remove(model.group); model.dispose(); }
     model = createVehicleModel(next.vehicle); scene.add(model.group);
@@ -653,9 +658,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   }
   function movingFieldSlice() { return fieldSlice !== 'volume' && clipAxis === fieldSlice && Number.isFinite(clipValue); }
   function syncFieldSampling() {
-    const next = p7Layout() ? createFieldPoints().map(([x,y,z]): Vec3 => [x, .68 + (y-.85)*.72, z*.90]) : createFieldPoints();
+    const row=vehicleLayout();
+    const next = config?.layoutId===P7_LAYOUT_ID ? createFieldPoints(DENSE_FIELD_GRID).map(([x,y,z]): Vec3 => [x, .68 + (y-.85)*.72, z*.90]) : row ? createFieldPoints(DENSE_FIELD_GRID).map(([x,y,z]):Vec3 => {
+      const front=row.seatZ[0]+.5,rear=row.seatZ[row.seatZ.length-1]-.25;
+      return [x*(row.layout.speakers[0][0]/.84),.65+(y-.85)/.84*(row.layout.roof-.70),rear+(z+1.2)/2.03*(front-rear)];
+    }) : createFieldPoints(DENSE_FIELD_GRID);
     if (movingFieldSlice()) {
-      const sampled = createFieldPointsForSlice(fieldSlice as SliceAxis, clipValue);
+      const sampled = createFieldPointsForSlice(fieldSlice as SliceAxis, clipValue, DENSE_FIELD_GRID);
       const component = {x:0,y:1,z:2}[fieldSlice as SliceAxis];
       sampled.forEach((point,i) => { if (point[component] === clipValue) { const moved = [...next[i]] as [number,number,number]; moved[component] = clipValue; next[i] = moved; } });
     }
@@ -665,11 +674,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     frame = null;
     fieldDisplay.setPoints(fieldPoints);
   }
+  let animateField = false;
   function paintField() {
     const valid = fieldMode !== 'off' && !!frame && fieldFrameMatchesPoints(frame, fieldPoints);
     field.visible = valid;
     fieldHud.hidden = !valid;
     if (!valid || !frame) {
+      fieldDisplay.clear();
       probeMarker.visible = false;
       fieldNote.hidden = fieldMode === 'off';
       if (!fieldNote.hidden) {
@@ -683,13 +694,13 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     fieldNote.hidden = false;
     const unit = frame.weighting === 'A' ? 'dBA' : 'dB';
     const quantity:FieldQuantity=improvementView?'reduction':fieldMode==='primary'?'primary':'residual';
-    const range:readonly[number,number]=improvementView?(lockedImprovementRange??[-10,10]):lockedFieldRange??[30,80];
+    const range:readonly[number,number]=improvementView?(lockedImprovementRange??[-10,10]):lockedFieldRange??[45,85];
     const values=fieldValues(frame,quantity);
     fieldHudScale.innerHTML=`<span>${range[0]} ${improvementView?'dB':unit}</span><i></i><span>${range[1]} ${improvementView?'dB':unit}</span>`;
     fieldHudScale.querySelector('i')!.style.background=`linear-gradient(90deg,${(improvementView?reductionColors:pressureColors).join(',')})`;
     fieldHud.dataset.quantity=quantity;fieldHud.dataset.time=String(frame.time);
     fieldHud.dataset.range=range.join(',');fieldHud.dataset.rendering=fieldSlice;
-    fieldDisplay.update(frame,quantity,fieldSlice,range);
+    fieldDisplay.update(frame,quantity,fieldSlice,range,animateField);
     let low = Infinity, high = -Infinity, hot = 0;
     values.forEach((value, index) => {
       if (value < low) low = value;
@@ -710,8 +721,8 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     }
     if (!fieldNote.hidden) {
       if (fieldSlice === 'volume') {
-        fieldNoteDetail.textContent = '280个真实采样点 · 连续体积透视；空间按声能插值，仅用于显示，色标范围见右侧图例';
-        fieldNoteCompact.textContent = '280点 · 连续体积 · 声能插值';
+        fieldNoteDetail.textContent = '1,989个真实采样点 · 三维等声压面与体积；空间/帧间按声能平滑显示，精确读数对应标注时间窗';
+        fieldNoteCompact.textContent = '1,989点 · 三维体声场 · 声能平滑';
       } else {
         const axis = fieldSlice as SliceAxis, sample = sliceMeshes.get(axis)!.sampleIndices[0];
         const coordinate = fieldPoints[sample][{ x: 0, y: 1, z: 2 }[axis]];
@@ -825,6 +836,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     }
   };
   renderer.domElement.oncontextmenu = event => { event.preventDefault(); const hit = hitAt(event); if (hit) callbacks.context(hit.object.userData.selection, event.clientX, event.clientY); };
+  const pageCameras = new Map<string, {asset: string; position: Vec3; target: Vec3; fov: number; stage: StageMode; compact: boolean}>();
   function focusPresentationCamera() {
     const compact=host.clientWidth<1000,page=host.dataset.presentationPage;
     if(page==='field'){focusCamera(compact?[5.8,4.6,6.6]:[4.4,4.6,4.7],compact?[0,1.0,0]:[1.0,.8,-.6]);return;}
@@ -854,6 +866,7 @@ export function createLabViewer(host: HTMLElement, callbacks: {
   const resize = new ResizeObserver(resizeViewer); resize.observe(host);
   window.addEventListener('resize', resizeViewer);
   function reset() {
+    pageCameras.clear();
     if (showroomActive) {
       showroomDetached.clear(); showroomAuto = null; showroomSelected = null;
       setShowroomBody('solid'); setShowroomSection('none', 0);
@@ -874,13 +887,14 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     focus:focusCamera,model:()=>showroomActive?showroomModel:null,
     body:solid=>{if(showroomModel)setShowroomBody(solid?'solid':'transparent');},
     road:()=>{stage.setMode('road');applyStage();},
-    gallery:()=>{stage.setMode('gallery');applyStage();if(fieldMode!=='off')setShowroomBody('transparent');focusPresentationCamera();},
+    inspect:()=>{stage.setMode('road');applyStage();fieldMode=fieldMode==='off'?'residual':fieldMode;setShowroomBody('transparent');host.dispatchEvent(new CustomEvent('driving-field-inspect',{bubbles:true}));},
     assemble:()=>{showroomDetached.clear();showroomAuto=null;showroomProgress.clear();showroomModel?.parts.forEach(p=>showroomModel!.setPartProgress(p.id,0));showroomModel?.inspection.select(null);setShowroomSection('none',0);},
   });
   applyStage(); reset();
   if (['#xpeng', '#p7plus'].includes(window.location.hash)) queueMicrotask(() => { if (!disposed) void enterShowroom(window.location.hash === '#p7plus' ? 'p7plus' : 'x9'); });
   return {
     get fieldPoints() { return fieldPoints; }, setConfig, reset,
+    get acousticAvailable() { return acousticAsset(); },
     get hasValidField() { return !!frame?.valid && acousticAsset(); },
     renderPreview(canvas: HTMLCanvasElement, top = false, acoustic = false) {
       if (!showroomModel || !showroomActive) return;
@@ -909,7 +923,12 @@ export function createLabViewer(host: HTMLElement, callbacks: {
     setRoadSurface(surface: RoadSurface) { stage.setRoadSurface(surface); refreshRoadSurface(); callbacks.roadPreset?.(surface, { smooth: .6, coarse: 1.2, gravel: 2.2 }[surface]); },
     setEnvironment(value: GalleryEnvironment) { stage.gallery.setEnvironment(value); if(stage.mode!=='road')stage.setMode('gallery'); applyStage(); },
     setPresentationView(page: string) {
+      const previous=host.dataset.presentationPage, asset=showroomModel?.assetId??'teaching';
+      if(previous===page){if(page==='field'&&stage.mode==='gallery'){stage.setMode('road');applyStage();focusStageCamera();}else if(stage.mode==='gallery')focusPresentationCamera();return;}
+      if(previous)pageCameras.set(previous,{asset,position:camera.position.toArray() as Vec3,target:controls.target.toArray() as Vec3,fov:camera.fov,stage:stage.mode,compact:host.clientWidth<1000});
       host.dataset.presentationPage = page; paintField();
+      const saved=pageCameras.get(page);
+      if(saved?.asset===asset&&saved.compact===(host.clientWidth<1000)){stage.setMode(saved.stage);applyStage();focusCamera(saved.position,saved.target,saved.fov);return;}
       if (page === 'structure') { assemblyPanel.open = showroomAssemblyPanel.open = host.clientWidth >= 900; }
       if(page==='field'&&stage.mode!=='road'){stage.setMode('road');applyStage();focusStageCamera();}
       else if(page!=='field'&&stage.mode==='road'){stage.setMode('gallery');applyStage();focusPresentationCamera();}
@@ -957,11 +976,12 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       const entering = fieldMode === 'off' && mode !== 'off';
       fieldMode = mode; fieldSlice = slice; probeIndex = null;
       if (entering) { fieldFocus = true; if(stage.mode!=='road')focusPresentationCamera(); }
-      if (mode === 'off') fieldFocus = false;
+      if (mode === 'off') {fieldFocus = false;driving?.clearOverlay();}
       refreshFieldFocus(); applyStage(); syncFieldSampling(); applyClipping(); paintField();
     },
-    updateField(value: FieldFrame) { frame = value; paintField(); },
-    render(time: number, selected: LabSelection, drives: number[], sourceValues: number[]) {
+    updateField(value: FieldFrame, animate = false) { animateField = animate; frame = value; paintField(); },
+    render(time: number, selected: LabSelection, drives: number[], sourceValues: number[], playing = false) {
+      fieldDisplay.advance(time, playing);
       const now = performance.now(), dt = Math.min(0.1, (now - lastTime) / 1000); lastTime = now;
       const targetAmount = exploded ? 1 : 0;
       amount += (targetAmount - amount) * (1 - Math.exp(-dt * 5));
@@ -993,20 +1013,30 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       }
       const distance=stage.mode==='road'?travelDistance(time,config?.speedKph??0):0;
       model?.wheels.forEach(wheel=>{wheel.rotation.x=distance/.4;});
+      const routeBefore=sampleDrivingRoute(distance-.1),routeAfter=sampleDrivingRoute(distance+.1);
+      const curvature=(Math.atan2(routeAfter.tangent.x,routeAfter.tangent.z)-Math.atan2(routeBefore.tangent.x,routeBefore.tangent.z))/.2;
+      const wheelbase=config?labLayout(config).sources[0][2]-labLayout(config).sources[2][2]:3;
       for(const part of showroomModel?.parts??[]){
         const wheel=showroomModel!.group.getObjectByName(part.id) as THREE.Group|undefined;
         if(!wheel?.userData.rollingCenter)continue;
         let motion=rollingWheels.get(wheel);if(!motion){motion=createWheelMotion(wheel,new THREE.Vector3(...wheel.userData.rollingCenter as [number,number,number]),wheel.userData.rollingRadius);rollingWheels.set(wheel,motion);}
-        motion.setDistance(distance);
+        motion.setDistance(distance);motion.setSteering(stage.mode==='road'&&wheel.userData.axleZ>0?Math.atan(wheelbase*curvature/(1-curvature*wheel.userData.rollingCenter[0])):0);
       }
       stripes.visible=false;
-      stage.update(time,config?.speedKph??0);
+      stage.update(time,config?.speedKph??0,dt);
+      if(stage.mode==='road'){
+        const inverse=sampleDrivingRoute(distance).rotation.invert();
+        key.position.set(4,7,5).applyQuaternion(inverse);fill.position.set(-5,4,-5).applyQuaternion(inverse);
+        scene.environmentRotation.setFromQuaternion(inverse);
+      }
       scene.environment = (stage.mode === 'gallery'||stage.mode==='road') && stage.gallery.environmentTexture ? stage.gallery.environmentTexture : environment.texture;
-      driving?.update(time,config?.speedKph??0,stage.driving.ready,stage.driving.failed);
+      driving?.update(time,config?.speedKph??0,stage.driving.ready,stage.driving.failed,Number(stage.road.userData.grade??0));
+      host.dataset.routeGrade=String(stage.road.userData.grade??0);host.dataset.routeHeading=String(stage.road.userData.heading??0);
       const environmentReady=stage.gallery.group.userData.environmentReady as string;
       if(host.dataset.environmentReady!==environmentReady)host.dataset.environmentReady=environmentReady;
-      host.dataset.environment=stage.gallery.environment;
-      host.dataset.environmentFailed=String(!!stage.gallery.group.userData.panoramaFailed);
+      if(host.dataset.environment!==stage.gallery.environment)host.dataset.environment=stage.gallery.environment;
+      const environmentFailed=String(!!stage.gallery.group.userData.panoramaFailed);
+      if(host.dataset.environmentFailed!==environmentFailed)host.dataset.environmentFailed=environmentFailed;
       markerRows.forEach(row => {
         displayPosition(row.anchor, row.mesh.position);
         const active = selected.channel === row.selection.channel && (selected.signal === row.selection.signal || ['d', 'a', 'e'].includes(selected.signal) && row.selection.signal === 'e');
@@ -1041,7 +1071,16 @@ export function createLabViewer(host: HTMLElement, callbacks: {
       else sections?.update(clipAxis === 'none' ? null : clipPlane);
       cameraMotion.update(reducedMotion.matches?Number.MAX_SAFE_INTEGER:now);
       host.dataset.cameraTransition=cameraMotion.active?'moving':'idle';
-      if(controls.enabled)controls.update();else camera.lookAt(controls.target);renderedOnce=true;
+      if(controls.enabled){
+        controls.update();
+        const outdoor=stage.mode!=='workshop';
+        if(outdoor&&!driving?.cabin&&!cameraMotion.active){
+          constrainEnvironmentCamera(camera.position,controls.target,stage.mode,showroomModel?.assetId);
+          camera.lookAt(controls.target);
+        }
+      }else camera.lookAt(controls.target);renderedOnce=true;
+      host.dataset.cameraPosition=camera.position.toArray().map(v=>v.toFixed(3)).join(',');
+      host.dataset.cameraTarget=controls.target.toArray().map(v=>v.toFixed(3)).join(',');
       const underfloor = camera.position.y < 0.1;
       stage.setUnderfloorView(underfloor); underfloorNote.hidden = !underfloor;
       stripes.visible = false; contactShade.visible = !underfloor;

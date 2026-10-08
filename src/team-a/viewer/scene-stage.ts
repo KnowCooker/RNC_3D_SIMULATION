@@ -9,6 +9,7 @@ export type RoadSurface = 'smooth' | 'coarse' | 'gravel';
 export function createSceneStage(scene: THREE.Scene, anisotropy = 8) {
   const gallery = createChampagneGallery(); scene.add(gallery.group);
   const driving = createDrivingRoad(anisotropy), road = driving.group; scene.add(road);
+  gallery.protectBackground(driving.usesBackground);
   const workshop = new THREE.Group(); workshop.name = 'rnc-workshop-stage'; scene.add(workshop);
   const roadFloor = driving.floor;
   const workshopFloor = new THREE.Group(); workshopFloor.name = 'workshop-floor'; workshop.add(workshopFloor);
@@ -86,7 +87,7 @@ export function createSceneStage(scene: THREE.Scene, anisotropy = 8) {
     // Camera presentation only: preserve stage and car transforms.
     setUnderfloorView(value: boolean) { roadFloor.visible = workshopFloor.visible = gallery.floor.visible = !value; },
     setRoadSurface,
-    update(time: number, speedKph: number) { if(mode === 'road') { driving.setEnvironment(gallery.environment, gallery.backgroundTexture); driving.update(time, speedKph); } },
+    update(time: number, speedKph: number, dt=1/60) { gallery.update(dt); if(mode === 'road') { driving.setEnvironment(gallery.environment, gallery.backgroundTexture); driving.update(time, speedKph, dt); } },
     dispose() {
       driving.dispose(); gallery.dispose();
       scene.remove(road, workshop);

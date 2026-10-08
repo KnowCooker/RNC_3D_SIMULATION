@@ -1,0 +1,191 @@
+{
+  "checks": [
+    {
+      "name": "smooth: dense same vehicle",
+      "pass": true,
+      "detail": {
+        "asset": "xpeng-p7plus",
+        "road": "smooth",
+        "run": "小鹏 P7+ · 布局 xpeng-p7plus-bev-v1 · 4×4×4 · bc4f713d",
+        "hud": "原声 d · 车内声场\n10.00 s / 采样范围 56.3–77.1 dBA\n45 dBA\n85 dBA\n\n最高采样值 77.1 dBA · (-0.48, 0.68, -1.08) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+        "range": "45,85",
+        "mode": "volume"
+      }
+    },
+    {
+      "name": "smooth: same fixed pressure legend",
+      "pass": true
+    },
+    {
+      "name": "smooth: actual road geometry",
+      "pass": true
+    },
+    {
+      "name": "coarse: dense same vehicle",
+      "pass": true,
+      "detail": {
+        "asset": "xpeng-p7plus",
+        "road": "coarse",
+        "run": "小鹏 P7+ · 布局 xpeng-p7plus-bev-v1 · 4×4×4 · def5df47",
+        "hud": "原声 d · 车内声场\n10.00 s / 采样范围 59.3–80.1 dBA\n45 dBA\n85 dBA\n\n最高采样值 80.1 dBA · (-0.48, 0.68, -1.08) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+        "range": "45,85",
+        "mode": "volume"
+      }
+    },
+    {
+      "name": "coarse: same fixed pressure legend",
+      "pass": true
+    },
+    {
+      "name": "coarse: actual road geometry",
+      "pass": true
+    },
+    {
+      "name": "gravel: dense same vehicle",
+      "pass": true,
+      "detail": {
+        "asset": "xpeng-p7plus",
+        "road": "gravel",
+        "run": "小鹏 P7+ · 布局 xpeng-p7plus-bev-v1 · 4×4×4 · 47621348",
+        "hud": "原声 d · 车内声场\n10.00 s / 采样范围 62.0–82.8 dBA\n45 dBA\n85 dBA\n\n最高采样值 82.8 dBA · (-0.48, 0.68, -1.08) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+        "range": "45,85",
+        "mode": "volume"
+      }
+    },
+    {
+      "name": "gravel: same fixed pressure legend",
+      "pass": true
+    },
+    {
+      "name": "gravel: actual road geometry",
+      "pass": true
+    },
+    {
+      "name": "rougher roads increase computed original pressure at same recorded window",
+      "pass": true,
+      "detail": [
+        77.1,
+        80.1,
+        82.8
+      ]
+    },
+    {
+      "name": "x9: dense same vehicle",
+      "pass": true,
+      "detail": {
+        "asset": "xpeng-x9",
+        "road": "gravel",
+        "run": "小鹏 X9 · 布局 xpeng-x9-erev-v1 · 4×4×4 · b55aeeb4",
+        "hud": "原声 d · 车内声场\n10.00 s / 采样范围 53.3–79.9 dBA\n45 dBA\n85 dBA\n\n最高采样值 79.9 dBA · (0.48, 0.65, 0.94) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+        "range": "45,85",
+        "mode": "volume"
+      }
+    },
+    {
+      "name": "l03: dense same vehicle",
+      "pass": true,
+      "detail": {
+        "asset": "xpeng-l03",
+        "road": "gravel",
+        "run": "小鹏 MONA L03 · 布局 xpeng-l03-bev-v1 · 4×4×4 · ea8df433",
+        "hud": "原声 d · 车内声场\n10.00 s / 采样范围 60.8–82.3 dBA\n45 dBA\n85 dBA\n\n最高采样值 82.3 dBA · (-0.46, 0.65, -0.97) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+        "range": "45,85",
+        "mode": "volume"
+      }
+    },
+    {
+      "name": "m03: dense same vehicle",
+      "pass": true,
+      "detail": {
+        "asset": "xpeng-m03",
+        "road": "gravel",
+        "run": "小鹏 MONA M03 · 布局 xpeng-m03-bev-v1 · 4×4×4 · f38c2f1f",
+        "hud": "原声 d · 车内声场\n10.00 s / 采样范围 61.5–82.5 dBA\n45 dBA\n85 dBA\n\n最高采样值 82.5 dBA · (-0.57, 0.65, -0.97) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+        "range": "45,85",
+        "mode": "volume"
+      }
+    },
+    {
+      "name": "gx: dense same vehicle",
+      "pass": true,
+      "detail": {
+        "asset": "xpeng-gx",
+        "road": "gravel",
+        "run": "小鹏 GX · 布局 xpeng-gx-erev-v1 · 4×4×4 · efd8c283",
+        "hud": "原声 d · 车内声场\n10.00 s / 采样范围 53.8–80.2 dBA\n45 dBA\n85 dBA\n\n最高采样值 80.2 dBA · (-0.49, 0.65, -0.84) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+        "range": "45,85",
+        "mode": "volume"
+      }
+    },
+    {
+      "name": "mobile no overflow",
+      "pass": true
+    }
+  ],
+  "samples": [
+    {
+      "name": "smooth",
+      "asset": "xpeng-p7plus",
+      "road": "smooth",
+      "run": "小鹏 P7+ · 布局 xpeng-p7plus-bev-v1 · 4×4×4 · bc4f713d",
+      "hud": "原声 d · 车内声场\n10.00 s / 采样范围 56.3–77.1 dBA\n45 dBA\n85 dBA\n\n最高采样值 77.1 dBA · (-0.48, 0.68, -1.08) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+      "range": "45,85",
+      "mode": "volume"
+    },
+    {
+      "name": "coarse",
+      "asset": "xpeng-p7plus",
+      "road": "coarse",
+      "run": "小鹏 P7+ · 布局 xpeng-p7plus-bev-v1 · 4×4×4 · def5df47",
+      "hud": "原声 d · 车内声场\n10.00 s / 采样范围 59.3–80.1 dBA\n45 dBA\n85 dBA\n\n最高采样值 80.1 dBA · (-0.48, 0.68, -1.08) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+      "range": "45,85",
+      "mode": "volume"
+    },
+    {
+      "name": "gravel",
+      "asset": "xpeng-p7plus",
+      "road": "gravel",
+      "run": "小鹏 P7+ · 布局 xpeng-p7plus-bev-v1 · 4×4×4 · 47621348",
+      "hud": "原声 d · 车内声场\n10.00 s / 采样范围 62.0–82.8 dBA\n45 dBA\n85 dBA\n\n最高采样值 82.8 dBA · (-0.48, 0.68, -1.08) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+      "range": "45,85",
+      "mode": "volume"
+    },
+    {
+      "name": "x9",
+      "asset": "xpeng-x9",
+      "road": "gravel",
+      "run": "小鹏 X9 · 布局 xpeng-x9-erev-v1 · 4×4×4 · b55aeeb4",
+      "hud": "原声 d · 车内声场\n10.00 s / 采样范围 53.3–79.9 dBA\n45 dBA\n85 dBA\n\n最高采样值 79.9 dBA · (0.48, 0.65, 0.94) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+      "range": "45,85",
+      "mode": "volume"
+    },
+    {
+      "name": "l03",
+      "asset": "xpeng-l03",
+      "road": "gravel",
+      "run": "小鹏 MONA L03 · 布局 xpeng-l03-bev-v1 · 4×4×4 · ea8df433",
+      "hud": "原声 d · 车内声场\n10.00 s / 采样范围 60.8–82.3 dBA\n45 dBA\n85 dBA\n\n最高采样值 82.3 dBA · (-0.46, 0.65, -0.97) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+      "range": "45,85",
+      "mode": "volume"
+    },
+    {
+      "name": "m03",
+      "asset": "xpeng-m03",
+      "road": "gravel",
+      "run": "小鹏 MONA M03 · 布局 xpeng-m03-bev-v1 · 4×4×4 · f38c2f1f",
+      "hud": "原声 d · 车内声场\n10.00 s / 采样范围 61.5–82.5 dBA\n45 dBA\n85 dBA\n\n最高采样值 82.5 dBA · (-0.57, 0.65, -0.97) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+      "range": "45,85",
+      "mode": "volume"
+    },
+    {
+      "name": "gx",
+      "asset": "xpeng-gx",
+      "road": "gravel",
+      "run": "小鹏 GX · 布局 xpeng-gx-erev-v1 · 4×4×4 · efd8c283",
+      "hud": "原声 d · 车内声场\n10.00 s / 采样范围 53.8–80.2 dBA\n45 dBA\n85 dBA\n\n最高采样值 80.2 dBA · (-0.49, 0.65, -0.84) m\n\n点击声场读取最近采样点；切片可定位车内不同区域\n\n同窗改善分布\n增强局部对比\n俯视座舱\n不透明度\n1,989 个物理采样点 · 体积声能插值；原声与残余共用色标，帧间平滑不增加物理信息。",
+      "range": "45,85",
+      "mode": "volume"
+    }
+  ],
+  "errors": []
+}
